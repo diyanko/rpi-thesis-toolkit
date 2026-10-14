@@ -1,0 +1,59 @@
+# Where things live: docs/project/README.md ("Where things live").
+# Rule of thumb: sources are tracked; anything a script or CI can rebuild is not.
+
+# Build outputs. CI rebuilds the PDF, website, previews, and starter ZIP.
+/build/
+/dist/
+/output/
+/tmp/
+
+# LaTeX working files, wherever they appear (including cheatsheet/).
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.lof
+*.lot
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+*-SAVE-ERROR
+
+# Compiled PDFs. PDF figures in figures/ stay tracked.
+/*.pdf
+/cheatsheet/*.pdf
+
+# HTML is generated from Markdown by scripts/build_site.py; never track it.
+/*.html
+/docs/**/*.html
+
+# Personal and local material: notes, prototypes, downloaded OGE documents,
+# RPI's original template (_local/legacy/), sample outputs, and agent scratch
+# files. Never commit or publish it.
+/_local/
+
+# RPI's seal belongs to RPI. Each student downloads it from RPI's Thesis
+# Preparation page (see assets/README.md), so this repository never ships it.
+/assets/rpi-seal.*
+
+# Local AI-agent and editor settings. Agents read AGENTS.md and CLAUDE.md;
+# .vscode/settings.json and extensions.json are tracked; they ship in the student ZIP.
+/.claude/
+/.codex/
+/.vscode/*
+!/.vscode/settings.json
+!/.vscode/extensions.json
+/.idea/
+
+# Python and operating-system clutter.
+/.venv/
+__pycache__/
+.DS_Store
+Thumbs.db
+*.swp
+*~
