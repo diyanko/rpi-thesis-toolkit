@@ -1,0 +1,345 @@
+% RPI Thesis Toolkit: one-page field guide for the thesis starter.
+% Compile with pdfLaTeX (no shell escape). See cheatsheet/README.md.
+% Every snippet below follows the starter's own files and conventions.
+\documentclass[10pt]{article}
+\usepackage[letterpaper,landscape,top=0.34in,bottom=0.30in,
+  left=0.36in,right=0.36in,footskip=0pt,nohead]{geometry}
+\usepackage{fix-cm}
+\usepackage[T1]{fontenc}
+\usepackage{libertinus}
+\usepackage[varqu,varl,scaled=0.97]{zi4}% Inconsolata for code
+\usepackage{xcolor}
+\usepackage[most]{tcolorbox}
+\usetikzlibrary{decorations.pathmorphing,arrows.meta,positioning,calc}
+\usepackage{array}
+\pagestyle{empty}
+
+% Palette: ink for text, three muted accents that stay dark in grayscale.
+\definecolor{ink}{HTML}{2A2723}
+\definecolor{terra}{HTML}{9E4526}
+\definecolor{sage}{HTML}{46684B}
+\definecolor{inkblue}{HTML}{2B4D7A}
+\definecolor{paper}{HTML}{FBF7EF}
+\definecolor{codebg}{HTML}{F5EFE3}
+\color{ink}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\newcommand{\bodysize}{\fontsize{7.9}{9.1}\selectfont}
+\newcommand{\codesize}{\fontsize{6.95}{7.85}\selectfont}
+
+% Inline code: \cs{cite} prints \cite; \code{...} prints anything in mono.
+\newcommand{\code}[1]{\leavevmode{\ttfamily\color{inkblue}#1}}
+\newcommand{\cs}[1]{\code{\textbackslash#1}}
+\newcommand{\aside}[1]{{\itshape\color{terra}#1}}
+\newcommand{\file}[1]{{\ttfamily#1}}
+
+% Numbered badge, like the guide's step circles.
+\newcommand{\badge}[1]{\tikz[baseline=(n.base)]\node[circle,draw=ink,
+  line width=.55pt,fill=sage!14,inner sep=0pt,minimum size=11.5pt,
+  font=\fontsize{7.5}{8}\selectfont\bfseries](n){#1};}
+
+% A boxed section: #1 number, #2 title, #3 handwritten-style aside.
+\newtcolorbox{fg}[3]{enhanced,breakable=false,
+  colback=white,colframe=ink,boxrule=.6pt,arc=3pt,
+  left=5pt,right=5pt,top=2pt,bottom=3pt,
+  before skip=0pt,after skip=0pt,
+  shadow={1.6pt}{-1.6pt}{0pt}{sage!28},
+  fontupper=\bodysize,
+  title={\badge{#1}\hspace{4pt}{\fontsize{10.6}{12}\selectfont\bfseries #2}%
+    \hfill\raisebox{.5pt}{\fontsize{8}{9}\selectfont\aside{#3}}},
+  coltitle=ink,colbacktitle=white,titlerule=0pt,
+  toptitle=2pt,bottomtitle=0pt,lefttitle=5pt,righttitle=5pt}
+
+% Code blocks: listings inside tcolorbox, no shell escape needed.
+\lstdefinestyle{fg}{language=[LaTeX]TeX,
+  basicstyle=\ttfamily\codesize\color{ink},
+  columns=fullflexible,keepspaces=true,upquote=true,
+  showstringspaces=false,
+  keywordstyle=\color{inkblue},texcsstyle=*\color{inkblue},
+  moretexcs={thesissetup,committeemember,frontchapter,chapterattribution,
+    fullcite,cite,eqref,enquote,includegraphics,toprule,midrule,bottomrule,
+    subsection,emph,textbf,centering,caption,label,ref,item,section,chapter},
+  commentstyle=\color{terra!82!black},
+  breaklines=false,aboveskip=0pt,belowskip=0pt,
+  literate={~}{{\textasciitilde}}1}
+\lstdefinestyle{bib}{style=fg,language={},
+  morecomment=[l]{\%},
+  moredelim=[s][\color{inkblue}]{@}{\{}}
+% Note: no optional argument here; an optional argument makes the
+% environment peek ahead and swallow the listing's first command.
+\tcbset{snipbox/.style={listing only,enhanced,
+  colback=codebg,colframe=codebg,boxrule=0pt,arc=2pt,
+  left=3.5pt,right=2pt,top=1.6pt,bottom=1.6pt,
+  before skip=2.5pt,after skip=2.5pt,
+  borderline west={1.4pt}{0pt}{sage!70}}}
+\newtcblisting{snip}{snipbox,listing options={style=fg}}
+\newtcblisting{bibsnip}{snipbox,listing options={style=bib}}
+
+% Small two-column tables for "this file / that job".
+\newcommand{\row}[2]{#1 & #2\\}
+\newcommand{\tip}{\raisebox{.15ex}{\tikz\fill[sage](0,0)--(0,4.2pt)--(3.6pt,2.1pt)--cycle;}\hspace{3pt}}
+\newcommand{\note}[1]{\par\vspace{1.2pt}\tip#1\par}
+
+
+% Column layout: three fixed-height columns; \vfill spreads the boxes so
+% every column ends on the same line.
+\newlength{\colw}
+\newlength{\colh}
+\newcommand{\gap}{\par\vspace{5pt plus 1fill}}
+
+\begin{document}
+\bodysize
+% ------------------------------------------------------------------ header
+\newsavebox{\headerbox}
+\sbox{\headerbox}{%
+\begin{minipage}[b]{.68\linewidth}
+  {\fontsize{8.3}{10}\selectfont\aside{A one-page field guide to the
+  community LaTeX starter for RPI theses \& dissertations}}\par\vspace{1pt}
+  {\fontsize{20}{22}\selectfont\bfseries RPI Thesis Toolkit:
+  \tikz[baseline=(t.base)]{\node[inner sep=0pt](t){the field guide};
+    \draw[terra,line width=.8pt,decorate,
+      decoration={snake,amplitude=.7pt,segment length=4.2pt}]
+      ([yshift=-2.6pt]t.south west)--([yshift=-2.6pt]t.south east);}}
+\end{minipage}%
+\hfill
+\begin{minipage}[b]{.27\linewidth}\raggedleft
+  {\fontsize{8}{9.6}\selectfont\aside{You write the words.\\
+  The template sets margins, headings,\\ numbering, contents \& references.}}
+\end{minipage}%
+\hspace{7pt}%
+\begin{tikzpicture}[baseline=0pt,line width=.6pt,ink]
+  % a small potted sprout, echoing the guide's illustrations
+  \fill[terra!22] (-.17,0)--(.17,0)--(.21,.27)--(-.21,.27)--cycle;
+  \draw (-.17,0)--(.17,0)--(.21,.27)--(-.21,.27)--cycle;
+  \draw (-.24,.27) rectangle (.24,.33);
+  \draw[sage!80!ink] (0,.33) .. controls (0,.48) and (.02,.56) .. (0,.66);
+  \draw[fill=sage!35] (0,.52) .. controls (.08,.66) and (.24,.66) .. (.32,.62)
+    .. controls (.24,.5) and (.1,.48) .. (0,.52);
+  \draw[fill=sage!35] (0,.6) .. controls (-.08,.74) and (-.22,.76) .. (-.3,.7)
+    .. controls (-.22,.59) and (-.08,.57) .. (0,.6);
+\end{tikzpicture}}%
+\noindent\usebox{\headerbox}\par
+\vspace{7pt}
+% ------------------------------------------------------------------ columns
+\setlength{\colw}{\dimexpr(\linewidth-20pt)/3\relax}
+\setlength{\colh}{\dimexpr\textheight-\ht\headerbox-\dp\headerbox-7pt-16pt\relax}
+\begin{minipage}[t][\colh][t]{\colw}\vspace{0pt}
+% ============================ 1. FILES
+\begin{fg}{1}{Your files}{what each one is for}
+\begin{tabular}{@{}>{\ttfamily\color{inkblue}}l@{\hspace{6pt}}l@{}}
+\row{main.tex}{The file you compile. Lists the parts in order.}
+\row{metadata.tex}{Title, name, degree, department, committee.}
+\row{frontmatter/}{Abstract and acknowledgment.}
+\row{chapters/}{One \file{.tex} file per chapter.}
+\row{appendices/}{Extra material, after the references.}
+\row{references.bib}{Your sources, one entry each.}
+\row{figures/}{Images: PNG, JPEG or PDF.}
+\row{preamble.tex}{Citation style and extra packages.}
+\row{rpi-thesis.cls}{The formatting. Leave it alone.}
+\row{assets/}{The RPI seal: download it (see README).}
+\end{tabular}
+\begin{snip}
+% metadata.tex: change only what is inside { }
+\thesissetup{
+  title  = {Your thesis title},
+  author = {Your full name},
+  degree = doctoral, % or masters, engineering-doctorate
+  graduation-month = May, % May, August, December
+  graduation-year  = {2027},
+}
+\committeemember[Chair]{Your committee chair}
+\committeemember{Committee member two}
+\end{snip}
+\note{List every approved member, with \code{[Chair]} on one line. Front-matter
+pages begin \cs{frontchapter}\code{\{ABSTRACT\}}.}
+\note{New chapter? Copy one, retitle it, add its \cs{include} to \file{main.tex}.}
+\end{fg}
+\gap
+% ============================ 2. WRITE
+\begin{fg}{2}{Write}{plain text, a few commands}
+\begin{snip}
+\section{Research question}
+\subsection{Context}
+Ordinary sentences make a paragraph.
+
+A blank line starts the next paragraph.
+\emph{emphasis}, \textbf{bold}, \enquote{a short quote}
+\begin{quote}
+  A long quotation, set apart.
+\end{quote}
+\begin{itemize}   % enumerate numbers: 1. 2. 3.
+  \item First point
+  \item Second point
+\end{itemize}
+\end{snip}
+\begin{tabular}{@{}l@{\hspace{6pt}}*{7}{c@{\hspace{8pt}}}@{}}
+Type &\code{\textbackslash\%}&\code{\textbackslash\&}&\code{\textbackslash\_}
+  &\code{\textbackslash\$}&\code{\textbackslash\#}&\code{\textbackslash\{}
+  &\code{\textbackslash\}}\\
+to get &\%&\&&\_&\$&\#&\{&\}
+\end{tabular}
+\note{\code{\%} starts a private comment. Don't type heading numbers or add
+space with \code{\textbackslash\textbackslash}. Use one capitalization style for headings and captions.}
+\end{fg}
+\gap
+% ============================ 3. REFER
+\begin{fg}{3}{Refer}{label it, then point at it}
+\begin{snip}
+\label{fig:growth}  % after \caption or \chapter
+As Figure~\ref{fig:growth} shows, the trend
+rises (Table~\ref{tab:x}, Equation~\ref{eq:x}).
+\end{snip}
+\note{\code{\textasciitilde} keeps word and number together. Never type
+numbers by hand. Prefixes: \code{chap: sec: fig: tab: eq:}}
+\end{fg}
+\end{minipage}%
+\hfill
+\begin{minipage}[t][\colh][t]{\colw}\vspace{0pt}
+% ============================ 4. CITE
+\begin{fg}{4}{Cite}{one entry, one key}
+\begin{snip}
+An earlier account explains this~\cite{lamport1994}.
+\fullcite{lamport1994}  % the whole entry, in text
+\end{snip}
+\begin{bibsnip}
+@book{lamport1994,
+  author    = {Leslie Lamport},
+  title     = {{LaTeX}: A Document Preparation System},
+  publisher = {Addison-Wesley},
+  date      = {1994}
+}
+@online{example-page,
+  author  = {{Name of the Organization}},
+  title   = {Title of the Web Page},
+  url     = {https://example.org/page},
+  urldate = {2026-10-14}
+}
+\end{bibsnip}
+\note{OGE wants an \textbf{access date for every URL} (not for DOIs):
+\code{urldate} is the day \emph{you} read it. Check that it prints.}
+\note{In \file{references.bib}, the key follows \code{@book\{}. Keys must be
+unique; only cited sources are listed. Braces keep capitals: \code{\{RPI\}}.}
+\note{Agree on a style with your advisor and set it in \file{preamble.tex}.
+The sample's numeric style is not an official one.}
+\end{fg}
+\gap
+% ============================ 5. FIGURE
+\begin{fg}{5}{Figure}{caption below}
+\begin{snip}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{figures/x}
+  \caption{One full caption, in your heading style.}
+  \label{fig:x}
+\end{figure}
+\end{snip}
+\note{\cs{label} goes \emph{after} \cs{caption}. Never use
+\cs{caption}\code{[short]\{long\}}: the list of figures must match the caption.}
+\note{Someone else's figure, or one from your paper? Its caption needs the full
+citation and a permission or license statement.}
+\end{fg}
+\gap
+% ============================ 6. TABLE
+\begin{fg}{6}{Table}{caption above}
+\begin{snip}
+\begin{table}[htbp]
+  \centering
+  \caption{Caption goes above the table.}
+  \label{tab:x}
+  \begin{tabular}{lr}  % l, c, r: column alignment
+    \toprule
+    Group & Value \\     % & next column, \\ end row
+    \midrule
+    A     & 12 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\end{snip}
+\note{The class loads \file{booktabs}, which gives \cs{toprule},
+\cs{midrule} and \cs{bottomrule}.}
+\end{fg}
+\end{minipage}%
+\hfill
+\begin{minipage}[t][\colh][t]{\colw}\vspace{0pt}
+% ============================ 7. EQUATION
+\begin{fg}{7}{Equation}{every display is numbered}
+\begin{snip}
+Inline maths uses dollar signs: $x = 2$.
+\begin{equation}
+  y = mx + b.
+  \label{eq:line}
+\end{equation}
+\begin{equation}
+  \begin{split}
+    (a + b)^2 &= (a + b)(a + b) \\
+              &= a^2 + 2ab + b^2.
+  \end{split}
+  \label{eq:square}
+\end{equation}
+\end{snip}
+\note{Not \code{equation*} or \code{\textbackslash[\,\textbackslash]}: only
+displays inside a lemma, theorem, proof or algorithm may go unnumbered.}
+\note{Number dropped below? The line is too long; break it with
+\code{split} (\code{\&} aligns, \code{\textbackslash\textbackslash} ends a line).}
+\end{fg}
+\gap
+% ============================ 8. PUBLISHED CHAPTER
+\begin{fg}{8}{Published chapter}{your own article}
+\begin{snip}
+\chapter{RESEARCH AND FINDINGS}
+\label{chap:research}
+\chapterattribution{[Exact sentence from the
+  current OGE manual] \fullcite{my-article}.}
+\end{snip}
+\note{\textbf{Copy the exact OGE wording} for your article's status
+(published, accepted or submitted). List the chapter on the
+co-contribution form.}
+\end{fg}
+\gap
+% ============================ 9. COMPILE
+\begin{fg}{9}{Compile}{or press Compile}
+\centering
+\begin{tikzpicture}[node distance=10pt,
+    st/.style={draw=ink,line width=.55pt,rounded corners=2pt,fill=#1,
+      font=\fontsize{7.3}{8.3}\selectfont\bfseries,inner sep=2.5pt,
+      minimum height=12.5pt,text height=1.6ex,text depth=.25ex},
+    ar/.style={-{Stealth[length=3.4pt]},line width=.6pt,terra}]
+  \node[st=sage!14] (a) {pdfLaTeX};
+  \node[st=terra!12,right=of a] (b) {Biber};
+  \node[st=sage!14,right=of b] (c) {pdfLaTeX};
+  \node[st=sage!14,right=of c] (d) {pdfLaTeX};
+  \draw[ar] (a)--(b); \draw[ar] (b)--(c); \draw[ar] (c)--(d);
+  \node[below=1pt of a,font=\fontsize{6.5}{7}\selectfont\itshape,text=terra]
+    {lays out};
+  \node[below=1pt of b,font=\fontsize{6.5}{7}\selectfont\itshape,text=terra]
+    {sorts sources};
+  \node[below=1pt of $(c.south)!.5!(d.south)$,font=\fontsize{6.5}{7}\selectfont\itshape,
+    text=terra] {fills in numbers};
+\end{tikzpicture}\par\vspace{1pt}
+\raggedright
+\note{One click runs it all: \textbf{Recompile} on Overleaf, Build in your
+editor, or \code{python3 scripts/build.py}.}
+\note{Read the \textbf{first} error, with its file and line number; later
+errors are often side effects.}
+\end{fg}
+\gap
+% ============================ 10. STUCK
+\begin{fg}{10}{When stuck}{errors are normal}
+\renewcommand{\arraystretch}{1.08}%
+\begin{tabular}{@{}>{\raggedright}p{.31\linewidth}@{\hspace{6pt}}>{\raggedright\arraybackslash}p{.65\linewidth}@{}}
+\code{Missing \$ inserted} & An unescaped \code{\_}, or maths outside \code{\$...\$}.\\
+A key in \textbf{bold} & Run Biber: compile again; check the key.\\
+\textbf{??} for a number & Compile again; check the label's spelling.\\
+\code{Runaway argument} & A missing \code{\}} near your last edit.\\
+\end{tabular}
+\note{Undo your last change and compile after every small edit. More help: the
+guide's \textbf{Fixing problems} page (\file{docs/troubleshooting.md}).}
+\end{fg}
+\end{minipage}
+
+\vfill
+{\fontsize{7.1}{8}\selectfont\color{ink!75}\centering
+\textbf{RPI Thesis Toolkit} \textperiodcentered{} unofficial community project, not
+endorsed by RPI/OGE \textperiodcentered{} check the current OGE manual\par}
+\end{document}
