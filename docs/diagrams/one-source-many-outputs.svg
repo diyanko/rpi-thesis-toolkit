@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 600" width="720" height="600" role="img" aria-labelledby="t d">
+  <title id="t">One source, many destinations</title>
+  <desc id="d">One source, many destinations. Your content files (chapters, figures, and references.bib) sit in the middle. Arrows lead outward to: the thesis PDF, through rpi-thesis.cls; a journal or conference paper, through the venue's class such as IEEEtran or acmart; slides, through Beamer; a Word copy for reviewers, through Pandoc; and a web page. A caption reads "a world of possibilities, not a to-do list".</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="680">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="600" rx="18"/>
+  <rect class="w-terra" x="237" y="29" width="260" height="92" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="230" y="22" width="260" height="92" rx="14"/>
+  <text class="h mid" x="360" y="58">thesis PDF</text>
+  <text class="s mid" x="360" y="88" style="font-size:17px">through <tspan class="m" style="font-size:16px">rpi-thesis.cls</tspan></text>
+  <path class="f-red" d="M452 22 V 52 L 461 44 L 470 52 V 22 Z"/>
+  <path class="ln terra" filter="url(#r)" d="M360 186 C 354 166, 366 146, 360 126" marker-end="url(#at)"/>
+  <text class="hand" x="384" y="162" style="font-size:19px">the one you need</text>
+  <path class="w-sage" transform="translate(7 7)" d="M262 196 C 316 182, 410 184, 462 198 C 486 206, 492 300, 470 318 C 420 336, 300 336, 252 318 C 228 300, 236 208, 262 196 Z"/>
+  <path class="ln" filter="url(#r)" d="M262 196 C 316 182, 410 184, 462 198 C 486 206, 492 300, 470 318 C 420 336, 300 336, 252 318 C 228 300, 236 208, 262 196 Z"/>
+  <text class="hand hs mid" x="360" y="226">your content</text>
+  <text class="m mid" x="360" y="258" style="font-size:17px">chapters/</text>
+  <text class="m mid" x="360" y="284" style="font-size:17px">figures/</text>
+  <text class="m mid" x="360" y="310" style="font-size:17px">references.bib</text>
+  <rect class="w-blue" x="26" y="424" width="152" height="104" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="20" y="418" width="152" height="104" rx="14"/>
+  <text class="mid" x="96" y="452" style="font-size:20px" font-weight="700">a paper</text>
+  <text class="s mid" x="96" y="478" style="font-size:16px">venue's class,</text>
+  <text class="s mid" x="96" y="500" style="font-size:16px">e.g. IEEEtran</text>
+  <rect class="w-blue" x="202" y="424" width="152" height="104" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="196" y="418" width="152" height="104" rx="14"/>
+  <text class="mid" x="272" y="452" style="font-size:20px" font-weight="700">slides</text>
+  <text class="s mid" x="272" y="478" style="font-size:16px">through</text>
+  <text class="s mid" x="272" y="500" style="font-size:16px">Beamer</text>
+  <rect class="w-blue" x="378" y="424" width="152" height="104" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="372" y="418" width="152" height="104" rx="14"/>
+  <text class="mid" x="448" y="452" style="font-size:20px" font-weight="700">Word copy</text>
+  <text class="s mid" x="448" y="478" style="font-size:16px">for reviewers,</text>
+  <text class="s mid" x="448" y="500" style="font-size:16px">via Pandoc</text>
+  <rect class="w-blue" x="554" y="424" width="152" height="104" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="548" y="418" width="152" height="104" rx="14"/>
+  <text class="mid" x="624" y="476" style="font-size:20px" font-weight="700">web page</text>
+  <path class="ln dash" filter="url(#r)" d="M276 334 C 220 360, 120 376, 98 408" marker-end="url(#a)"/>
+  <path class="ln dash" filter="url(#r)" d="M322 340 C 306 364, 278 380, 272 408" marker-end="url(#a)"/>
+  <path class="ln dash" filter="url(#r)" d="M398 340 C 414 364, 442 380, 448 408" marker-end="url(#a)"/>
+  <path class="ln dash" filter="url(#r)" d="M444 334 C 500 360, 600 376, 622 408" marker-end="url(#a)"/>
+  <text class="hand mid" x="360" y="566" style="font-size:21px">a world of possibilities, not a to-do list</text>
+</svg>

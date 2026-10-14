@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 500" width="720" height="500" role="img" aria-labelledby="t d">
+  <title id="t">How a citation travels</title>
+  <desc id="d">How a citation travels. A source's details go into references.bib, either pasted by hand or exported from a citation manager such as Zotero. In a chapter you write \cite with the source's key. When you compile, Biber matches the key to the entry and formats it in your chosen style. The PDF shows the in-text citation and the entry in the reference list.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="580">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="500" rx="18"/>
+  <rect class="w-butter" x="24" y="36" width="160" height="62" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="18" y="30" width="160" height="62" rx="12"/>
+  <text class="mid" x="98" y="58" style="font-size:18px">pasted</text>
+  <text class="s mid" x="98" y="80" style="font-size:17px">by hand</text>
+  <rect class="w-sage" x="24" y="126" width="160" height="70" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="18" y="120" width="160" height="70" rx="12"/>
+  <text class="mid" x="98" y="150" style="font-size:17px">exported from</text>
+  <text class="s mid" x="98" y="174" style="font-size:16px">Zotero or similar</text>
+  <path class="ln" filter="url(#r)" d="M184 62 C 196 66, 204 74, 214 84" marker-end="url(#a)"/>
+  <path class="ln" filter="url(#r)" d="M184 152 C 196 148, 204 138, 214 126" marker-end="url(#a)"/>
+  <path class="w-plum" d="M222 30 H512 L528 46 V200 H222 Z"/>
+  <path class="card" d="M216 24 H506 L522 40 V194 H216 Z"/>
+  <path class="ln" filter="url(#r)" d="M216 24 H506 L522 40 V194 H216 Z M506 24 V40 H522"/>
+  <text class="m" x="232" y="56">references.bib</text>
+  <text class="code" x="232" y="92">@book{<tspan class="k">lamport1994</tspan>,</text>
+  <text class="code" x="232" y="118" xml:space="preserve">  author = {Leslie Lamport},</text>
+  <text class="code" x="232" y="144" xml:space="preserve">  title  = {LaTeX: …},</text>
+  <text class="code" x="232" y="170" xml:space="preserve">  …}</text>
+  <path class="ln terra dash" filter="url(#r)" d="M318 204 C 312 226, 324 244, 318 266" marker-start="url(#at)" marker-end="url(#at)"/>
+  <text class="hand" x="334" y="242" style="font-size:19px">the keys must match</text>
+  <path class="w-blue" d="M222 282 H512 L528 298 V394 H222 Z"/>
+  <path class="card" d="M216 276 H506 L522 292 V388 H216 Z"/>
+  <path class="ln" filter="url(#r)" d="M216 276 H506 L522 292 V388 H216 Z M506 276 V292 H522"/>
+  <text class="m" x="232" y="308" style="font-size:15px">chapters/01-introduction.tex</text>
+  <text class="code" x="232" y="340">…as in this example</text>
+  <text class="code" x="232" y="366">~\cite{<tspan class="k">lamport1994</tspan>}.</text>
+  <text class="hand hb mid" x="98" y="300">you write</text>
+  <text class="hand hb mid" x="98" y="326">\cite{key}</text>
+  <text class="hand hb mid" x="98" y="352">in a chapter</text>
+  <path class="ln blue" filter="url(#r)" d="M150 366 C 172 378, 192 376, 210 364" marker-end="url(#ab)"/>
+  <rect class="w-plum" x="559" y="157" width="150" height="96" rx="16"/>
+  <rect class="ln" filter="url(#r)" x="552" y="150" width="150" height="96" rx="16"/>
+  <text class="h mid" x="627" y="186">Biber</text>
+  <text class="s mid" x="627" y="212" style="font-size:17px">matches keys,</text>
+  <text class="s mid" x="627" y="234" style="font-size:17px">in your style</text>
+  <text class="hand mid" x="627" y="134" style="font-size:18px">when you compile</text>
+  <path class="ln" filter="url(#r)" d="M528 100 C 540 108, 548 124, 556 140" marker-end="url(#a)"/>
+  <path class="ln" filter="url(#r)" d="M528 330 C 544 320, 550 288, 560 258" marker-end="url(#a)"/>
+  <path class="w-sage" d="M572 296 H692 L708 312 V476 H572 Z"/>
+  <path class="card" d="M566 290 H686 L702 306 V470 H566 Z"/>
+  <path class="ln" filter="url(#r)" d="M566 290 H686 L702 306 V470 H566 Z M686 290 V306 H702"/>
+  <path class="ln thin sage" filter="url(#r)" d="M580 318 H686 M580 334 H668"/>
+  <text x="580" y="362" style="font-size:16px">this work <tspan class="k">[1]</tspan>.</text>
+  <text x="580" y="398" style="font-size:16px" font-weight="700">References</text>
+  <text x="580" y="422" style="font-size:15px"><tspan class="k">[1]</tspan> L. Lamport,</text>
+  <text class="s" x="580" y="444" style="font-size:15px" font-style="italic">LaTeX: A Doc…</text>
+  <path class="ln" filter="url(#r)" d="M640 254 C 646 264, 642 274, 640 282" marker-end="url(#a)"/>
+  <text class="hand mid" x="634" y="492" style="font-size:18px">in your PDF</text>
+</svg>

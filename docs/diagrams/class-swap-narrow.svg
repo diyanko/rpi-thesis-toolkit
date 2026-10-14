@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 616" width="360" height="616" role="img" aria-labelledby="t d">
+  <title id="t">Swapping the class file</title>
+  <desc id="d">Swapping the class file. On the left, your files (metadata.tex, frontmatter, chapters, appendices, figures, references.bib, preamble.tex) stay exactly as they are. In the middle, an old rpi-thesis.cls is replaced with a new one. On the right, recompiling produces a PDF with the same words in the updated formatting.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="440" height="696">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="360" height="616" rx="18"/>
+  <text class="hand hs mid" x="180" y="32" style="font-size:19px">your files</text>
+  <path class="w-sage" transform="translate(6 6)" d="M18 50 V 214 H336 V 62 H124 L112 50 Z"/>
+  <path class="ln" filter="url(#r)" d="M18 50 V 214 H336 V 62 H124 L112 50 Z"/>
+  <text class="m" x="36" y="96" style="font-size:15px">metadata.tex</text>
+  <text class="m" x="36" y="128" style="font-size:15px">frontmatter/</text>
+  <text class="m" x="36" y="160" style="font-size:15px">chapters/</text>
+  <text class="m" x="36" y="192" style="font-size:15px">appendices/</text>
+  <text class="m" x="192" y="96" style="font-size:15px">figures/</text>
+  <text class="m" x="192" y="128" style="font-size:15px">references.bib</text>
+  <text class="m" x="192" y="160" style="font-size:15px">preamble.tex</text>
+  <text class="hand hs mid" x="180" y="252" style="font-size:18px">stay exactly as they are</text>
+  <text class="h mid" x="180" y="290" style="font-size:30px">+</text>
+  <g opacity=".6">
+  <rect class="ln thin mut dash" filter="url(#r)" x="16" y="312" width="132" height="72" rx="12"/>
+  <text class="s m mid" x="82" y="342" style="font-size:14px">rpi-thesis.cls</text>
+  <text class="s mid" x="82" y="368" style="font-size:15px">old rules</text>
+  <path class="ln mut" filter="url(#r)" d="M24 338 C 60 334, 104 340, 140 336"/>
+  </g>
+  <path class="ln terra" filter="url(#r)" d="M154 352 C 170 348, 186 356, 204 350" marker-end="url(#at)"/>
+  <text class="hand mid" x="180" y="328" style="font-size:17px">replace</text>
+  <rect class="w-terra" x="218" y="316" width="132" height="76" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="212" y="310" width="132" height="76" rx="12"/>
+  <text class="m mid" x="278" y="342" style="font-size:14px">rpi-thesis.cls</text>
+  <text class="s mid" x="278" y="368" style="font-size:15px">new rules</text>
+  <path class="ln" filter="url(#r)" d="M262 396 C 252 420, 220 432, 190 438" marker-end="url(#a)"/>
+  <text class="hand mid" x="282" y="430" style="font-size:17px">recompile</text>
+  <path class="w-sage" d="M52 420 H168 L184 436 V596 H52 Z"/>
+  <path class="card" d="M46 414 H162 L178 430 V590 H46 Z"/>
+  <path class="ln" filter="url(#r)" d="M46 414 H162 L178 430 V590 H46 Z M162 414 V430 H178"/>
+  <rect class="ln thin blue dash" x="58" y="430" width="108" height="146" rx="2"/>
+  <path class="ln terra" filter="url(#r)" d="M70 452 H124"/>
+  <path class="ln thin" d="M70 476 H156 M70 492 H156 M70 508 H144 M70 532 H156 M70 548 H156 M70 564 H124"/>
+  <text class="hand" x="196" y="500" style="font-size:18px">same words,</text>
+  <text class="hand" x="196" y="524" style="font-size:18px">updated</text>
+  <text class="hand" x="196" y="548" style="font-size:18px">formatting</text>
+</svg>

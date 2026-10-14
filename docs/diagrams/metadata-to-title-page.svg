@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 448" width="720" height="448" role="img" aria-labelledby="t d">
+  <title id="t">From metadata.tex to the title page</title>
+  <desc id="d">How the lines in metadata.tex fill the title page. Pin 1: title = {Your thesis title} becomes the title, printed in capitals at the top of the page. Pin 2: author = {Your full name} becomes your name below the title. Pin 3: degree = masters becomes MASTER OF SCIENCE under the fixed words Submitted in Partial Fulfillment of the Requirements for the Degree of (doctoral gives Doctor of Philosophy, engineering-doctorate gives Doctor of Engineering). Pin 4: each committeemember line becomes one name in the list under Approved by, and the chair's name is followed by Chair. Pin 5: department becomes the department name near the bottom of the page, above Rensselaer Polytechnic Institute, Troy, New York. Pin 6: graduation-month and graduation-year become the bracketed date at the bottom, such as [May 2027]. The RPI seal, drawn as an empty dashed circle, is added by the class. A handwritten note says the fixed wording and layout come from the class file.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="528">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="448" rx="18"/>
+  <rect class="w-butter" x="20" y="46" width="410" height="356.8" rx="12" opacity=".7"/>
+  <rect class="card" x="14" y="40" width="410" height="356.8" rx="12"/>
+  <rect class="w-butter" x="16" y="104.94" width="406" height="20"/>
+  <rect class="w-butter" x="16" y="127.94" width="406" height="20"/>
+  <rect class="w-butter" x="16" y="150.94" width="406" height="20"/>
+  <rect class="w-butter" x="16" y="173.94" width="406" height="43"/>
+  <rect class="w-butter" x="16" y="219.94" width="406" height="43"/>
+  <rect class="w-butter" x="16" y="321.94" width="406" height="66"/>
+  <rect class="ln" filter="url(#r)" x="14" y="40" width="410" height="356.8" rx="12"/>
+  <path class="ln thin mut" d="M14 74 H424"/>
+  <text class="m" x="28" y="63" style="font-size:14px">metadata.tex</text>
+  <text class="hand end" x="410" y="63" style="font-size:15px">you edit this</text>
+  <text class="code" x="54" y="97" style="font-size:12.5px" xml:space="preserve">\thesissetup{</text>
+  <text class="code" x="54" y="120" style="font-size:12.5px" xml:space="preserve">  title = <tspan style="fill:var(--ink)" font-weight="700">{Your thesis title},</tspan></text>
+  <text class="code" x="54" y="143" style="font-size:12.5px" xml:space="preserve">  author = <tspan style="fill:var(--ink)" font-weight="700">{Your full name},</tspan></text>
+  <text class="code" x="54" y="166" style="font-size:12.5px" xml:space="preserve">  degree = <tspan style="fill:var(--ink)" font-weight="700">masters,</tspan></text>
+  <text class="code" x="54" y="189" style="font-size:12.5px" xml:space="preserve">  department = <tspan style="fill:var(--ink)" font-weight="700">{Department of Your</tspan></text>
+  <text class="code" x="54" y="212" style="font-size:12.5px" xml:space="preserve">    <tspan style="fill:var(--ink)" font-weight="700">Full Department Name},</tspan></text>
+  <text class="code" x="54" y="235" style="font-size:12.5px" xml:space="preserve">  graduation-month = <tspan style="fill:var(--ink)" font-weight="700">May,</tspan></text>
+  <text class="code" x="54" y="258" style="font-size:12.5px" xml:space="preserve">  graduation-year = <tspan style="fill:var(--ink)" font-weight="700">{2027},</tspan></text>
+  <text class="code" x="54" y="281" style="font-size:12.5px" xml:space="preserve">  …</text>
+  <text class="code" x="54" y="304" style="font-size:12.5px" xml:space="preserve">}</text>
+  <text class="code" x="54" y="337" style="font-size:12.5px" xml:space="preserve">\committeemember[Chair]<tspan style="fill:var(--ink)" font-weight="700">{Your committee chair}</tspan></text>
+  <text class="code" x="54" y="360" style="font-size:12.5px" xml:space="preserve">\committeemember<tspan style="fill:var(--ink)" font-weight="700">{Committee member two}</tspan></text>
+  <text class="code" x="54" y="383" style="font-size:12.5px" xml:space="preserve">\committeemember<tspan style="fill:var(--ink)" font-weight="700">{Committee member three}</tspan></text>
+  <circle class="w-butter" cx="34" cy="115.625" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="34" cy="115.625" r="10"/>
+  <text class="n mid" x="34" y="120.175" style="font-size:13px">1</text>
+  <circle class="w-butter" cx="34" cy="138.625" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="34" cy="138.625" r="10"/>
+  <text class="n mid" x="34" y="143.175" style="font-size:13px">2</text>
+  <circle class="w-butter" cx="34" cy="161.625" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="34" cy="161.625" r="10"/>
+  <text class="n mid" x="34" y="166.175" style="font-size:13px">3</text>
+  <circle class="w-butter" cx="34" cy="196.125" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="34" cy="196.125" r="10"/>
+  <text class="n mid" x="34" y="200.675" style="font-size:13px">5</text>
+  <circle class="w-butter" cx="34" cy="242.125" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="34" cy="242.125" r="10"/>
+  <text class="n mid" x="34" y="246.675" style="font-size:13px">6</text>
+  <circle class="w-butter" cx="34" cy="355.625" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="34" cy="355.625" r="10"/>
+  <text class="n mid" x="34" y="360.175" style="font-size:13px">4</text>
+  <rect class="w-sage" x="469" y="47" width="246" height="318.353" rx="3"/>
+  <rect class="card" x="462" y="40" width="246" height="318.353" rx="3"/>
+  <rect class="ln" filter="url(#r)" x="462" y="40" width="246" height="318.353" rx="3"/>
+  <text class="mid" x="585" y="71.8353" style="font-size:14px" font-weight="700">YOUR THESIS TITLE</text>
+  <text class="mid" x="585" y="95.7118" style="font-size:13.5px" font-weight="700">Your full name</text>
+  <rect x="508.74" y="108.924" width="152.52" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
+  <rect x="548.1" y="117.838" width="73.8" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
+  <text class="mid" x="585" y="137.098" style="font-size:13px" font-style="italic">MASTER OF SCIENCE</text>
+  <rect x="553.02" y="152.857" width="63.96" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
+  <text class="mid" x="585" y="168.933" style="font-size:13px">Your committee chair, Chair</text>
+  <text class="mid" x="585" y="185.933" style="font-size:13px">Committee member two</text>
+  <text class="mid" x="585" y="202.933" style="font-size:13px">Committee member three</text>
+  <circle class="ln thin mut dash" cx="585" cy="248.521" r="24.6"/>
+  <text class="s" x="617.6" y="237.721" style="font-size:12px" font-style="italic">RPI seal</text>
+  <text class="s" x="617.6" y="252.721" style="font-size:12px" font-style="italic">(added by</text>
+  <text class="s" x="617.6" y="267.721" style="font-size:12px" font-style="italic">the class)</text>
+  <text class="mid" x="585" y="294.682" style="font-size:11px" font-style="italic">Department of Your Full Department Name</text>
+  <rect x="523.5" y="304.711" width="123" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
+  <rect x="548.1" y="314.262" width="73.8" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
+  <text class="mid" x="585" y="336.068" style="font-size:13px">[May 2027]</text>
+  <circle class="w-butter" cx="444" cy="67.2853" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="444" cy="67.2853" r="10"/>
+  <text class="n mid" x="444" y="71.8353" style="font-size:13px">1</text>
+  <circle class="w-butter" cx="444" cy="91.1618" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="444" cy="91.1618" r="10"/>
+  <text class="n mid" x="444" y="95.7118" style="font-size:13px">2</text>
+  <circle class="w-butter" cx="444" cy="132.548" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="444" cy="132.548" r="10"/>
+  <text class="n mid" x="444" y="137.098" style="font-size:13px">3</text>
+  <circle class="w-butter" cx="444" cy="181.383" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="444" cy="181.383" r="10"/>
+  <text class="n mid" x="444" y="185.933" style="font-size:13px">4</text>
+  <circle class="w-butter" cx="444" cy="290.132" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="444" cy="290.132" r="10"/>
+  <text class="n mid" x="444" y="294.682" style="font-size:13px">5</text>
+  <circle class="w-butter" cx="444" cy="331.518" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="444" cy="331.518" r="10"/>
+  <text class="n mid" x="444" y="336.068" style="font-size:13px">6</text>
+  <text class="hand mid" x="585" y="26" style="font-size:16px">your title page</text>
+  <text class="hand" x="18" y="430.8" style="font-size:17px">fixed wording and layout come from the class file</text>
+  <path class="ln terra" filter="url(#r)" d="M410 414.8 C 450 402.8, 470 347.416, 519.5 313.416" marker-end="url(#at)"/>
+</svg>

@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640" width="360" height="640" role="img" aria-labelledby="t d">
+  <title id="t">Your computer compared with Overleaf</title>
+  <desc id="d">Your computer compared with Overleaf. Both start from the same project files and run the same compile steps (pdfLaTeX, Biber, then pdfLaTeX twice, repeated as needed) to produce the same PDF. On your computer the files live in a folder you control, LaTeX is installed locally, and you work offline in an editor. On Overleaf the files and the LaTeX installation live on Overleaf's servers and you work in a browser.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="440" height="720">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="360" height="640" rx="18"/>
+  <text class="hand mid" x="180" y="30" style="font-size:18px">the same project files</text>
+  <path class="w-butter" d="M104 48 H252 L268 64 V160 H104 Z"/>
+  <path class="card" d="M98 42 H246 L262 58 V154 H98 Z"/>
+  <path class="ln" filter="url(#r)" d="M98 42 H246 L262 58 V154 H98 Z M246 42 V58 H262"/>
+  <text class="m" x="114" y="70" style="font-size:16px">main.tex</text>
+  <text class="code" x="114" y="94" style="font-size:14px">metadata.tex</text>
+  <text class="code" x="114" y="115" style="font-size:14px">chapters/</text>
+  <text class="code" x="114" y="136" style="font-size:14px">references.bib</text>
+  <path class="ln" filter="url(#r)" d="M92 120 C 70 130, 62 150, 70 170" marker-end="url(#a)"/>
+  <path class="ln" filter="url(#r)" d="M268 120 C 290 130, 298 150, 290 170" marker-end="url(#a)"/>
+  <g transform="translate(-184 0)">
+    <rect class="w-blue" x="210" y="182" width="136" height="72" rx="10"/>
+    <rect class="ln" filter="url(#r)" x="204" y="176" width="136" height="72" rx="10"/>
+    <path class="ln" filter="url(#r)" d="M194 258 H350 L342 268 H202 Z"/>
+    <text class="mid" x="272" y="206" style="font-size:16px" font-weight="700">Your computer</text>
+    <text class="s mid" x="272" y="228" style="font-size:13.5px">in an editor</text>
+  </g>
+  <g transform="translate(182 0)">
+    <path class="w-sage" transform="translate(5 5)" d="M32 244 C 11 244, 9 218, 30 213 C 26 191, 53 182, 67 195 C 77 176, 110 174, 118 195 C 137 186, 161 200, 154 218 C 173 223, 170 246, 150 244 Z"/>
+    <path class="ln" filter="url(#r)" d="M32 244 C 11 244, 9 218, 30 213 C 26 191, 53 182, 67 195 C 77 176, 110 174, 118 195 C 137 186, 161 200, 154 218 C 173 223, 170 246, 150 244 Z"/>
+    <text class="h mid" x="90" y="216" style="font-size:18px">Overleaf</text>
+    <text class="s mid" x="90" y="236" style="font-size:13.5px">in a browser</text>
+  </g>
+  <text class="mid" x="90" y="300" style="font-size:14.5px">files in your own</text>
+  <text class="mid" x="90" y="320" style="font-size:14.5px">folder, LaTeX</text>
+  <text class="mid" x="90" y="340" style="font-size:14.5px">installed locally</text>
+  <text class="mid" x="272" y="300" style="font-size:14.5px">files and LaTeX</text>
+  <text class="mid" x="272" y="320" style="font-size:14.5px">live on Overleaf's</text>
+  <text class="mid" x="272" y="340" style="font-size:14.5px">servers</text>
+  <text class="hand mid" x="90" y="370" style="font-size:16px">you can work offline</text>
+  <text class="hand mid" x="272" y="370" style="font-size:16px">you need internet</text>
+  <path class="ln" filter="url(#r)" d="M90 382 C 96 396, 120 404, 140 414" marker-end="url(#a)"/>
+  <path class="ln" filter="url(#r)" d="M272 382 C 266 396, 242 404, 222 414" marker-end="url(#a)"/>
+  <text class="hand hp mid" x="180" y="404" style="font-size:16px">same steps</text>
+  <rect class="ln thin plum dash" filter="url(#r)" x="34" y="420" width="292" height="50" rx="12"/>
+  <text class="m mid" x="88" y="451" style="font-size:14px">pdfLaTeX</text>
+  <text class="m mid" x="180" y="451" style="font-size:14px">Biber</text>
+  <text class="m mid" x="272" y="451" style="font-size:14px">pdfLaTeX</text>
+  <path class="ln plum" filter="url(#r)" d="M128 446 H 150" marker-end="url(#ap)"/>
+  <path class="ln plum" filter="url(#r)" d="M210 446 H 232" marker-end="url(#ap)"/>
+  <path class="ln" filter="url(#r)" d="M180 476 C 176 486, 184 492, 180 502" marker-end="url(#a)"/>
+  <path class="w-sage" d="M144 514 H216 L232 530 V620 H144 Z"/>
+  <path class="card" d="M138 508 H210 L226 524 V614 H138 Z"/>
+  <path class="ln" filter="url(#r)" d="M138 508 H210 L226 524 V614 H138 Z M210 508 V524 H226"/>
+  <path class="ln thin sage" d="M152 546 H212 M152 560 H212 M152 574 H194"/>
+  <path class="ln terra" filter="url(#r)" d="M170 592 l8 9 l18 -20"/>
+  <text class="hand" x="240" y="570" style="font-size:17px">the same PDF</text>
+</svg>

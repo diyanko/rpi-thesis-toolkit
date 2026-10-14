@@ -1,0 +1,170 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 1154" width="360" height="1154" role="img" aria-labelledby="t d">
+  <title id="t">From your draft to the project files</title>
+  <desc id="d">Where each part of a Word or Google Docs draft goes in the project. Numbered pins match the parts of the draft on one side to the files on the other. 1: the title, your name, degree, and committee go in metadata.tex. 2: the abstract goes in frontmatter/abstract.tex. 3: the acknowledgments go in frontmatter/acknowledgments.tex. 4: each chapter, Chapter 1 to N, goes in its own file in chapters/, such as 01-introduction.tex, and each chapter file is listed in main.tex; its tables and equations come along but are marked rebuild in LaTeX. 5: figures are saved as image files in figures/. 6: the reference list goes into Zotero and is exported to references.bib, and each citation in the text becomes \cite{key}. 7: appendices go in appendices/. A handwritten note says text pastes in; equations, tables and citations are rebuilt.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="440" height="1234">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="360" height="1154" rx="18"/>
+  <text class="hand" x="30" y="26" style="font-size:16px">your draft (Word or Google Docs)</text>
+  <path class="w-butter" transform="translate(6 6)" d="M32 40 H314 L336 62 V514 H32 Z"/>
+  <path class="card" d="M32 40 H314 L336 62 V514 H32 Z"/>
+  <text class="m" x="48" y="66" style="font-size:15px">my-thesis.docx</text>
+  <path class="ln thin mut" d="M32 78 H336"/>
+  <rect class="w-butter" x="35" y="84" width="300" height="60"/>
+  <rect class="w-butter" x="35" y="150" width="300" height="32"/>
+  <rect class="w-butter" x="35" y="188" width="300" height="32"/>
+  <rect class="w-butter" x="35" y="226" width="300" height="40"/>
+  <rect class="w-butter" x="35" y="272" width="300" height="48"/>
+  <rect class="w-terra" x="35" y="326" width="300" height="52"/>
+  <rect class="w-terra" x="35" y="384" width="300" height="30"/>
+  <rect class="w-butter" x="35" y="420" width="300" height="46"/>
+  <rect class="w-butter" x="35" y="472" width="300" height="34"/>
+  <text class="n mid" x="184" y="104" style="font-size:15px">THESIS TITLE</text>
+  <text class="mid" x="184" y="122" style="font-size:14px">Your Name</text>
+  <text class="s mid" x="184" y="138" style="font-size:13px">degree, committee</text>
+  <text x="48" y="171" style="font-size:15px" font-weight="700">Abstract</text>
+  <rect x="132" y="165" width="194" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
+  <text x="48" y="209" style="font-size:15px" font-weight="700">Acknowledgments</text>
+  <rect x="194" y="203" width="132" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
+  <text x="48" y="245" style="font-size:15px" font-weight="700">Chapter 1 … N</text>
+  <rect x="166" y="239" width="160" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
+  <rect x="48" y="255" width="248" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
+  <rect class="ln thin" x="48" y="278" width="54" height="36" rx="2"/>
+  <path class="ln thin sage" d="M52 309 L68 292 L78 302 L86 295 L98 309"/>
+  <circle class="ln thin terra" cx="90" cy="287" r="3.5"/>
+  <text class="s" x="114" y="301" style="font-size:13px">Figure 1. A caption</text>
+  <rect class="ln thin" x="48" y="332" width="54" height="40" rx="1"/>
+  <path class="ln thin" d="M48 345 H102 M48 358 H102 M70 332 V372"/>
+  <text x="114" y="347" style="font-size:15px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-style="italic">y = mx + b</text>
+  <text class="end" x="322" y="347" style="font-size:14px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">(1)</text>
+  <text class="hand" x="114" y="369" style="font-size:15px">rebuild in LaTeX</text>
+  <text x="48" y="404" style="font-size:13.5px">…as shown (Lamport, 1994).</text>
+  <text class="hand end" x="322" y="404" style="font-size:15px">rebuild</text>
+  <text x="48" y="440" style="font-size:15px" font-weight="700">References</text>
+  <text class="s" x="48" y="458" style="font-size:13px">Lamport, L. (1994). LaTeX…</text>
+  <text x="48" y="494" style="font-size:15px" font-weight="700">Appendix A</text>
+  <rect x="146" y="488" width="180" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
+  <path class="ln" filter="url(#r)" d="M32 40 H314 L336 62 V514 H32 Z M314 40 V62 H336"/>
+  <circle class="w-butter" cx="32" cy="114" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="32" cy="114" r="10"/>
+  <text class="n mid" x="32" y="118.55" style="font-size:13px">1</text>
+  <circle class="w-butter" cx="32" cy="166" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="32" cy="166" r="10"/>
+  <text class="n mid" x="32" y="170.55" style="font-size:13px">2</text>
+  <circle class="w-butter" cx="32" cy="204" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="32" cy="204" r="10"/>
+  <text class="n mid" x="32" y="208.55" style="font-size:13px">3</text>
+  <circle class="w-butter" cx="32" cy="246" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="32" cy="246" r="10"/>
+  <text class="n mid" x="32" y="250.55" style="font-size:13px">4</text>
+  <circle class="w-butter" cx="32" cy="296" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="32" cy="296" r="10"/>
+  <text class="n mid" x="32" y="300.55" style="font-size:13px">5</text>
+  <circle class="w-butter" cx="32" cy="352" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="32" cy="352" r="10"/>
+  <text class="n mid" x="32" y="356.55" style="font-size:13px">4</text>
+  <circle class="w-butter" cx="32" cy="399" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="32" cy="399" r="10"/>
+  <text class="n mid" x="32" y="403.55" style="font-size:13px">6</text>
+  <circle class="w-butter" cx="32" cy="443" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="32" cy="443" r="10"/>
+  <text class="n mid" x="32" y="447.55" style="font-size:13px">6</text>
+  <circle class="w-butter" cx="32" cy="489" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="32" cy="489" r="10"/>
+  <text class="n mid" x="32" y="493.55" style="font-size:13px">7</text>
+  <path class="ln" filter="url(#r)" d="M180 526 C 176 540, 184 550, 180 564" marker-end="url(#a)"/>
+  <text class="hand" x="196" y="552" style="font-size:16px">your project files</text>
+  <rect class="w-blue" x="47" y="583" width="296" height="58" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="42" y="578" width="296" height="58" rx="12"/>
+  <text class="m" x="58" y="603" style="font-size:16px">metadata.tex</text>
+  <text class="s" x="58" y="625" style="font-size:14px">title, name, degree, committee</text>
+  <circle class="w-butter" cx="22" cy="607" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="607" r="10"/>
+  <text class="n mid" x="22" y="611.55" style="font-size:13px">1</text>
+  <path class="w-sage" transform="translate(5 5)" d="M42 652 V 746 H338 V 664 H194 L182 652 Z"/>
+  <path class="card" d="M42 652 V 746 H338 V 664 H194 L182 652 Z"/>
+  <path class="ln" filter="url(#r)" d="M42 652 V 746 H338 V 664 H194 L182 652 Z"/>
+  <text class="m" x="58" y="680" style="font-size:16px">frontmatter/</text>
+  <text class="code" x="70" y="708" style="font-size:15px">abstract.tex</text>
+  <text class="code" x="70" y="732" style="font-size:15px">acknowledgments.tex</text>
+  <circle class="w-butter" cx="22" cy="703" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="703" r="10"/>
+  <text class="n mid" x="22" y="707.55" style="font-size:13px">2</text>
+  <circle class="w-butter" cx="22" cy="727" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="727" r="10"/>
+  <text class="n mid" x="22" y="731.55" style="font-size:13px">3</text>
+  <path class="w-sage" transform="translate(5 5)" d="M42 762 V 868 H338 V 774 H166 L154 762 Z"/>
+  <path class="card" d="M42 762 V 868 H338 V 774 H166 L154 762 Z"/>
+  <path class="ln" filter="url(#r)" d="M42 762 V 868 H338 V 774 H166 L154 762 Z"/>
+  <text class="m" x="58" y="790" style="font-size:16px">chapters/</text>
+  <text class="code" x="70" y="816" style="font-size:15px">01-introduction.tex</text>
+  <text class="code" x="70" y="837" style="font-size:15px">02-research.tex  …</text>
+  <text class="s" x="58" y="859" style="font-size:14px">one file each, listed in main.tex</text>
+  <circle class="w-butter" cx="22" cy="816" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="816" r="10"/>
+  <text class="n mid" x="22" y="820.55" style="font-size:13px">4</text>
+  <path class="w-sage" transform="translate(5 5)" d="M42 884 V 934 H338 V 896 H156 L144 884 Z"/>
+  <path class="card" d="M42 884 V 934 H338 V 896 H156 L144 884 Z"/>
+  <path class="ln" filter="url(#r)" d="M42 884 V 934 H338 V 896 H156 L144 884 Z"/>
+  <text class="m" x="58" y="917" style="font-size:16px">figures/</text>
+  <text class="s" x="154" y="917" style="font-size:14px">image files</text>
+  <circle class="w-butter" cx="22" cy="912" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="912" r="10"/>
+  <text class="n mid" x="22" y="916.55" style="font-size:13px">5</text>
+  <rect class="w-plum" x="47" y="955" width="296" height="64" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="42" y="950" width="296" height="64" rx="12"/>
+  <text x="58" y="976" style="font-size:16px">Zotero <tspan class="s">→</tspan> <tspan class="m">references.bib</tspan></text>
+  <text class="s" x="58" y="1000" style="font-size:14px"><tspan class="code" style="fill:var(--ink)">\cite{key}</tspan> in the text</text>
+  <circle class="w-butter" cx="22" cy="982" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="982" r="10"/>
+  <text class="n mid" x="22" y="986.55" style="font-size:13px">6</text>
+  <path class="w-sage" transform="translate(5 5)" d="M42 1030 V 1080 H338 V 1042 H184 L172 1030 Z"/>
+  <path class="card" d="M42 1030 V 1080 H338 V 1042 H184 L172 1030 Z"/>
+  <path class="ln" filter="url(#r)" d="M42 1030 V 1080 H338 V 1042 H184 L172 1030 Z"/>
+  <text class="m" x="58" y="1063" style="font-size:16px">appendices/</text>
+  <circle class="w-butter" cx="22" cy="1058" r="10"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="1058" r="10"/>
+  <text class="n mid" x="22" y="1062.55" style="font-size:13px">7</text>
+  <text class="hand" x="20" y="1114" style="font-size:16px">text pastes in; equations, tables</text>
+  <text class="hand" x="20" y="1134" style="font-size:16px">and citations are rebuilt</text>
+</svg>

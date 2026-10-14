@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 490" width="720" height="490" role="img" aria-labelledby="t d">
+  <title id="t">Review loop</title>
+  <desc id="d">Review loop. You compile the thesis and send a dated PDF to your advisor. Your advisor marks it up on paper or with a PDF reader's comment tools and sends it back. You make each change in your .tex files, recompile, and send the next dated PDF. The loop repeats until the draft is ready.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="570">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="490" rx="18"/>
+  <circle class="w-blue" cx="115" cy="205" r="34"/>
+  <circle class="ln" filter="url(#r)" cx="110" cy="200" r="34"/>
+  <circle class="ln thin" filter="url(#r)" cx="110" cy="192" r="10"/>
+  <path class="ln thin" filter="url(#r)" d="M93 222 C 96 206, 124 206, 127 222"/>
+  <text class="h mid" x="110" y="266">You</text>
+  <text class="s mid" x="110" y="292" style="font-size:17px">edit the .tex files,</text>
+  <text class="s mid" x="110" y="314" style="font-size:17px">recompile</text>
+  <circle class="w-plum" cx="615" cy="205" r="34"/>
+  <circle class="ln" filter="url(#r)" cx="610" cy="200" r="34"/>
+  <circle class="ln thin" filter="url(#r)" cx="610" cy="192" r="10"/>
+  <path class="ln thin" filter="url(#r)" d="M593 222 C 596 206, 624 206, 627 222"/>
+  <text class="h mid" x="610" y="266">Advisor</text>
+  <text class="s mid" x="610" y="292" style="font-size:17px">marks it up, on paper</text>
+  <text class="s mid" x="610" y="314" style="font-size:17px">or in a PDF reader</text>
+  <path class="ln" filter="url(#r)" d="M150 160 C 210 64, 510 64, 570 160" marker-end="url(#a)"/>
+  <path class="ln terra" filter="url(#r)" d="M580 340 C 516 426, 204 426, 140 340" marker-end="url(#at)"/>
+  <path class="w-butter" d="M332 46 H384 L400 62 V130 H332 Z"/>
+  <path class="card" d="M326 40 H378 L394 56 V124 H326 Z"/>
+  <path class="ln" filter="url(#r)" d="M326 40 H378 L394 56 V124 H326 Z M378 40 V56 H394"/>
+  <path class="ln thin sage" d="M336 74 H380 M336 88 H384 M336 102 H370"/>
+  <text class="hand mid" x="360" y="28">a dated PDF</text>
+  <path class="w-terra" d="M332 362 H384 L400 378 V446 H332 Z"/>
+  <path class="card" d="M326 356 H378 L394 372 V440 H326 Z"/>
+  <path class="ln" filter="url(#r)" d="M326 356 H378 L394 372 V440 H326 Z M378 356 V372 H394"/>
+  <path class="ln thin sage" d="M336 390 H380 M336 404 H384 M336 418 H370"/>
+  <path class="ln terra" filter="url(#r)" d="M332 402 C 344 396, 352 408, 364 400 M374 382 l10 -6 M386 414 c 6 -4 8 2 2 6"/>
+  <text class="hand mid" x="360" y="474">marked up and sent back</text>
+  <text class="hand hs mid" x="360" y="196" style="font-size:22px">repeat until</text>
+  <text class="hand hs mid" x="360" y="224" style="font-size:22px">the draft is ready</text>
+</svg>

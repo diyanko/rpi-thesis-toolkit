@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 450" width="720" height="450" role="img" aria-labelledby="t d">
+  <title id="t">Submission timeline</title>
+  <desc id="d">Submission timeline. Step 1: finish a complete draft and check its attributions and citations. Step 2: request OGE's preliminary formatting review at least a week before your defense. Step 3: defend. Step 4: finish the content revisions your committee asks for. Step 5: complete signatures and paperwork. Step 6: upload your final PDF to ProQuest promptly. Step 7: expect several rounds of formatting revisions until OGE approves.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="530">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="450" rx="18"/>
+  <path class="ln sage dash" filter="url(#r)" d="M122 120 C 162 114, 202 126, 242 120" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M302 120 C 342 126, 382 114, 422 120" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M482 120 C 522 114, 562 126, 602 120" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M658 134 C 718 180, 718 280, 658 326" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M602 340 C 562 334, 522 346, 482 340" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M422 340 C 382 346, 342 334, 302 340" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M242 340 C 202 334, 162 346, 122 340" marker-end="url(#as)"/>
+  <circle class="w-butter" cx="92" cy="120" r="22"/>
+  <circle class="ln" filter="url(#r)" cx="92" cy="120" r="22"/>
+  <text class="n mid" x="92" y="127" style="font-size:20px">1</text>
+  <text class="mid" x="92" y="170" style="font-size:17px" font-weight="700">Finish a</text>
+  <text class="mid" x="92" y="192" style="font-size:17px" font-weight="700">complete draft</text>
+  <text class="s mid" x="92" y="214" style="font-size:16px">and check its</text>
+  <text class="s mid" x="92" y="235" style="font-size:16px">attributions</text>
+  <text class="s mid" x="92" y="256" style="font-size:16px">and citations</text>
+  <circle class="w-butter" cx="272" cy="120" r="22"/>
+  <circle class="ln" filter="url(#r)" cx="272" cy="120" r="22"/>
+  <text class="n mid" x="272" y="127" style="font-size:20px">2</text>
+  <text class="mid" x="272" y="170" style="font-size:17px" font-weight="700">Request a</text>
+  <text class="mid" x="272" y="192" style="font-size:17px" font-weight="700">preliminary</text>
+  <text class="mid" x="272" y="214" style="font-size:17px" font-weight="700">formatting review</text>
+  <circle class="w-terra" cx="452" cy="120" r="22"/>
+  <circle class="ln" filter="url(#r)" cx="452" cy="120" r="22"/>
+  <text class="n mid" x="452" y="127" style="font-size:20px">3</text>
+  <text class="mid" x="452" y="170" style="font-size:17px" font-weight="700">Defend</text>
+  <circle class="w-butter" cx="632" cy="120" r="22"/>
+  <circle class="ln" filter="url(#r)" cx="632" cy="120" r="22"/>
+  <text class="n mid" x="632" y="127" style="font-size:20px">4</text>
+  <text class="mid" x="632" y="170" style="font-size:17px" font-weight="700">Finish the</text>
+  <text class="mid" x="632" y="192" style="font-size:17px" font-weight="700">content</text>
+  <text class="mid" x="632" y="214" style="font-size:17px" font-weight="700">revisions</text>
+  <circle class="w-butter" cx="632" cy="340" r="22"/>
+  <circle class="ln" filter="url(#r)" cx="632" cy="340" r="22"/>
+  <text class="n mid" x="632" y="347" style="font-size:20px">5</text>
+  <text class="mid" x="632" y="390" style="font-size:17px" font-weight="700">Complete</text>
+  <text class="mid" x="632" y="412" style="font-size:17px" font-weight="700">signatures and</text>
+  <text class="mid" x="632" y="434" style="font-size:17px" font-weight="700">paperwork</text>
+  <circle class="w-butter" cx="452" cy="340" r="22"/>
+  <circle class="ln" filter="url(#r)" cx="452" cy="340" r="22"/>
+  <text class="n mid" x="452" y="347" style="font-size:20px">6</text>
+  <text class="mid" x="452" y="390" style="font-size:17px" font-weight="700">Upload your final</text>
+  <text class="mid" x="452" y="412" style="font-size:17px" font-weight="700">PDF to ProQuest</text>
+  <text class="mid" x="452" y="434" style="font-size:17px" font-weight="700">promptly</text>
+  <circle class="w-butter" cx="272" cy="340" r="22"/>
+  <circle class="ln" filter="url(#r)" cx="272" cy="340" r="22"/>
+  <text class="n mid" x="272" y="347" style="font-size:20px">7</text>
+  <text class="mid" x="272" y="390" style="font-size:17px" font-weight="700">Expect several</text>
+  <text class="mid" x="272" y="412" style="font-size:17px" font-weight="700">rounds of</text>
+  <text class="mid" x="272" y="434" style="font-size:17px" font-weight="700">formatting revisions</text>
+  <circle class="w-sage" cx="96" cy="344" r="24"/>
+  <circle class="ln" filter="url(#r)" cx="92" cy="340" r="24"/>
+  <path class="ln" d="M84 353 V 326"/>
+  <path class="f-red" d="M85 326 C 94 322, 98 332, 106 329 L 104 339 C 96 342, 92 332, 85 336 Z"/>
+  <text class="mid" x="92" y="392" style="font-size:17px" font-weight="700">OGE approves</text>
+  <path class="ln plum" filter="url(#r)" d="M302 322 C 324 288, 220 288, 242 322" marker-end="url(#ap)"/>
+  <text class="hand hp mid" x="272" y="284" style="font-size:18px">several rounds</text>
+  <text class="hand mid" x="272" y="64" style="font-size:18px">at least a week</text>
+  <text class="hand mid" x="272" y="86" style="font-size:18px">before you defend</text>
+</svg>

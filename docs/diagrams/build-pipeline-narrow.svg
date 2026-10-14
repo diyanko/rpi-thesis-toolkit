@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 690" width="360" height="690" role="img" aria-labelledby="t d">
+  <title id="t">Build pipeline</title>
+  <desc id="d">Build pipeline. Step 1: pdfLaTeX reads main.tex and writes notes about labels, headings, and the citations it needs. Step 2: Biber reads that citation list and references.bib and writes a formatted reference list. Step 3: pdfLaTeX runs again and places the references. Step 4: pdfLaTeX runs once more so page numbers in the contents and cross-references settle. The result is main.pdf.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="440" height="770">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="360" height="690" rx="18"/>
+  <path class="w-butter" d="M26 24 H182 L198 40 V82 H26 Z"/>
+  <path class="card" d="M20 18 H176 L192 34 V76 H20 Z"/>
+  <path class="ln" filter="url(#r)" d="M20 18 H176 L192 34 V76 H20 Z M176 18 V34 H192"/>
+  <text class="m" x="34" y="44" style="font-size:16px">main.tex</text>
+  <text class="s" x="34" y="66" style="font-size:14px">your thesis</text>
+  <path class="ln" filter="url(#r)" d="M106 82 C 104 90, 108 94, 106 100" marker-end="url(#a)"/>
+  <rect class="w-blue" x="26" y="110" width="172" height="62" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="20" y="104" width="172" height="62" rx="14"/>
+  <circle class="w-butter" cx="22" cy="106" r="15"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="106" r="15"/>
+  <text class="n mid" x="22" y="111.25" style="font-size:15px">1</text>
+  <text class="h mid" x="110" y="132" style="font-size:19px">pdfLaTeX</text>
+  <text class="s mid" x="110" y="154" style="font-size:14px">lays out the pages</text>
+  <rect class="w-plum" x="26" y="234" width="172" height="80" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="20" y="228" width="172" height="80" rx="14"/>
+  <circle class="w-butter" cx="22" cy="230" r="15"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="230" r="15"/>
+  <text class="n mid" x="22" y="235.25" style="font-size:15px">2</text>
+  <text class="h mid" x="110" y="256" style="font-size:19px">Biber</text>
+  <text class="s mid" x="110" y="278" style="font-size:14px">builds the</text>
+  <text class="s mid" x="110" y="297" style="font-size:14px">reference list</text>
+  <rect class="w-blue" x="26" y="372" width="172" height="62" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="20" y="366" width="172" height="62" rx="14"/>
+  <circle class="w-butter" cx="22" cy="368" r="15"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="368" r="15"/>
+  <text class="n mid" x="22" y="373.25" style="font-size:15px">3</text>
+  <text class="h mid" x="110" y="394" style="font-size:19px">pdfLaTeX</text>
+  <text class="s mid" x="110" y="416" style="font-size:14px">places the references</text>
+  <rect class="w-blue" x="26" y="474" width="172" height="62" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="20" y="468" width="172" height="62" rx="14"/>
+  <circle class="w-butter" cx="22" cy="470" r="15"/>
+  <circle class="ln" filter="url(#r)" cx="22" cy="470" r="15"/>
+  <text class="n mid" x="22" y="475.25" style="font-size:15px">4</text>
+  <text class="h mid" x="110" y="496" style="font-size:19px">pdfLaTeX</text>
+  <text class="s mid" x="110" y="518" style="font-size:14px">settles page numbers</text>
+  <path class="ln" filter="url(#r)" d="M106 172 C 103 188, 109 204, 106 220" marker-end="url(#a)"/>
+  <g transform="rotate(-2 210 198)">
+  <rect class="w-butter" x="122" y="176" width="176" height="44" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="122" y="176" width="176" height="44" rx="3"/>
+  <rect class="w-terra" x="190" y="169" width="40" height="13" opacity=".9"/>
+  <text class="m" x="132" y="194" style="font-size:13px">.aux .toc .bcf</text>
+  <text class="s" x="132" y="212" style="font-size:12.5px">notes: labels, citations</text>
+  </g>
+  <path class="w-plum" d="M228 242 H338 L352 256 V304 H228 Z"/>
+  <path class="card" d="M222 236 H332 L346 250 V298 H222 Z"/>
+  <path class="ln" filter="url(#r)" d="M222 236 H332 L346 250 V298 H222 Z M332 236 V250 H346"/>
+  <text class="m" x="231" y="262" style="font-size:12.5px">references.bib</text>
+  <text class="s" x="231" y="284" style="font-size:13px">your sources</text>
+  <path class="ln" filter="url(#r)" d="M218 268 C 212 266, 206 268, 200 268" marker-end="url(#a)"/>
+  <path class="ln" filter="url(#r)" d="M106 314 C 103 330, 109 344, 106 360" marker-end="url(#a)"/>
+  <g transform="rotate(2 180 338)">
+  <rect class="w-butter" x="122" y="318" width="116" height="40" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="122" y="318" width="116" height="40" rx="3"/>
+  <rect class="w-terra" x="160" y="311" width="40" height="13" opacity=".9"/>
+  <text class="m" x="132" y="336" style="font-size:13px">.bbl</text>
+  <text class="s" x="132" y="352" style="font-size:12.5px">reference list</text>
+  </g>
+  <path class="ln" filter="url(#r)" d="M106 434 C 103 444, 109 452, 106 462" marker-end="url(#a)"/>
+  <path class="ln" filter="url(#r)" d="M106 536 C 103 544, 109 552, 106 560" marker-end="url(#a)"/>
+  <path class="w-sage" d="M64 572 H148 L164 588 V672 H64 Z"/>
+  <path class="card" d="M58 566 H142 L158 582 V666 H58 Z"/>
+  <path class="ln" filter="url(#r)" d="M58 566 H142 L158 582 V666 H58 Z M142 566 V582 H158"/>
+  <path class="ln thin sage" d="M72 598 H144 M72 612 H144 M72 626 H122.4"/>
+  <path class="ln terra" filter="url(#r)" d="M96 644 l8 9 l18 -20"/>
+  <text class="m" x="70" y="592" style="font-size:14px">main.pdf</text>
+  <text class="hand hb mid" x="274" y="402" style="font-size:16px">One Compile</text>
+  <text class="hand hb mid" x="274" y="423" style="font-size:16px">runs these</text>
+  <text class="hand hb mid" x="274" y="444" style="font-size:16px">steps as often</text>
+  <text class="hand hb mid" x="274" y="465" style="font-size:16px">as needed</text>
+  <path class="ln blue" filter="url(#r)" d="M270 488 C 258 512, 232 522, 202 506" marker-end="url(#ab)"/>
+</svg>
