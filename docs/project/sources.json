@@ -1,0 +1,100 @@
+{
+  "primary_entry_point": "https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation",
+  "last_reviewed": "2026-10-14",
+  "status": "local development baseline; not OGE approved",
+  "documents": [
+    {
+      "title": "Dissertation and Thesis Manual 2026.pdf",
+      "version": "2026",
+      "publisher": "RPI Office of Graduate Education",
+      "link_seen_on_review_date": "https://rpi.app.box.com/s/fjbuf5w7a12x9cl5org34h4peepa0hsn",
+      "sha256_local_copy": "7552b1bea895047b08a8de32f9814a1a73f7f6850bba8014ca07d15c1f8f2cb3",
+      "review_method": "read local downloaded copy; follow primary entry point for current version",
+      "redistributed": false
+    },
+    {
+      "title": "Doctoral Dissertation Checklist - Updated September 2025.pdf",
+      "version": "September 2025",
+      "publisher": "RPI Office of Graduate Education",
+      "link_seen_on_review_date": "https://rpi.app.box.com/s/h9fiar6jhr3y6zefwqv8zmj7tdov18bn",
+      "sha256_local_copy": "c98f6f4c75241edebb85a10f86ea6f20b622c8272a5aae3e98b2af4aca9fe0b5",
+      "review_method": "read local downloaded copy; follow primary entry point for current version",
+      "redistributed": false
+    },
+    {
+      "title": "Master's Thesis Checklist - Updated September 2025.pdf",
+      "version": "September 2025",
+      "publisher": "RPI Office of Graduate Education",
+      "link_seen_on_review_date": "https://rpi.box.com/s/rmn9olsysjh3c5mzn5yk64im415bu5qc",
+      "sha256_local_copy": "1e3087ac31d06c5091add6b7e207432b48ef08fcfdff8e2a170a0d46d5ed83b2",
+      "review_method": "read local downloaded copy; follow primary entry point for current version",
+      "redistributed": false
+    },
+    {
+      "title": "Thesis & Dissertation Formatting Checklist - F25.pdf",
+      "version": "September 2025",
+      "publisher": "RPI Office of Graduate Education",
+      "link_seen_on_review_date": null,
+      "sha256_local_copy": "5206db49ca0c47d41e2128a4c4e514bbf80291762da46b9f300416e80aa4eb1f",
+      "review_method": "read local downloaded copy; follow primary entry point for current version",
+      "redistributed": false
+    },
+    {
+      "title": "LaTex Formatting Tips & Tricks- September 2025.pdf",
+      "version": "September 2025",
+      "publisher": "RPI Office of Graduate Education",
+      "link_seen_on_review_date": null,
+      "sha256_local_copy": "b9b38016ddce378ea910baf7f1e8c6ab7a9de716004128e86e0e7d3b30797ac7",
+      "review_method": "read local downloaded copy; follow primary entry point for current version",
+      "redistributed": false
+    },
+    {
+      "title": "Dissertation and Thesis Manual 2026 - Word Version for Template Use - Revised.docx",
+      "version": "2026",
+      "publisher": "RPI Office of Graduate Education",
+      "link_seen_on_review_date": null,
+      "sha256_local_copy": "bb9d6c6ce2d85bab695bde6050e2e00bac74378ddcd2d5bd1b355d800ff8d068",
+      "review_method": "read local downloaded copy; follow primary entry point for current version",
+      "redistributed": false
+    },
+    {
+      "title": "Dissertation and Thesis Preparation Workshop - F26.pptx",
+      "version": "Fall 2026 (16 September 2026)",
+      "publisher": "RPI Office of Graduate Education",
+      "link_seen_on_review_date": null,
+      "sha256_local_copy": "14e6ec561b13b613e44bebaf88954bd8a3d522747397d39bc59abac0359fc77c",
+      "review_method": "read local downloaded copy; follow primary entry point for current version",
+      "redistributed": false
+    }
+  ],
+  "other_links_seen": {
+    "note": "Deep links checked on the review date. Student pages link only the primary entry point; follow it when these change.",
+    "links": [
+      {
+        "title": "Additional thesis/dissertation resources (formatting help, citation guidance)",
+        "url": "https://rpi.box.com/s/4zmb0xdl4syr9wnhcgeyrxse1wl0mlq5"
+      },
+      {
+        "title": "OGE forms",
+        "url": "https://rpi.box.com/s/d7f6pb33a8o6mj8809ozf7cn0nd6qt7s"
+      },
+      {
+        "title": "Online preparation workshops",
+        "url": "https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation/online-preparation-workshops"
+      },
+      {
+        "title": "Manual link from the submission page",
+        "url": "https://rpi.app.box.com/file/1658198742826?s=fjbuf5w7a12x9cl5org34h4peepa0hsn"
+      },
+      {
+        "title": "Doctoral checklist link from the submission page",
+        "url": "https://rpi.app.box.com/file/1768439989964?s=h9fiar6jhr3y6zefwqv8zmj7tdov18bn"
+      },
+      {
+        "title": "RPI ITS Thesis Preparation (RPI's official LaTeX template and the seal)",
+        "url": "https://itssc.rpi.edu/hc/en-us/articles/360010087512-Thesis-Preparation"
+      }
+    ]
+  },
+  "legacy_reference": "RPI's official LaTeX template (thesis.cls and samples), available from RPI ITS's Thesis Preparation page, is the formatting baseline; differences are listed in requirements.md. Not redistributed: maintainers keep a reference copy in _local/legacy/ (ignored by Git)."
+}
