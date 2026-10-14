@@ -1,0 +1,1074 @@
+/* ==========================================================================
+   RPI Thesis Toolkit website · "Sketchbook garden"
+   One stylesheet for the landing page (site/index.html) and every guide page
+   (site/guide-template.html). No JavaScript; works from file:// offline.
+
+   Sections:  1 Fonts  2 Colors and sizes  3 Base  4 Header  5 Shared pieces
+              6 Landing page  7 Guide layout  8 Guide content  9 Footer
+              10 Small screens  11 Motion and print
+
+   To change a color, edit the tokens in section 2 (light) and the dark block
+   right below them. Everything else reads those tokens.
+   ========================================================================== */
+
+/* ---------- 1. Fonts ----------------------------------------------------
+   Fraunces (headings) and Atkinson Hyperlegible Next (body), SIL OFL 1.1,
+   latin subset, from Google Fonts. Licenses: site/fonts/OFL-*.txt.
+   If a font fails to load, the fallbacks in --font-* are used instead. */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("fonts/fraunces-600-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/fraunces-400-italic-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("fonts/atkinson-hyperlegible-next-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Next";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("fonts/atkinson-hyperlegible-next-400-italic-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ---------- 2. Colors and sizes ----------------------------------------- */
+:root {
+  color-scheme: light dark;
+
+  --paper:       #fbf7ef;  /* page background */
+  --paper-2:     #f3ecdf;  /* bands, code, footer */
+  --card:        #fffdf8;
+  --ink:         #2b2723;  /* main text */
+  --ink-soft:    #463f38;
+  --muted:       #655b51;  /* secondary text */
+  --line:        #e4dac8;
+  --line-strong: #c9bba3;
+  --btn-edge:    #2b2723;  /* button outline (primary) */
+  --btn-edge-2:  #2b2723;  /* button outline (secondary) */
+  --btn-shadow:  #2b2723;  /* offset shadow under buttons */
+
+  --sage:  #46684b;  --sage-wash:  #e2ebd9;   /* tips */
+  --blue:  #2b4d7a;  --blue-wash:  #dfe7f2;   /* notes, links */
+  --terra: #9e4526;  --terra-wash: #f6e0d3;   /* warnings, accents */
+  --plum:  #6b4669;  --plum-wash:  #efe2ed;   /* important */
+  --butter-wash: #f7ebbd;
+
+  --rpi-red: #c8102e;   /* used sparingly: primary button, one squiggle */
+  --on-red:  #ffffff;
+  --link:    var(--blue);
+  --scroll-hint: rgba(43, 39, 35, 0.22);   /* edge shadow on scrollable code and tables */
+  --focus:   var(--blue);
+
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --font-body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --radius: 14px;
+  --wobble: 58% 42% 55% 45% / 48% 56% 44% 52%;   /* hand-drawn circle */
+  --sketch: 14px 18px 13px 17px / 17px 13px 18px 14px;  /* hand-drawn box */
+  --page-max: 1200px;
+  --gutter: clamp(16px, 4vw, 40px);
+}
+
+/* Dark theme: warm charcoal paper, same roles as above. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper:       #1c1a17;
+    --paper-2:     #24211d;
+    --card:        #29251f;
+    --ink:         #efe8dc;
+    --ink-soft:    #ddd4c6;
+    --muted:       #b4a998;
+    --line:        #3a352e;
+    --line-strong: #574f44;
+    --btn-edge:    #0b0a08;
+    --btn-edge-2:  #8a7f70;
+    --btn-shadow:  #0b0a08;
+
+    --sage:  #a9c9a1;  --sage-wash:  #263226;
+    --blue:  #a3c0ea;  --blue-wash:  #222f44;
+    --terra: #eda482;  --terra-wash: #3a271e;
+    --plum:  #d8b6d3;  --plum-wash:  #33263a;
+    --butter-wash: #3a3320;
+    --rpi-red: #d6223f;   /* a touch brighter: 3.4:1 against the dark page, 5:1 with white text */
+    --scroll-hint: rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* ---------- 3. Base ------------------------------------------------------ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 1.125rem;   /* 18px; 17px on phones (section 10) */
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+
+img, svg { max-width: 100%; height: auto; }
+
+a {
+  color: var(--link);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, var(--link) 45%, transparent);
+}
+a:hover { text-decoration-color: currentColor; text-decoration-thickness: 2px; }
+
+/* Links to other sites end in a small arrow; screen readers hear "external". */
+:is(main, .site-footer) a[href^="http"]:not(.button)::after {
+  content: "\00a0\2197" / " (external)";
+  font-size: 0.8em;
+}
+.page-notfound a[href^="http"]::after { content: none; }   /* its own links are absolute too */
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 100;
+  text-wrap: balance;
+}
+h1 { font-size: clamp(2.3rem, 1.6rem + 3vw, 3.6rem); margin: 0 0 0.4em; }
+h2 { font-size: clamp(1.7rem, 1.4rem + 1.3vw, 2.3rem); margin: 2.2em 0 0.5em; }
+h3 { font-size: 1.35rem; margin: 1.8em 0 0.4em; }
+h4 { font-size: 1.15rem; margin: 1.6em 0 0.3em; }
+p { margin: 0 0 1.1em; text-wrap: pretty; }
+strong, b { font-weight: 700; }
+
+code, kbd, pre { font-family: var(--font-mono); }
+code {
+  font-size: 0.86em;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 0.08em 0.36em;
+  overflow-wrap: anywhere;   /* long file paths wrap instead of widening the page */
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+kbd {
+  font-size: 0.82em;
+  padding: 0.1em 0.45em;
+  background: var(--card);
+  border: 1.5px solid var(--line-strong);
+  border-bottom-width: 3px;
+  border-radius: 7px;
+  white-space: nowrap;
+}
+mark { background: var(--butter-wash); color: inherit; border-radius: 4px; padding: 0 2px; }
+
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -200px;
+  z-index: 10;
+  background: var(--card);
+  color: var(--ink);
+  padding: 10px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+}
+.skip-link:focus { top: 12px; }
+
+.doodle-defs { position: absolute; width: 0; height: 0; }
+
+/* ---------- 4. Header ---------------------------------------------------- */
+.site-header {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 22px var(--gutter);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 28px;
+}
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  font-variation-settings: "SOFT" 100;
+}
+.wordmark-logo { width: 28px; height: 28px; flex: none; }   /* site/logo.svg */
+.brand { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.unofficial-tag {   /* "not an RPI resource", said calmly next to the name */
+  display: inline-block;
+  padding: 1px 10px;
+  font-size: 0.8rem;
+  line-height: 1.6;
+  white-space: nowrap;
+  color: var(--muted);
+  border: 1.5px dashed var(--line-strong);
+  border-radius: 999px;
+}
+.site-nav { display: flex; flex-wrap: wrap; gap: 4px 22px; }
+.site-nav a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 1rem;
+  padding: 4px 0;
+  border-bottom: 2px solid transparent;
+}
+.site-nav a:hover { color: var(--ink); border-bottom-color: var(--line-strong); }
+.site-nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--sage); }
+
+/* ---------- 5. Shared pieces -------------------------------------------- */
+.wrap { max-width: var(--page-max); margin: 0 auto; padding: 0 var(--gutter); }
+
+/* Small italic label above a heading */
+.eyebrow {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--terra);
+  margin: 0 0 0.5rem;
+}
+
+/* Buttons. Three kinds, used the same way everywhere:
+     .button                    primary, RPI red: the ONE main action on a page
+     .button.button-secondary   paper: other actions next to the primary one
+     .text-link                 tertiary: a bold link with an arrow ("Start on Overleaf →")
+   Paper-card feel: hover lifts the card (shadow grows), pressing pushes it flat.
+   Disabled: add aria-disabled="true" (links) or the disabled attribute. */
+.hero-actions { display: flex; flex-wrap: wrap; gap: 14px 16px; margin: 0; }
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 22px;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--rpi-red);
+  color: var(--on-red);
+  border: 2px solid var(--btn-edge);
+  border-radius: var(--sketch);
+  box-shadow: 3px 3px 0 var(--btn-shadow);
+  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+}
+.button:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--btn-shadow); }
+.button:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--btn-shadow); }
+.button:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; border-radius: var(--sketch); }
+.button-secondary { background: var(--card); color: var(--ink); border-color: var(--btn-edge-2); }
+.button-secondary:hover { background: var(--paper); }
+.button svg {
+  width: 20px; height: 20px; flex: none;
+  fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+}
+.button[aria-disabled="true"], .button:disabled {
+  cursor: not-allowed;
+  background: var(--paper-2);
+  color: var(--muted);
+  border-color: var(--line-strong);
+  border-style: dashed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Tertiary: a text link with a little arrow that nudges on hover */
+.text-link {
+  display: inline-block;
+  padding: 9px 0;   /* with the line height: a 44px+ touch target */
+  font-weight: 700;
+  color: var(--link);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
+  text-decoration-color: color-mix(in srgb, var(--link) 35%, transparent);
+}
+.text-link:hover { text-decoration-color: currentColor; }
+.text-link:active { transform: translateY(1px); }
+.text-link .arrow { display: inline-block; margin-left: 0.4em; transition: transform .15s ease; }
+.text-link:hover .arrow { transform: translateX(3px); }
+.text-link[aria-disabled="true"] { color: var(--muted); text-decoration-style: dashed; cursor: not-allowed; }
+
+/* Inline doodles: strokes follow the text color, fills follow the theme */
+.doodle { color: var(--ink); overflow: visible; }
+.dd, .dd * { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.dd .f-sage   { fill: var(--sage-wash); }
+.dd .f-blue   { fill: var(--blue-wash); }
+.dd .f-terra  { fill: var(--terra-wash); }
+.dd .f-card   { fill: var(--card); }
+.dd .f-butter-strong { fill: var(--butter-wash); }
+.doodle .f-butter { fill: var(--butter-wash); stroke: none; }
+
+/* Cards: paper on paper. ".tinted" adds a misregistered color wash behind. */
+.card {
+  position: relative;
+  background: var(--card);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: clamp(20px, 3vw, 30px);
+}
+.card.tinted::before {
+  content: "";
+  position: absolute;
+  inset: 9px -9px -9px 9px;
+  border-radius: var(--radius);
+  background: var(--tint, var(--sage-wash));
+  z-index: -1;
+}
+
+/* Margin note: Fraunces italic with a little squiggle */
+.margin-note {
+  font-family: var(--font-display);
+  font-style: italic;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+/* ---------- 6. Landing page --------------------------------------------- */
+/* Hero */
+.hero {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: clamp(20px, 5vw, 56px) var(--gutter) clamp(40px, 6vw, 80px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+}
+.hero h1 { max-width: 14ch; }
+.hero .squiggle {
+  text-decoration: underline wavy var(--rpi-red);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+  text-decoration-skip-ink: none;
+}
+@media (prefers-color-scheme: dark) { .hero .squiggle { text-decoration-color: #ff8d98; } }
+.lead { font-size: 1.25rem; line-height: 1.55; color: var(--ink-soft); max-width: 36ch; margin-bottom: 1.5em; }
+.hero-aside { margin: 1.3em 0 0; font-size: 1rem; color: var(--muted); }
+.hero-art { margin: 0; }
+.hero-art img { display: block; width: 100%; }
+
+/* Sections and bands */
+.section { padding: clamp(44px, 6vw, 80px) 0; }
+.section:not(.band) + .section:not(.band) { padding-top: 0; }   /* no doubled gap between two plain sections */
+.band { background: var(--paper-2); border-block: 1px solid var(--line); }
+.section-head { max-width: 46rem; margin-bottom: 2rem; }
+.section-head h2 { margin-top: 0; }
+.section-head p:last-child { color: var(--ink-soft); margin: 0; }
+
+/* Pick your path */
+.routes {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 36px;
+  isolation: isolate;
+}
+.route-card { --tint: var(--sage-wash); display: flex; flex-direction: column; }
+.route-card.local { --tint: var(--blue-wash); }
+.route-badge {   /* "Recommended for a full thesis" */
+  align-self: flex-start;
+  margin: 0 0 14px;
+  padding: 2px 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--blue);
+  background: var(--blue-wash);
+  border: 1.5px solid color-mix(in srgb, var(--blue) 45%, transparent);
+  border-radius: 999px;
+}
+.route-top { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.route-top svg { width: 60px; height: 60px; flex: none; }
+.route-card h3 { margin: 0; font-size: 1.55rem; }
+.kicker { margin: 0; color: var(--muted); font-size: 1rem; }
+.best-if { margin: 1.1rem 0 1.2rem; padding: 0; list-style: none; }
+.best-if::before {
+  content: "Best if…";
+  display: block;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--terra);
+  margin-bottom: 0.2em;
+}
+.best-if li { position: relative; padding-left: 30px; margin: 0.4em 0; }
+.best-if li::before {   /* hand-drawn check mark */
+  content: "";
+  position: absolute; left: 2px; top: 0.45em;
+  width: 16px; height: 12px;
+  background: var(--sage);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'%3E%3Cpath d='M1.5 6.5 C 3 7.5, 4.5 9, 5.8 10.5 C 8 6.5, 11 3.5, 14.5 1.5' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'%3E%3Cpath d='M1.5 6.5 C 3 7.5, 4.5 9, 5.8 10.5 C 8 6.5, 11 3.5, 14.5 1.5' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
+}
+.tradeoff {
+  margin: auto 0 0;
+  padding-top: 1rem;
+  border-top: 1.5px dashed var(--line-strong);
+  font-size: 1rem;
+  color: var(--muted);
+}
+.routes-foot { margin: 2.4rem 0 0; max-width: 42rem; font-size: 1.1rem; }
+.routes-foot::before {   /* curly arrow pointing up at the cards */
+  content: "";
+  display: inline-block;
+  vertical-align: -0.2em;
+  width: 40px; height: 22px;
+  margin-right: 10px;
+  background: var(--terra);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 22'%3E%3Cpath d='M3 4 C 8 16, 20 20, 34 16 M28 11 L35 16 L28 20' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 22'%3E%3Cpath d='M3 4 C 8 16, 20 20, 34 16 M28 11 L35 16 L28 20' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
+}
+
+/* Your first hour: numbered step bubbles joined by a dashed trail */
+.steps {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 28px;
+}
+.steps li { position: relative; }
+.steps li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 1.3rem; left: 3.4rem; right: -18px;
+  border-top: 2px dashed var(--line-strong);
+  transform: rotate(-1.5deg);
+}
+.step-bubble {
+  display: inline-grid;
+  place-items: center;
+  width: 2.6rem; height: 2.6rem;
+  margin-bottom: 0.7rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--ink);
+  background: var(--butter-wash);
+  border: 2px solid var(--ink);
+  border-radius: var(--wobble);
+}
+.steps li:nth-child(2) .step-bubble { background: var(--sage-wash); border-radius: 45% 55% 50% 50% / 55% 45% 55% 45%; }
+.steps li:nth-child(3) .step-bubble { background: var(--blue-wash); border-radius: 52% 48% 44% 56% / 46% 52% 48% 54%; }
+.steps li:nth-child(4) .step-bubble { background: var(--plum-wash); border-radius: 48% 52% 58% 42% / 54% 46% 50% 50%; }
+.steps h3 { margin: 0 0 0.3rem; font-size: 1.3rem; }
+.steps p { margin: 0 0 0.6rem; color: var(--ink-soft); font-size: 1.05rem; }
+.steps .see { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--muted); }
+.snippet {   /* short code in a step card: wraps, never scrolls */
+  display: block;
+  margin: 0.2rem 0 0.7rem;
+  padding: 9px 12px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+/* Behind the scenes */
+.teaser {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+}
+.teaser h2 { margin-top: 0; }
+.teaser figure { margin: 0; }
+.teaser figure img { display: block; width: 100%; }
+
+/* Anatomy of your thesis: pages from the sample, with what you edit under each.
+   Without page pictures (no --previews) the same rows show as .anatomy-table. */
+.anatomy-pages {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 36px 26px;
+}
+.anatomy-pages li { display: flex; flex-direction: column; }
+.anatomy-pages img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: 18px;
+  background: #fff;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 3px;
+  box-shadow: 5px 5px 0 var(--tint, var(--sage-wash));
+  transform: rotate(-0.9deg);
+}
+.anatomy-pages li:nth-child(even) img { --tint: var(--blue-wash); transform: rotate(0.8deg); }
+.anatomy-pages li:nth-child(3n) img { --tint: var(--plum-wash); }
+.anatomy-pages h3 { margin: 0 0 0.35rem; font-size: 1.2rem; }
+.anatomy-pages dl { margin: 0; font-size: 0.95rem; line-height: 1.45; }
+.anatomy-pages dt {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--line-strong);
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--terra);
+}
+.anatomy-pages dd { margin: 0; color: var(--ink-soft); }
+.anatomy code { overflow-wrap: break-word; }
+.anatomy .nowrap { white-space: nowrap; }
+.anatomy-table { --fill: var(--card); border: 1.5px solid var(--line); border-radius: 12px; }
+.anatomy-table table { width: 100%; border-collapse: collapse; font-size: 1rem; line-height: 1.45; }
+.anatomy-table th, .anatomy-table td { padding: 10px 14px; text-align: left; vertical-align: top; }
+.anatomy-table thead th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  background: var(--paper-2);
+  border-bottom: 2px solid var(--line-strong);
+}
+.anatomy-table tbody th { font-weight: 700; white-space: nowrap; }
+.anatomy-table tbody tr + tr > * { border-top: 1px solid var(--line); }
+.anatomy-table td { color: var(--ink-soft); }
+.cheatsheet-note { margin: 1.8rem 0 0; font-size: 1.1rem; }
+
+/* Help at your level */
+.guide-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+}
+.help-card { display: flex; flex-direction: column; }
+.help-card > svg { width: 52px; height: 52px; margin-bottom: 10px; }
+.help-card .kicker {   /* the stage name, as in the guide sidebar */
+  font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.help-card h3 { margin: 0 0 0.35rem; font-size: 1.3rem; }
+.help-card p { color: var(--ink-soft); font-size: 1.02rem; margin-bottom: 0.9rem; }
+.help-card ul { list-style: none; margin: auto 0 0; padding: 0.8rem 0 0; border-top: 1.5px dashed var(--line); }
+.help-card li { margin: 0; font-size: 1.02rem; line-height: 1.4; }
+.help-card li a { display: inline-block; padding: 9px 0; }
+.help-card li a::after { content: "\00a0→"; }
+
+/* Community note */
+.community { padding: 0 0 clamp(44px, 6vw, 72px); }
+.community-note {
+  max-width: 50rem;
+  padding: 22px 26px 8px;
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--sketch);
+}
+.community h2 { font-size: 1.4rem; margin: 0 0 0.4rem; }
+.community p { color: var(--ink-soft); }
+
+/* Page not found (site/404.html) */
+.notfound { padding: clamp(24px, 6vw, 72px) var(--gutter) clamp(48px, 8vw, 96px); }
+.notfound-inner { max-width: 38rem; margin: 0 auto; text-align: center; }
+.notfound-art { display: block; width: 130px; height: auto; margin: 0 auto 1rem; }
+.dd .qmark { stroke: var(--terra); stroke-width: 6; }
+.notfound .lead { margin-inline: auto; }
+.notfound .hero-actions { justify-content: center; margin-bottom: 0.6rem; }
+
+/* ---------- 7. Guide layout --------------------------------------------- */
+.guide-frame {
+  max-width: var(--page-max);
+  margin: 0 auto clamp(40px, 6vw, 72px);
+  padding: 8px var(--gutter) 0;
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 56px;
+  align-items: start;
+}
+
+/* Sidebar (wide screens) */
+.guide-sidebar { position: sticky; top: 24px; padding-top: 30px; }
+.guide-sidebar-title {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--muted);
+  margin: 0 0 0.5rem;
+}
+.guide-groups { list-style: none; margin: 0; padding: 0; counter-reset: topic; }
+.guide-sidebar .guide-groups { margin-inline: -10px 0; }   /* text, not the pill, sits on the page's left edge */
+.guide-groups > li { margin: 0 0 12px; }
+.guide-group {   /* stage label above each group of pages: Start, Write, ... */
+  display: block;
+  padding: 0 10px 2px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.guide-nav { list-style: none; margin: 0; padding: 0; }
+.guide-nav li { margin: 1px 0; counter-increment: topic; }
+.guide-nav a {
+  display: flex; gap: 10px; align-items: baseline;
+  padding: 6px 10px;
+  border-radius: 10px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+.guide-nav a::before {
+  content: counter(topic);
+  font-family: var(--font-display);
+  font-size: 0.875rem;
+  color: var(--muted);
+  min-width: 1.1em;
+}
+.guide-nav a:hover { background: var(--paper-2); color: var(--ink); }
+.guide-nav a[aria-current="page"] {
+  color: var(--ink);
+  font-weight: 700;
+  background: var(--sage-wash);
+  border-radius: var(--sketch);
+}
+.guide-nav a[aria-current="page"]::before { color: var(--sage); }
+
+/* "Guide topics" disclosure (small screens only, see section 10) */
+.guide-topics { display: none; }
+
+/* Reading column */
+.guide-content { min-width: 0; max-width: 68ch; padding-bottom: 8px; }
+.guide-content > h1:first-child { margin-top: 26px; font-size: clamp(2.2rem, 1.7rem + 2.2vw, 3.1rem); }
+.guide-content > h1:first-child + p { font-size: 1.2rem; color: var(--ink-soft); line-height: 1.6; }
+.guide-content :is(h2, h3, h4) { scroll-margin-top: 20px; }
+
+/* h2: a short hand-drawn underline */
+.guide-content h2::after {
+  content: "";
+  display: block;
+  width: 64px; height: 8px;
+  margin-top: 10px;
+  background: var(--terra);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 8'%3E%3Cpath d='M2 5 C 14 2, 24 7, 36 4 S 56 3, 62 5' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 8'%3E%3Cpath d='M2 5 C 14 2, 24 7, 36 4 S 56 3, 62 5' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat;
+}
+
+/* Previous / next */
+.pager {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin: 3.4rem 0 0;
+  padding-top: 1.6rem;
+  border-top: 1.5px dashed var(--line-strong);
+}
+.pager a {   /* card-like buttons: lift on hover, press flat when clicked */
+  display: block;
+  min-height: 44px;
+  padding: 14px 18px;
+  background: var(--card);
+  color: var(--link);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--sketch);
+  box-shadow: 3px 3px 0 var(--line-strong);
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1.35;
+  text-decoration: none;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+.pager a:hover { border-color: var(--ink); transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--line-strong); }
+.pager a:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--line-strong); }
+.pager a:focus-visible { outline-offset: 4px; border-radius: var(--sketch); }
+.pager-label {
+  display: block;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 1rem;
+  color: var(--muted);
+}
+.pager-prev .pager-label::before { content: "← " / ""; }
+.pager-next .pager-label::after { content: " →" / ""; }
+.pager-next { grid-column: 2; text-align: right; }
+
+/* ---------- 8. Guide content (what Pandoc makes from Markdown) ----------- */
+.guide-content ul, .guide-content ol { padding-left: 1.4em; margin: 0 0 1.1em; }
+.guide-content li { margin: 0.3em 0; }
+.guide-content li > p { margin-bottom: 0.4em; }
+.guide-content li::marker { color: var(--terra); }
+.guide-content ol > li::marker { font-family: var(--font-display); font-weight: 600; }
+.guide-content blockquote {
+  margin: 1.4rem 0;
+  padding: 2px 0 2px 18px;
+  border-left: 3px solid var(--line-strong);
+  color: var(--ink-soft);
+}
+.guide-content hr { border: 0; border-top: 1.5px dashed var(--line-strong); margin: 2.4rem 0; }
+
+/* Pictures and diagrams: centered, never wider than the column. An italic
+   paragraph right after a picture ("*In words:* …") reads as its caption. */
+.guide-content img { display: block; margin: 0 auto; }
+.guide-content p:has(> img:only-child),
+.guide-content figure { margin: 2.2rem 0 2.4rem; text-align: center; }
+.guide-content :is(p:has(> img:only-child), figure.diagram):has(+ p > em:first-child) { margin-bottom: 0.8rem; }
+.guide-content :is(p:has(> img:only-child), figure.diagram) + p:has(> em:first-child),
+.guide-content figcaption {
+  max-width: 54ch;
+  margin: 0 auto 2.4rem;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--muted);
+  text-align: center;
+}
+.guide-content figcaption { font-family: var(--font-display); font-style: italic; margin-top: 0.8rem; }
+/* Diagrams (the build wraps each one): tap the drawing or the link to zoom */
+.guide-content .diagram-zoom { display: block; }
+.guide-content .diagram-open { display: inline-block; margin-top: 4px; padding: 6px 0; font-size: 0.9rem; }
+/* Pictures of the sample PDF (scripts/previews.py), left-aligned under their text */
+.guide-content figure.shot { margin: 0.4rem 0 1.4rem; }
+.guide-content figure.shot img {
+  width: 100%;
+  background: #fff;
+  border: 1.5px solid var(--line-strong);
+  border-radius: 6px;
+}
+
+/* Callouts: > [!TIP] becomes <div class="tip"><div class="title"><p>Tip</p></div>… */
+.note, .tip, .important, .warning, .caution {
+  --c: var(--blue); --w: var(--blue-wash);
+  margin: 1.6rem 0;
+  padding: 14px 20px 16px;
+  background: var(--w);
+  border: 1.5px solid color-mix(in srgb, var(--c) 40%, transparent);
+  border-radius: 6px 18px 8px 16px / 16px 8px 18px 6px;
+}
+.tip       { --c: var(--sage);  --w: var(--sage-wash); }
+.important { --c: var(--plum);  --w: var(--plum-wash); }
+.warning, .caution { --c: var(--terra); --w: var(--terra-wash); }
+:is(.note, .tip, .important, .warning, .caution) > .title {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 4px;
+}
+:is(.note, .tip, .important, .warning, .caution) > .title p {
+  margin: 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--c);
+}
+:is(.note, .tip, .important, .warning, .caution) > .title::before {
+  content: "";
+  width: 22px; height: 22px; flex: none;
+  background: var(--c);
+  -webkit-mask: var(--icon) no-repeat center / contain;
+          mask: var(--icon) no-repeat center / contain;
+}
+:is(.note, .tip, .important, .warning, .caution) p { margin-bottom: 0.8em; }
+:is(.note, .tip, .important, .warning, .caution) > :last-child { margin-bottom: 0; }
+:is(.note, .tip, .important, .warning, .caution) code { background: var(--card); }
+/* Icons, hand-drawn: pencil (tip), pinned note (note), star (important), "!" in a triangle (warning) */
+.tip { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20l1.2-4.6L16 4.6a2 2 0 0 1 3 0l.4.4a2 2 0 0 1 0 3L8.6 18.8z'/%3E%3Cpath d='M14 6.6l3.4 3.4'/%3E%3C/svg%3E"); }
+.note { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5.5 7.5 19 6.6l.5 13.4-13.5.6z'/%3E%3Cpath d='M9 12.5h7M9 16h5'/%3E%3Ccircle cx='12.3' cy='5.6' r='2'/%3E%3C/svg%3E"); }
+.important { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5l2.4 5.3 5.6.6-4.2 3.9 1.2 5.6L12 16l-5 2.9 1.2-5.6L4 9.4l5.6-.6z'/%3E%3C/svg%3E"); }
+.warning, .caution { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5C15 9 18 14 21.2 19.6 15 20.2 9 19.8 2.8 19.6 6 14 9 9 12 3.5z'/%3E%3Cpath d='M12 9.5v5M12 17.3v.2'/%3E%3C/svg%3E"); }
+
+/* Details: "For experienced users" sections, closed until wanted */
+.guide-content details {
+  margin: 1.6rem 0;
+  padding: 0 20px;
+  background: var(--card);
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--radius);
+}
+.guide-content summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 14px 0;
+  font-weight: 700;
+  line-height: 1.4;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.guide-content summary::-webkit-details-marker { display: none; }
+.guide-content summary::before {   /* chevron: right when closed, down when open */
+  content: "";
+  width: 10px; height: 10px; flex: none;
+  margin: calc((1.4em - 10px) / 2) 0 0 2px;   /* centred on the first line */
+  border-right: 2.5px solid var(--terra);
+  border-bottom: 2.5px solid var(--terra);
+  transform: rotate(-45deg);
+  transition: transform .15s ease;
+}
+.guide-content details[open] { padding-bottom: 6px; }
+.guide-content details[open] > summary { margin-bottom: 14px; border-bottom: 1.5px dashed var(--line); }
+.guide-content details[open] > summary::before { transform: rotate(45deg); }
+.guide-content summary:hover { color: var(--link); }
+
+/* Code blocks */
+/* Long lines scroll sideways. A soft shadow at an edge means "more this way";
+   it disappears when you reach the end, and nothing shows when the code fits. */
+.guide-content pre, .table-wrap {
+  --fill: var(--paper-2);
+  overflow-x: auto;
+  background:
+    linear-gradient(to right, var(--fill) 40%, transparent) left / 28px 100% no-repeat local,
+    linear-gradient(to left, var(--fill) 40%, transparent) right / 28px 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, var(--scroll-hint), transparent) left / 12px 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, var(--scroll-hint), transparent) right / 12px 100% no-repeat scroll,
+    var(--fill);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+:is(.guide-content pre, .table-wrap)::-webkit-scrollbar { height: 8px; }
+:is(.guide-content pre, .table-wrap)::-webkit-scrollbar-track { background: transparent; }
+:is(.guide-content pre, .table-wrap)::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 8px; }
+.guide-content pre {
+  margin: 0 0 1.2rem;
+  padding: 16px 20px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  tab-size: 2;
+}
+
+/* Tables: the build wraps each one in .table-wrap, which scrolls if needed */
+.table-wrap {
+  --fill: var(--card);
+  margin: 1.4rem 0 1.8rem;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+}
+.guide-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+  line-height: 1.45;
+}
+.guide-content th {
+  text-align: left;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.02rem;
+  padding: 11px 14px;
+  background: var(--paper-2);
+  border-bottom: 2px solid var(--line-strong);
+}
+.guide-content td { padding: 10px 14px; border-top: 1px solid var(--line); vertical-align: top; }
+.guide-content tr:first-child td { border-top: 0; }
+.guide-content td code { overflow-wrap: break-word; }   /* "style=numeric,sorting=none" stays whole */
+.guide-content td:first-child code { white-space: nowrap; }   /* keys and file names; phones may wrap */
+.guide-content th:empty { padding: 0; }
+
+/* ---------- 9. Footer ---------------------------------------------------- */
+.site-footer { background: var(--paper-2); border-top: 1px solid var(--line); }
+.footer-inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+  padding: 36px var(--gutter) 44px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 28px 56px;
+}
+.footer-about { margin: 0 0 1rem; color: var(--ink-soft); font-size: 1rem; }
+.footer-about strong { font-family: var(--font-display); font-weight: 600; color: var(--ink); }
+
+/* The edition line, styled as a calm "last checked" stamp */
+.edition {
+  display: inline-block;
+  margin: 0;
+  padding: 7px 14px 7px 36px;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--muted);
+  border: 1.5px dashed var(--line-strong);
+  border-radius: var(--sketch);
+  background: var(--card);
+  position: relative;
+}
+.edition::before {   /* small check mark */
+  content: "";
+  position: absolute; left: 12px; top: 50%;
+  width: 16px; height: 12px; margin-top: -6px;
+  background: var(--sage);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'%3E%3Cpath d='M1.5 6.5 C 3 7.5, 4.5 9, 5.8 10.5 C 8 6.5, 11 3.5, 14.5 1.5' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'%3E%3Cpath d='M1.5 6.5 C 3 7.5, 4.5 9, 5.8 10.5 C 8 6.5, 11 3.5, 14.5 1.5' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
+}
+.updated { margin: 0.7rem 0 0; font-size: 0.875rem; color: var(--muted); }
+.footer-cheatsheet { margin: 0.8rem 0 0; font-size: 0.95rem; }
+.footer-actions, .footer-links { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 1rem; }
+.footer-actions { margin: -9px 0 10px; padding-bottom: 6px; border-bottom: 1.5px dashed var(--line-strong); }   /* -9px: text-link touch padding */
+.footer-actions { gap: 0 24px; }
+.footer-links a { color: var(--ink-soft); display: inline-block; padding: 6px 0; }
+.site-footer a[aria-current="page"] { color: var(--ink); text-decoration-color: var(--sage); }
+
+/* ---------- 10. Small screens ------------------------------------------- */
+@media (max-width: 1080px) {
+  .anatomy-pages { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .guide-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; }
+  .steps li:nth-child(2)::after { display: none; }
+}
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: minmax(0, 1fr); }
+  .hero h1 { max-width: 16ch; }
+  .hero-art { max-width: 460px; justify-self: center; width: 100%; }
+  .teaser, .routes, .footer-inner { grid-template-columns: minmax(0, 1fr); }
+
+  .guide-frame { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .guide-sidebar { display: none; }
+  .guide-topics {
+    display: block;
+    margin: 4px 0 6px;
+    background: var(--card);
+    border: 1.5px solid var(--line-strong);
+    border-radius: var(--radius);
+  }
+  .guide-topics > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 700;
+  }
+  .guide-topics > summary::-webkit-details-marker { display: none; }
+  .guide-topics-here { font-weight: 400; color: var(--muted); flex: 1; min-width: 0; }
+  .guide-topics-here:not(:empty)::before { content: "· "; }
+  .guide-topics > summary::after {
+    content: "";
+    width: 9px; height: 9px; flex: none; margin-left: auto;
+    border-right: 2.5px solid var(--terra);
+    border-bottom: 2.5px solid var(--terra);
+    transform: translateY(-3px) rotate(45deg);
+  }
+  .guide-topics[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
+  .guide-topics .guide-groups { padding: 10px 8px 4px; border-top: 1.5px dashed var(--line); }
+  .guide-topics .guide-group { padding-inline: 8px; }
+  .guide-topics .guide-nav a { padding: 9px 8px; }
+}
+
+@media (max-width: 640px) {
+  body { font-size: 1.0625rem; }   /* 17px */
+  .site-header { padding-top: 16px; padding-bottom: 12px; }
+  .site-nav { gap: 0 16px; }
+  .site-nav a { font-size: 0.95rem; padding: 2px 0; }
+  .unofficial-more { display: none; }   /* phones: just "Unofficial" */
+  .lead { font-size: 1.15rem; }
+  .steps { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
+  .steps li { padding: 0 0 26px 58px; }
+  .step-bubble { position: absolute; left: 0; top: -4px; }
+  .steps li:nth-child(n)::after {   /* the trail runs down instead of across */
+    display: block;
+    top: 46px; bottom: 4px; left: 20px; right: auto;
+    border-top: 0;
+    border-left: 2px dashed var(--line-strong);
+    transform: none;
+  }
+  .steps li:last-child::after { display: none; }
+  .guide-list { grid-template-columns: minmax(0, 1fr); }
+  .card.tinted::before { inset: 7px -6px -7px 6px; }
+  .routes { padding-right: 6px; }
+  .teaser figure { margin: 0 -6px; }
+  .anatomy-pages { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+  .anatomy-pages li { display: grid; grid-template-columns: 36% minmax(0, 1fr); column-gap: 18px; align-items: start; }
+  .anatomy-pages img { grid-row: 1 / span 2; margin: 0; }
+  .anatomy-pages li > :not(img) { grid-column: 2; }
+  /* The fallback table becomes one small card per row */
+  .anatomy-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .anatomy-table :is(tr, th, td) { display: block; }
+  .anatomy-table tbody tr { padding: 10px 0; }
+  .anatomy-table tbody tr + tr > * { border-top: 0; }
+  .anatomy-table tbody tr + tr { border-top: 1px solid var(--line); }
+  .anatomy-table tbody :is(th, td) { padding: 2px 14px; }
+  .anatomy-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--terra);
+  }
+  .guide-content > h1:first-child + p { font-size: 1.1rem; }
+  .guide-content :is(p:has(> img:only-child), figure.diagram) { margin-inline: -10px; }   /* diagrams get a little more room */
+  /* PDF crops keep a readable size and scroll sideways inside their box */
+  .guide-content figure.shot { overflow-x: auto; scrollbar-width: thin; }
+  .guide-content figure.shot img { width: 480px; max-width: none; }
+  .note, .tip, .important, .warning, .caution { padding: 12px 16px 14px; }
+  .guide-content details { padding: 0 16px; }
+  .guide-content pre { padding: 12px 14px; font-size: 0.85rem; }
+  .guide-content th, .guide-content td { padding: 9px 11px; }
+  .guide-content td:first-child code { white-space: normal; overflow-wrap: break-word; padding: 0.05em 0.25em; }
+  .pager { grid-template-columns: minmax(0, 1fr); }
+  .pager-next { grid-column: 1; }
+}
+
+@media (max-width: 420px) {
+  .hero-actions .button { width: 100%; }   /* stack the main buttons full width */
+}
+
+/* ---------- 11. Motion and print ---------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+  .button:hover, .button:active, .pager a:hover, .pager a:active,
+  .text-link:active, .text-link:hover .arrow { transform: none; }
+}
+
+/* Print: guide pages print as plain black-on-white documents (handy for checklists). */
+@media print {
+  .site-header, .guide-sidebar, .guide-topics, .pager, .skip-link, .site-footer,
+  .hero-actions, .doodle-defs, .diagram-open { display: none !important; }
+  :root { --ink: #000; --ink-soft: #000; --muted: #333; --link: #000; --line: #bbb; --line-strong: #888; }
+  body { background: #fff; color: #000; font-size: 11pt; }
+  .guide-frame { display: block; max-width: none; margin: 0; padding: 0; }
+  .guide-content { max-width: none; }
+  .guide-content h2::after { display: none; }
+  a { color: #000; text-decoration: underline; }
+  :is(main, .site-footer) a[href^="http"]:not(.button)::after { content: " (" attr(href) ")"; font-size: 0.85em; overflow-wrap: anywhere; }
+  .band, .card, .note, .tip, .important, .warning, .caution, code, .table-wrap, .guide-content pre, th {
+    background: #fff !important; box-shadow: none !important;
+  }
+  .card.tinted::before { display: none; }
+  .guide-content pre { white-space: pre-wrap; overflow: visible; border-color: #888; }
+  .table-wrap { overflow: visible; }
+  pre, .table-wrap, figure, p:has(> img:only-child), .note, .tip, .important, .warning, .caution, details, tr {
+    break-inside: avoid;
+  }
+  h1, h2, h3, h4 { break-after: avoid; }
+  .guide-content img { max-height: 5.5in; width: auto; }
+  :is(.note, .tip, .important, .warning, .caution) { --c: #000; border-color: #888; }
+  details::details-content { content-visibility: visible; display: block; }   /* print closed sections too */
+  details > summary::before { display: none; }
+}

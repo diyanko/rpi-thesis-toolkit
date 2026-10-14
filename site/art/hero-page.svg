@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 480" width="600" height="480" role="img" aria-labelledby="title desc">
+  <title id="title">You write the words; the template does the formatting</title>
+  <desc id="desc">A sketch of a thesis page on top of a small stack of pages. A note on the left says "you write the words" and points to the paragraphs. Notes on the right say the template sets the margins and headings, and also handles page numbers, contents and references.</desc>
+  <style>
+    .ink    { stroke: #2b2723; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin   { stroke-width: 1.6; }
+    .paper  { fill: #fffdf8; }
+    .paper2 { fill: #f3ecdf; }
+    .sage-w { fill: #dbe7d1; }
+    .butter-w { fill: #f5e6ad; }
+    .terra-w  { fill: #f4d8c8; }
+    .scribble { stroke: #6a6056; fill: none; stroke-width: 2.4; stroke-linecap: round; }
+    .guide  { stroke: #4c6f9c; fill: none; stroke-width: 1.6; stroke-dasharray: 5 6; }
+    .sage-s { stroke: #46684b; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .sage-f { fill: #46684b; }
+    .terra-s { stroke: #9e4526; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .t      { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; fill: #2b2723; }
+    .hand   { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-style: italic; font-size: 25px; fill: #9e4526; }
+    .hand.b { fill: #2b4d7a; }
+    @media (prefers-color-scheme: dark) {
+      .ink    { stroke: #efe8dc; }
+      .paper  { fill: #2a2621; }
+      .paper2 { fill: #221f1b; }
+      .sage-w { fill: #2f3e2e; }
+      .butter-w { fill: #4a4022; }
+      .terra-w  { fill: #43291e; }
+      .scribble { stroke: #b4a998; }
+      .guide  { stroke: #a3c0ea; }
+      .sage-s { stroke: #a9c9a1; }
+      .sage-f { fill: #a9c9a1; }
+      .terra-s { stroke: #eda482; }
+      .t      { fill: #efe8dc; }
+      .hand   { fill: #eda482; }
+      .hand.b { fill: #a3c0ea; }
+    }
+  </style>
+  <defs>
+    <filter id="rough" filterUnits="userSpaceOnUse" x="-300" y="-300" width="1200" height="1080">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="rough2" filterUnits="userSpaceOnUse" x="-300" y="-300" width="1200" height="1080">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="1" seed="2" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="ah-t" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+      <path class="terra-s" d="M3 2.5 L11 7 L3.5 11.5"/>
+    </marker>
+    <marker id="ah-b" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+      <path d="M3 2.5 L11 7 L3.5 11.5" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="b-s"/>
+    </marker>
+  </defs>
+  <style>
+    .b-s { stroke: #2b4d7a; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    @media (prefers-color-scheme: dark) { .b-s { stroke: #a3c0ea; } }
+  </style>
+
+  <!-- stack of pages behind -->
+  <g filter="url(#rough)">
+    <rect class="paper2" x="196" y="76" width="232" height="312" rx="4" transform="rotate(5 312 232)"/>
+    <rect class="ink thin" x="196" y="76" width="232" height="312" rx="4" transform="rotate(5 312 232)"/>
+    <rect class="paper2" x="182" y="70" width="232" height="312" rx="4" transform="rotate(2 298 226)"/>
+    <rect class="ink thin" x="182" y="70" width="232" height="312" rx="4" transform="rotate(2 298 226)"/>
+  </g>
+
+  <!-- the page -->
+  <g transform="rotate(-2 285 215)">
+    <rect class="butter-w" x="178" y="68" width="230" height="310" rx="4"/>
+    <rect class="paper" x="170" y="60" width="230" height="310" rx="4"/>
+    <g filter="url(#rough)">
+      <rect class="ink" x="170" y="60" width="230" height="310" rx="4"/>
+    </g>
+    <!-- margins (set by the template) -->
+    <rect class="guide" x="192" y="82" width="186" height="266" rx="2"/>
+    <!-- heading -->
+    <text class="t" x="200" y="118" font-size="19" font-weight="700">1  Introduction</text>
+    <!-- your words -->
+    <path class="sage-w" d="M196 136 C 240 130, 330 134, 377 137 C 380 190, 378 250, 376 306 C 320 310, 250 309, 197 305 C 194 250, 193 190, 196 136 Z" filter="url(#rough2)"/>
+    <g filter="url(#rough2)">
+      <path class="scribble" d="M202 150 C 240 147, 300 152, 368 149"/>
+      <path class="scribble" d="M202 168 C 250 166, 310 170, 368 167"/>
+      <path class="scribble" d="M202 186 C 245 184, 300 188, 368 185"/>
+      <path class="scribble" d="M202 204 C 250 202, 300 206, 366 203"/>
+      <path class="scribble" d="M202 222 C 230 220, 260 223, 292 221"/>
+      <path class="scribble" d="M218 248 C 260 246, 310 250, 368 247"/>
+      <path class="scribble" d="M202 266 C 250 264, 300 268, 368 265"/>
+      <path class="scribble" d="M202 284 C 245 282, 300 286, 366 283"/>
+    </g>
+    <!-- page number -->
+    <text class="t" x="285" y="342" font-size="16" text-anchor="middle">7</text>
+  </g>
+
+  <!-- annotation: you write the words -->
+  <text class="hand" x="18" y="164">you write</text>
+  <text class="hand" x="18" y="194">the words</text>
+  <path class="terra-s" d="M58 210 C 70 250, 140 262, 196 236" marker-end="url(#ah-t)" filter="url(#rough2)"/>
+
+  <!-- annotation: template sets margins and headings -->
+  <text class="hand b" x="444" y="80">the template</text>
+  <text class="hand b" x="444" y="108">sets margins</text>
+  <text class="hand b" x="444" y="136">&amp; headings</text>
+  <path class="b-s" d="M452 152 C 440 178, 412 128, 386 122" marker-end="url(#ah-b)" filter="url(#rough2)"/>
+
+  <!-- annotation: page numbers etc. -->
+  <text class="hand b" x="444" y="292">…and page</text>
+  <text class="hand b" x="444" y="320">numbers,</text>
+  <text class="hand b" x="444" y="348">contents &amp;</text>
+  <text class="hand b" x="444" y="376">references</text>
+  <path class="b-s" d="M440 392 C 410 424, 340 412, 300 352" marker-end="url(#ah-b)" filter="url(#rough2)"/>
+
+  <!-- gear doodle -->
+  <g transform="translate(540 206)" filter="url(#rough2)">
+    <path class="b-s" d="M-4 -22 L4 -22 L5 -15 L11 -12 L17 -16 L22 -10 L17 -5 L19 1 L25 3 L24 11 L17 11 L14 17 L18 22 L12 27 L7 22 L0 24 L-2 30 L-10 29 L-10 22 L-16 19 L-22 23 L-27 17 L-22 12 L-24 6 L-30 4 L-29 -4 L-22 -4 L-19 -10 L-23 -15 L-17 -20 L-12 -15 L-6 -17 Z" transform="scale(1.05)"/>
+    <circle class="b-s" cx="-2" cy="3" r="8"/>
+  </g>
+
+  <!-- pencil, with the line it just wrote -->
+  <path class="sage-s" d="M34 452 C 52 440, 64 456, 82 446 S 108 438, 118 444" filter="url(#rough2)"/>
+  <g transform="translate(104 386) rotate(-38)" filter="url(#rough2)">
+    <path class="butter-w" d="M-50 -9 H36 V9 H-50 Z"/>
+    <path class="ink" d="M-50 -9 H36 V9 H-50 Z"/>
+    <path class="ink thin" d="M-50 0 H36"/>
+    <path class="terra-w" d="M-66 -9 H-50 V9 H-66 C -71 9, -71 -9, -66 -9 Z"/>
+    <path class="ink" d="M-66 -9 H-50 V9 H-66 C -71 9, -71 -9, -66 -9 Z"/>
+    <path class="paper" d="M36 -9 L62 0 L36 9 Z"/>
+    <path class="ink" d="M36 -9 L62 0 L36 9 Z"/>
+    <path class="ink" d="M54 -3 L62 0 L54 3"/>
+  </g>
+
+  <!-- sparkles -->
+  <g class="terra-s" filter="url(#rough2)">
+    <path d="M150 52 L140 40"/>
+    <path d="M160 44 L158 28"/>
+    <path d="M140 64 L126 60"/>
+  </g>
+</svg>

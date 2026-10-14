@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" width="600" height="300" role="img" aria-labelledby="title desc">
+  <title id="title">Compile turns your files into a PDF</title>
+  <desc id="desc">Your plain-text files go in on the left. When you press Compile, pdfLaTeX and Biber take turns over a few passes. Your finished, formatted PDF comes out on the right.</desc>
+  <style>
+    .ink    { stroke: #2b2723; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin   { stroke-width: 1.6; }
+    .paper  { fill: #fffdf8; }
+    .blue-w { fill: #dce5f1; }
+    .plum-w { fill: #ecdeeb; }
+    .sage-w { fill: #dbe7d1; }
+    .butter-w { fill: #f5e6ad; }
+    .terra-w  { fill: #f4d8c8; }
+    .shadow { fill: #e9e0cf; }
+    .terra-s { stroke: #9e4526; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .blue-s  { stroke: #2b4d7a; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .sage-s  { stroke: #46684b; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .t    { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; fill: #2b2723; }
+    .h    { font-size: 27px; font-weight: 700; }
+    .sub  { font-size: 17px; fill: #574e45; }
+    .mono { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 18px; font-weight: 700; fill: #2b2723; }
+    .num  { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-size: 19px; font-weight: 700; fill: #2b2723; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-style: italic; font-size: 23px; fill: #9e4526; }
+    .hand.b { fill: #2b4d7a; }
+    @media (prefers-color-scheme: dark) {
+      .ink    { stroke: #efe8dc; }
+      .paper  { fill: #2a2621; }
+      .blue-w { fill: #24324a; }
+      .plum-w { fill: #3a2b3b; }
+      .sage-w { fill: #2c3a2b; }
+      .butter-w { fill: #4a4022; }
+      .terra-w  { fill: #43291e; }
+      .shadow { fill: #34302a; }
+      .terra-s { stroke: #eda482; }
+      .blue-s  { stroke: #a3c0ea; }
+      .sage-s  { stroke: #a9c9a1; }
+      .t, .mono, .num { fill: #efe8dc; }
+      .sub  { fill: #c3b8a8; }
+      .hand { fill: #eda482; }
+      .hand.b { fill: #a3c0ea; }
+    }
+    .dash { stroke-dasharray: 7 7; }
+    .key  { fill: #9e4526; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: #3b342e; }
+    .muted { fill: #574e45; }
+    @media (prefers-color-scheme: dark) {
+      .key { fill: #eda482; }
+      .code { fill: #e4dccf; }
+      .muted { fill: #c3b8a8; }
+    }
+  </style>
+  <defs>
+    <filter id="rough" filterUnits="userSpaceOnUse" x="-300" y="-300" width="1200" height="900">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="3.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="rough2" filterUnits="userSpaceOnUse" x="-300" y="-300" width="1200" height="900">
+      <feTurbulence type="fractalNoise" baseFrequency="0.025" numOctaves="1" seed="9" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="ah" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+      <path class="ink" d="M3 2.5 L11 7 L3.5 11.5"/>
+    </marker>
+    <marker id="ah-b" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+      <path class="blue-s" d="M3 2.5 L11 7 L3.5 11.5"/>
+    </marker>
+    <marker id="ah-t-start" viewBox="0 0 14 14" refX="4" refY="7" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+      <path class="terra-s" d="M3 2.5 L11 7 L3.5 11.5"/>
+    </marker>
+    <marker id="ah-t" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto">
+      <path class="terra-s" d="M3 2.5 L11 7 L3.5 11.5"/>
+    </marker>
+  </defs>
+
+  <g filter="url(#rough)">
+    <path class="paper ink thin" d="M40 44 H140 L156 60 V186 H40 Z" transform="rotate(-6 98 115)"/>
+    <path class="paper ink thin" d="M40 44 H140 L156 60 V186 H40 Z" transform="rotate(4 98 115)"/>
+  </g>
+  <g>
+    <path class="sage-w" d="M42 52 H144 L160 68 V192 H42 Z"/>
+    <path class="paper" d="M36 46 H138 L154 62 V186 H36 Z"/>
+    <g filter="url(#rough)"><path class="ink" d="M36 46 H138 L154 62 V186 H36 Z M138 46 V62 H154"/></g>
+    <text class="mono" x="52" y="80" style="font-size:20px">.tex</text>
+  </g>
+  <g filter="url(#rough2)"><path class="scribble" d="M52 104 H136 M52 124 H130 M52 144 H138 M52 164 H112" style="stroke:#8a7f72;stroke-width:2.4;fill:none;stroke-linecap:round"/></g>
+  <path class="plum-w" d="M114 150 h52 v34 h-52 z" transform="rotate(8 140 167)"/>
+  <g filter="url(#rough2)"><path class="ink thin" d="M114 150 h52 v34 h-52 z" transform="rotate(8 140 167)"/></g>
+  <text class="mono" x="140" y="173" text-anchor="middle" transform="rotate(8 140 167)" style="font-size:15px">.bib</text>
+  <text class="t h" x="96" y="246" text-anchor="middle">your files</text>
+  <text class="hand" x="96" y="276" text-anchor="middle">plain text</text>
+  <path class="ink" d="M180 120 C 200 110, 214 124, 232 116" marker-end="url(#ah)" filter="url(#rough2)"/>
+  <g transform="translate(302 118) scale(2.1)">
+    <path class="blue-w" d="M-4 -22 L4 -22 L5 -15 L11 -12 L17 -16 L22 -10 L17 -5 L19 1 L25 3 L24 11 L17 11 L14 17 L18 22 L12 27 L7 22 L0 24 L-2 30 L-10 29 L-10 22 L-16 19 L-22 23 L-27 17 L-22 12 L-24 6 L-30 4 L-29 -4 L-22 -4 L-19 -10 L-23 -15 L-17 -20 L-12 -15 L-6 -17 Z" transform="translate(2.5 2.5)"/>
+  </g>
+  <g transform="translate(302 118) scale(2.1)" filter="url(#rough2)">
+    <path class="ink" d="M-4 -22 L4 -22 L5 -15 L11 -12 L17 -16 L22 -10 L17 -5 L19 1 L25 3 L24 11 L17 11 L14 17 L18 22 L12 27 L7 22 L0 24 L-2 30 L-10 29 L-10 22 L-16 19 L-22 23 L-27 17 L-22 12 L-24 6 L-30 4 L-29 -4 L-22 -4 L-19 -10 L-23 -15 L-17 -20 L-12 -15 L-6 -17 Z" style="stroke-width:1.1"/>
+    <circle class="ink" cx="-2" cy="3" r="8" style="stroke-width:1.1"/>
+  </g>
+  <path class="terra-s" d="M244 74 C 270 30, 350 30, 368 76" marker-end="url(#ah-t)" filter="url(#rough2)"/>
+  <path class="terra-s" d="M362 172 C 338 210, 268 210, 246 168" marker-end="url(#ah-t)" filter="url(#rough2)"/>
+  <text class="t h" x="300" y="246" text-anchor="middle">Compile</text>
+  <text class="hand" x="300" y="276" text-anchor="middle">a few quick passes</text>
+  <path class="ink" d="M378 116 C 398 110, 410 124, 428 116" marker-end="url(#ah)" filter="url(#rough2)"/>
+  <g>
+    <path class="sage-w" d="M450 46 H552 L568 62 V196 H450 Z"/>
+    <path class="paper" d="M444 40 H546 L562 56 V190 H444 Z"/>
+    <g filter="url(#rough)"><path class="ink" d="M444 40 H546 L562 56 V190 H444 Z M546 40 V56 H562"/></g>
+    <text class="t" x="460" y="80" style="font-size:15px;font-weight:700;font-family:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif">Chapter 1</text>
+    <g filter="url(#rough2)"><path class="sage-s thin" d="M460 100 H546 M460 116 H546 M460 132 H530 M460 152 H546 M460 168 H520"/></g>
+  </g>
+  <text class="t h" x="503" y="246" text-anchor="middle">your PDF</text>
+  <text class="hand" x="503" y="276" text-anchor="middle">formatted for you</text>
+</svg>
