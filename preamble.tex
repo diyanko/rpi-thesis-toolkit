@@ -1,0 +1,39 @@
+% !TEX root = main.tex
+% Extra packages and reference settings. Beginners can leave this alone.
+\usepackage{csquotes}
+% This numeric style demonstrates working citations. It is not an official
+% disciplinary style. Choose your advisor's style before writing; see
+% docs/citations.md. Change the style here, not in the formatting class.
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{references.bib}
+% OGE requires an access date for every URL. This style prints urldate;
+% after changing styles, check that access dates still appear.
+% Let long URLs wrap inside the margins instead of running past them.
+\setcounter{biburlnumpenalty}{9000}
+\setcounter{biburllcpenalty}{9000}
+\setcounter{biburlucpenalty}{9000}
+\setlength{\bibitemsep}{\baselineskip}
+
+% Experts can add packages here. Avoid changing page geometry or line spacing.
+% Optional extras, tested with this class. Uncomment only the groups you use;
+% docs/advanced.md ("Recipes for common extras") shows how to use each one.
+% Figures with parts (a), (b):
+% \usepackage{subcaption}
+% Theorems and proofs:
+% \usepackage{amsthm}
+% \newtheorem{theorem}{Theorem}[chapter]
+% \newtheorem{lemma}[theorem]{Lemma}
+% Algorithms, numbered by chapter, captions formatted like figure captions:
+% \usepackage[chapter]{algorithm}
+% \usepackage{algpseudocode}
+% \captionsetup[algorithm]{labelsep=colon,font=bf}
+% \AtBeginEnvironment{algorithm}{\singlespacing}
+% Code listings, single spaced:
+% \usepackage{listings}
+% \lstset{basicstyle=\small\ttfamily\setstretch{1}}
+% \lstset{breaklines=true,showstringspaces=false}
+% \captionsetup[lstlisting]{font+=singlespacing}
+% A list of symbols or abbreviations:
+% \usepackage{longtable}
+% To compile only one chapter locally, uncomment (front matter still appears):
+% \includeonly{chapters/02-research}

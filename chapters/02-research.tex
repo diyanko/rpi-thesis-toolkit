@@ -1,0 +1,102 @@
+% !TEX root = ../main.tex
+\chapter{RESEARCH AND FINDINGS}
+\label{chap:research}
+% Does this chapter reuse your own published, presented, accepted, submitted,
+% or preprint article? Add a chapter attribution here, directly below \label.
+% It prints single spaced at the bottom of this chapter's first page, with no
+% footnote number. Use the wording for the article's status (OGE manual 2026,
+% section 2.8, Table 2.1), then the full citation in your citation style:
+%   Published, presented, or a preprint:
+%     Portions of this chapter have previously appeared as:
+%     This chapter has previously appeared as:
+%   Accepted, not yet published:
+%     Portions of this chapter are to appear as:   (This chapter is to appear as:)
+%   Submitted or under review (name the journal or conference):
+%     Portions of this chapter are under review as:  (This chapter is ...)
+%     Portions of this chapter have been submitted as:  (This chapter has ...)
+% \fullcite{key} prints a full citation from references.bib. Delete the % signs:
+% \chapterattribution{Portions of this chapter have previously appeared as:
+%   \fullcite{your-article-key}.}
+% Also list every attributed article on the Declaration of Co-Contribution.
+Replace this chapter with your analysis, methods, findings, or argument.
+The examples below are teaching examples, not research results.
+Delete any examples you do not need.
+
+\section{A table}
+Table~\ref{tab:example} shows invented data to demonstrate a simple table.
+Put the caption above a table. Use a full caption: the same words appear in the
+list of tables automatically.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Illustrative values for three example groups.}
+  \label{tab:example}
+  \begin{tabular}{lr}
+    \toprule
+    Group & Example value \\
+    \midrule
+    A & 12 \\
+    B & 18 \\
+    C & 24 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{A figure}
+Figure~\ref{fig:example} is a placeholder for your own image. Upload your image
+to the figures folder and follow the instructions in figures/README.md.
+Put figure captions below the image.
+
+\begin{figure}[htbp]
+  \centering
+  \fbox{\parbox[c][1in][c]{0.8\linewidth}{\centering Your figure goes here.}}
+  % Replace the fbox line above with, for example:
+  % \includegraphics[width=0.8\linewidth]{figures/my-figure.png}
+  \caption{A placeholder demonstrating the position of a figure caption.}
+  \label{fig:example}
+\end{figure}
+
+\section{A reproduced figure}
+Figure~\ref{fig:reproduced} shows where a permission statement goes when you
+reuse someone else's figure or table. The bracketed text is a placeholder,
+not a real source.
+
+% A reproduced figure or table needs, in its caption: your description, the
+% FULL citation of the original, and a permission or license statement.
+% With permission (add any notice your permission document requires):
+%   Reproduced from [full citation], with permission from [publisher].
+% Creative Commons or open access (state the exact license):
+%   Reproduced from [full citation] under the [CC BY 4.0] license.
+% \fullcite{key} inside \caption{...} prints the full citation for you.
+% Never use \caption[short]{long}: the list must match the caption exactly.
+% List your permission files in an appendix; see appendices/.
+\begin{figure}[htbp]
+  \centering
+  \fbox{\parbox[c][1in][c]{0.8\linewidth}{\centering Reproduced figure goes here.}}
+  \caption{An example caption for a reproduced figure. Reproduced from [full
+    citation of the original source], with permission from [publisher].}
+  \label{fig:reproduced}
+\end{figure}
+
+\section{An equation}
+Delete this section if you do not need mathematics. Equation~\ref{eq:example}
+demonstrates an equation with an automatically generated number:
+\begin{equation}
+  y = mx + b.
+  \label{eq:example}
+\end{equation}
+Give every displayed equation a number by using the \verb|equation|
+environment. Only displays within a lemma, algorithm, theorem, or proof may
+be unnumbered. Equation~\ref{eq:multiline} spans two lines and has one centered number:
+\begin{equation}
+  \begin{split}
+    (a + b)^2 &= (a + b)(a + b) \\
+              &= a^2 + 2ab + b^2.
+  \end{split}
+  \label{eq:multiline}
+\end{equation}
+% If a number drops BELOW its equation, the line is too long. Break it with
+% split as above (\\ ends a line, & aligns the lines) so the number stays on
+% the same line, centered vertically. Use align for several numbered lines.
+Use dollar signs for short mathematical expressions inside a sentence, such as
+$x = 2$. Reference labels instead of typing page or equation numbers by hand.
