@@ -1,0 +1,117 @@
+name: Build thesis, website, and starter ZIP
+
+# Runs the same commands a maintainer runs locally (docs/project/maintenance.md).
+# Publishing to GitHub Pages happens only when a maintainer runs this workflow
+# by hand with "publish" ticked, and only after the public-release checklist in
+# docs/project/maintenance.md is complete. No thesis PDFs are uploaded; the only
+# PDF in the artifacts is the one-page cheat sheet. The repository holds no RPI
+# seal, so CI compiles and checks the title page with its placeholder.
+
+on:
+  pull_request:
+    paths-ignore: ['.github/ISSUE_TEMPLATE/**', '.github/pull_request_template.md']
+  push:
+    branches: [main]
+    paths-ignore: ['.github/ISSUE_TEMPLATE/**', '.github/pull_request_template.md']
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish the website to GitHub Pages (maintainer authorization required)
+        type: boolean
+        default: false
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # Keep in step with the Pandoc you use locally (pandoc --version).
+  PANDOC_VERSION: '3.11'
+  PANDOC_SHA256: 89d4c9d97818c62a97157f0072844e4602c6cee795bf84abd1aee7273abcda99
+  # pypdf for scripts/check.py, installed with pip (not the distribution's
+  # python3-pypdf, whose version varies) so CI reads PDFs as maintainers do.
+  # To update: run check.py locally with the new version, then copy the
+  # version and the sha256 of its py3-none-any wheel from
+  # https://pypi.org/project/pypdf/#files (or: pip hash <wheel>).
+  PYPDF_VERSION: '6.20.1'
+  PYPDF_SHA256: aa5a55ddcffdc5e5ab291d5decb23f6383f4e56f8e3263dc39af41fff03885ad
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    # TeX Live 2026 ("latest" image of 2026-10-11), pinned by digest. To update:
+    # docs/project/maintenance.md, "Updating pinned tools".
+    container: texlive/texlive:latest@sha256:0f4884ca7d287f47ab466d2dd405d4c901c576585363f628863a7ca7eea21301
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      pages: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0  # full history: each guide page shows when it last changed
+      - name: Install Pandoc, poppler (page previews), and pypdf (PDF checks)
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates curl poppler-utils python3 python3-pip
+          echo "pypdf==${PYPDF_VERSION} --hash=sha256:${PYPDF_SHA256}" > /tmp/pypdf-requirements.txt
+          python3 -m pip install --break-system-packages --no-cache-dir --require-hashes -r /tmp/pypdf-requirements.txt
+          python3 -c "import pypdf; print('pypdf', pypdf.__version__)"
+          curl -fsSL -o /tmp/pandoc.deb "https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-1-amd64.deb"
+          echo "${PANDOC_SHA256}  /tmp/pandoc.deb" | sha256sum -c -
+          dpkg -i /tmp/pandoc.deb
+          pandoc --version | head -1
+      - name: Compile the sample thesis
+        run: python3 scripts/build.py --fresh
+      - name: Check thesis variants and PDF structure
+        run: python3 scripts/check.py
+      - name: Build and link-check the website with page previews and the cheat sheet
+        # With TeX present (this container), --previews also compiles
+        # cheatsheet/cheatsheet.tex into the website's downloads.
+        run: python3 scripts/build_site.py --previews
+      - name: Check that the cheat sheet compiled
+        run: |
+          test -s dist/site/downloads/rpi-thesis-cheatsheet.pdf || {
+            echo "Cheat sheet PDF missing: compile cheatsheet/cheatsheet.tex (see cheatsheet/README.md)."
+            exit 1
+          }
+      - name: Package the student starter ZIP
+        run: python3 scripts/package.py
+      - name: Keep the starter ZIP
+        uses: actions/upload-artifact@v7
+        with:
+          name: starter-zip
+          path: dist/rpi-thesis-starter-v*.zip
+          if-no-files-found: error
+      - name: Keep the website
+        uses: actions/upload-artifact@v7
+        with:
+          name: website
+          path: dist/site
+          if-no-files-found: error
+      - name: Configure Pages
+        if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
+        uses: actions/configure-pages@v6
+      - name: Stage the website for Pages
+        if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist/site
+
+  deploy:
+    if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish the website
+        id: deployment
+        uses: actions/deploy-pages@v5
