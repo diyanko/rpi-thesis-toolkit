@@ -1,0 +1,25 @@
+# How to cite the RPI Thesis Toolkit itself (not RPI's requirements or anyone's
+# thesis). Maintainers: keep "version" equal to the \ProvidesClass version in
+# rpi-thesis.cls (see docs/project/maintenance.md, "Make a release").
+cff-version: 1.2.0
+message: "If you refer to this toolkit, please cite it using these metadata."
+type: software
+title: "RPI Thesis Toolkit"
+abstract: >-
+  An unofficial, community-made LaTeX starter and plain-language guide for
+  graduate theses and dissertations (master's, PhD, and DEng) at Rensselaer
+  Polytechnic Institute (RPI). It is not affiliated with or endorsed by RPI or
+  its Office of Graduate Education, and it includes no RPI-owned materials.
+authors:
+  - given-names: Diyanko
+    family-names: Bhowmik
+version: 0.1.0
+license: MIT
+repository-code: "https://github.com/diyanko/rpi-thesis-toolkit"
+url: "https://diyanko.github.io/rpi-thesis-toolkit"
+keywords:
+  - LaTeX
+  - thesis
+  - dissertation
+  - template
+  - Rensselaer Polytechnic Institute
