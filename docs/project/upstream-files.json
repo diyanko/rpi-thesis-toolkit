@@ -1,0 +1,84 @@
+{
+  "recorded_on": "2026-10-14",
+  "note": "Our own record (file names and SHA-256 hashes) of RPI's original LaTeX template files (thesis.cls, samples, and seal) supplied at the start of this project. RPI distributes its template through RPI ITS's Thesis Preparation page; these copies have not yet been compared byte for byte with the current download. None of these files is in the repository or the starter ZIP. Maintainers keep a reference copy in _local/legacy/ (ignored by Git); scripts/check.py compares its hashes when that folder exists and prints SKIP otherwise.",
+  "source": "https://itssc.rpi.edu/hc/en-us/articles/360010087512-Thesis-Preparation",
+  "status": "RPI material; not distributed; not covered by this project's license",
+  "files": [
+    {
+      "path": "_local/legacy/abstitle-mas.tex",
+      "sha256": "018d4f1c697f9e548f06e3a5f710a57214dc2252909807287817465209807dc1"
+    },
+    {
+      "path": "_local/legacy/abstitle-phd.tex",
+      "sha256": "1c50d5c515b44e54f2e4f830fb5fd9f01b306ea89d0e923bda83aef4f6c1edb2"
+    },
+    {
+      "path": "_local/legacy/msthesis.tex",
+      "sha256": "e20de630a47e9429ba6649d6df9a1d468969b1d8ba2f4f2359dfdc343eb8a9a1"
+    },
+    {
+      "path": "_local/legacy/phddisertation.tex",
+      "sha256": "78025c01f0579ef2a4227295b09d36aacc07af305f294c38d1cd45f7c7366331"
+    },
+    {
+      "path": "_local/legacy/rpi_seal.png",
+      "sha256": "12e6d8f809ada56b2f0ff3bbce1b7ab10a90fb6800d1fff31de3fedeb7c31fec"
+    },
+    {
+      "path": "_local/legacy/rpiabs.tex",
+      "sha256": "5dd07c7c83e37ba7c8cb2a2f5f91fd5254382947dce35abfa07cf54668497fa1"
+    },
+    {
+      "path": "_local/legacy/rpiack.tex",
+      "sha256": "2d908ad70e313afebdf383354495dcd4953ab50ec3a6498534ced53e4f39d1cf"
+    },
+    {
+      "path": "_local/legacy/rpiapp.tex",
+      "sha256": "1f7cc022bb20bf7345b030d885c7a056407ed09676a0ba318f06a935ccd1a035"
+    },
+    {
+      "path": "_local/legacy/rpibib.tex",
+      "sha256": "98a93e11af4105b015e8482633a05423341fe595a5721eef702d7cbbb602fb47"
+    },
+    {
+      "path": "_local/legacy/rpichap1.tex",
+      "sha256": "4ff922bf4386209e11f6b57a548a305a01d62dd1f13c574fbf46388ba3f1062c"
+    },
+    {
+      "path": "_local/legacy/rpichap2.tex",
+      "sha256": "bfc7501e3a39727ef085e93f7d36582355566b3a6daf85a440be38cfba223fbf"
+    },
+    {
+      "path": "_local/legacy/rpithes-short.tex",
+      "sha256": "36105bdbcf1b212032eac281a3ae230d11854059d29b5bed5963676d7a52c0ec"
+    },
+    {
+      "path": "_local/legacy/rpithes.tex",
+      "sha256": "47fff74a13e394493875ace03ba59d42d86d4b9c80e1a7ab4febbe78878d6714"
+    },
+    {
+      "path": "_local/legacy/rpithesis-doc.tex",
+      "sha256": "15a097b714221154a9148154232cde87b3ffb07f77ad179ccf33e2d5630daed2"
+    },
+    {
+      "path": "_local/legacy/rpititle-mas.tex",
+      "sha256": "d97087ccbc05164817379b54bf6ea433b28f728dfbb754bf28bf97c3a8f15860"
+    },
+    {
+      "path": "_local/legacy/rpititle-phd.tex",
+      "sha256": "452dd3c4a2c0ec82065dabe0bcef329642bfb70fb20729c34147d3cdff3394f3"
+    },
+    {
+      "path": "_local/legacy/thesis.cls",
+      "sha256": "a4e377e3a7a2cdaa5382db730adce58df4827cd8369c882aaab349775678d571"
+    }
+  ],
+  "student_downloads": [
+    {
+      "file": "assets/rpi-seal.jpg",
+      "sha256": "be264ce39398b2beb244e220548aeb7428094aad6b93126f43e3fed493bd15bb",
+      "source": "Current RPI seal on RPI ITS's Thesis Preparation page, checked by the maintainer on 2026-10-14; same design as the seal in the original template",
+      "status": "not distributed; each student downloads it (assets/README.md). Not checked by scripts; a newer download may differ."
+    }
+  ]
+}
