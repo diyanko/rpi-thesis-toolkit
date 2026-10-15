@@ -30,12 +30,12 @@ Settings go inside `\thesissetup{...}` in `metadata.tex`.
 | --- | --- | --- | --- |
 | `title` | text | — (required) | Printed in capitals on the title page |
 | `author` | text | — (required) | |
-| `degree` | `masters`, `doctoral`, `engineering-doctorate` | `masters` | Master of Science, Doctor of Philosophy, Doctor of Engineering |
+| `degree` | `doctoral`, `masters`, `engineering-doctorate` | `doctoral` | Doctor of Philosophy, Master of Science, Doctor of Engineering |
 | `degree-name` | text | from `degree` | Overrides the displayed degree name; put it **after** `degree` |
 | `department` | text | — (required) | Full name, e.g. `Department of Physics, Applied Physics and Astronomy` |
 | `graduation-month` | `May`, `August`, `December` | — (required) | Graduation, not submission, month |
 | `graduation-year` | four digits | — (required) | |
-| `seal-file` | file path | `assets/rpi-seal.jpg` | You download the seal from RPI ([how](../assets/README.md)). If missing, `assets/rpi-seal.png` is tried; then a same-size placeholder box, a warning, and a build hint |
+| `seal-file` | file path | `assets/rpi-seal.jpg` | You download the seal from RPI ([add the RPI seal](get-started.md#add-the-rpi-seal-one-minute)). If missing, `assets/rpi-seal.png` is tried; then a same-size placeholder box, a warning, and a build hint |
 | `copyright-page` | `true`, `false` | `false` | Adds the copyright notice page (ii) |
 | `list-of-tables` | `true`, `false` | `true` | Set `false` only if there are no tables anywhere |
 | `list-of-figures` | `true`, `false` | `true` | Set `false` only if there are no figures anywhere |
@@ -62,13 +62,18 @@ other document types; those need their own requirements check.
 
 ## Build commands
 
-The helper needs Python 3 (no extra packages) and a LaTeX distribution with
-`latexmk`, the chosen engine, and Biber; on Windows, prefer TeX Live, which
-includes the Perl that `latexmk` needs. The VS Code recipe in `.vscode/` runs
-the same steps ([setup](get-started.md#step-3a-your-computer-route)).
+Every route runs the same programs: `latexmk` calls the engine and Biber as
+often as needed. Editors such as VS Code (with the recipe in `.vscode/`),
+TeXShop, TeXworks, and TeXstudio do this for you
+([setup](get-started.md#step-3a-your-computer-route)). From a terminal, use
+plain `latexmk -norc -pdf main.tex` (PDF next to `main.tex`) or the build
+helper below. The helper needs Python 3.9 or newer (no extra packages; on
+Windows type `python` or `py` for `python3`) and TeX Live 2022 or newer with
+`latexmk`, the chosen engine, and Biber. On Windows, prefer TeX Live, which
+includes the Perl that `latexmk` needs.
 
 ```sh
-python3 scripts/build.py --doctor            # check tools, build nothing
+python3 scripts/build.py --doctor            # check tools and next steps
 python3 scripts/build.py                     # pdfLaTeX → build/main.pdf
 python3 scripts/build.py --fresh             # rebuild everything from scratch
 python3 scripts/build.py --engine lualatex   # or --engine xelatex
@@ -79,8 +84,11 @@ hints**: `.bib` entries with a `url` but no `urldate`, and `\caption[...]`
 short captions.
 
 The helper ignores personal `latexmkrc` files, disables shell escape, and
-creates the output subfolders (`build/chapters/`, …) a first pass needs;
-create them yourself if you run `latexmk` with an output directory.
+creates the output subfolders (`build/chapters/`, …) a first pass needs. It
+reads only the files `main.tex` pulls in with literal `\input` and
+`\include`, so drafts elsewhere in the folder never affect the build. If you
+type `latexmk -outdir=...` yourself, create those subfolders first, or let
+`latexmk` retry after "I can't write on file".
 
 **Engines.** pdfLaTeX uses New TX fonts; LuaLaTeX and XeLaTeX use TeX Gyre
 Termes via `fontspec`/`unicode-math`. Switch for characters pdfLaTeX can't
