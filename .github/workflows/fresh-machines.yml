@@ -4,6 +4,9 @@ name: Fresh-machine test
 # docs/get-started.md: install TeX the way the guide says, then compile the
 # unchanged starter. Runs only when a maintainer starts it from the Actions
 # tab (about an hour; the Windows TeX Live install is the slow part).
+# GitHub's hosted Windows image is Windows Server, not Windows 11 itself; it
+# stands in for a Windows computer. Runner images are named explicitly so a
+# retiring image is noticed here, not silently changed.
 
 on:
   workflow_dispatch:
@@ -20,8 +23,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { name: "Windows 11 + TeX Live (official installer)", os: windows-latest }
-          - { name: "macOS (Apple Silicon) + MacTeX", os: macos-14 }
+          - { name: "Windows Server 2025 (windows-2025) + TeX Live (official installer)", os: windows-2025 }
+          - { name: "macOS 15 (Apple Silicon, macos-15) + MacTeX", os: macos-15 }
           - { name: "Ubuntu 24.04 + distribution TeX Live", os: ubuntu-24.04 }
           - { name: "Ubuntu 22.04 + distribution TeX Live", os: ubuntu-22.04 }
     steps:
@@ -82,6 +85,15 @@ jobs:
           latexmk -norc -pdf -no-shell-escape -interaction=nonstopmode -halt-on-error main.tex
           test -s main.pdf
           ! grep -E "There were undefined references|Citation .* undefined|Empty bibliography" main.log
+
+      - name: Compile the way the editor does (output folder, first run, project latexmkrc)
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/editor"
+          cp -R main.tex metadata.tex preamble.tex rpi-thesis.cls references.bib latexmkrc chapters frontmatter appendices figures assets "$RUNNER_TEMP/editor/"
+          cd "$RUNNER_TEMP/editor"
+          latexmk -pdf -no-shell-escape -synctex=1 -interaction=nonstopmode -halt-on-error -file-line-error -outdir="$RUNNER_TEMP/editor/build" main.tex
+          test -s build/main.pdf
 
       - name: Compile with the build helper in a folder with a space
         shell: bash
