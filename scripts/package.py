@@ -110,6 +110,34 @@ def add_text(archive, name, text):
     archive.writestr(info, text)
 
 
+# For "Open in Overleaf": only what the thesis needs, so the Overleaf file tree
+# stays short. Overleaf opens it from a link (overleaf.com/docs?snip_uri=...).
+OVERLEAF_SKIP = ("scripts/", ".vscode/")
+OVERLEAF_README = """\
+# RPI Thesis Toolkit: Overleaf starter
+
+1. Compile main.tex (the green Recompile button) to see the sample PDF.
+2. Add the RPI seal: see assets/README.md.
+3. Put your details in metadata.tex, then write in chapters/.
+
+The full guide: https://diyanko.github.io/rpi-thesis-toolkit/
+This is a community project, not approved by RPI or the Office of Graduate
+Education. Check the current OGE requirements before you submit.
+"""
+
+
+def package_overleaf(version):
+    destination = ROOT / f"dist/rpi-thesis-overleaf-v{version}.zip"
+    temp = destination.with_suffix(".tmp")
+    with zipfile.ZipFile(temp, "w", zipfile.ZIP_DEFLATED) as archive:
+        for name in FILES:
+            if not name.startswith(OVERLEAF_SKIP):
+                archive.write(ROOT / name, name)
+        add_text(archive, "README.md", OVERLEAF_README)
+    temp.replace(destination)
+    return destination
+
+
 def package():
     missing = [name for name in FILES if not (ROOT / name).is_file()]
     if missing:
@@ -148,6 +176,8 @@ def package():
         raise RuntimeError("Not for the student ZIP: " + ", ".join(leaked))
     temp.replace(destination)
     print(f"Local test archive ({len(names)} files): {destination}")
+    overleaf = package_overleaf(version)
+    print(f"Overleaf archive (thesis files only): {overleaf}")
     if CHEATSHEET_NAME not in names:
         print("Cheat sheet PDF not included: run build_site.py --cheatsheet (needs TeX) first.")
     print("No RPI seal or original template included; students download the seal (assets/README.md).")
