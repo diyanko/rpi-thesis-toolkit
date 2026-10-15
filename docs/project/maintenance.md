@@ -83,6 +83,14 @@ Open `dist/site/index.html` in a browser. The build checks every local link and
 heading anchor and fails with the page and link to fix. A missing diagram in
 `docs/diagrams/` is only a warning while the diagrams are being drawn.
 
+The build holds an operating-system file lock beside its output folder,
+using [flock on Unix](https://docs.python.org/3/library/fcntl.html#fcntl.flock)
+or [byte-range locking on Windows](https://docs.python.org/3/library/msvcrt.html#msvcrt.locking).
+The lock file stays in place; the operating system releases the lock when
+the process exits, including after a crash. Do not delete the file while a
+build runs. Linked source files and linked source folders are refused before
+their contents enter the website or starter ZIPs.
+
 How the website is put together:
 
 - `dist/site/index.html` is the landing page: `site/index.html` wrapped in
@@ -107,6 +115,40 @@ How the website is put together:
   hides the link when a drawing is already shown near full size). Without
   JavaScript, code stays selectable and the same links open the picture
   through CSS (`:target`), with Close going back.
+- Optional guide search uses `site/search.js` and a generated
+  `search-index.js`. The build indexes the rendered guide headings and full
+  section text, before navigation is added, and checks every result's page
+  and anchor. Each troubleshooting table row gets a generated anchor and a
+  separate result, using its message and the guide's suggested fix.
+  Optional examples have separate results at their disclosure anchors, so
+  selecting a hidden fix opens its containing example. Text from inside an
+  example is not attributed to the heading above it. Task
+  labels from **How do I…?** also describe their destination sections in the
+  index. Project pages, PDFs, and local files are not indexed. The data
+  loads as a classic script so the same search works from offline `file:`
+  pages without a server. A compact search control beside the appearance
+  switch opens the search dialog. On phones the header control uses a
+  labeled magnifying-glass icon. This is the only search entry point;
+  the sidebar and **How do I…?** keep their task links. Search stays hidden until
+  ready; task links and navigation work without JavaScript. Ctrl+K or Cmd+K
+  opens search; Tab visits result links, arrow keys move between them, Enter
+  from the field opens the first result, and Escape closes the dialog.
+  Ranking favors section headings and task labels over body text, weights
+  distinctive terms more heavily, and tolerates missing words in a longer
+  question. Normalization preserves meaningful symbols such as `??`, `$`,
+  `&`, and braces; distinct “Missing … inserted” errors stay distinct.
+  Pasted logs are reduced to their first diagnostic before the single-line
+  field can discard line breaks. Log searches discard line-number noise.
+  Known error signatures take priority. Synonyms, spelling tolerance,
+  and task-intent rules live in `site/search.js`. Short searches such as
+  `APA`, `TOC`, `MS degree`, or `Biber` lead with the main task rather than
+  an obscure error mentioning that word. Related results are
+  labeled; unrecognized logs point to reading errors and asking for help,
+  without inventing a fix. No query is sent to a server or stored.
+  When changing it, check real guide queries (including `bibliograpy`,
+  `seel`, `my bibliography doesn't show up`, `my picture is on the wrong
+  page`, `??`, and pasted errors with paths and line numbers), keyboard and screen-reader
+  behavior, empty results, both themes, and the packaged offline guide.
 - The optional `site/theme.js` restores a saved Light or Dark choice before
   the stylesheet loads; System leaves appearance to the device. The header
   button appears only after its handlers are ready. Its panel closes with
@@ -137,7 +179,8 @@ How the website is put together:
   source free of class-specific adapters so the one-word claim stays true.
   With TeX present it also compiles `cheatsheet/cheatsheet.tex` to
   `downloads/rpi-thesis-cheatsheet.pdf`.
-- The site may contain only HTML, CSS, SVG, WOFF2 fonts (with their license
+- The site may contain only HTML, CSS, SVG, the named optional JavaScript
+  files and generated search index, WOFF2 fonts (with their license
   text), PNG/WebP files under `previews/`, and the cheat sheet PDF. Git
   history, `_local/`, research, other PDFs, LaTeX sources, `reference/`,
   `assets/` (where students put the RPI seal), and archives are refused.
@@ -161,6 +204,9 @@ files, `assets/README.md` (how to download the seal), `scripts/build.py`,
 been compiled. Maintainer pages, `AGENTS.md`, `CLAUDE.md`, site tooling,
 `cheatsheet/` sources, and every RPI file (the seal, the original template)
 stay out; `package.py` refuses any seal file and any other PDF.
+Packaging also requires a nonempty `site_url` in `site/site.json` for the
+Overleaf README's guide link; an unset address stops packaging before either
+existing ZIP is replaced.
 
 ### Updating pinned tools
 
@@ -228,6 +274,36 @@ and with the file moved aside (as in CI). If `_local/legacy/` exists, it also
 confirms that your local copy of RPI's original template matches the hashes
 in `upstream-files.json`; otherwise it prints SKIP. Parsed
 PDF text cannot judge layout quality, so also look at the pages.
+
+### Coordinating concurrent work
+
+Use the same process for people and AI assistants:
+
+1. Assign one editor to each file, or an explicit region of a shared file.
+   Other reviewers send a reproduction and suggested correction to that
+   editor. Keep independent test fixtures and reports in separate `_local/`
+   folders. Have one person integrate the changes and write the final report.
+2. Run focused checks while editing. Before final verification, stop edits
+   and record a SHA-256 manifest of the inputs being reviewed, the commands,
+   and the tool environment. A passing result applies to those inputs.
+3. Have one build owner run the gates required by
+   [AGENTS.md](../../AGENTS.md#verification-gates). When all are needed, run
+   the thesis build and structural checks, then the website with
+   `--previews`, packaging, and a smoke check of the extracted ZIP. Do not
+   replace that preview build with a plain site build before packaging.
+4. Reuse completed checks while their inputs remain unchanged. A later
+   search correction needs query and browser checks; it does not invalidate
+   an unchanged thesis's engine checks. Compare the input manifest after
+   testing. If an input changed, rerun its affected gates before handoff.
+5. Give the next reviewer one report listing the input manifest, changed
+   files, results, evidence locations, and remaining limits. Distinguish
+   native operating-system tests from simulations and browser event tests
+   from real clipboard checks. Keep commit and publication approval separate.
+
+The existing preview fingerprint checks whether its thesis inputs changed.
+Use that freshness check; do not bypass it or add a second preview cache.
+File locks prevent overlapping website promotions, but they do not freeze
+source files while another editor works.
 
 ## Compatibility promise
 
