@@ -1,0 +1,103 @@
+name: Fresh-machine test
+
+# Before a release, check that brand-new computers can follow
+# docs/get-started.md: install TeX the way the guide says, then compile the
+# unchanged starter. Runs only when a maintainer starts it from the Actions
+# tab (about an hour; the Windows TeX Live install is the slow part).
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 240
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: "Windows 11 + TeX Live (official installer)", os: windows-latest }
+          - { name: "macOS (Apple Silicon) + MacTeX", os: macos-14 }
+          - { name: "Ubuntu 24.04 + distribution TeX Live", os: ubuntu-24.04 }
+          - { name: "Ubuntu 22.04 + distribution TeX Live", os: ubuntu-22.04 }
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install TeX Live (Windows, full scheme, as the guide says)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Invoke-WebRequest https://mirror.ctan.org/systems/texlive/tlnet/install-tl.zip -OutFile install-tl.zip
+          Expand-Archive install-tl.zip -DestinationPath C:\tl-installer
+          $dir = Get-ChildItem C:\tl-installer -Directory | Select-Object -First 1
+          @"
+          selected_scheme scheme-full
+          TEXDIR C:/texlive/current
+          TEXMFLOCAL C:/texlive/texmf-local
+          TEXMFSYSCONFIG C:/texlive/current/texmf-config
+          TEXMFSYSVAR C:/texlive/current/texmf-var
+          instopt_adjustpath 0
+          tlpdbopt_install_docfiles 0
+          tlpdbopt_install_srcfiles 0
+          tlpdbopt_autobackup 0
+          "@ | Set-Content -Encoding ascii C:\tl.profile
+          & "$($dir.FullName)\install-tl-windows.bat" -no-gui -profile C:\tl.profile
+          "C:\texlive\current\bin\windows" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+
+      - name: Install MacTeX (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install --cask mactex-no-gui
+          echo "/Library/TeX/texbin" >> "$GITHUB_PATH"
+
+      - name: Install distribution TeX Live (Ubuntu, full package)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends texlive-full
+
+      - name: Report versions
+        shell: bash
+        run: |
+          pdflatex --version | head -1
+          biber --version | head -1
+          latexmk -v | head -2 | tail -1
+
+      - name: Build helper doctor
+        shell: bash
+        run: python3 scripts/build.py --doctor || python scripts/build.py --doctor
+
+      - name: Compile with latexmk directly (the guide's terminal command)
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/plain"
+          cp -R main.tex metadata.tex preamble.tex rpi-thesis.cls references.bib chapters frontmatter appendices figures assets "$RUNNER_TEMP/plain/"
+          cd "$RUNNER_TEMP/plain"
+          latexmk -norc -pdf -no-shell-escape -interaction=nonstopmode -halt-on-error main.tex
+          test -s main.pdf
+          ! grep -E "There were undefined references|Citation .* undefined|Empty bibliography" main.log
+
+      - name: Compile with the build helper in a folder with a space
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/My Thesis"
+          cp -R main.tex metadata.tex preamble.tex rpi-thesis.cls references.bib chapters frontmatter appendices figures assets scripts "$RUNNER_TEMP/My Thesis/"
+          cd "$RUNNER_TEMP/My Thesis"
+          (python3 scripts/build.py --fresh || python scripts/build.py --fresh)
+          test -s build/main.pdf
+
+      - name: "Info only: folder with accented letters"
+        continue-on-error: true
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/Thèse étudiante"
+          cp -R main.tex metadata.tex preamble.tex rpi-thesis.cls references.bib chapters frontmatter appendices figures assets scripts "$RUNNER_TEMP/Thèse étudiante/"
+          cd "$RUNNER_TEMP/Thèse étudiante"
+          (python3 scripts/build.py --fresh || python scripts/build.py --fresh)
+          test -s build/main.pdf
