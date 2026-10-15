@@ -4,8 +4,9 @@
     python3 scripts/package.py
 
 Needs Pandoc (the guide is rendered by build_site.py). Nothing is uploaded.
-A release needs a current cheat sheet: run build_site.py --cheatsheet (needs
-TeX) first. For a quick local test without it, add --dev.
+A release needs a current cheat sheet and current sample-thesis pictures: run
+build_site.py --previews (needs TeX) first. The guide must be complete (every page
+and picture); for a quick local test that tolerates gaps, add --dev.
 """
 import argparse
 from pathlib import Path
@@ -14,6 +15,7 @@ import re
 import tempfile
 import zipfile
 
+from build import active_sources
 from build_site import OFFLINE_CHEATSHEET, ROOT, build_site, class_version
 
 # Everything a student needs, and nothing for maintainers (no AGENTS.md,
@@ -151,6 +153,34 @@ def cheatsheet_state(path):
     return "stale" if path.stat().st_mtime < newest else "fresh"
 
 
+def document_inputs():
+    """What main.tex needs, read the way build.py reads it: every \\include and
+    \\input target (and the files those load), local .cls/.sty files, .bib files
+    from \\addbibresource, and graphics with literal paths. Returns (needed file
+    names, problems). Example images from TeX Live's mwe package are not files."""
+    scan = active_sources(ROOT)
+    needed = {path.relative_to(ROOT).as_posix() for path in scan.files} | set(scan.assets)
+    problems = [f"{where}: {message}" for where, message, _ in scan.problems]
+    for where, target, kind in scan.missing_assets:
+        if kind == "graphic" and re.match(r"example-(image|grid)", target):
+            continue
+        problems.append(f"{where}: {target} ({kind}) does not exist in the repository")
+    return needed, problems
+
+
+def verify_archive(label, names, skip=()):
+    """Fail if the archive lacks a file the sample thesis needs, so a ZIP that
+    compiles with 'No file x.tex' warnings never ships."""
+    needed, problems = document_inputs()
+    absent = sorted(n for n in needed if n not in names and not n.startswith(skip))
+    absent_text = "".join(f"\n- {n}: used by the sample thesis but not in the {label}; add it to FILES"
+                          " in scripts/package.py" for n in absent)
+    problems_text = "".join(f"\n- {p}" for p in problems)
+    if absent or problems:
+        raise SystemExit(f"The {label} would not build the whole sample thesis:"
+                         + absent_text + problems_text)
+
+
 def package_overleaf(version):
     destination = ROOT / f"dist/rpi-thesis-overleaf-v{version}.zip"
     temp = destination.with_suffix(".tmp")
@@ -159,6 +189,12 @@ def package_overleaf(version):
             if not name.startswith(OVERLEAF_SKIP):
                 archive.write(ROOT / name, name)
         add_text(archive, "README.md", OVERLEAF_README.format(guide_url=guide_url()))
+        names = archive.namelist()
+    try:
+        verify_archive("Overleaf ZIP", names)
+    except SystemExit:
+        temp.unlink()
+        raise
     temp.replace(destination)
     return destination
 
@@ -167,6 +203,7 @@ def package(dev=False):
     missing = [name for name in FILES if not (ROOT / name).is_file()]
     if missing:
         raise FileNotFoundError("Starter files missing: " + ", ".join(missing))
+    verify_archive("starter ZIP", set(FILES))  # before the slow guide build
     version, released = class_version()
     # main.tex asks for the class date, so LaTeX warns students whose rpi-thesis.cls is older.
     wanted = re.search(r"\\documentclass\{rpi-thesis\}\[(\d{4})/(\d\d)/(\d\d)\]", (ROOT / "main.tex").read_text(encoding="utf-8"))
@@ -185,7 +222,8 @@ def package(dev=False):
         )
     with_cheatsheet = state == "fresh"
     with tempfile.TemporaryDirectory() as folder:
-        guide = build_site(Path(folder) / "guide", offline=True, cheatsheet=with_cheatsheet)
+        guide = build_site(Path(folder) / "guide", offline=True, cheatsheet=with_cheatsheet,
+                           complete=not dev)
         # The archive replaces the old one only after everything is in place.
         with zipfile.ZipFile(temp, "w", zipfile.ZIP_DEFLATED) as archive:
             for name in FILES:
@@ -210,6 +248,11 @@ def package(dev=False):
     if leaked:
         temp.unlink()
         raise RuntimeError("Not for the student ZIP: " + ", ".join(leaked))
+    try:
+        verify_archive("starter ZIP", names)
+    except SystemExit:
+        temp.unlink()
+        raise
     temp.replace(destination)
     print(f"Local test archive ({len(names)} files): {destination}")
     overleaf = package_overleaf(version)
@@ -224,6 +267,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument(
         "--dev", action="store_true",
-        help="allow a missing or stale cheat sheet (leaves it out); not for releases",
+        help="allow a missing or stale cheat sheet, missing guide pages, diagrams or pictures; not for releases",
     )
     package(parser.parse_args().dev)

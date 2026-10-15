@@ -99,6 +99,12 @@ jobs:
           test -f START-HERE.html -a -f guide/index.html -a -f latexmkrc
           latexmk -pdf -no-shell-escape -synctex=1 -interaction=nonstopmode -halt-on-error -file-line-error -outdir="$work/starter/build" main.tex
           test -s build/main.pdf
+          # Exit code 0 is not enough: LaTeX only warns "No file chapters/x.tex."
+          # when an \include'd file is missing from the ZIP, and still writes a PDF.
+          if grep -En 'No file [^ ]+\.(tex|bib)|File .[^ ]+. not found|Package biblatex Warning: File' build/main.log; then
+            echo "The starter ZIP builds without a file main.tex asks for (see the lines above)."
+            exit 1
+          fi
           # The offline guide: every link and anchor resolves.
           python3 -I -c "
           import sys
@@ -107,12 +113,18 @@ jobs:
           from build_site import validate
           errors, warnings, pages = validate(Path('guide'), beside=('rpi-thesis-cheatsheet.pdf',))
           print(pages, 'guide pages checked')
-          sys.exit('\n'.join(errors) if errors else 0)
+          # A guide with a missing page, diagram or picture is incomplete: warnings fail too.
+          problems = errors + warnings
+          sys.exit('\n'.join(problems) if problems else 0)
           " "$root"
           # Overleaf ZIP: plain latexmk, as Overleaf runs it.
           cd "$work/overleaf"
           latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
           test -s main.pdf
+          if grep -En 'No file [^ ]+\.(tex|bib)|File .[^ ]+. not found|Package biblatex Warning: File' main.log; then
+            echo "The Overleaf ZIP builds without a file main.tex asks for (see the lines above)."
+            exit 1
+          fi
       - name: Keep the starter ZIP
         uses: actions/upload-artifact@v7
         with:

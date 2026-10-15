@@ -33,6 +33,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from urllib.parse import quote, unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -451,15 +452,17 @@ class Site:
         if parts.scheme or parts.netloc or not parts.path:
             return unescape(href)
         target = posixpath.normpath(posixpath.join(base, unquote(parts.path)))
-        fragment = "#" + parts.fragment if parts.fragment else ""
+        # Keep ?query and #fragment (an SVG's #id, a PDF's #page=2) on every kind of link.
+        fragment = ("?" + parts.query if parts.query else "") + (
+            "#" + parts.fragment if parts.fragment else "")
         if target in self.pages:
             return self.relative(here, self.pages[target]) + fragment
         if target in self.assets:
-            return self.relative(here, self.assets[target])
+            return self.relative(here, self.assets[target]) + fragment
         if target in CHEATSHEET_SOURCES and self.cheatsheet:  # the PDF, when built
-            return self.relative(here, self.cheatsheet)
+            return self.relative(here, self.cheatsheet) + fragment
         if target.startswith("docs/diagrams/"):  # planned diagram, not drawn yet
-            return self.relative(here, "diagrams/" + posixpath.basename(target))
+            return self.relative(here, "diagrams/" + posixpath.basename(target)) + fragment
         if target in self.planned:  # planned guide page, not written yet
             self.warnings.append(f"{source}: link to a guide page not written yet: {href}")
             return None
@@ -817,26 +820,26 @@ def make_previews(destination):
 
 def reuse_previews(destination, final):
     """The offline guide reuses the pictures of the last build_site.py --previews
-    run (dist/site/previews), as package.py reuses its cheat sheet; {} if none."""
-    from previews import read
+    run (dist/site/previews), as package.py reuses its cheat sheet; {} if none.
+    Each picture records a hash of the thesis files and of previews.py it was
+    made from (previews.fingerprint); pictures made from anything else are
+    stale and left out."""
+    from previews import fingerprint, read
 
     source = ROOT / "dist/site/previews"
     if not source.is_dir() or source.is_symlink() or final.resolve() == source.parent.resolve():
         return {}
-    sources = [ROOT / name for name in ("rpi-thesis.cls", "main.tex", "metadata.tex", "preamble.tex",
-                                        "references.bib", "docs/why-latex.md")]
-    for folder in ("frontmatter", "chapters", "appendices"):
-        sources += (ROOT / folder).glob("*.tex")
-    pictures = [path for path in source.glob("*.png") if path.is_file()]
-    newest = max((path.stat().st_mtime for path in sources if path.is_file()), default=0)
-    if pictures and newest > min(path.stat().st_mtime for path in pictures):
-        print("WARNING: the sample-thesis pictures in dist/site/previews are older than the thesis "
-              "files, so the offline guide leaves them out. Run build_site.py --previews first.")
+    pictures = [path for path in source.glob("*.png") if path.is_file() and not path.is_symlink()]
+    current = fingerprint()
+    made = read(source)
+    if pictures and any(made.get(path.stem, {}).get("fingerprint") != current for path in pictures):
+        print("WARNING: the sample-thesis pictures in dist/site/previews were made from other thesis "
+              "files (or an older previews.py), so the offline guide leaves them out. Run "
+              "build_site.py --previews first.")
         return {}
     (destination / "previews").mkdir()
-    for path in source.glob("*.png"):
-        if path.is_file() and not path.is_symlink():
-            shutil.copyfile(path, destination / "previews" / path.name)
+    for path in pictures:
+        shutil.copyfile(path, destination / "previews" / path.name)
     return read(destination / "previews")
 
 
@@ -906,6 +909,13 @@ def validate(destination, beside=()):
             parsed[path] = PageLinks(path)
         return parsed[path]
 
+    svg_ids = {}
+
+    def ids_of(svg):
+        if svg not in svg_ids:
+            svg_ids[svg] = set(SVG_ID.findall(svg.read_text(encoding="utf-8")))
+        return svg_ids[svg]
+
     pages = sorted(root.rglob("*.html"))
     for page in pages:
         name = page.relative_to(root).as_posix()
@@ -927,30 +937,34 @@ def validate(destination, beside=()):
             elif address.fragment and target.suffix == ".html":
                 if unquote(address.fragment) not in parse(target).ids:
                     errors.append(f"{name}: missing heading or anchor: {link}")
+            elif address.fragment and target.suffix == ".svg" and not target.is_symlink():
+                if unquote(address.fragment) not in ids_of(target):
+                    errors.append(f"{name}: missing id in the picture: {link}")
     # Files that other files load: fonts and pictures named in CSS url(...), and
-    # local files or #fragments named by an SVG's href / xlink:href.
+    # local files or #fragments named by an SVG's href / xlink:href / url(...).
+    # Root-relative addresses start at the website folder.
     for path in sorted(root.rglob("*")):
         if path.suffix not in (".css", ".svg") or path.is_symlink():
             continue
         name = path.relative_to(root).as_posix()
         text = path.read_text(encoding="utf-8")
-        if path.suffix == ".css":
-            references = [match[2] for match in CSS_URL.finditer(text)]
-        else:
-            references = SVG_REF.findall(text)
-        ids = set(SVG_ID.findall(text))
+        references = [match[2] for match in CSS_URL.finditer(text)]
+        if path.suffix == ".svg":
+            references += SVG_REF.findall(text)
         for reference in references:
             address = urlsplit(unescape(reference.strip()))
-            if address.scheme or address.netloc or address.path.startswith("/") or (
-                    not address.path and not address.fragment):
+            if address.scheme or address.netloc or (not address.path and not address.fragment):
                 continue  # data: URIs, web addresses
-            target = (path.parent / unquote(address.path)).resolve() if address.path else path
+            if address.path.startswith("/"):
+                target = (root / unquote(address.path).lstrip("/")).resolve()
+            else:
+                target = (path.parent / unquote(address.path)).resolve() if address.path else path.resolve()
             if not target.is_relative_to(root):
                 errors.append(f"{name}: reference leaves the website: {reference}")
             elif not target.is_file():
                 errors.append(f"{name}: missing file: {reference}")
-            elif address.fragment and path.suffix == ".svg" and target == path.resolve():
-                if unquote(address.fragment) not in ids:
+            elif address.fragment and target.suffix == ".svg":
+                if unquote(address.fragment) not in ids_of(target):
                     errors.append(f"{name}: missing id: {reference}")
     for path in sorted(root.rglob("*")):
         relative = path.relative_to(root)
@@ -1007,42 +1021,99 @@ def pid_running(pid):
     return True
 
 
+def lock_owner(lock):
+    """(process number or 0, seconds since the lock changed) for an existing lock."""
+    try:
+        age = time.time() - lock.stat().st_mtime
+    except OSError:
+        return 0, 0.0
+    try:
+        return int(lock.read_text().strip() or 0), age
+    except (OSError, ValueError):
+        return 0, age
+
+
+def lock_is_live(owner, age):
+    """A lock whose owner runs is live. One that is empty or unreadable is
+    live for a minute: its writer may be about to put its number in."""
+    return pid_running(owner) if owner else age < LOCK_GRACE
+
+
+LOCK_GRACE = 60  # seconds an unreadable or empty lock counts as in use
+
+
+def take_lock(lock):
+    """Create `lock` already holding this process's number, or raise
+    FileExistsError. The number is written to a private file first and linked
+    into place, so no other process can ever see an empty lock."""
+    private = lock.with_name(f"{lock.name}.{os.getpid()}.new")
+    private.write_text(str(os.getpid()))
+    try:
+        try:
+            os.link(private, lock)  # atomic: fails if the lock exists
+        except FileExistsError:
+            raise
+        except OSError:  # no hard links here: exclusive create (the number follows at once)
+            handle = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            with os.fdopen(handle, "w") as out:
+                out.write(str(os.getpid()))
+    finally:
+        private.unlink(missing_ok=True)
+
+
 @contextlib.contextmanager
 def build_lock(destination):
     """One build at a time per destination: a lock file beside it, with this process's
     number. A lock left by a process that is gone is replaced."""
     lock = destination.parent / f".{destination.name}.lock"
     destination.parent.mkdir(parents=True, exist_ok=True)
-    for _ in range(2):
+    for _ in range(5):
         try:
-            handle = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-        except FileExistsError:
-            try:
-                owner = int(lock.read_text().strip() or 0)
-            except (OSError, ValueError):
-                owner = 0
-            if owner and pid_running(owner):
-                raise SystemExit(f"Another build of {destination.name} is running (process {owner}). "
-                                 f"Wait for it to finish; if it is not running, delete {lock}.")
-            lock.unlink(missing_ok=True)
-        else:
-            with os.fdopen(handle, "w") as out:
-                out.write(str(os.getpid()))
+            take_lock(lock)
             break
+        except FileExistsError:
+            owner, age = lock_owner(lock)
+            if lock_is_live(owner, age):
+                raise SystemExit(f"Another build of {destination.name} is running"
+                                 + (f" (process {owner})" if owner else "") + ". "
+                                 f"Wait for it to finish; if it is not running, delete {lock}.")
+            # Stale. Move it aside (atomic) so two waiters cannot both delete a
+            # lock a third has just taken, then check what was moved.
+            aside = lock.with_name(f"{lock.name}.{os.getpid()}.stale")
+            try:
+                lock.rename(aside)
+            except OSError:
+                continue
+            moved, moved_age = lock_owner(aside)
+            if moved != owner and lock_is_live(moved, moved_age):
+                try:
+                    os.link(aside, lock)  # we took a live lock: put it back
+                except OSError:
+                    pass
+                aside.unlink(missing_ok=True)
+                raise SystemExit(f"Another build of {destination.name} is running (process {moved}).")
+            aside.unlink(missing_ok=True)
     else:
         raise SystemExit(f"Could not take the build lock {lock}; delete it if no build is running.")
     try:
         yield
     finally:
-        lock.unlink(missing_ok=True)
+        owner, _ = lock_owner(lock)
+        if owner == os.getpid():
+            lock.unlink(missing_ok=True)
 
 
-def build_site(destination=None, offline=False, previews=False, cheatsheet=False, publish=False):
+def build_site(destination=None, offline=False, previews=False, cheatsheet=False, publish=False,
+               complete=False):
     """Build the website, or with offline=True the guide for the starter ZIP.
     Offline, cheatsheet=True means the caller puts OFFLINE_CHEATSHEET beside
     the destination folder, so the guide links to it. The build happens in a
     sibling folder, which replaces `destination` only after every check passes.
-    publish=True is the strict mode for deployment (see the module docstring)."""
+    publish=True is the strict mode for deployment (see the module docstring).
+    complete=True is the content gate the starter ZIP uses: every guide page in
+    NAV, every referenced diagram and every sample-thesis picture must exist
+    and the build must produce no warnings. It does not check the release
+    version (that is publish's job)."""
     check_pandoc()
     destination = Path(destination or ROOT / "dist/site").absolute()
     with build_lock(destination):
@@ -1054,11 +1125,19 @@ def build_site(destination=None, offline=False, previews=False, cheatsheet=False
         try:
             shutil.rmtree(stage, ignore_errors=True)
             stage.mkdir()
-            build_into(stage, destination, offline, previews, cheatsheet, publish)
+            build_into(stage, destination, offline, previews, cheatsheet, publish, complete)
             old = destination.parent / f"{destination.name}.old-{os.getpid()}"
-            if destination.exists():
+            moved = destination.exists()
+            if moved:
                 destination.rename(old)
-            stage.rename(destination)
+            try:
+                stage.rename(destination)
+            except OSError:
+                if moved:  # put the previous site back; it is still the good one
+                    if destination.exists():
+                        shutil.rmtree(destination, ignore_errors=True)
+                    old.rename(destination)
+                raise
             shutil.rmtree(old, ignore_errors=True)
         finally:
             shutil.rmtree(stage, ignore_errors=True)
@@ -1066,7 +1145,7 @@ def build_site(destination=None, offline=False, previews=False, cheatsheet=False
     return destination
 
 
-def build_into(destination, final, offline, previews, cheatsheet, publish):
+def build_into(destination, final, offline, previews, cheatsheet, publish, complete=False):
     """Write and check the site in `destination` (the staging folder); `final` is
     where it will end up."""
     site = Site(offline)
@@ -1096,11 +1175,15 @@ def build_into(destination, final, offline, previews, cheatsheet, publish):
         site.cheatsheet = "../" + OFFLINE_CHEATSHEET
     elif cheatsheet and build_cheatsheet(destination):
         site.cheatsheet = CHEATSHEET_PDF
-    if publish and not offline:
+    strict = publish or complete  # missing content stops the build instead of warning
+    if strict:
         missing = [name for name in REQUIRED_PREVIEWS if name not in site.previews]
         if missing:
-            site.errors.append("--publish needs every sample-thesis picture (run with --previews and LaTeX); "
-                               "missing: " + ", ".join(missing))
+            site.errors.append(("--publish" if publish else "The complete guide")
+                               + " needs every sample-thesis picture (run build_site.py --previews with "
+                               "LaTeX, after your last change to the thesis files); missing: "
+                               + ", ".join(missing))
+    if publish and not offline:
         if not site.cheatsheet:
             site.errors.append("--publish needs the cheat sheet PDF (run with --previews or --cheatsheet and LaTeX).")
     for source, output in site.pages.items():
@@ -1121,8 +1204,9 @@ def build_into(destination, final, offline, previews, cheatsheet, publish):
     errors, warnings, count = validate(destination, beside)
     problems = site.warnings + warnings
     for warning in problems:
-        print(("ERROR (--publish): " if publish else "WARNING: ") + warning)
-    if publish:  # a missing page, diagram or picture must stop a deployment
+        print(("ERROR (" + ("--publish" if publish else "complete guide") + "): " if strict
+               else "WARNING: ") + warning)
+    if strict:  # a missing page, diagram or picture must stop a deployment or a release ZIP
         errors = errors + problems
     if site.errors or errors:
         raise SystemExit("Website check failed (the previous site, if any, is untouched):\n- "
