@@ -2,99 +2,117 @@
 
 For anyone adding sources to a thesis or dissertation that already compiles
 ([get started](get-started.md) if not). List each source once in
-`references.bib`, cite it with `\cite{key}`, and LaTeX builds the reference list.
+`references.bib`, cite it with `\cite{key}`, and LaTeX builds the reference
+list for you.
 
-![How a citation travels. A Zotero record (author, title, year) has a citation key, lamport1994, pinned with Better BibTeX and exported into references.bib, or you paste an entry by hand. The chapter contains only \cite{lamport1994}. When you compile, Biber prints [1] in the text and the full entry under REFERENCES. The record, the key, and the formatted citation are different things; only the key goes in your chapter.](diagrams/citation-flow.svg)
+## Try the sample citation
 
-*In words:* a source's record lives in Zotero; its **key** goes into
-`references.bib` and into `\cite{key}` in your chapter; Biber (the program
-that formats references) turns that into [1] and a full reference-list entry
-when you compile.
+Try it on the source already in the starter. Leave `references.bib` alone.
+
+1. Open `chapters/01-introduction.tex`.
+2. Add this as a new paragraph:
+
+   ```tex
+   This example cites the sample book~\cite{lamport1994}.
+   ```
+
+3. Compile `main.tex` and find the new sentence in your PDF. You should see
+   another [1] pointing to Lamport's book, already listed under REFERENCES.
+
+That is a working citation. Ready for your own sources? Pick a style below,
+then collect them with Zotero or
+[paste an entry by hand](#if-you-cant-use-zotero-paste-an-entry-by-hand).
+
+![How a citation travels. A source's record (author, title, year) gets a citation key such as lamport1994 and goes into references.bib, from Zotero or pasted by hand. The chapter contains only \cite{lamport1994}. When you compile, Biber prints [1] in the text and the full entry under REFERENCES.](diagrams/citation-flow.svg)
+
+*In words:* a source's **key** goes into `references.bib` and into
+`\cite{key}` in your chapter. Biber (the program that formats references)
+turns that into [1] and a full reference-list entry when you compile.
 
 ## Step 1: Agree on a style with your advisor
 
 Fields differ: the humanities often use Chicago or MLA, the social sciences
 APA, and engineering IEEE. The sample's numbered style only shows citations
-working; it is **not** an official style for any department, and neither are
-LaTeX defaults such as `plain`. RPI's citation guidance is under *Additional Resources* on the
+working; it is **not** a department's style. RPI's citation guidance is under
+*Additional Resources* on the
 [OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation).
 Use one style throughout ([change the citation style](#change-the-citation-style)).
 
 ## Step 2: Collect and cite sources with Zotero
 
 This guide suggests [Zotero](https://www.zotero.org/), a free citation
-manager: it keeps your papers and PDFs together, shares libraries with
-co-authors, and also works with Word. It is a convenience, not an OGE requirement. Starting
-early pays off: real records saved while you read, with stable keys, are
-easy to cite in any chapter later.
+manager that keeps your papers together and shares libraries with co-authors.
+It is a convenience, not an OGE requirement.
 
 1. **Install Zotero and its browser connector**
    ([Zotero quick start](https://www.zotero.org/support/quick_start_guide)).
-   Optionally add [Better BibTeX](https://retorque.re/zotero-better-bibtex/)
-   for stable citation keys, so a key you cite today still matches after
-   later exports.
+   Optionally add [Better BibTeX](https://retorque.re/zotero-better-bibtex/),
+   which keeps citation keys stable between exports.
 2. **Save sources while you read** with the connector button, into one
    thesis collection. Check each item; imported details are often incomplete.
-3. **Export the collection to `references.bib`** in your thesis folder, in
-   **BibLaTeX** (or **Better BibLaTeX**) format
-   ([Zotero: exporting](https://www.zotero.org/support/kb/exporting)). This
-   replaces the sample file. On Overleaf, upload it in place of the old one,
-   and again whenever it changes
-   ([auto-export](#set-it-and-forget-it) can automate this).
-4. **Cite with `\cite{key}`.** The key is the word after `@article{` (or
-   `@book{`, ...) in the exported entry; Better BibTeX also shows it in Zotero:
+3. **Export to `references.bib`.** Do these three things:
+   1. Export the collection in **BibLaTeX** (or **Better BibLaTeX**) format
+      to `references.bib` in your thesis folder, replacing the sample
+      ([Zotero: exporting](https://www.zotero.org/support/kb/exporting)).
+   2. Replace or remove the sample citations `lamport1994` in
+      `chapters/01-introduction.tex` and `rpi-submission` in
+      `appendices/additional-material.tex`, so every citation uses a key from
+      your file.
+   3. On Overleaf, upload the new file over the old one, and again whenever
+      it changes ([auto-export](#set-it-and-forget-it) can automate this).
+4. **Cite with `\cite{your-key}`.** The key is the word after `@article{` (or
+   `@book{`, ...) in the exported entry. Better BibTeX also shows it in Zotero:
 
    ```tex
-   An earlier account explains this approach~\cite{lamport1994}.
+   An earlier account explains this approach~\cite{your-key}.
    ```
 
 5. **Compile.** Only sources you cite appear in the reference list.
 
 A key in **bold** means Biber has not run or the key is not in the file
-([bold keys](how-it-works.md#bold-citation-keys-and-question-marks)); the
-sample chapters' citations stay bold until you replace that text. The style
-chosen inside Zotero does not affect your PDF.
+([bold keys](how-it-works.md#bold-citation-keys-and-question-marks)). The
+style chosen inside Zotero does not affect your PDF.
 
 ### Where Zotero keeps your library
 
 **Never put the Zotero data folder in OneDrive, Dropbox, iCloud, or Google
 Drive**; it can corrupt the database ([Zotero: syncing](https://www.zotero.org/support/sync)).
 Use Zotero sync plus your [computer backup](workflows.md#back-up-your-work).
-`references.bib` is not a library backup, but it is safe in a synced folder.
+`references.bib` is safe in a synced folder, but it is not a library backup.
 
-<details id="set-it-and-forget-it"><summary>For experienced users: Zotero storage, sync, Overleaf, and auto-export</summary>
+<details id="set-it-and-forget-it"><summary>Optional: Zotero storage, sync, Overleaf, and auto-export</summary>
 
-- **Storage:** data sync is free and unlimited; file (PDF) sync has limited
-  free storage, and group files count against the group owner's
+- **Storage:** data sync is free; PDF sync has limited free storage, and
+  group files count against the group owner's
   ([Zotero: storage](https://www.zotero.org/support/storage_faq)). If it
-  fills up, buy more, use WebDAV, or keep PDFs only on your computer.
+  fills up, buy more, use WebDAV, or keep PDFs on your computer.
   <!-- Maintainer: checked 14 Oct 2026 against zotero.org/support/sync and storage_faq. Neither page says what happens at a full quota, so the guide does not describe it. -->
-- **New computer:** use Zotero sync, or copy the whole data folder while
-  Zotero is closed on both computers
-  ([Zotero: moving your library](https://www.zotero.org/support/kb/transferring_a_library)).
+- **New computer:** use Zotero sync, or copy the data folder while Zotero is
+  closed ([Zotero: moving your library](https://www.zotero.org/support/kb/transferring_a_library)).
 - **Overleaf:** its built-in [Zotero integration](https://docs.overleaf.com/integrations-and-add-ons/reference-manager-integrations/zotero)
-  is available only on some
-  [Overleaf plans](https://docs.overleaf.com/getting-started/free-and-premium-plans).
-  Free routes: upload `references.bib` again when it changes, or link it (below).
+  needs some [Overleaf plans](https://docs.overleaf.com/getting-started/free-and-premium-plans).
+  Free routes: upload `references.bib` again when it changes, or link it
+  (next bullet).
 - **Auto-export:** with [Better BibTeX](https://retorque.re/zotero-better-bibtex/exporting/auto/),
-  tick **Keep updated** when exporting, into your thesis folder or a synced
-  folder. On Overleaf, use **Upload → From external URL** with a
-  direct-download link ([Overleaf: file from a URL](https://docs.overleaf.com/managing-projects-and-files/adding-files-to-a-project/adding-a-file-from-a-url)),
-  then click **Refresh** on the file to pull changes. It is not listed as a
-  [premium feature](https://docs.overleaf.com/getting-started/free-and-premium-plans/premium-features);
-  if your **Upload** menu lacks it, check your plan.
-  <!-- Maintainer: checked 14 Oct 2026. Overleaf's premium-features page does not mention "From external URL"; its Google Drive page says linked files "can be refreshed at any time" (manual). Recheck both pages yearly. -->
-- **Cautions:** export only a thesis collection; anyone with the share link
-  can read it; pin [citation keys](https://retorque.re/zotero-better-bibtex/citing/).
-  To keep hand-written entries too, export to `zotero.bib` and add
-  `\addbibresource{zotero.bib}` in `preamble.tex`; keys must be unique.
+  tick **Keep updated** when exporting into your thesis folder, and Zotero
+  rewrites that file whenever your library changes. On Overleaf, upload the
+  file again after changes (or use the Zotero integration above); linking a
+  file on your computer by web address needs a public link, which exposes
+  your whole bibliography, so this guide leaves it out.
+- **Cautions:** export only a thesis collection and pin
+  [citation keys](https://retorque.re/zotero-better-bibtex/citing/).
+  **The exporter owns the file it writes to.** Every export or auto-export
+  replaces it completely, so edits made inside it are lost. To keep
+  hand-written entries too, export to `zotero.bib`, leave `references.bib`
+  for your own entries, and add `\addbibresource{zotero.bib}` in
+  `preamble.tex`. Keys must be unique across both files.
 
 </details>
 
 ## If you can't use Zotero: paste an entry by hand
 
 Paste a BibTeX entry from the publisher, a library database, or Google
-Scholar. These are often slightly wrong, so check each one.
+Scholar. They are often slightly wrong, so check each one.
 
 1. Copy the source's BibTeX or BibLaTeX entry. It looks like:
 
@@ -108,17 +126,35 @@ Scholar. These are often slightly wrong, so check each one.
    }
    ```
 
-2. Paste it into `references.bib`. The word after `@book{` is the **key**,
-   here `lamport1994`. Every key must be unique.
-3. Cite it with `\cite{lamport1994}` and compile.
+   This example is already in the starter; do not add it twice.
 
-Wrap capitals that must stay capitalized in braces, like `{RPI}`.
+2. Paste your source's entry into `references.bib`. The word after `@book{`
+   is the **key**, here `lamport1994`. Every key must be unique.
+3. Cite it with `\cite{key}`, using your entry's key, and compile.
+
+Wrap capitals that must stay capitalized in braces, like `{RPI}`. Two more
+things to get right in the `author` field:
+
+- **Several people:** join the names with the word `and`, typed literally:
+  `author = {Alice Smith and Bob Jones}`. Commas and semicolons do not
+  separate authors.
+- **An organization:** use double braces so it is not read as a person's
+  name: `author = {{Example Research Institute}}`.
+
+Only have a messy reference? An AI chat can turn it into a BibTeX entry.
+Then compare every field with the source, and paste only published
+references, never confidential material.
 
 ## Web sources need an access date
 
 OGE requires an **access date for every reference with a URL**, even if your
-citation style would normally leave it out. Add `urldate` with the date *you*
-read it (year-month-day):
+style would normally leave it out. Add `urldate` with the date *you* read it
+(year-month-day).
+
+If the entry came from Zotero, fill in the item's **Accessed** field in
+Zotero and export again; Zotero writes it as `urldate`. Do not type it into
+an exported file, because the next export replaces it. Edit the entry
+directly only in a file you maintain by hand, like this one:
 
 ```bibtex
 @online{rpi-submission,
@@ -129,21 +165,25 @@ read it (year-month-day):
 }
 ```
 
-Check that the date actually **prints** in your PDF; some styles hide it.
-The build helper flags any `url` without a `urldate`. DOIs need no access date.
+Check that the date **prints** in your PDF; some styles hide it. The build
+helper flags any `url` without a `urldate`. DOIs need no access date.
 
 ## Change the citation style
 
-In `preamble.tex` (the file for the citation style and extra packages), find
-this line; it is the only one you need to change:
+Four parts work together: the **class** sets the page layout, **biblatex**
+provides the citation commands, the **style** decides what they print, and
+**Biber** processes `references.bib`. In `preamble.tex` (the file for the
+citation style and extra packages), find this line:
 
 ```tex
 \usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
 ```
 
-Replace `style=numeric,sorting=none` with a starting point from this table:
+Replace `style=numeric,sorting=none` with a starting point from this table.
+An extra package is an add-on; the ones listed are included in full TeX Live
+and Overleaf. Do not also load `natbib`; it is a separate system.
 
-| Style family | Replace with | Package, an add-on (included in full TeX Live and Overleaf) |
+| Style family | Replace with | Extra package |
 | --- | --- | --- |
 | Numbered in order of citation (sample) | `style=numeric,sorting=none` | built in |
 | Generic author–year | `style=authoryear` | built in |
@@ -154,39 +194,80 @@ Replace `style=numeric,sorting=none` with a starting point from this table:
 | Chicago | not a one-word swap; follow its manual | [biblatex-chicago](https://ctan.org/pkg/biblatex-chicago) |
 
 These are starting points, not validated department presets; see each
-package's manual. For a paper in a classic-BibTeX venue template, see
+package's manual. After changing the style, the plain `\cite` may print
+differently, so choose the command by what you want to read:
+
+| You want | Type | Numeric sample | APA |
+| --- | --- | --- | --- |
+| A citation in brackets or parentheses | `\parencite{key}` | [1] | (Lamport, 1994) |
+| The author as part of the sentence | `\textcite{key}` | Lamport [1] | Lamport (1994) |
+| A page or section | `\parencite[23]{key}` | [1, p. 23] | (Lamport, 1994, p. 23) |
+| Whatever the style calls a plain citation | `\cite{key}` | [1] | Lamport, 1994 (no parentheses) |
+| The full reference in the text | `\fullcite{key}` | see below | see below |
+
+Use `\parencite` and `\textcite` and the result looks right in every style.
+A paper template that uses classic BibTeX with `natbib` has the matching
+commands `\citep` (like `\parencite`) and `\citet` (like `\textcite`); see
 [turn a chapter into a paper](workflows.md#turn-a-chapter-into-a-paper).
+
+### Print a full reference in the text
+
+[Chapter attribution](writing.md#chapters-based-on-published-papers) and
+[reproduced figure captions](writing.md#reproduced-figures-and-permissions)
+need the whole reference where it is cited. `\fullcite{key}` does this in the
+styles below. Tested with compiled examples of a journal article, a book,
+and a web page; check your own entries.
+
+| Style | `\fullcite{key}` |
+| --- | --- |
+| numeric, authoryear, IEEE, APA, Chicago author–date | Prints the full reference |
+| ACS (`chem-acs`) | Prints the reference in ACS form, with abbreviated first names; with many authors it shortens the list to the first author and "et al.", unlike the reference list, and it omits a DOI that the reference list may show. Check that this is enough |
+| MLA (`mla`) | **Prints nothing.** Add the lines below to `preamble.tex` |
+
+For MLA, put this under `\addbibresource{references.bib}` in `preamble.tex`.
+It makes `\fullcite` print the full reference:
+
+```tex
+\DeclareCiteCommand{\fullcite}{\usebibmacro{prenote}}
+  {\usedriver{\DeclareNameAlias{sortname}{default}}{\thefield{entrytype}}}
+  {\multicitedelim}{\usebibmacro{postnote}}
+```
+
+This worked for journal articles and books. For a source whose author is an
+organization, or one you cite in full more than once, MLA may print a long
+dash in place of the author, because it hides a repeated author. Check each
+one, and write the reference out by hand if the dash is wrong.
+<!-- TODO(verify): the MLA workaround was tested with pdflatex and Biber on a small fixture only; the organization-author dash is a biblatex-mla repeated-author behavior that was not fully resolved. -->
 
 ## Check the output yourself
 
-Citation managers handle journal articles well but are much less reliable for
+Citation managers handle journal articles well but are far less reliable for
 **websites, reports, theses, datasets, software, standards, and archival
-sources**. Compare every reference in the PDF with your official style guide.
+sources**. Compare every reference in the PDF with your style guide.
 
 ### Numbered styles: check delayed figures and tables
 
 In a style numbered in order of first citation (such as IEEE, or the
 sample), OGE's formatting checklist expects reference 1 to be the first
 citation in Chapter 1, and a caption's citation to be numbered where its
-figure or table appears in the body. The list of figures does not change the
-numbers, and the abstract has no citations (OGE manual §1.8).
+figure or table appears in the body. The abstract has no citations (OGE
+manual §1.8).
 
 LaTeX numbers citations in the order they appear in your `.tex` files, not
 where they land in the PDF. A figure that floats to a later page can show
-[2] after text that already shows [3]. If your style requires order of first
-appearance, look at every figure and table that moved away from its first
-mention. To fix one:
+[2] after text that already shows [3]. Check each figure and table that
+moved away from its first mention. To fix one:
 
-- move its whole `figure` or `table` block (from `\begin` to `\end`) to
-  directly after the paragraph that first mentions it, then compile; or
+- move its whole `figure` or `table` block (`\begin` to `\end`) to directly
+  after the paragraph that first mentions it, then compile; or
 - cite the same source in that paragraph, before the figure.
 
-Don't renumber references by hand; LaTeX renumbers them when you compile.
+Never renumber by hand.
 
-Not every style numbers in order: SIAM, for example, uses numbers from an
-alphabetical reference list, so they are not sequential in the text (OGE
-manual §3.3), and author–year styles have no numbers. Use the style you
-agreed with your advisor ([step 1](#step-1-agree-on-a-style-with-your-advisor)).
+Not every style numbers in order. SIAM, for example, numbers from an
+alphabetical reference list (OGE manual §3.3), and author–year styles have no
+numbers. Use the style you agreed with your advisor
+([step 1](#step-1-agree-on-a-style-with-your-advisor)).
 
 ## If co-authors use Word
 

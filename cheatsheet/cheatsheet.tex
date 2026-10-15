@@ -103,24 +103,34 @@
       ([yshift=-2.6pt]t.south west)--([yshift=-2.6pt]t.south east);}}
 \end{minipage}%
 \hfill
-\begin{minipage}[b]{.27\linewidth}\raggedleft
-  {\fontsize{8}{9.6}\selectfont\aside{You write the words.\\
-  The template sets margins, headings,\\ numbering, contents \& references.}}
-\end{minipage}%
-\hspace{7pt}%
-\begin{tikzpicture}[baseline=0pt,line width=.6pt,ink]
-  % a small potted sprout, echoing the guide's illustrations
-  \fill[terra!22] (-.17,0)--(.17,0)--(.21,.27)--(-.21,.27)--cycle;
-  \draw (-.17,0)--(.17,0)--(.21,.27)--(-.21,.27)--cycle;
-  \draw (-.24,.27) rectangle (.24,.33);
-  \draw[sage!80!ink] (0,.33) .. controls (0,.48) and (.02,.56) .. (0,.66);
-  \draw[fill=sage!35] (0,.52) .. controls (.08,.66) and (.24,.66) .. (.32,.62)
-    .. controls (.24,.5) and (.1,.48) .. (0,.52);
-  \draw[fill=sage!35] (0,.6) .. controls (-.08,.74) and (-.22,.76) .. (-.3,.7)
-    .. controls (-.22,.59) and (-.08,.57) .. (0,.6);
-\end{tikzpicture}}%
+\begin{minipage}[b]{.31\linewidth}\raggedleft
+% the whole idea in one line: you write the .tex files, compiling formats them
+\begin{tikzpicture}[baseline=0pt,line width=.6pt,ink,x=1.55cm,y=1.15cm,
+    lbl/.style={font=\fontsize{7.6}{8.5}\selectfont\itshape,text=terra,inner sep=1pt},
+    go/.style={-{Stealth[length=3.6pt,width=3.4pt]},terra,line width=.7pt,
+      decorate,decoration={snake,amplitude=.45pt,segment length=6pt,post length=4pt}}]
+  % your files: a sheet of plain text
+  \draw[fill=codebg] (0,0) -- (0,.62) -- (.36,.62) -- (.46,.52) -- (.46,0) -- cycle;
+  \draw (.36,.62) -- (.36,.52) -- (.46,.52);
+  \node[font=\ttfamily\fontsize{7.4}{8}\selectfont,text=inkblue] at (.2,.4) {.tex};
+  \foreach \y in {.25,.17,.09} \draw[ink!45,line width=.45pt] (.08,\y) -- (.38,\y);
+  % compile: a small gear-like badge
+  \node[circle,draw=ink,fill=sage!16,minimum size=23pt,inner sep=0pt,
+    font=\fontsize{8}{9}\selectfont\bfseries] (c) at (1.28,.31) {TeX};
+  % the PDF: a formatted page with a heading and a page number
+  \draw[fill=white] (2.1,0) rectangle (2.56,.62);
+  \draw[terra,line width=.8pt] (2.17,.52) -- (2.38,.52);
+  \foreach \y in {.42,.35,.28,.21,.14} \draw[ink!55,line width=.4pt] (2.17,\y) -- (2.49,\y);
+  \node[font=\fontsize{5}{5}\selectfont] at (2.33,.065) {7};
+  \draw[go] (.54,.31) -- (c.west);
+  \draw[go] (c.east) -- (2.02,.31);
+  \node[lbl,anchor=north] at (.23,-.04) {you write};
+  \node[lbl,anchor=north] at (1.28,-.04) {compile};
+  \node[lbl,anchor=north] at (2.33,-.04) {it formats};
+\end{tikzpicture}
+\end{minipage}}%
 \noindent\usebox{\headerbox}\par
-\vspace{7pt}
+\vspace{3.5pt}
 % ------------------------------------------------------------------ columns
 \setlength{\colw}{\dimexpr(\linewidth-20pt)/3\relax}
 \setlength{\colh}{\dimexpr\textheight-\ht\headerbox-\dp\headerbox-7pt-16pt\relax}
@@ -319,7 +329,7 @@ Declaration of Co-Contribution (not needed if you are the sole author).}
 \end{tikzpicture}\par\vspace{1pt}
 \raggedright
 \note{One click runs it all: \textbf{Recompile} on Overleaf, Build in your
-editor, or \code{python3 scripts/build.py}.}
+editor, or \code{python3 scripts/build.py} (Windows: \code{py}).}
 \note{Read the \textbf{first} error, with its file and line number; later
 errors are often side effects.}
 \end{fg}

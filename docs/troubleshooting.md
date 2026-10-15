@@ -1,27 +1,26 @@
 # Fixing problems
 
 For anyone whose compile stops with an error or whose PDF looks wrong, on
-your own computer or Overleaf. Errors are normal — every LaTeX writer sees
-them, and most take a minute to fix once you know where to look.
+your computer or Overleaf. Errors are normal. Most take a minute to fix once
+you know where to look.
 
-Quick habits that save the day:
-
-1. Compile after each small change, so you know what caused a problem.
-2. Undo the last change if you are stuck, then try again more slowly.
-3. Warnings still produce a PDF, but review them before submission.
-
-Want to know *why* something happens? See [how it works](how-it-works.md).
+Know the message? Jump to [common messages](#common-messages). Not in the
+list? Paste the first error into an [AI chat](#ask-an-ai-chat-to-explain-it)
+or [ask for help](#ask-for-help). Want to know *why* something happens? See
+[how it works](how-it-works.md).
 
 ## When a compile stops
 
-A failed compile never changes your files: your writing is exactly as you
+A failed compile never changes your files. Your writing is exactly as you
 left it.
 
-![What to do when a compile stops, in six steps. 1: the build stopped. 2: find the first error in the messages. 3: it names a file and a line number; look at that line and the line before it. 4: check the common culprits: a typo in a command, a missing closing brace or dollar sign, one of the special characters & % _ # $ typed without a backslash, or a wrong file name or path. 5: fix it and compile again. 6: still stuck, or the error is about a tool such as latexmk or Biber: look it up in the table of common messages, then ask for help.](diagrams/error-triage.svg)
+![What to do when a compile stops: find the first error, open the file and line it names, check the usual culprits (typo in a command, missing brace, unescaped special character, wrong file name), fix, and compile again. Still stuck: look it up in the common messages, then ask for help.](diagrams/error-triage.svg)
 
 *In words:* find the **first** error, look at the file and line it names (and
-the line before), check the usual culprits, fix, and compile again. Still
-stuck? See [common messages](#common-messages), then [ask for help](#ask-for-help).
+the line before), check the usual culprits, fix, and compile again.
+
+Compile after each small change so you know what caused a problem. A warning
+still produces a PDF, but review warnings before you submit.
 
 ## Read an error message
 
@@ -35,88 +34,131 @@ l.10 example~\cit
 ```
 
 1. **The file:** `chapters/01-introduction.tex`. Open this file, not `main.tex`.
-2. **The line:** `10`, the number after the file name. Most editors show line
-   numbers in the margin.
+2. **The line:** `10`, the number after the file name.
 3. **The message:** "Undefined control sequence" means LaTeX does not know a
    command, usually because of a typo after a backslash.
-4. **Where it stopped:** the line starting `l.10` ends exactly where LaTeX
-   stopped reading, so the last thing on it, `\cit`, is the problem. The line
-   below is the rest of your text, not read yet.
+4. **Where it stopped:** the line starting `l.10` ends where LaTeX stopped
+   reading, so the last thing on it, `\cit`, is the problem.
 
-Here the fix is to write `\cite{lamport1994}`, then compile again. Some editors
-show the message as `! Undefined control sequence.` without the file name; the
-`l.10` line still tells you where to look.
-
-If there are several errors, fix the first one only, then compile again;
-the later ones are often side effects that disappear with it.
+Fix: write `\cite{lamport1994}` and compile again. With several errors, fix
+only the first; the later ones are often side effects.
 
 ### Ask an AI chat to explain it
 
-An AI chat you already have access to can explain the first error and
-suggest the smallest fix, alongside a web search, [Overleaf Learn](https://www.overleaf.com/learn),
-or [asking for help](#ask-for-help). Share only the first error and a short
-example, never confidential material. Try one change, compile, and check
-the PDF; undo it if it doesn't help.
+An AI chat is a quick way to decode a cryptic error. Paste the first error and
+the few lines around it, and say whether you use Overleaf or your computer.
+Never paste confidential or unpublished material. Try one change, compile,
+and undo it if the PDF gets worse.
 
-```text
-Here is the first LaTeX error and a short example. Explain what it means and
-suggest the smallest fix. Keep my text, data, citations, and template
-formatting unchanged. Show the lines to change.
+```prompt
+Here is the first LaTeX error and a short example. I use Overleaf (or: my computer, with macOS/Windows/Linux). Explain what it means and suggest the smallest fix. Keep my text, data, citations, and template formatting unchanged. Show the lines to change.
 ```
 
 More, including assistants that can edit your files:
-[AI for technical help](workflows.md#use-ai-for-technical-help).
+[AI for technical help](workflows.md#use-ai-for-technical-help). A web search
+or [Overleaf Learn](https://www.overleaf.com/learn) works too.
+
+## Clean recompile
+
+A clean recompile throws away LaTeX's scratch files and builds everything
+again. Try it when the PDF will not update, numbers stay as **??**, or an error
+looks impossible. It never changes your writing. You can do it without a
+terminal.
+
+- **Overleaf:** open the **Recompile** menu (the small arrow beside the
+  button) and choose **Recompile from scratch**. To change engine, open
+  **Menu** (top left) and pick a **Compiler**: pdfLaTeX, XeLaTeX, or LuaLaTeX.
+- **VS Code:** open the Command Palette (Ctrl+Shift+P, or Cmd+Shift+P on
+  macOS), run **LaTeX Workshop: Clean up auxiliary files**, then build again.
+  The starter defines one recipe, pdfLaTeX + Biber, so VS Code has no
+  engine menu here. To use LuaLaTeX or XeLaTeX, use the
+  [optional build helper](advanced.md#choose-a-compile-engine) in a terminal,
+  or use Overleaf.
+- **TeXShop or TeXstudio:** clean the auxiliary files, then run the steps from
+  [Get started](get-started.md#other-editors-and-the-command-line) again.
+  <!-- TODO(verify): menu names not checked in the current apps. TeXShop is believed to offer File > Trash Aux Files, TeXstudio Tools > Clean Auxiliary Files. -->
+  In TeXShop, the engine is the menu at the top of the editor window; in
+  TeXstudio, set it under **Options → Configure TeXstudio → Build**.
+  <!-- TODO(verify): TeXstudio build-settings path. -->
+- **Any editor, in a terminal (optional):** `python3 scripts/build.py --fresh`
+  (on Windows, `py scripts/build.py --fresh`).
+
+Switch engine only to fix characters pdfLaTeX cannot handle, then check
+the whole PDF ([compile engines](advanced.md#choose-a-compile-engine)).
 
 ## Common messages
 
+### Setup and files
+
 | What you see | What to try |
 | --- | --- |
-| `File rpi-thesis.cls not found` | Extract the whole ZIP, not only `main.tex`, and open the folder that contains `main.tex`. On Overleaf, `main.tex` must be at the top of the file list, not inside a folder ([Overleaf route](get-started.md#step-3b-overleaf-route)). |
-| `Missing title in metadata.tex` (or author, department, …) | Fill in that setting inside `\thesissetup{...}`. |
+| `File rpi-thesis.cls not found` | Extract the whole ZIP and open the folder that contains `main.tex`. On Overleaf, `main.tex` must be at the top of the file list ([Overleaf route](get-started.md#step-3b-overleaf-route)). |
+| `Missing title in metadata.tex` (or author, department, ...) | Fill in that setting inside `\thesissetup{...}`. |
 | `Committee chair is missing` | Put `[Chair]` (or `[Co-Chair]`) on one `\committeemember` line. |
+| `You have requested ... version ... of document class rpi-thesis` | Your `rpi-thesis.cls` is older than the rest of your starter files. Copy `rpi-thesis.cls` from the newest starter ([update safely](workflows.md#update-the-formatting-safely)). |
 | `Unknown degree choice` | Use `masters`, `doctoral`, or `engineering-doctorate`. |
 | `Unknown graduation month` | Use `May`, `August`, or `December`. |
 | `Graduation year must have four digits` | Write the year like `2027`. |
-| `RPI seal not found`, or a seal placeholder on the title page | Download the seal and save it as `assets/rpi-seal.jpg` ([add the RPI seal](get-started.md#add-the-rpi-seal-one-minute)). |
-| `Unsupported class option` | Leave `\documentclass{rpi-thesis}` without options; settings go in `metadata.tex`. |
-| `Missing $ inserted` | Look for an unescaped `_` or a math command outside `$...$`. Write `\_` for an underscore. |
-| `Runaway argument` or a brace error | Check your last edit for a missing `}`. |
+| `RPI seal not found`, or a seal placeholder on the title page | Save the seal as `assets/rpi-seal.jpg` ([add the RPI seal](get-started.md#add-the-rpi-seal-one-minute)). |
+| `Unsupported class option` | Use `\documentclass{rpi-thesis}` with no options; settings go in `metadata.tex`. |
+| A figure file cannot be found | Check the file name, capital letters, extension, and the `figures/` path. |
+| A file can't be found, and the folder is in OneDrive or iCloud or its path has non-English letters | Set the folder to "Always keep on this device", or move it to a short, plain path such as `C:\thesis` or `~/thesis`. |
+
+### Citations and references
+
+| What you see | What to try |
+| --- | --- |
 | A citation key in **bold** | Run the bibliography step (Biber), then compile twice. Check the key spelling. |
 | **??** instead of a number | Compile again. Check the `\label` and `\ref` spelling. |
 | The reference list is empty | Cite at least one entry with `\cite{key}`, then run Biber. |
-| A figure file cannot be found | Check the file name, capital letters, extension, and the `figures/` path. |
-| A special character (such as an accented letter, or one from another alphabet) is missing or garbled | Use a LaTeX accent command, or try the LuaLaTeX/XeLaTeX engine (see [advanced use](advanced.md#build-commands)). |
-| `Overfull \hbox` | Something is wider than the text area: a long URL, wide table, equation, or image. Find it in the PDF and resize or break it. |
-| `Overfull \vbox` on the title page | Remove manual line breaks from the title; check long names and committee lines. |
-| The contents or references will not update | Save all files and rebuild from scratch: Overleaf's "recompile from scratch", `python3 scripts/build.py --fresh`, or rerun pdfLaTeX → Biber → pdfLaTeX → pdfLaTeX. Make sure you open the right PDF ([where it ends up](how-it-works.md#where-the-pdf-ends-up)). |
-| An edit doesn't show up in the PDF | Save every file, then check you are viewing the newly built PDF, not an old copy ([where it ends up](how-it-works.md#where-the-pdf-ends-up)). |
-| A new Zotero source doesn't appear | Re-export (or let auto-export finish), compile with Biber, and check that the `\cite{key}` matches the key in the `.bib` file exactly. |
+| A new Zotero source doesn't appear | Re-export, run Biber, and check that `\cite{key}` matches the key in the `.bib` file exactly. |
 | `Misplaced alignment tab character &` in the references | A title in the `.bib` file contains `&`. Write it as `\&`. |
-| A figure floats to a different page | That's normal LaTeX behavior. Use `[htbp]` after `\begin{figure}` and refer to it as "Figure~\ref{...}" rather than "below". |
-| Overleaf says the compile timed out | The free plan's time limit is short. Try **Fast [draft]** from the Recompile menu, shrink large photos and export plots as PDF, or compile on your computer, which has no limit ([Overleaf: compile timeouts](https://docs.overleaf.com/troubleshooting-and-support/fixing-and-preventing-compile-timeouts)). |
-| `latexmk`, `pdflatex`, or `biber` not found, or `spawn latexmk ENOENT` | Finish installing the full LaTeX distribution, then quit your editor or terminal completely and reopen it (on Windows, restart the computer if that isn't enough). On Linux, use VS Code's `.deb` or `.rpm`, not the Flatpak. Optional, in a terminal: `python3 scripts/build.py --doctor` names the missing tool and the next step. |
-| VS Code says **Restricted Mode**, or LaTeX Workshop does nothing | Trust the folder: click **Restricted Mode** in the status bar and choose **Trust**. LaTeX Workshop is off in untrusted folders. |
-| `You have requested release '2022-06-01' of LaTeX` | Your TeX Live is older than the 2022 release this starter is written for (common with Ubuntu 22.04's packages). The sample still compiled with TeX Live 2021 in a test, so you can usually continue; if something looks wrong, install [TeX Live from tug.org](https://tug.org/texlive/quickinstall.html). |
-| `Found biblatex control file version ..., expected version ...` | Biber and biblatex come from different TeX installations or years. Keep one TeX distribution, update it completely, and make sure `biber` comes from it. |
-| `I can't write on file chapters/...aux` (or `appendices/...aux`) after typing a build command | Only hand-typed builds with an output folder (`latexmk -outdir=...` or `pdflatex -output-directory=...`) do this; latexmk usually retries by itself. Build with `python3 scripts/build.py`, or with `latexmk -norc -pdf main.tex` without `-outdir`. Editors and Overleaf are not affected. |
-| A file can't be found, and the folder is in OneDrive or iCloud or its path has non-English letters | Set the folder to "Always keep on this device". If it still fails, move the project to a short, plain path such as `C:\thesis` or `~/thesis`. |
-| `python3` is not recognized (Windows) | Type `python` or `py` instead. Python is optional: editors compile without it. |
-| On a Mac, Biber fails and the log mentions `lipo` | An older Mac build of Biber that newer macOS can't start; your thesis is fine. Update TeX Live (TeX Live Utility, **Update all packages**, or `sudo tlmgr update --self --all`) and build again. `python3 scripts/build.py --doctor` shows whether Biber starts. |
-| The build helper prints "Pre-submission hints" | Your PDF was built. Fix each listed file and line before submitting — see [web sources](citations.md#web-sources-need-an-access-date) or [short captions](writing.md#use-one-full-caption-not-a-short-one). |
+
+### Layout and the PDF
+
+| What you see | What to try |
+| --- | --- |
+| `Missing $ inserted` | Look for an unescaped `_` or a math command outside `$...$`. Write `\_` for an underscore. |
+| `Runaway argument` or a brace error | Check your last edit for a missing `}`. |
+| A special character (such as an accented letter, or one from another alphabet) is missing or garbled | Use a LaTeX accent command, or try another engine ([compile engines](advanced.md#choose-a-compile-engine)). |
+| `Overfull \hbox` | Something is wider than the text area: a long URL, table, equation, or image. Find it in the PDF and resize or break it. |
+| `Overfull \vbox` on the title page | Remove manual line breaks from the title; check long names and committee lines. |
+| A figure floats to a different page | Normal. Use `[htbp]` after `\begin{figure}` and write "Figure~\ref{...}", not "below". |
+| An edit, the contents, or the references do not update | Save every file and check you are viewing the new PDF, not an old copy ([where it ends up](how-it-works.md#where-the-pdf-ends-up)). Still stale? Do a [clean recompile](#clean-recompile). |
+| The build helper prints "Pre-submission hints" | Your PDF was built. Fix each listed line before submitting ([web sources](citations.md#web-sources-need-an-access-date), [short captions](writing.md#use-one-full-caption-not-a-short-one)). |
+
+### Tools and installs
+
+| What you see | What to try |
+| --- | --- |
+| `latexmk`, `pdflatex`, or `biber` not found, or `spawn latexmk ENOENT` | Finish installing the full LaTeX distribution, then quit your editor completely and reopen it (on Windows, restart the computer if needed). On Linux, use VS Code's `.deb` or `.rpm`, not the Flatpak. Optional, in a terminal: `python3 scripts/build.py --doctor` (Windows: `py scripts/build.py --doctor`) names the missing tool. |
+| VS Code says **Restricted Mode**, or LaTeX Workshop does nothing | Click **Restricted Mode** in the status bar and choose **Trust**. LaTeX Workshop is off in untrusted folders. |
+| Overleaf says the compile timed out | Try **Fast [draft]** from the Recompile menu, shrink large photos, export plots as PDF, or compile on your computer. **Fast draft** shows images as empty boxes, so switch back to **Normal** and check every figure and the seal before you share or submit ([Overleaf: compile timeouts](https://docs.overleaf.com/troubleshooting-and-support/fixing-and-preventing-compile-timeouts)). |
+| `python3` is not recognized, or opens the Microsoft Store (Windows) | On Windows, `python3` may open the Microsoft Store or say it is not recognized. Close the Store and type `py scripts/build.py` instead. Python is optional: editors compile without it. |
+
+<details><summary>Rare messages: old TeX Live, Biber version mismatch, Biber on a Mac, hand-typed builds</summary>
+
+| What you see | What to try |
+| --- | --- |
+| `You have requested release '2022-06-01' of LaTeX` | Your TeX Live is older than the 2022 release this starter is written for (common with Ubuntu 22.04's packages). The sample compiled with TeX Live 2021 in a test, so you can usually continue; if something looks wrong, install [TeX Live from tug.org](https://tug.org/texlive/quickinstall.html). |
+| `Found biblatex control file version ..., expected version ...` | Try a [clean recompile](#clean-recompile) first. If it persists, Biber and biblatex probably come from different TeX installations: keep one distribution, update it fully, and use its `biber`. |
+| On a Mac, Biber fails and the log mentions `lipo` | An older Mac build of Biber that newer macOS can't start; your thesis is fine. Update TeX Live and build again. On macOS (MacTeX), use TeX Live Utility, **Update all packages**, or run `sudo tlmgr update --self --all`. On Linux with apt, update with your package manager: first `sudo apt update`, then `sudo apt upgrade`. |
+| `I can't write on file build/chapters/...aux` (or `chapters/...aux`, `appendices/...aux`) | The starter's settings create those folders for you. If you see this, do a [clean recompile](#clean-recompile). If you typed your own `latexmk -outdir=...` command, build with `python3 scripts/build.py` (Windows: `py scripts/build.py`) or `latexmk -norc -pdf main.tex` instead. |
+
+</details>
 
 Please don't make an error disappear by changing margins, spacing, or the
 class file. Adjust the object instead, or ask for help.
 
 ## Ask for help
 
-Stuck on something odd? That's what this community is for. Weird edge cases
-are normal, and every question helps the next student. Questions about
-LaTeX, Zotero, files, or "where does this go?" are all welcome.
+Stuck on something odd? Every question helps the next student, and questions
+about LaTeX, Zotero, files, or "where does this go?" are all welcome.
 
-1. **Make it easy to see.** On Overleaf, use the share menu to create a
-   view-only link. On your own computer, make the smallest made-up example
-   that still shows the problem.
-2. **Copy the first error**, including its file and line number.
+1. **Make it easy to see.** On Overleaf, create a view-only link from the
+   share menu. On your computer, make the smallest made-up example that still
+   shows the problem.
+2. **Copy the first error**, with its file and line number.
 3. **Send it** through either channel:
    <!-- Maintainer: the form URL below is the ONLY place it appears. README.md,
    CONTRIBUTING.md, and the website footer link to this section
@@ -124,8 +166,8 @@ LaTeX, Zotero, files, or "where does this go?" are all welcome.
    - **No account needed:** the
      [help and feedback form](https://forms.gle/fjfiLfkmVhkcyRNCA).
    - **With a GitHub account:** open an issue with the **LaTeX help or bug**
-     form. Answers stay public and searchable for the next person. Never
-     opened one? See [how to open an issue](../CONTRIBUTING.md#open-an-issue).
+     form. Answers stay public and searchable. Never opened one? See
+     [how to open an issue](../CONTRIBUTING.md#open-an-issue).
 
 Copy and fill in:
 
@@ -139,11 +181,9 @@ View-only link or small example: ...
 ```
 
 > [!WARNING]
-> Remove unpublished research and personal details before sharing anything.
-> A view-only link shows your whole project, so share it only with someone
-> you trust, and turn link sharing off afterwards.
+> Remove unpublished research and personal details before sharing. A
+> view-only link shows your whole project, so share it only with someone you
+> trust, then turn link sharing off.
 
-[Overleaf Learn](https://www.overleaf.com/learn) also explains many common errors.
-
-Found a fix, a tip, or a tool worth passing on? The help and feedback form takes
-those too, and [ways to contribute](../CONTRIBUTING.md) lists the other options.
+Found a fix or a tip worth passing on? The form takes those too, and
+[ways to contribute](../CONTRIBUTING.md) lists other options.
