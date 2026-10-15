@@ -96,5 +96,86 @@
       }
     ]
   },
-  "legacy_reference": "RPI's official LaTeX template (thesis.cls and samples), available from RPI ITS's Thesis Preparation page, is the formatting baseline; differences are listed in requirements.md. Not redistributed: maintainers keep a reference copy in _local/legacy/ (ignored by Git)."
+  "helpers": {
+    "note": "Optional third-party helper websites named in docs/writing.md (Helpers for common tasks). Each URL loaded on the review date. Re-check links, menu names, and privacy notes yearly; name no other tool on student pages without a recorded re-review.",
+    "last_reviewed": "2026-10-14",
+    "tools": [
+      {
+        "name": "Tables Generator",
+        "url": "https://www.tablesgenerator.com/latex_tables",
+        "task": "tables from spreadsheet cells, CSV, or Excel",
+        "status": "recommended",
+        "verified": "Page loads; File > Import CSV or Excel file and paste from a spreadsheet; booktabs style; column width gives p{} columns; Escape special characters option (its help text says special characters are escaped); packages named in a comment. Changelog version 26.10.1. Privacy policy: table contents are sent to its server for some features and not stored permanently; CSV import is client-side (changelog 24.05.2). The guide's matching hand-written snippets compile with the class (the tool's own output was not compiled): p{5cm}, \\multicolumn, \\cmidrule, escaped & % _ # $.",
+        "related": [
+          "https://www.tablesgenerator.com/",
+          "https://www.tablesgenerator.com/changelog",
+          "https://www.tablesgenerator.com/privacy-policy"
+        ]
+      },
+      {
+        "name": "LaTeXEditor.app",
+        "url": "https://latexeditor.app/",
+        "task": "equations by clicking symbols, fractions, matrices, systems, chemistry",
+        "status": "recommended (primary equation helper)",
+        "verified": "Page loads without sign-in; source shown in a text box without delimiters; System of equations inserts aligned, which compiles inside equation with one number. Preview is KaTeX-like and lists amsmath, amssymb, amsfonts, mathtools, cancel, mhchem, so it accepts commands the thesis may not load. With the class: \\usepackage[version=4]{mhchem} compiles; a pasted \\usepackage{amssymb} or {amsfonts} is harmless, because the class marks both as loaded (before that fix they conflicted with newtxmath: Command \\Bbbk already defined). The Copy button was not confirmed to copy the source; the guide says to copy from the text box."
+      },
+      {
+        "name": "Detexify",
+        "url": "https://detexify.kirelabs.org/",
+        "task": "find the command for one hand-drawn symbol",
+        "status": "recommended",
+        "verified": "Page loads; project https://github.com/kirel/detexify-next says classification runs in the browser (Web Worker). \\nabla, \\mathbb, \\varnothing, \\leqslant compile with the class without amssymb."
+      },
+      {
+        "name": "draw.io",
+        "url": "https://app.diagrams.net/",
+        "task": "flowcharts, block and process diagrams, schematics",
+        "status": "recommended",
+        "verified": "Page loads. Per https://www.drawio.com/docs/manual/export/export-to-pdf/ : File > Export As > PDF has a Crop option and sends the diagram to the draw.io server (deleted after the PDF is returned); File > Print keeps it local. Print with Crop sets the page size to the drawing (read from the app's print code; not supported in Safari); not tested by hand. A PDF next to its .drawio source compiles with \\includegraphics{figures/my-diagram}."
+      },
+      {
+        "name": "Mathcha",
+        "url": "https://www.mathcha.io/",
+        "task": "mathematical drawings exported as TikZ",
+        "status": "one optional line only",
+        "verified": "Home page loads; editor at https://www.mathcha.io/editor. TikZ export unverified with this class; verify before expanding. \\usepackage{tikz} itself compiles with the class."
+      },
+      {
+        "name": "Lagrida LaTeX Equation Editor",
+        "url": "https://latexeditor.lagrida.com/",
+        "task": "equations",
+        "status": "omitted from student pages",
+        "verified": "Evaluated; basic editing works without sign-in; omitted to avoid two similar editors (no distinct advantage over LaTeXEditor.app found)."
+      }
+    ]
+  },
+  "legacy_reference": "RPI's official LaTeX template (thesis.cls and samples), available from RPI ITS's Thesis Preparation page, is the formatting baseline; differences are listed in requirements.md. Not redistributed: maintainers keep a reference copy in _local/legacy/ (ignored by Git).",
+  "conversion_tools": {
+    "note": "Tools named in docs/bring-your-draft.md (From Markdown). Re-check yearly and whenever Pandoc changes its LaTeX output.",
+    "last_reviewed": "2026-10-14",
+    "tools": [
+      {
+        "name": "Pandoc",
+        "url": "https://pandoc.org/",
+        "related": [
+          "https://pandoc.org/MANUAL.html",
+          "https://pandoc.org/MANUAL.html#citations",
+          "https://pandoc.org/installing.html"
+        ],
+        "task": "optional first pass of a long Markdown chapter into chapter content",
+        "status": "optional, experienced users only",
+        "verified": "Pandoc 3.11, command: pandoc my-chapter.md --to=latex --biblatex --top-level-division=chapter --output=my-chapter.tex. Output is a fragment (no preamble) without --standalone. [@key] -> \\autocite{key}, @key -> \\textcite{key}; without --biblatex citations stay as text. # -> \\chapter, ## -> \\section (default: # -> \\section). $$...$$ -> \\[ \\] (unnumbered). Pipe table -> longtable with \\noalign{} and \\endhead; caption only from a ': Caption' line; class does not load longtable, so compile fails (Environment longtable undefined); it compiles when \\usepackage{longtable} is uncommented in preamble.tex. Image -> \\pandocbounded{\\includegraphics[keepaspectratio,alt={...}]{...}} in figure without placement; \\pandocbounded undefined. {#fig:x} -> \\label{fig:x}. Tight lists emit \\tightlist (undefined); loose lists do not. Raw \\ref passes through; ~ becomes \\textasciitilde{}. %, &, _, #, $ escaped. After the cleanup listed in the guide, a converted chapter compiled with latexmk -norc -pdf in a scratch copy of the starter: no errors, citation printed [1], equation, table, and figure numbered 4.1 and listed in the lists of tables and figures."
+      },
+      {
+        "name": "PanWriter",
+        "url": "https://panwriter.com/",
+        "related": [
+          "https://panwriter.com/MANUAL.html"
+        ],
+        "task": "graphical Markdown editor that exports through Pandoc",
+        "status": "omitted from student pages",
+        "verified": "Evaluated from official docs only (desktop app not installed or tested). Free, open-source editor for macOS, Windows, Linux; needs a separate Pandoc installation for File > Export (print-to-PDF from the preview does not use Pandoc). Export options come from the document's YAML output block and a default.yaml, which can add a preamble or standalone document; citations are not documented. Omitted because it adds a second tool and settings without removing the cleanup, and its .tex export is untested with this starter."
+      }
+    ]
+  }
 }

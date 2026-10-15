@@ -23,10 +23,22 @@ seal are on RPI ITS's
 keep your copy of the template in `_local/legacy/` and the seal in
 `assets/rpi-seal.jpg` (both ignored by Git).
 
-Decision recorded 14 Oct 2026 following advice from OGE: do not redistribute
-RPI materials. Because nothing RPI-owned is redistributed, no redistribution
-permission is needed. Present the project as unofficial and community-made
-([style guide](style-guide.md#talking-about-rpi)).
+Maintainer decisions (14 Oct 2026), settled and not awaiting anyone's input:
+
+- **No RPI materials are redistributed.** Nothing RPI-owned is in the
+  repository, the starter ZIPs, or the website, so no redistribution
+  permission is needed.
+- **The seal:** the toolkit uses the current seal supplied on RPI ITS's
+  Thesis Preparation page. Each student downloads it and saves it as
+  `assets/rpi-seal.jpg` (or `.png`); until then the title page shows a
+  placeholder. The seal stays out of the repository, the starter ZIPs, the
+  website artwork, and this project's license. (The 2026 manual's sample title
+  page shows an older design; the Thesis Preparation download is the one we
+  point to.)
+
+These are the maintainer's project decisions, not OGE approval and not
+permission to redistribute RPI artwork. Present the project as unofficial and
+community-made ([style guide](style-guide.md#talking-about-rpi)).
 
 ## Where things live
 
@@ -138,6 +150,15 @@ something breaks):
   Then run `check.py`.
 - **Actions:** check the latest major version of each `actions/...` step on
   its GitHub releases page.
+- **Helper websites:** open each tool in the `helpers` list of
+  `sources.json` (named in the "Helpers for common tasks" section of
+  `docs/writing.md`), check that it loads without sign-in, that the menu
+  names and the draw.io privacy note still match, and that the guide's
+  snippets compile; update `last_reviewed`. Each entry records what was
+  verified and why a tool was kept or omitted (Lagrida: evaluated, omitted as
+  a second similar editor; Mathcha: TikZ export not verified with this class,
+  so verify before expanding). Replace or remove a tool that has changed
+  rather than adding alternatives.
 
 Writing conventions for the guide, the website, and error messages are in
 the [style guide](style-guide.md).
@@ -248,6 +269,14 @@ Until then, do not call a release compliant, approved, or fully tested.
 Short on purpose, so it still works in a few years. Do it only with the
 maintainer's authorization.
 
+1. **Fresh-machine test.** In the **Actions** tab, run **Fresh-machine test**
+   (about an hour). It installs TeX on clean Windows, macOS, and Ubuntu
+   machines as the guide says and compiles the starter. All four must pass.
+1. **Update the download links** to the new tag: `docs/get-started.md`
+   (Step 2 and Step 3b) and `README.md` ("Download") point at the release
+   files `rpi-thesis-starter-v<version>.zip` and `rpi-thesis-overleaf-v<version>.zip`.
+   After publishing, open both links and the "Open the starter in Overleaf"
+   link once to confirm they work.
 1. **Real-student test.** Someone new to the toolkit completes
    [Get started](../get-started.md) unaided, on Overleaf and on a computer,
    up to a PDF with their name on it. Fix what made them pause.
