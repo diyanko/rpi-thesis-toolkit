@@ -141,7 +141,10 @@ Education. Check the current OGE requirements before you submit.
 def guide_url():
     """The public guide address, from site/site.json (one place to change it)."""
     config = json.loads((ROOT / "site/site.json").read_text(encoding="utf-8"))
-    return config["site_url"].rstrip("/") + "/"
+    url = config.get("site_url")
+    if not isinstance(url, str) or not url.strip():
+        raise SystemExit("site/site.json: set site_url to the published guide address before packaging.")
+    return url.strip().rstrip("/") + "/"
 
 
 def cheatsheet_state(path):
@@ -181,14 +184,27 @@ def verify_archive(label, names, skip=()):
                          + absent_text + problems_text)
 
 
+def verify_files():
+    """Check source files before writing either ZIP, including linked folders."""
+    missing = [name for name in FILES if not (ROOT / name).is_file()]
+    if missing:
+        raise FileNotFoundError("Starter files missing: " + ", ".join(missing))
+    for name in FILES:
+        path = Path(name)
+        if any((ROOT / part).is_symlink() for part in (path, *path.parents)):
+            raise ValueError("Starter files must not be symlinks or inside linked folders: " + name)
+
+
 def package_overleaf(version):
+    verify_files()
+    public_guide = guide_url()
     destination = ROOT / f"dist/rpi-thesis-overleaf-v{version}.zip"
     temp = destination.with_suffix(".tmp")
     with zipfile.ZipFile(temp, "w", zipfile.ZIP_DEFLATED) as archive:
         for name in FILES:
             if not name.startswith(OVERLEAF_SKIP):
                 archive.write(ROOT / name, name)
-        add_text(archive, "README.md", OVERLEAF_README.format(guide_url=guide_url()))
+        add_text(archive, "README.md", OVERLEAF_README.format(guide_url=public_guide))
         names = archive.namelist()
     try:
         verify_archive("Overleaf ZIP", names)
@@ -200,9 +216,8 @@ def package_overleaf(version):
 
 
 def package(dev=False):
-    missing = [name for name in FILES if not (ROOT / name).is_file()]
-    if missing:
-        raise FileNotFoundError("Starter files missing: " + ", ".join(missing))
+    verify_files()
+    guide_url()  # fail before replacing either archive if Overleaf's guide link is unset
     verify_archive("starter ZIP", set(FILES))  # before the slow guide build
     version, released = class_version()
     # main.tex asks for the class date, so LaTeX warns students whose rpi-thesis.cls is older.
@@ -227,8 +242,6 @@ def package(dev=False):
         # The archive replaces the old one only after everything is in place.
         with zipfile.ZipFile(temp, "w", zipfile.ZIP_DEFLATED) as archive:
             for name in FILES:
-                if (ROOT / name).is_symlink():
-                    raise ValueError("Starter files must not be symlinks: " + name)
                 archive.write(ROOT / name, name)
             add_text(archive, ".gitignore", STUDENT_GITIGNORE)
             readme = STUDENT_README

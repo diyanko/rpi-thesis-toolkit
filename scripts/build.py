@@ -8,7 +8,6 @@ import re
 import shutil
 import subprocess
 import sys
-import time
 import types
 
 if sys.version_info < (3, 9):
@@ -114,13 +113,25 @@ def active_sources(root, main="main.tex"):
         texts.append((name, text))
         for found in re.finditer(r"\\includeonly\s*\{([^}]*)\}", text):
             scan.includeonly = (scan.includeonly or set()) | {
-                t.strip() for t in found[1].split(",") if t.strip()}
+                t.strip().removesuffix(".tex") for t in found[1].split(",") if t.strip()}
         for found in re.finditer(r"\\graphicspath\s*\{((?:\s*\{[^}]*\})+)\s*\}", text):
             graphics_dirs += re.findall(r"\{([^}]*)\}", found[1])
-        for number, line in enumerate(text.splitlines(), 1):
+        patterns = (
+            r"\\(input|include)\s*\{([^}]+)\}",
+            r"\\includegraphics\*?\s*(\[[^\]]*\])?\s*\{([^}]+)\}",
+            r"\\(addbibresource|bibliography)\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}",
+            r"\\(documentclass|usepackage|RequirePackage)\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}",
+        )
+        matches = ((kind, match) for kind, pattern in enumerate(patterns)
+                   for match in re.finditer(pattern, text))
+        for kind, match in matches:
+            number = text.count("\n", 0, match.start()) + 1
             where = f"{name}, line {number}"
-            for command, target in re.findall(r"\\(input|include)\s*\{([^}]+)\}", line):
+            command, target = match.groups()
+            if kind == 0:
                 target = target.strip()
+                if command == "include":
+                    target = target.removesuffix(".tex")
                 path = (root / target).resolve()
                 if not path.is_relative_to(root):
                     # TeX may read a file outside the project, but an \\include
@@ -132,7 +143,8 @@ def active_sources(root, main="main.tex"):
                     continue
                 if command == "include":
                     scan.include_dirs.add(Path(target).parent)
-                candidates = (path.with_name(path.name + ".tex"), path)
+                candidates = ((path,) if path.name.endswith(".tex") else
+                              (path.with_name(path.name + ".tex"), path))
                 found = next((c for c in candidates if c.is_file()), None)
                 if found:
                     pending.append((found, where))
@@ -142,22 +154,19 @@ def active_sources(root, main="main.tex"):
                                           " and the folder.", False))
                     if command == "include":
                         scan.missing_includes.append((where, target))
-            for options, target in re.findall(
-                    r"\\includegraphics\*?\s*(\[[^\]]*\])?\s*\{([^}]+)\}", line):
+            elif kind == 1:
                 target = target.strip()
                 if "\\" in target or "#" in target:
                     continue  # built from macros: not checked
                 scan.assets.append((where, target, "graphic"))
-            for command, target in re.findall(
-                    r"\\(addbibresource|bibliography)\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}", line):
+            elif kind == 2:
                 for one in target.split(","):
                     one = one.strip()
                     if command == "bibliography" and not one.endswith(".bib"):
                         one += ".bib"
                     if one and "\\" not in one and not re.match(r"[a-z]+://", one):
                         scan.assets.append((where, one, "bib"))
-            for command, target in re.findall(
-                    r"\\(documentclass|usepackage|RequirePackage)\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}", line):
+            else:
                 for one in target.split(","):
                     one = one.strip()
                     local = root / (one + (".cls" if command == "documentclass" else ".sty"))
@@ -205,7 +214,7 @@ def unwrapped_log(output):
     joined, index = [], 0
     while index < len(lines):
         line = lines[index]
-        while len(line) == 79 and index + 1 < len(lines):
+        while len(lines[index]) == 79 and index + 1 < len(lines):
             index += 1
             line += lines[index]
         joined.append(line)
@@ -213,17 +222,31 @@ def unwrapped_log(output):
     return "\n".join(joined)
 
 
-def missing_chapters(scan, log_text, log_is_fresh):
+def missing_chapters(scan, log_text, loaded=()):
     """\\include files that the document asks for and LaTeX could not find.
-    The scan must say the file is missing and \\includeonly (if any) must list
-    it. When this run wrote the log, the log must also show that LaTeX skipped
-    the file (so a conditional the scan cannot see is not reported). When
-    latexmk found nothing to redo, the log is from an earlier run and the scan
-    decides."""
-    logged = set(re.findall(r"No file (\S+\.tex)\.", log_text))
-    active = {target for _, target in scan.missing_includes
-              if scan.includeonly is None or target in scan.includeonly}
-    return sorted(t for t in active if not log_is_fresh or t + ".tex" in logged)
+    The scan must say the file is missing, and LaTeX must have reported its
+    omission or recorded it as an input on an earlier run. Existing logs and
+    recorder files remain useful when latexmk has nothing to redo; a scanned
+    include in an inactive conditional is not evidence of missing content.
+    """
+    logged = set(re.findall(r"No file ([^\r\n]+?\.tex)\.", log_text))
+    active = logged | set(loaded)
+    return sorted({target for _, target in scan.missing_includes
+                   if target + ".tex" in active})
+
+
+def recorded_inputs(root, output):
+    """Project inputs from LaTeX's recorder, including paths containing spaces."""
+    recorder = output / "main.fls"
+    if not recorder.is_file():
+        return set()
+    loaded = set()
+    for line in recorder.read_text(encoding="utf-8", errors="replace").splitlines():
+        if line.startswith("INPUT "):
+            path = (root / line[6:]).resolve()
+            if path.is_relative_to(root):
+                loaded.add(path.relative_to(root).as_posix())
+    return loaded
 
 
 def layout_warnings(log_text):
@@ -503,7 +526,6 @@ def build(root=ROOT, engine="pdflatex", fresh=False, output=None):
         "Building main.tex. References and page numbers may need several passes.",
         flush=True,
     )
-    started = time.time()
     with log.open("w", encoding="utf-8") as stream:
         result = subprocess.run(
             command, cwd=root, env=environment, stdout=stream, stderr=subprocess.STDOUT
@@ -528,20 +550,24 @@ def build(root=ROOT, engine="pdflatex", fresh=False, output=None):
             print("\nNote: " + note, file=sys.stderr)
     else:
         log_text = unwrapped_log(output)
-        main_log = output / "main.log"
-        fresh = main_log.is_file() and main_log.stat().st_mtime >= started - 2
-        absent = missing_chapters(scan, log_text, fresh)
+        absent = missing_chapters(scan, log_text, recorded_inputs(root, output))
+        logged_missing = set(re.findall(r"No file ([^\r\n]+?\.tex)\.", log_text))
         known = {target + ".tex" for _, target in scan.missing_includes}
-        for name in sorted(set(re.findall(r"No file (\S+\.tex)\.", log_text)) - known):
+        for name in sorted(logged_missing - known):
             warnings.append(f"LaTeX could not find {name}, so it was left out of the PDF."
                             " Check the file name in the \\include or \\input line.")
         layout = presubmission_hints(root, output, sources, warnings)
         if absent:
             names = ", ".join(t + ".tex" for t in absent)
+            if all(t + ".tex" in logged_missing for t in absent):
+                message = (f"PDF built WITHOUT {names}: the file is missing, so that part of your"
+                           " thesis is not in the PDF.")
+            else:
+                message = (f"Chapter source missing: {names}. The PDF may be from an earlier"
+                           " compile and does not confirm the current source files.")
             print(
-                f"\nPDF built WITHOUT {names}: the file is missing, so that part of your"
-                " thesis is not in the PDF. Create the file, or delete or comment out its"
-                " \\include line in main.tex.",
+                "\n" + message + " Restore the file, or delete or comment out its"
+                " \\include line in main.tex, then compile again.",
                 file=sys.stderr,
             )
             return 1
@@ -562,9 +588,15 @@ def doctor(engine):
             working = False
             continue
         # Run each tool once: an installed tool can still fail to start.
-        check = subprocess.run(
-            [path, "--version"], capture_output=True, text=True, errors="replace"
-        )
+        try:
+            check = subprocess.run(
+                [path, "--version"], capture_output=True, text=True, errors="replace"
+            )
+        except OSError as error:
+            working = False
+            print(tool + ": " + path + " (cannot start: " + str(error) + ")")
+            print("  Reinstall this tool for your operating system and processor, then check again.")
+            continue
         output = check.stdout + check.stderr
         first = (check.stdout or check.stderr).strip().splitlines()[:1]
         if check.returncode:
