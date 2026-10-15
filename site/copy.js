@@ -20,24 +20,32 @@
 
   Array.prototype.forEach.call(blocks, function (code) {
     var pre = code.parentNode, box = document.createElement("div"), button = document.createElement("button");
+    var toolbar = document.createElement("div"), label = document.createElement("span");
+    var labels = { tex: "LaTeX", latex: "LaTeX", sh: "Terminal command", bibtex: "BibTeX", prompt: "Example prompt", text: "Text" };
+    var kind = labels[pre.className] || "Example";
     box.className = "code-block";
     pre.parentNode.insertBefore(box, pre);
     box.appendChild(pre);
     button.type = "button";
     button.className = "copy-button";
+    button.setAttribute("aria-label", "Copy " + kind.toLowerCase());
     button.textContent = "Copy";
-    box.appendChild(button);
+    toolbar.className = "code-toolbar";
+    label.textContent = kind;
+    toolbar.appendChild(label);
+    toolbar.appendChild(button);
+    box.insertBefore(toolbar, pre);
     button.addEventListener("click", function () {
       function select() {
         var range = document.createRange(), selection = window.getSelection();
         range.selectNodeContents(code);
         selection.removeAllRanges();
         selection.addRange(range);
-        show(button, "Selected", "Code selected. Press Control C, or Command C on a Mac, to copy it.");
+        show(button, "Selected", "Text selected. Use your device's Copy command, or Control C or Command C on a keyboard.");
       }
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(code.textContent).then(function () {
-          show(button, "Copied", "Code copied.");
+          show(button, "Copied", "Text copied.");
         }, select);
       } else {
         select();

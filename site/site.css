@@ -1,14 +1,14 @@
 /* ==========================================================================
    RPI Thesis Toolkit website · "Sketchbook garden"
    One stylesheet for the landing page (site/index.html) and every guide page
-   (site/guide-template.html). No JavaScript; works from file:// offline.
+   (site/guide-template.html). Works offline and without JavaScript.
 
    Sections:  1 Fonts  2 Colors and sizes  3 Base  4 Header  5 Shared pieces
               6 Landing page  7 Guide layout  8 Guide content  9 Footer
               10 Small screens  11 Motion and print
 
-   To change a color, edit the tokens in section 2 (light) and the dark block
-   right below them. Everything else reads those tokens.
+   To change a color, edit the light tokens or --dark-* values in section 2.
+   Everything else reads those tokens.
    ========================================================================== */
 
 /* ---------- 1. Fonts ----------------------------------------------------
@@ -78,6 +78,39 @@
   --squiggle: var(--rpi-red);   /* the hero's hand-drawn underline */
   --select:  #f3dc8c;           /* highlighter yellow for selected text */
 
+  --table-head: var(--paper-2);
+  --control-edge: var(--muted);
+  --checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%2346684b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
+  /* The dark palette is defined once; both System and Dark use it. */
+  --dark-paper: #1c1a17;
+  --dark-paper-2: #25221d;
+  --dark-card: #2c2822;
+  --dark-ink: #efe8dc;
+  --dark-ink-soft: #ddd4c6;
+  --dark-muted: #b4a998;
+  --dark-line: #494238;
+  --dark-line-strong: #756a58;
+  --dark-btn-edge: #0b0a08;
+  --dark-btn-edge-2: #8a7f70;
+  --dark-btn-shadow: #0b0a08;
+  --dark-sage: #a9c9a1;
+  --dark-sage-wash: #263226;
+  --dark-blue: #a3c0ea;
+  --dark-blue-wash: #222f44;
+  --dark-terra: #eda482;
+  --dark-terra-wash: #3a271e;
+  --dark-plum: #d8b6d3;
+  --dark-plum-wash: #33263a;
+  --dark-butter-wash: #3a3320;
+  --dark-rpi-red: #d6223f;
+  --dark-squiggle: #ff8d98;
+  --dark-select: #5c4b1d;
+  --dark-scroll-hint: rgba(0, 0, 0, 0.6);
+  --dark-table-head: #353027;
+  --dark-control-edge: #8a7f70;
+  --dark-checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%23a9c9a1' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+
   --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --font-body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
@@ -90,31 +123,72 @@
   --page-max: 1200px;
   --gutter: clamp(16px, 4vw, 40px);
 }
+/* Large screens: a wider frame, so the extra width goes to tables and
+   drawings instead of empty margins (text keeps its 68ch measure). */
+@media (min-width: 1560px) { :root { --page-max: 1400px; } }
 
-/* Dark theme: warm charcoal paper, same roles as above. */
+/* System follows the device; explicit choices also theme native controls and SVGs. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: var(--dark-paper);
+    --paper-2: var(--dark-paper-2);
+    --card: var(--dark-card);
+    --ink: var(--dark-ink);
+    --ink-soft: var(--dark-ink-soft);
+    --muted: var(--dark-muted);
+    --line: var(--dark-line);
+    --line-strong: var(--dark-line-strong);
+    --btn-edge: var(--dark-btn-edge);
+    --btn-edge-2: var(--dark-btn-edge-2);
+    --btn-shadow: var(--dark-btn-shadow);
+    --sage: var(--dark-sage);
+    --sage-wash: var(--dark-sage-wash);
+    --blue: var(--dark-blue);
+    --blue-wash: var(--dark-blue-wash);
+    --terra: var(--dark-terra);
+    --terra-wash: var(--dark-terra-wash);
+    --plum: var(--dark-plum);
+    --plum-wash: var(--dark-plum-wash);
+    --butter-wash: var(--dark-butter-wash);
+    --rpi-red: var(--dark-rpi-red);
+    --squiggle: var(--dark-squiggle);
+    --select: var(--dark-select);
+    --scroll-hint: var(--dark-scroll-hint);
+    --table-head: var(--dark-table-head);
+    --control-edge: var(--dark-control-edge);
+    --checkmark: var(--dark-checkmark);
+}
 @media (prefers-color-scheme: dark) {
-  :root {
-    --paper:       #1c1a17;
-    --paper-2:     #24211d;
-    --card:        #29251f;
-    --ink:         #efe8dc;
-    --ink-soft:    #ddd4c6;
-    --muted:       #b4a998;
-    --line:        #3a352e;
-    --line-strong: #574f44;
-    --btn-edge:    #0b0a08;
-    --btn-edge-2:  #8a7f70;
-    --btn-shadow:  #0b0a08;
-
-    --sage:  #a9c9a1;  --sage-wash:  #263226;
-    --blue:  #a3c0ea;  --blue-wash:  #222f44;
-    --terra: #eda482;  --terra-wash: #3a271e;
-    --plum:  #d8b6d3;  --plum-wash:  #33263a;
-    --butter-wash: #3a3320;
-    --rpi-red: #d6223f;   /* a touch brighter: 3.4:1 against the dark page, 5:1 with white text */
-    --squiggle: #ff8d98;
-    --select:  #5c4b1d;
-    --scroll-hint: rgba(0, 0, 0, 0.6);
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --paper: var(--dark-paper);
+    --paper-2: var(--dark-paper-2);
+    --card: var(--dark-card);
+    --ink: var(--dark-ink);
+    --ink-soft: var(--dark-ink-soft);
+    --muted: var(--dark-muted);
+    --line: var(--dark-line);
+    --line-strong: var(--dark-line-strong);
+    --btn-edge: var(--dark-btn-edge);
+    --btn-edge-2: var(--dark-btn-edge-2);
+    --btn-shadow: var(--dark-btn-shadow);
+    --sage: var(--dark-sage);
+    --sage-wash: var(--dark-sage-wash);
+    --blue: var(--dark-blue);
+    --blue-wash: var(--dark-blue-wash);
+    --terra: var(--dark-terra);
+    --terra-wash: var(--dark-terra-wash);
+    --plum: var(--dark-plum);
+    --plum-wash: var(--dark-plum-wash);
+    --butter-wash: var(--dark-butter-wash);
+    --rpi-red: var(--dark-rpi-red);
+    --squiggle: var(--dark-squiggle);
+    --select: var(--dark-select);
+    --scroll-hint: var(--dark-scroll-hint);
+    --table-head: var(--dark-table-head);
+    --control-edge: var(--dark-control-edge);
+    --checkmark: var(--dark-checkmark);
   }
 }
 
@@ -146,12 +220,20 @@ a {
 }
 a:hover { text-decoration-color: currentColor; text-decoration-thickness: 2px; }
 
-/* Links to other sites end in a small arrow; screen readers hear "external". */
-:is(main, .site-footer) a[href^="http"]:not(.button)::after {
-  content: "\00a0\2197" / " (external)";
-  font-size: 0.8em;
+/* The build labels new tabs for screen readers; the arrow is the visual cue,
+   kept on the link's last word (.ext-last) so it never wraps onto its own line. */
+a[target="_blank"] { overflow-wrap: anywhere; }   /* a long address wraps instead of widening a phone */
+a[target="_blank"] .ext-last { white-space: nowrap; }
+a[target="_blank"] .ext-last::after,
+a[target="_blank"]:not(:has(.ext-last))::after {
+  content: "";
+  display: inline-block;
+  width: 0.7em; height: 0.7em;
+  margin-left: 0.2em;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 12.5 12.5 3M4.5 3h8v8' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 12.5 12.5 3M4.5 3h8v8' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
 }
-.page-notfound :is(main, .site-footer) a[href^="http"]:not(.button)::after { content: none; }   /* its own links are absolute too */
 
 :focus-visible {
   outline: 3px solid var(--focus);
@@ -169,7 +251,7 @@ h1, h2, h3, h4 {
   text-wrap: balance;
 }
 h1 { font-size: clamp(2.3rem, 1.6rem + 3vw, 3.6rem); margin: 0 0 0.4em; }
-h2 { font-size: clamp(1.7rem, 1.4rem + 1.3vw, 2.3rem); margin: 2.2em 0 0.5em; }
+h2 { font-size: clamp(1.7rem, 1.4rem + 1.3vw, 2.3rem); margin: 1.8em 0 0.5em; }
 h3 { font-size: 1.35rem; margin: 1.8em 0 0.4em; }
 h4 { font-size: 1.15rem; margin: 1.6em 0 0.3em; }
 p { margin: 0 0 1.1em; text-wrap: pretty; }
@@ -199,12 +281,9 @@ kbd {
 mark { background: var(--butter-wash); color: inherit; border-radius: 4px; padding: 0 2px; }
 ::selection { background: var(--select); color: var(--ink); }
 
-/* Links in running text: the underline turns hand-drawn (wavy) on hover */
-main a:not([class]):is(:hover, :focus-visible) {
-  text-decoration-style: wavy;
-  text-decoration-thickness: 1.5px;
-  text-decoration-color: currentColor;
-}
+/* A single solid underline stays clear on wrapped links and in Safari.
+   Keep the sketch treatment on illustrations rather than changing link geometry. */
+a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 
 .skip-link {
   position: absolute;
@@ -219,7 +298,6 @@ main a:not([class]):is(:hover, :focus-visible) {
 }
 .skip-link:focus { top: 12px; }
 
-.doodle-defs { position: absolute; width: 0; height: 0; }
 
 /* Read by screen readers, not shown */
 .visually-hidden {
@@ -232,9 +310,10 @@ main a:not([class]):is(:hover, :focus-visible) {
 
 /* ---------- 4. Header ---------------------------------------------------- */
 .site-header {
+  position: relative;
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: 22px var(--gutter);
+  padding: 22px calc(var(--gutter) + 60px) 22px var(--gutter);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -254,6 +333,44 @@ main a:not([class]):is(:hover, :focus-visible) {
 }
 .wordmark-logo { width: 28px; height: 28px; flex: none; }   /* site/logo.svg */
 .brand { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.appearance {
+  position: absolute; top: 18px; right: var(--gutter); z-index: 20;
+}
+.appearance[hidden], .appearance-menu[hidden] { display: none; }
+.diagram-open[hidden] { display: none; }   /* viewer.js hides it when the drawing is already near full size */
+.appearance-toggle {
+  display: grid; place-items: center;
+  width: 44px; height: 44px; padding: 10px;
+  color: var(--ink-soft); background: var(--card);
+  border: 1.5px solid var(--control-edge);
+  border-radius: 50%; cursor: pointer;
+}
+.appearance-toggle:hover { color: var(--ink); background: var(--paper-2); }
+.theme-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.appearance-toggle .theme-icon { display: none; }
+.appearance[data-mode="system"] .theme-icon-system,
+.appearance[data-mode="light"] .theme-icon-light,
+.appearance[data-mode="dark"] .theme-icon-dark { display: block; }
+.appearance-menu {
+  position: absolute; top: 54px; right: 0; width: 220px;
+  padding: 8px; color: var(--ink); background: var(--card);
+  border: 1.5px solid var(--control-edge); border-radius: 14px;
+  box-shadow: 0 8px 24px var(--scroll-hint);
+}
+.appearance-menu p { margin: 4px 10px 8px; color: var(--muted); font-size: 0.875rem; }
+.appearance-menu button {
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 8px 12px;
+  font: inherit; font-size: 1rem; text-align: left;
+  color: var(--ink); background: transparent; border: 1.5px solid transparent;
+  border-radius: 8px; cursor: pointer;
+}
+.appearance-menu button .choice { display: block; line-height: 1.25; }
+.appearance-menu button .choice span { display: block; color: var(--muted); font-size: 0.8rem; font-weight: 400; }
+.appearance-menu .theme-icon { flex: none; width: 20px; height: 20px; color: var(--ink-soft); }
+.appearance-menu button { min-height: 48px; }
+.appearance-menu button:hover { background: var(--paper-2); }
+.appearance-menu button[aria-pressed="true"] { background: var(--blue-wash); font-weight: 700; }
+.appearance-menu button:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
 .unofficial-tag {   /* "not an RPI resource", said calmly next to the name */
   display: inline-block;
   padding: 1px 10px;
@@ -313,7 +430,7 @@ main a:not([class]):is(:hover, :focus-visible) {
   border: 2px solid var(--btn-edge);
   border-radius: var(--sketch);
   box-shadow: 3px 3px 0 var(--btn-shadow);
-  transition: transform .12s ease, box-shadow .12s ease, background-color .12s ease;
+  transition: transform .12s ease, box-shadow .12s ease;
 }
 .button:is(:hover, :focus-visible) { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--btn-shadow); }
 .button:active { transform: translate(3px, 3px); box-shadow: 0 0 0 var(--btn-shadow); }
@@ -431,7 +548,7 @@ main a:not([class]):is(:hover, :focus-visible) {
 .hero {
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: clamp(20px, 5vw, 56px) var(--gutter) clamp(40px, 6vw, 80px);
+  padding: clamp(16px, 3.5vw, 40px) var(--gutter) clamp(40px, 6vw, 80px);
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: clamp(24px, 4vw, 56px);
@@ -450,34 +567,41 @@ main a:not([class]):is(:hover, :focus-visible) {
           mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 7'%3E%3Cpath d='M-1 4.2 C 2 1.6, 6 1.4, 10 3.5 S 17 5.6, 21 2.9' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left center / 0.4em 100%;
 }
 .lead { font-size: 1.25rem; line-height: 1.55; color: var(--ink-soft); max-width: 36ch; margin-bottom: 1.5em; }
-.hero-aside { margin: 1.3em 0 0; font-size: 1rem; color: var(--muted); }
-.hero-scope {   /* who else the guide helps; small, under the links */
-  margin: 1.1em 0 0;
-  padding-top: 0.9em;
-  max-width: 34rem;
-  border-top: 1.5px dashed var(--line-strong);
-  font-size: 0.95rem;
-  line-height: 1.5;
-  color: var(--muted);
-}
+.hero-aside { margin: 1.3em 0 0; font-size: 1rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.25em 1.1em; }
+.hero-aside > span { white-space: nowrap; }   /* each question stays with its link */
+.hero-next { margin: 0.7em 0 0; font-size: 0.95rem; color: var(--muted); }   /* under "Get the starter", which downloads */
+.hero-next + .hero-aside { margin-top: 0.5em; }
 .hero-art { margin: 0; }
 .hero-art img { display: block; width: 100%; }
 
 /* Sections and bands */
-.section { padding: clamp(44px, 6vw, 80px) 0; }
+.section { padding: clamp(40px, 5vw, 64px) 0; }
 .section:not(.band) + .section:not(.band) { padding-top: 0; }   /* no doubled gap between two plain sections */
 .band { background: var(--paper-2); border-block: 1px solid var(--line); }
 .section-head { max-width: 46rem; margin-bottom: 2rem; }
 .section-head h2 { margin-top: 0; }
 .section-head p:last-child { color: var(--ink-soft); margin: 0; }
 
+/* Anatomy: the compile drawing sits beside the section heading */
+.anatomy-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+  gap: clamp(20px, 4vw, 56px);
+  align-items: center;
+  margin-bottom: 2rem;
+}
+.anatomy-head .section-head { margin-bottom: 0; }
+.anatomy-flow { margin: 0; }
+.anatomy-flow img { display: block; width: 100%; height: auto; }
+@media (max-width: 860px) {
+  .anatomy-head { grid-template-columns: minmax(0, 1fr); }
+  .anatomy-flow { max-width: 360px; }
+}
+
 /* Your thesis, start to finish */
-.section.timeline { padding-top: 0; }
-.timeline .section-head { margin-bottom: 1.2rem; }
-.timeline-figure { margin: 0; max-width: 880px; }
-.timeline-figure a { display: block; }
+.timeline-figure { margin: 0; }   /* as wide as the stage cards under it */
 .timeline-figure img { display: block; width: 100%; height: auto; }
-.timeline-today { margin: 1.2rem 0 0; font-size: 1.1rem; }
+.guide-list-title { margin: clamp(2.2rem, 4vw, 3rem) 0 1.1rem; font-size: 1.35rem; }   /* the stage cards under the drawing */
 
 /* Pick your path */
 .routes {
@@ -488,10 +612,11 @@ main a:not([class]):is(:hover, :focus-visible) {
 }
 .route-card { --tint: var(--sage-wash); display: flex; flex-direction: column; }
 .route-card.local { --tint: var(--blue-wash); }
-.route-badge {   /* "Recommended for a full thesis" */
-  align-self: flex-start;
-  justify-self: start;
-  margin: 0 0 14px;
+.route-badge {   /* "Suggested for a full thesis", on the card's top border */
+  position: absolute;
+  top: 0; left: clamp(20px, 3vw, 30px);
+  transform: translateY(-50%);
+  margin: 0;
   padding: 2px 12px;
   font-size: 0.9rem;
   font-weight: 700;
@@ -501,6 +626,7 @@ main a:not([class]):is(:hover, :focus-visible) {
   border-radius: 999px;
 }
 .route-top { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
+.route-top > div { flex: 1 1 10rem; min-width: 0; }
 .route-top svg { width: 60px; height: 60px; flex: none; }
 .route-card h3 { margin: 0; font-size: 1.55rem; }
 .kicker { margin: 0; color: var(--muted); font-size: 1rem; }
@@ -547,7 +673,7 @@ main a:not([class]):is(:hover, :focus-visible) {
   list-style: none;
   margin: 0; padding: 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 28px;
 }
 .steps li { position: relative; }
@@ -574,7 +700,6 @@ main a:not([class]):is(:hover, :focus-visible) {
 }
 .steps li:nth-child(2) .step-bubble { background: var(--sage-wash); border-radius: 45% 55% 50% 50% / 55% 45% 55% 45%; }
 .steps li:nth-child(3) .step-bubble { background: var(--blue-wash); border-radius: 52% 48% 44% 56% / 46% 52% 48% 54%; }
-.steps li:nth-child(4) .step-bubble { background: var(--plum-wash); border-radius: 48% 52% 58% 42% / 54% 46% 50% 50%; }
 .steps h3 { margin: 0 0 0.3rem; font-size: 1.3rem; }
 .steps p { margin: 0 0 0.6rem; color: var(--ink-soft); font-size: 1.05rem; }
 .steps .see { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--muted); }
@@ -591,16 +716,6 @@ main a:not([class]):is(:hover, :focus-visible) {
   overflow-wrap: break-word;
 }
 
-/* Behind the scenes */
-.teaser {
-  display: grid;
-  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-  gap: clamp(24px, 4vw, 56px);
-  align-items: center;
-}
-.teaser h2 { margin-top: 0; }
-.teaser figure { margin: 0; }
-.teaser figure img { display: block; width: 100%; }
 
 /* Anatomy of your thesis: one row per part of the sample. The whole page is
    small, with the close-up area outlined; the close-up beside it shows the
@@ -636,6 +751,7 @@ main a:not([class]):is(:hover, :focus-visible) {
   position: relative;
   display: block;
   background: #fff;
+  color: #2b4d7a;   /* readable fallback text on actual PDF paper in either theme */
   border: 1.5px solid var(--line-strong);
   border-radius: 2px;
   box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--tint, var(--sage-wash));
@@ -653,6 +769,7 @@ main a:not([class]):is(:hover, :focus-visible) {
   margin-left: -12px;
   padding: 6px 10px;
   background: #fff;
+  color: #2b4d7a;
   border: 2px solid var(--lens-edge, var(--ink));
   border-radius: 16px 13px 17px 14px / 13px 17px 14px 16px;
   box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--tint, var(--sage-wash));
@@ -661,17 +778,12 @@ main a:not([class]):is(:hover, :focus-visible) {
 .anatomy-shot:is(:hover, :focus-visible) .anatomy-lens {
   box-shadow: calc(var(--offset-sm) + 2px) calc(var(--offset-sm) + 2px) 0 var(--tint, var(--sage-wash));
 }
-.anatomy-open {
-  position: absolute;
-  z-index: 2;
-  right: 18px;
-  bottom: -13px;
-  padding: 0 10px;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  background: var(--card);
-  border: 1.5px solid var(--lens-edge, var(--ink));
-  border-radius: 999px;
+.anatomy-open {   /* under the close-up, like "View larger" under a diagram */
+  grid-column: 2;
+  justify-self: start;
+  margin-top: 10px;
+  padding: 2px 0;
+  font-size: 0.9rem;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -699,7 +811,7 @@ main a:not([class]):is(:hover, :focus-visible) {
 .anatomy-table thead th {
   font-family: var(--font-display);
   font-weight: 600;
-  background: var(--paper-2);
+  background: var(--table-head);
   border-bottom: 2px solid var(--line-strong);
 }
 .anatomy-table tbody th { font-weight: 700; white-space: nowrap; }
@@ -717,6 +829,11 @@ main a:not([class]):is(:hover, :focus-visible) {
 }
 .help-card { display: flex; flex-direction: column; }
 .help-card > svg { width: 52px; height: 52px; margin-bottom: 10px; }
+@media (max-width: 600px) {
+  .help-card > svg { float: left; width: 44px; height: 44px; margin: 0 14px 0 0; }
+  .help-card .kicker { margin-top: 2px; }
+  .help-card .help-text { clear: left; }
+}
 .help-card .kicker {   /* the stage name, as in the guide sidebar */
   font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
   margin-bottom: 2px;
@@ -734,17 +851,14 @@ main a:not([class]):is(:hover, :focus-visible) {
   border-color: color-mix(in srgb, var(--ink) 45%, var(--line-strong));
 }
 
-/* Card rows: cards side by side share their row lines (CSS subgrid), so the
-   dashed dividers, link lists and "you should see" lines start at the same
-   height in every card of a row, however long each card's text is. Browsers
-   without subgrid keep the flex layout above: links pinned to the bottom. */
+/* Comparable cards share row lines. The first-hour steps keep their natural
+   flow, so a code example in one step never leaves a blank row in another. */
 @supports (grid-template-rows: subgrid) {
   .guide-list, .routes { grid-auto-rows: auto; }
   /* An empty shared row (no badge, no snippet) would still keep the outer
      row gap, so gaps between rows of cards come from margins instead. */
-  .routes, ol.steps { row-gap: 0; }   /* "ol": outranks the 2-column gap in section 10 */
+  .routes { row-gap: 0; }
   @media (max-width: 860px) { .route-card + .route-card { margin-top: 36px; } }
-  @media (min-width: 641px) and (max-width: 1080px) { .steps li:nth-child(-n+2) { margin-bottom: 36px; } }
   .help-card, .route-card {
     display: grid;
     grid-template-rows: subgrid;
@@ -753,31 +867,19 @@ main a:not([class]):is(:hover, :focus-visible) {
   }
   .help-card { grid-row: span 4; }   /* icon, stage, title and text, links */
   .help-card ul { margin-top: 0; }
-  .route-card { grid-row: span 5; }  /* badge, title, "Best if", trade-off, link */
-  .route-badge { grid-row: 1; }
-  .route-top { grid-row: 2; }
-  .best-if { grid-row: 3; }
-  .tradeoff { grid-row: 4; margin-top: 0; }
-  .route-go { grid-row: 5; }
-  @media (min-width: 641px) {
-    .steps li {   /* number, title, text, snippet, "you should see" */
-      display: grid;
-      grid-row: span 5;
-      grid-template-rows: subgrid;
-      row-gap: 0;
-    }
-    .steps .step-bubble { grid-row: 1; }
-    .steps h3 { grid-row: 2; }
-    .steps p:not(.see) { grid-row: 3; }
-    .steps .snippet { grid-row: 4; align-self: start; }
-    .steps .see { grid-row: 5; }
-  }
+  .route-card { grid-row: span 4; }  /* title, "Best if", trade-off, link; the badge sits on the border */
+  .route-top { grid-row: 1; }
+  .best-if { grid-row: 2; }
+  .tradeoff { grid-row: 3; margin-top: 0; }
+  .route-go { grid-row: 4; }
 }
 
 /* Community note */
-.community { padding: 0 0 clamp(44px, 6vw, 72px); }
-.community-note {
-  max-width: 50rem;
+.community { padding: clamp(32px, 4vw, 48px) 0 clamp(40px, 5vw, 56px); }
+.community-note {   /* heading beside the text on wide screens */
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: 0 clamp(20px, 4vw, 48px);
   padding: 22px 26px 8px;
   border: 1.5px dashed var(--line-strong);
   border-radius: var(--sketch);
@@ -796,7 +898,7 @@ main a:not([class]):is(:hover, :focus-visible) {
 /* ---------- 7. Guide layout --------------------------------------------- */
 .guide-frame {
   max-width: var(--page-max);
-  margin: 0 auto clamp(40px, 6vw, 72px);
+  margin: 0 auto clamp(32px, 5vw, 56px);
   padding: 8px var(--gutter) 0;
   display: grid;
   grid-template-columns: 210px minmax(0, 1fr);
@@ -805,7 +907,15 @@ main a:not([class]):is(:hover, :focus-visible) {
 }
 
 /* Sidebar (wide screens) */
-.guide-sidebar { position: sticky; top: 24px; padding-top: 30px; }
+.guide-sidebar {
+  position: sticky;
+  top: 24px;
+  max-height: calc(100dvh - 160px);   /* leave room for the header before this sticks */
+  overflow-y: auto;
+  padding: 30px 8px 8px 16px;
+  margin-left: -16px;   /* room for focus outlines outside the indented links */
+  scrollbar-width: thin;
+}
 .guide-sidebar-title {
   font-family: var(--font-display);
   font-style: italic;
@@ -840,14 +950,17 @@ main a:not([class]):is(:hover, :focus-visible) {
   font-family: var(--font-display);
   font-size: 0.875rem;
   color: var(--muted);
-  min-width: 1.1em;
+  flex: 0 0 1.4em;
+  white-space: nowrap;
 }
+.guide-nav .nav-text { min-width: 0; }
 .guide-nav a .tag, .guide-quick .tag { margin-left: 2px; font-size: 0.7rem; padding: 0 7px; }
 .guide-nav a[aria-current="page"] .tag, .guide-quick[aria-current="page"] .tag { font-weight: 700; }
+.guide-nav .tag-optional { padding: 0; background: none; border: 0; font-weight: 600; }
 .guide-nav a:hover { background: var(--paper-2); color: var(--ink); }
 .guide-nav a[aria-current="page"] {
   color: var(--ink);
-  font-weight: 700;
+  font-weight: 700;   /* safe: no sidebar tags, so a bold label wraps exactly like a regular one (checked on every page) */
   background: var(--sage-wash);
   border-radius: var(--sketch);
 }
@@ -856,6 +969,7 @@ main a:not([class]):is(:hover, :focus-visible) {
 /* "How do I…?": quick answers, above the stages */
 .guide-quick {
   display: flex; gap: 10px; align-items: center;
+  min-height: 44px;
   margin: 0 0 16px;
   padding: 8px 10px;
   color: var(--ink);
@@ -885,7 +999,9 @@ main a:not([class]):is(:hover, :focus-visible) {
 .guide-topics { display: none; }
 
 /* Reading column */
-.guide-content { min-width: 0; max-width: 68ch; padding-bottom: 8px; }
+.guide-content { min-width: 0; padding-bottom: 8px; }
+.guide-content > * { max-width: 68ch; }   /* comfortable lines of text */
+.guide-content > :is(.table-wrap, figure, p:has(> img:only-child)) { max-width: none; }   /* tables and drawings may use the whole column */
 .guide-content > h1:first-child { margin-top: 26px; font-size: clamp(2.2rem, 1.7rem + 2.2vw, 3.1rem); }
 .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1.2rem; color: var(--ink-soft); line-height: 1.6; }
 .guide-content > h1:first-child:has(+ .page-tag) { margin-bottom: 0.25em; }
@@ -922,9 +1038,14 @@ main a:not([class]):is(:hover, :focus-visible) {
 .page-toc a, .page-toc-wide a { display: inline-block; padding: 4px 0; line-height: 1.35; }
 .page-toc-wide { display: none; }
 @media (min-width: 1180px) {
-  .guide-frame.has-toc { grid-template-columns: 210px minmax(0, 1fr) 190px; gap: 44px; }
+  /* Every guide page keeps the same text column; the right rail stays empty
+     on pages without "On this page", so text never jumps between pages. */
+  .guide-frame { grid-template-columns: 210px minmax(0, 1fr) 190px; gap: 44px; }
+  .guide-sidebar { grid-column: 1; grid-row: 1; }
+  .guide-content { grid-column: 2; grid-row: 1; }
   .has-toc .guide-content .page-toc { display: none; }
   .page-toc-wide {
+    grid-column: 3; grid-row: 1;   /* keyboard order puts this before the article */
     display: block;
     position: sticky; top: 24px;
     padding: 30px 8px 8px 0;   /* room for the focus ring, which overflow would clip */
@@ -938,13 +1059,16 @@ main a:not([class]):is(:hover, :focus-visible) {
 }
 
 /* Previous / next */
+.guide-end {   /* the dashed rule, then "Back to top" at the end of the column, then previous / next */
+  margin: 3.4rem 0 0;
+  padding-top: 1.1rem;
+  border-top: 1.5px dashed var(--line-strong);
+}
 .pager {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
-  margin: 3.4rem 0 0;
-  padding-top: 1.6rem;
-  border-top: 1.5px dashed var(--line-strong);
+  margin: 0;
 }
 .pager a {   /* card-like buttons: lift on hover, press flat when clicked */
   display: block;
@@ -975,8 +1099,8 @@ main a:not([class]):is(:hover, :focus-visible) {
 .pager-prev .pager-label::before { content: "← " / ""; }
 .pager-next .pager-label::after { content: " →" / ""; }
 .pager-next { grid-column: 2; text-align: right; }
-.to-top { margin: 2.2rem 0 0; font-size: 0.95rem; text-align: right; }   /* long pages: before previous / next */
-.to-top + .pager { margin-top: 0.6rem; }
+.guide-content .to-top { margin: 0 0 1.1rem; font-size: 0.95rem; line-height: 1.4; text-align: right; }
+.guide-content .to-top a { display: inline-block; padding: 8px 0 8px 10px; }   /* a comfortable touch target */
 
 /* ---------- 8. Guide content (what Pandoc makes from Markdown) ----------- */
 .guide-content ul, .guide-content ol { padding-left: 1.4em; margin: 0 0 1.1em; }
@@ -1013,28 +1137,114 @@ main a:not([class]):is(:hover, :focus-visible) {
 .task-list label:hover input { border-color: var(--ink); }
 .task-list input:checked { background-color: var(--sage-wash); border-color: var(--sage); background-image: var(--tick); }
 .task-list input:focus-visible { outline-offset: 2px; }
-.task-list { --tick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%2346684b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); }
-@media (prefers-color-scheme: dark) { .task-list { --tick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%23a9c9a1' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); } }
+.task-list { --tick: var(--checkmark); }
 
 /* Pictures and diagrams: centered, never wider than the column. An italic
    paragraph right after a picture ("*In words:* …") reads as its caption. */
 .guide-content img { display: block; margin: 0 auto; }
 .guide-content p:has(> img:only-child),
-.guide-content figure { margin: 2.2rem 0 2.4rem; text-align: center; }
+.guide-content figure { margin: 1.5rem 0 1.8rem; text-align: center; }
 .guide-content :is(p:has(> img:only-child), figure.diagram):has(+ p > em:first-child) { margin-bottom: 0.8rem; }
 .guide-content :is(p:has(> img:only-child), figure.diagram) + p:has(> em:first-child),
 .guide-content figcaption {
   max-width: 54ch;
-  margin: 0 auto 2.4rem;
+  margin: 0 auto 1.8rem;
   font-size: 1rem;
   line-height: 1.55;
   color: var(--muted);
   text-align: center;
 }
 .guide-content figcaption { font-family: var(--font-display); font-style: italic; margin-top: 0.8rem; }
-/* Diagrams (the build wraps each one): tap the drawing or the link to zoom */
-.guide-content .diagram-zoom { display: block; }
-.guide-content .diagram-open { display: inline-block; margin-top: 4px; padding: 6px 0; font-size: 0.9rem; }
+/* Diagrams (the build wraps each one): the link under the drawing opens it full size */
+.guide-content figure.diagram { scroll-margin-top: 20vh; }
+.guide-content .diagram-open {   /* centered under its picture, everywhere */
+  display: flex;
+  width: fit-content;
+  align-items: center;
+  min-height: 44px;
+  margin: 10px auto 0;
+  padding: 8px 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  text-decoration: none;
+}
+.guide-content .diagram-open:is(:hover, :focus-visible) {
+  border-color: var(--link);
+  background: var(--blue-wash);
+}
+/* Full-size pictures (viewer_dialog in scripts/build_site.py, and the anatomy
+   pages): a dialog over the page that viewer.js opens as a modal. Without
+   JavaScript the dialog stays closed and the link opens the picture file. Same look in both
+   themes: a dark surround, the picture on its own paper. */
+dialog.viewer {
+  position: fixed; inset: 0; z-index: 100;
+  width: 100%; height: 100%; max-width: none; max-height: none;
+  margin: 0; padding: 64px clamp(12px, 4vw, 48px) clamp(12px, 3vw, 32px);
+  border: 0;
+  color: #f4efe6;
+  background: #181511;   /* underlying page text must not compete with the picture */
+  overflow: auto;
+}
+dialog.viewer::backdrop { background: transparent; }
+dialog.viewer[open] { display: grid; place-items: center; }
+.viewer-hint { display: none; }
+html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays put */
+.viewer img {
+  display: block;
+  max-width: 100%; max-height: calc(100vh - 96px);
+  width: auto; height: auto;
+  background: var(--paper);   /* a diagram's own paper, in either theme */
+  border-radius: 6px;
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.45);
+}
+.viewer img[src$=".svg"] { width: min(100%, 1400px); object-fit: contain; padding: clamp(8px, 2vw, 20px); }
+.viewer-close {
+  display: inline-flex; align-items: center; min-height: 44px;
+  position: fixed; top: 14px; right: clamp(12px, 3vw, 28px);
+  padding: 6px 16px;
+  color: #f4efe6; font-weight: 700; text-decoration: none;
+  background: rgb(0 0 0 / 0.35);
+  border: 1.5px solid rgb(244 239 230 / 0.7);
+  border-radius: 999px;
+}
+.viewer-close:hover { background: rgb(0 0 0 / 0.6); border-color: #f4efe6; }
+.viewer-close:focus-visible { outline: 2px solid #f4efe6; outline-offset: 3px; }
+@media (max-width: 600px) {   /* phones: each table row becomes a small card, nothing hidden off to the side */
+  .guide-content .table-wrap { overflow: visible; }
+  .guide-content .table-wrap :is(table, tbody, tr, td) { display: block; width: auto; }
+  .guide-content .table-wrap thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .guide-content .table-wrap tr { padding: 12px 16px; border-top: 1px solid var(--line); }
+  .guide-content .table-wrap tbody tr:first-child { border-top: 0; }
+  .guide-content .table-wrap td { padding: 2px 0; border: 0; }
+  .guide-content .table-wrap td:first-child { padding-bottom: 4px; font-weight: 700; color: var(--ink); }
+  .guide-content .table-wrap td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-top: 6px;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--muted);
+  }
+}
+@media (max-width: 600px) {   /* phones: show it larger and let readers pan */
+  dialog.viewer[open] { justify-items: start; }
+  .viewer img, .viewer img[src$=".svg"] { width: 760px; max-width: none; max-height: none; }
+  .viewer-hint {
+    display: block;
+    position: fixed;
+    top: 64px; left: 12px; right: 12px;
+    margin: 0;
+    padding: 6px 10px;
+    color: #f4efe6;
+    background: #181511;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+  dialog.viewer { padding-top: 120px; }
+}
+
 /* Pictures of the sample PDF (scripts/previews.py), left-aligned under their text */
 .guide-content figure.shot { margin: 0.4rem 0 1.4rem; }
 .guide-content figure.shot img {
@@ -1083,7 +1293,7 @@ main a:not([class]):is(:hover, :focus-visible) {
 .important { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12.1 3.4C12.9 5.2 13.6 7 14.5 8.8C16.3 9 18.2 9.2 20.1 9.5C18.7 10.8 17.3 12.1 15.9 13.4C16.2 15.2 16.6 17 17 18.9C15.4 17.9 13.7 17 12.1 16C10.4 16.9 8.7 17.9 7 18.8C7.4 17 7.8 15.2 8.2 13.3C6.8 12 5.4 10.7 4 9.4C5.9 9.2 7.7 9 9.6 8.7C10.4 6.9 11.2 5.2 12.1 3.4Z'/%3E%3C/svg%3E"); }
 .warning, .caution { --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.5C15 9 18 14 21.2 19.6 15 20.2 9 19.8 2.8 19.6 6 14 9 9 12 3.5z'/%3E%3Cpath d='M12 9.5v5M12 17.3v.2'/%3E%3C/svg%3E"); }
 
-/* Details: "For experienced users" sections, closed until wanted */
+/* Details: optional sections, closed until wanted */
 .guide-content details {
   margin: 1.6rem 0;
   padding: 0 20px;
@@ -1142,14 +1352,38 @@ main a:not([class]):is(:hover, :focus-visible) {
   tab-size: 2;
 }
 
-/* "Copy" button on each code block, added by site/copy.js when JavaScript runs.
-   The block gets a slim top margin inside so the button never covers code. */
-.code-block { position: relative; }
-.guide-content .code-block > pre { padding-top: 42px; }
+/* Prose prompts wrap; LaTeX, commands and diagnostic logs keep their spacing. */
+.guide-content pre.prompt, .guide-content pre.prompt code {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+/* Optional Copy controls occupy their own row, never the example's text. */
+.code-block {
+  margin: 0 0 1.2rem;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper-2);
+}
+.code-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  padding: 3px 6px 3px 16px;
+  border-bottom: 1px solid var(--line);
+  line-height: 1.2;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.guide-content .code-block > pre {
+  margin: 0;
+  padding-top: 8px;
+  border: 0;
+  border-radius: 0 0 11px 11px;
+}
 .copy-button {
-  position: absolute;
-  top: 7px; right: 8px;
-  min-height: 28px;
+  flex: none;
+  min-height: 30px;
   padding: 2px 12px;
   font: inherit;
   font-size: 0.8rem;
@@ -1157,7 +1391,7 @@ main a:not([class]):is(:hover, :focus-visible) {
   line-height: 1.2;
   color: var(--ink-soft);
   background: var(--card);
-  border: 1.5px solid var(--line-strong);
+  border: 1.5px solid var(--control-edge);
   border-radius: var(--sketch);
   box-shadow: 2px 2px 0 var(--line-strong);
   cursor: pointer;
@@ -1168,6 +1402,7 @@ main a:not([class]):is(:hover, :focus-visible) {
 
 /* Tables: the build wraps each one in .table-wrap, which scrolls if needed */
 .table-wrap {
+  position: relative;   /* keep off-screen link labels inside the scroll box */
   --fill: var(--card);
   margin: 1.4rem 0 1.8rem;
   border: 1.5px solid var(--line);
@@ -1185,13 +1420,16 @@ main a:not([class]):is(:hover, :focus-visible) {
   font-weight: 600;
   font-size: 1.02rem;
   padding: 11px 14px;
-  background: var(--paper-2);
+  background: var(--table-head);
   border-bottom: 2px solid var(--line-strong);
 }
 .guide-content td { padding: 10px 14px; border-top: 1px solid var(--line); vertical-align: top; }
 .guide-content tr:first-child td { border-top: 0; }
+.guide-content code.keep { white-space: nowrap; }   /* short names stay whole (build_site.py) */
+.guide-content code.keep-path .nowrap { white-space: nowrap; }   /* a path breaks only after a slash */
 .guide-content td code { overflow-wrap: break-word; }   /* "style=numeric,sorting=none" stays whole */
-.guide-content td:first-child code { white-space: nowrap; }   /* keys and file names; phones may wrap */
+.guide-content td:first-child code:not(.phrase, .long) { white-space: nowrap; }   /* keys and file names; messages wrap */
+.guide-content td code.long { overflow-wrap: anywhere; }   /* a 50-character \includegraphics line */
 .guide-content th:empty { padding: 0; }
 
 /* ---------- 9. Footer ---------------------------------------------------- */
@@ -1210,6 +1448,7 @@ main a:not([class]):is(:hover, :focus-visible) {
 /* The edition line, styled as a calm "last checked" stamp */
 .edition {
   display: inline-block;
+  font-variant-numeric: normal; font-feature-settings: "zero" 0;   /* no slashed zeros in "2026" */
   margin: 0;
   padding: 7px 14px 7px 36px;
   font-size: 0.875rem;
@@ -1240,15 +1479,14 @@ main a:not([class]):is(:hover, :focus-visible) {
 @media (max-width: 1080px) {
   .anatomy-pages > li { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); column-gap: 30px; }
   .guide-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 36px; }
-  .steps li:nth-child(2)::after { display: none; }
 }
 
 @media (max-width: 860px) {
+  .community-note { grid-template-columns: minmax(0, 1fr); }
   .hero { grid-template-columns: minmax(0, 1fr); }
   .hero h1 { max-width: 16ch; }
-  .hero-art { max-width: 460px; justify-self: center; width: 100%; }
-  .teaser, .routes, .footer-inner { grid-template-columns: minmax(0, 1fr); }
+  .hero-art { max-width: min(460px, 78%); justify-self: center; width: 100%; }   /* a smaller sketch keeps the next step in view */
+  .routes, .footer-inner { grid-template-columns: minmax(0, 1fr); }
 
   .guide-frame { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .guide-sidebar { display: none; }
@@ -1277,23 +1515,35 @@ main a:not([class]):is(:hover, :focus-visible) {
     transform: translateY(-3px) rotate(45deg);
   }
   .guide-topics[open] > summary::after { transform: translateY(2px) rotate(-135deg); }
-  .guide-topics .guide-groups { padding: 10px 8px 4px; border-top: 1.5px dashed var(--line); }
+  .guide-topics > nav { padding: 0 12px 8px; }
+  .guide-topics .guide-groups { padding: 10px 0 4px; border-top: 1.5px dashed var(--line); }
   .guide-topics .guide-group { padding-inline: 8px; }
-  .guide-topics .guide-nav a { padding: 9px 8px; }
+  .guide-topics .guide-nav a { padding: 9px 8px; min-height: 44px; }
   /* Stacked: the close-up takes the full width, the whole page sits under it */
   .anatomy-pages { gap: 38px; }
   .anatomy-pages > li { display: block; }
   .anatomy-shot { grid-template-columns: 60px minmax(0, 1fr); row-gap: 14px; margin-bottom: 14px; }
-  .anatomy-lens { grid-column: 1 / -1; grid-row: 1; margin: 0; padding: 4px 6px; }
-  .anatomy-page { grid-row: 2; }
-  .anatomy-open { position: static; grid-row: 2; justify-self: start; margin-left: 16px; }
+  .anatomy-lens { grid-column: 1 / -1; grid-row: 1; margin: 0; padding: 4px 6px; overflow: hidden; }
+  .anatomy-page { display: none; }   /* the full page is one tap away */
+  .anatomy-open { grid-column: 1 / -1; grid-row: 2; margin: 0; }
+}
+@media (max-width: 600px) {
+  .anatomy-lens img { width: 175%; max-width: none; }   /* close-up text near reading size; its right edge is cropped */
+  :is(#anatomy-chapter, #anatomy-appendix, #anatomy-figure-table) .anatomy-lens img { margin-left: -37.5%; }   /* centered headings and tables: crop both sides */
 }
 
 @media (max-width: 640px) {
   body { font-size: 1.0625rem; }   /* 17px */
   .site-header { padding-top: 16px; padding-bottom: 12px; }
-  .site-nav { gap: 0 16px; }
+  .wordmark { font-size: 1.15rem; gap: 8px; }   /* name and "Unofficial" stay on one line beside the appearance button */
+  .wordmark-logo { width: 24px; height: 24px; }
+  .brand { column-gap: 8px; }
+  .appearance { top: 8px; }   /* centred on the brand line */
+  .site-nav { gap: 0 16px; width: calc(100% + 60px); flex-shrink: 0; margin-right: -60px; }
   .site-nav a { font-size: 0.95rem; padding: 2px 0; }
+  .page-guide .site-nav { display: none; }   /* "Guide topics", just below, lists every page */
+  .guide-topics-here { display: none; }   /* the page title immediately below already names this page */
+  .guide-topics-here::before { content: none; }
   .unofficial-more { display: none; }   /* phones: just "Unofficial" */
   .lead { font-size: 1.15rem; }
   .steps { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
@@ -1310,7 +1560,6 @@ main a:not([class]):is(:hover, :focus-visible) {
   .guide-list { grid-template-columns: minmax(0, 1fr); }
   .card.tinted::before { inset: 7px -6px -7px 6px; }
   .routes { padding-right: 6px; }
-  .teaser figure { margin: 0 -6px; }
   /* The fallback table becomes one small card per row */
   .anatomy-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   .anatomy-table :is(tr, th, td) { display: block; }
@@ -1333,22 +1582,15 @@ main a:not([class]):is(:hover, :focus-visible) {
   .note, .tip, .important, .warning, .caution { padding: 12px 16px 14px; }
   .guide-content details { padding: 0 16px; }
   .guide-content pre { padding: 12px 14px; font-size: 0.85rem; }
+  .copy-button { min-height: 44px; box-shadow: none; }
+  .guide-content pre, .guide-content pre code { white-space: pre-wrap; overflow-wrap: anywhere; }   /* phones: wrap, never clip; Copy still copies the original lines */
   .guide-content th, .guide-content td { padding: 9px 11px; }
   .guide-content td:first-child code { white-space: normal; overflow-wrap: break-word; padding: 0.05em 0.25em; }
   .pager { grid-template-columns: minmax(0, 1fr); }
   .pager-next { grid-column: 1; }
-  /* Phones: the close-up reaches into the side margins, and all but the
-     contents (page numbers at the right edge) show larger, cut off on the
-     right with a fade, so 12 pt text stays about 11 px */
-  .anatomy-lens { margin-inline: calc(var(--gutter) * -0.5); padding: 0; overflow: hidden; }
-  .anatomy-lens:not(.anatomy-lens-whole) img { width: 130%; max-width: none; }
-  .anatomy-lens:not(.anatomy-lens-whole)::after {
-    content: "";
-    position: absolute;
-    inset: 0 0 0 auto;
-    width: 48px;
-    background: linear-gradient(to right, rgba(255, 255, 255, 0), #fff);
-  }
+  /* Keep the complete close-up visible; the full-size view is available
+     when the reader needs larger text. */
+  .anatomy-lens { padding: 4px; }
 }
 
 @media (max-width: 420px) {
@@ -1365,7 +1607,7 @@ main a:not([class]):is(:hover, :focus-visible) {
    Off for anyone who asks for reduced motion.
      1. the hero's underline draws itself once on load
      2. cards (and anatomy close-ups) lift a little on hover or keyboard focus
-     3. "For experienced users" and other details boxes ease open */
+     3. Optional details boxes ease open */
 @media (prefers-reduced-motion: no-preference) {
   .hero .squiggle::after { animation: draw-in .8s .35s ease-out both; }
 
@@ -1398,13 +1640,53 @@ main a:not([class]):is(:hover, :focus-visible) {
    checklists), whatever the screen theme and whether or not the browser's
    "background graphics" option is on. The tokens are reset to print values,
    so the dark-theme colors above never reach paper. */
+/* The optional one-word class example uses native radio buttons, no script. */
+.class-demo {
+  position: relative; min-width: 0; margin: 1.4rem 0; padding: 16px;
+  display: grid; grid-template-columns: minmax(0, max-content) minmax(0, max-content) minmax(0, 1fr);
+  justify-content: start; gap: 0; background: var(--card); border: 1.5px solid var(--line-strong);
+  border-radius: 12px;
+}
+.class-demo legend { padding: 0 8px; font-weight: 700; font-size: 0.95rem; }
+/* A segmented control: the native radios stay (keyboard, arrow keys) but are
+   visually hidden; each label is a segment, same look as the appearance menu. */
+.class-demo > input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
+.class-demo > label {
+  display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 6px 18px;
+  font-size: 0.95rem; color: var(--ink); background: transparent; cursor: pointer;
+  border: 1.5px solid var(--line-strong);
+}
+.class-demo > label + input + label { border-left-width: 0; border-radius: 0 10px 10px 0; }
+.class-demo > label:first-of-type { border-radius: 10px 0 0 10px; }
+.class-demo > label:hover { background: var(--paper-2); }
+.class-demo > input:checked + label { background: var(--blue-wash); font-weight: 700; box-shadow: inset 0 -3px 0 var(--link); }
+@media (max-width: 400px) { .class-demo { padding: 12px; } .class-demo > label { padding: 6px 10px; font-size: 0.9rem; text-align: center; } }
+.class-demo > input:focus-visible + label { outline: 3px solid var(--focus); outline-offset: 2px; position: relative; z-index: 1; }
+.class-demo-panels { grid-column: 1 / -1; min-width: 0; margin-top: 8px; }
+.guide-content .class-demo-line { margin: 16px 0; text-align: center; }
+.class-demo-line code { font-size: clamp(0.8rem, 2vw, 1rem); white-space: nowrap; }
+.class-demo-line mark { padding: 3px 1px; color: var(--ink); background: var(--butter-wash); border-bottom: 2px solid var(--terra); font-weight: 700; }
+.guide-content .class-demo-panel > figure { margin: 0; }
+.guide-content .class-demo-panel > figure img {
+  width: 100%; max-width: 380px; height: auto; border: 1px solid #888; background: #fff;
+}
+.guide-content .class-demo-panel figcaption { margin: 10px 0; font-size: 0.8rem; color: var(--muted); }
+#choose-class-demo-ams:checked ~ .class-demo-panels > .class-demo-ieee,
+#choose-class-demo-ieee:checked ~ .class-demo-panels > .class-demo-ams { display: none; }
+@media print {
+  .class-demo > input, .class-demo > label, .class-demo legend { display: none; }
+  .class-demo { display: block; }
+  .class-demo .class-demo-panel { display: block !important; break-inside: avoid; }
+}
+
 @media print {
   .site-header, .guide-sidebar, .guide-topics, .pager, .skip-link, .site-footer,
-  .hero-actions, .doodle-defs, .diagram-open, .page-toc, .page-toc-wide, .copy-button { display: none !important; }
+  .hero-actions, .hero-next, .diagram-open, .viewer, .page-toc, .page-toc-wide, .code-toolbar { display: none !important; }
+  .code-block { border: 0; background: none; }
   .guide-content .code-block > pre { padding-top: 16px; }
-  :root {
+  :root, :root[data-theme], :root:not([data-theme]) {
     color-scheme: light;
-    --paper: #fff; --paper-2: #fff; --card: #fff;
+    --paper: #fff; --paper-2: #fff; --card: #fff; --table-head: #fff; --control-edge: #000;
     --ink: #000; --ink-soft: #111; --muted: #333;
     --line: #bbb; --line-strong: #888;
     --btn-edge: #000; --btn-edge-2: #000; --btn-shadow: transparent;
@@ -1420,7 +1702,11 @@ main a:not([class]):is(:hover, :focus-visible) {
   .guide-content { max-width: none; }
   .guide-content h2::after { display: none; }
   a { color: #000; text-decoration: underline; }
-  :is(main, .site-footer) a[href^="http"]:not(.button)::after { content: " (" attr(href) ")"; font-size: 0.85em; overflow-wrap: anywhere; }
+  :is(main, .site-footer) a[href^="http"]:not(.button)::after {
+    content: " (" attr(href) ")"; font-size: 0.85em; overflow-wrap: anywhere;
+    display: inline; width: auto; height: auto; margin: 0;
+    background: none; -webkit-mask: none; mask: none;
+  }
   /* White boxes, black text, thin grey borders */
   .band, .card, .note, .tip, .important, .warning, .caution, details, summary, code, kbd, mark,
   .guide-content pre, .snippet, .table-wrap, .anatomy-table, th, td, .tag, .route-badge, .edition,
@@ -1453,7 +1739,7 @@ main a:not([class]):is(:hover, :focus-visible) {
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
     --tick: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%23000000' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   }
-  /* "For experienced users" sections print open, closed or not */
+  /* Optional sections print open, closed or not */
   details::details-content { content-visibility: visible; display: block; block-size: auto !important; }
   .guide-content details > summary { margin-bottom: 10px; border-bottom: 1px solid #bbb; }
   .guide-content summary::before { display: none; }
