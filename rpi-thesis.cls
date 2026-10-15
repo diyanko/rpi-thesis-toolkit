@@ -259,6 +259,9 @@
 % \committeemember[Chair]{Name}, [Co-Chair], or no role for other members.
 \NewDocumentCommand \committeemember { O{} m }
   {
+    \tl_if_blank:nT {#2}
+      { \ClassError{rpi-thesis}{Blank~committee~member~name~in~metadata.tex}
+          {Put~the~member's~name~inside~the~braces~of~each~committeemember~line.} }
     \seq_gput_right:Nn \g_rpi_committee_seq
       { #2 \tl_if_blank:nF {#1} {,~#1} \par }
     \str_if_eq:nnT {#1} {Chair} { \int_gincr:N \g_rpi_chairs_int }
