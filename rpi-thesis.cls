@@ -23,6 +23,11 @@
   \RequirePackage{unicode-math}
   \setmathfont{texgyretermes-math.otf}
 \fi
+% The math fonts above already provide every amssymb and amsfonts symbol.
+% Mark both packages as loaded, so a pasted \usepackage{amssymb} is harmless
+% instead of stopping the build with "Command ... already defined".
+\@namedef{ver@amssymb.sty}{2013/01/14 v3.01 (symbols provided by rpi-thesis)}
+\@namedef{ver@amsfonts.sty}{2013/01/14 v3.01 (symbols provided by rpi-thesis)}
 % Page numbers sit 0.75 in from the page edge (footer and header baselines).
 \RequirePackage[margin=1in,footskip=0.25in,headheight=12pt,headsep=0.25in]
   {geometry}
@@ -171,7 +176,7 @@
     list-of-figures .bool_gset:N = \g_rpi_figures_bool,
   }
 \keys_set:nn { rpi/thesis }
-  { degree=masters, seal-file=assets/rpi-seal.jpg,
+  { degree=doctoral, seal-file=assets/rpi-seal.jpg,
     copyright-page=false, list-of-tables=true, list-of-figures=true }
 \NewDocumentCommand \thesissetup { m } { \keys_set:nn { rpi/thesis } {#1} }
 \NewDocumentCommand \committeemember { O{} m }
@@ -249,7 +254,11 @@
       { \exp_args:NV \rpi_seal_image:n \g_rpi_seal_tl }
       {
         \exp_args:NV \file_if_exist:nTF \c_rpi_seal_png_tl
-          { \exp_args:NV \rpi_seal_image:n \c_rpi_seal_png_tl }
+          {
+            % Log the missing seal-file too, so adding it later recompiles.
+            \iow_log:x { No~file~\tl_use:N \g_rpi_seal_tl . }
+            \exp_args:NV \rpi_seal_image:n \c_rpi_seal_png_tl
+          }
           { \rpi_seal_placeholder: }
       }
   }
