@@ -43,10 +43,10 @@ Built your change with an AI assistant? That's welcome too.
 1. Fork (make your own copy of) the repository, then make a branch for
    your change.
 2. Make one focused change.
-3. Optional: if you use a terminal, check it with `python3 scripts/build.py`
-   after changing LaTeX, or `python3 scripts/build_site.py` after changing
-   the guide (on Windows, type `py` instead of `python3`). If you cannot, say
-   so; the automated checks run anyway.
+3. Optional: if you use a terminal, run `python3 scripts/verify.py quick`
+   (guide or website) or `python3 scripts/verify.py` (LaTeX or scripts); on
+   Windows, type `py` instead of `python3`. Paste its last line into the pull
+   request. If you cannot, say so; the same checks run automatically.
 4. Open the pull request and fill in the short template.
 
 New to forks and pull requests? GitHub's
@@ -82,16 +82,12 @@ or Share a tip), and write a title and text in plain language. Leave out
 anything private from my thesis.
 ```
 
-To prepare a pull request (an AI assistant that can edit files and use
-GitHub):
+To make the change itself (an AI assistant that can edit files and use
+GitHub, such as Claude Code or Codex):
 
 ```text
-I want to contribute to https://github.com/diyanko/rpi-thesis-toolkit.
-First read AGENTS.md and CONTRIBUTING.md and follow them. My change:
-[describe it]. Fork the repository if needed, make one small change on a new
-branch, and run the checks AGENTS.md lists for that kind of change if you
-can. Show me the changes and the check results, and wait for my OK before
-pushing. Then open a pull request with the template and mark it AI-assisted.
+Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its
+"Contributing as an agent" steps. What I'd like changed: [describe it].
 ```
 
 Keep it to one change, never include your own thesis files or data, and say
