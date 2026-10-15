@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Compile the thesis locally; never install, upload, or publish anything."""
 import argparse
+import datetime
 import os
 from pathlib import Path
 import re
@@ -149,13 +150,17 @@ def install_hint(missing):
     engine_missing = [name for name in missing if name not in ("latexmk", "biber")]
     if shutil.which("apt-get"):
         if engine_missing:
-            return "Install LaTeX: sudo apt install texlive-full  (with latexmk and biber)"
-        return "Install the missing tools: sudo apt install " + " ".join(missing)
+            return (
+                "Install LaTeX with this command:\n"
+                "  sudo apt install texlive-full\n"
+                "(it includes latexmk and biber)"
+            )
+        return "Install the missing tools with this command:\n  sudo apt install " + " ".join(missing)
     if shutil.which("dnf"):
         packages = [name for name in missing if name in ("latexmk", "biber")]
         if engine_missing:
             packages = ["texlive-scheme-full", "latexmk", "biber"]
-        return "Install LaTeX: sudo dnf install " + " ".join(packages)
+        return "Install LaTeX with this command:\n  sudo dnf install " + " ".join(packages)
     return "Install TeX Live: https://tug.org/texlive/quickinstall.html"
 
 
@@ -180,9 +185,34 @@ def location_notes(root):
     return notes
 
 
+def valid_iso_date(value):
+    """True for a real calendar date written YYYY-MM-DD."""
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+        return False
+    try:
+        datetime.date.fromisoformat(value)
+    except ValueError:
+        return False
+    return True
+
+
+def biber_warnings(output):
+    """Biber warnings about dates or malformed fields, from main.blg."""
+    blg = output / "main.blg"
+    if not blg.is_file():
+        return []
+    found = []
+    for line in blg.read_text(encoding="utf-8", errors="replace").splitlines():
+        if "WARN" in line and re.search(r"(?i)date|invalid|malformed|ignor", line):
+            text = re.sub(r"^.*?WARN\s*-\s*", "", line).strip()
+            if text not in found:
+                found.append(text)
+    return ["Biber warning (see build/main.blg): " + text for text in found[:10]]
+
+
 def presubmission_hints(root, output, sources=None, warnings=()):
     """Warn about common revision comments. Advice only; never fails a build."""
-    hints = list(warnings)
+    hints = list(warnings) + biber_warnings(output)
     log = output / "main.log"
     log_text = ""
     if log.is_file():
@@ -199,15 +229,25 @@ def presubmission_hints(root, output, sources=None, warnings=()):
         starts = list(re.finditer(r"@(\w+)\s*\{\s*([^,\s]+)\s*,", text))
         for start, end in zip(starts, starts[1:] + [None]):
             entry = text[start.end() : end.start() if end else None]
-            if re.search(r"(?i)\burl\s*=", entry) and not re.search(
-                r"(?i)\burldate\s*=", entry
-            ):
-                line = text.count("\n", 0, start.start()) + 1
+            if not re.search(r"(?i)\burl\s*=", entry):
+                continue
+            line = text.count("\n", 0, start.start()) + 1
+            where = f"{bib.relative_to(root)}, line {line}: entry '{start[2]}'"
+            date = re.search(r"(?i)\burldate\s*=\s*(?:\{([^{}]*)\}|\"([^\"]*)\"|([^,\s}]+))", entry)
+            if not date:
                 hints.append(
-                    f"{bib.relative_to(root)}, line {line}: entry '{start[2]}' has a "
-                    "url but no access date. OGE requires one for every URL. Add "
-                    "the line  urldate = {YYYY-MM-DD},  using the date you read it "
-                    "(or delete the url line if it only repeats the entry's DOI)."
+                    f"{where} has a url but no access date. OGE requires one for every "
+                    "URL. Add the line  urldate = {YYYY-MM-DD},  using the date you read "
+                    "it (or delete the url line if it only repeats the entry's DOI)."
+                )
+                continue
+            value = next(g for g in date.groups() if g is not None).strip()
+            if not valid_iso_date(value):
+                what = "an empty urldate" if not value else f"urldate = {{{value}}}"
+                hints.append(
+                    f"{where} has {what}. Write the access date as YYYY-MM-DD, for "
+                    "example  urldate = {2026-10-15},  (not a month name); otherwise "
+                    "biblatex cannot read it and the date is left out."
                 )
     for tex in sources if sources is not None else student_files(root, "*.tex"):
         lines = read_source(tex).splitlines()
@@ -224,6 +264,12 @@ def presubmission_hints(root, output, sources=None, warnings=()):
             + " or newer). Install a current TeX Live; see "
             + guide(root, "get-started") + "."
         )
+    if re.search(r"You have requested,.*?\n.*?document class rpi-thesis", log_text):
+        hints.append(
+            "Your rpi-thesis.cls is older than your other starter files expect. Copy "
+            "rpi-thesis.cls from the newest starter into this folder; see "
+            + guide(root, "workflows") + " (Update the formatting safely)."
+        )
     if hints:
         print(
             "\nPre-submission hints (your PDF was built; check these before submitting):"
@@ -237,14 +283,18 @@ KNOWN_PROBLEMS = [
     (
         "lipo",
         "Biber, the bibliography tool, could not start: older Mac builds of Biber"
-        " fail on newer macOS. Update TeX Live (TeX Live Utility, Update all"
-        " packages; or 'sudo tlmgr update --self --all'), then build again.",
+        " fail on newer macOS. Update TeX Live, then build again. On macOS"
+        " (MacTeX), use TeX Live Utility, Update all packages, or run"
+        " 'sudo tlmgr update --self --all'. On Linux with apt, update with your"
+        " package manager, for example 'sudo apt update' then 'sudo apt upgrade'.",
     ),
     (
         "biblatex control file version",
-        "Biber and biblatex come from different TeX installations or years. Use one"
-        " TeX distribution, update it completely, and make sure 'biber' is the one"
-        " it installed.",
+        "This is most often a stale control file left by an earlier build. Clean"
+        " compile first: python3 scripts/build.py --fresh (or your editor's clean"
+        " command), then build again. If it still fails, Biber and biblatex come"
+        " from different TeX installations or years: use one TeX distribution,"
+        " update it completely, and make sure 'biber' is the one it installed.",
     ),
     (
         "script engine",
