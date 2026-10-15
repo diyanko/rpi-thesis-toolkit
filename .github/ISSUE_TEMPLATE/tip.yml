@@ -1,0 +1,31 @@
+name: Share a tip, tool, or workflow
+description: Something that saved you time, a fix for an edge case, or a note for your department. Beginners welcome.
+title: "Tip: "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing. Tips about related documents (a journal or conference version, slides, or a poster) are welcome too. Write in your own words; screenshots are welcome. Please leave out private research and personal details.
+  - type: textarea
+    id: helps-with
+    attributes:
+      label: What does it help with?
+      placeholder: For example, keeping figure numbers right after moving a chapter, or making a poster from thesis figures.
+    validations:
+      required: true
+  - type: textarea
+    id: how
+    attributes:
+      label: How do you use it? (optional)
+      description: The steps, a short example, or a link to the tool's own page.
+  - type: input
+    id: scope
+    attributes:
+      label: For which department or document type? (optional)
+      placeholder: For example, any thesis; Physics; doctoral dissertations; conference papers; posters.
+  - type: input
+    id: credit
+    attributes:
+      label: Public credit (optional)
+      description: If your tip is added, the name you would like listed in the project's credits. Leave blank for no credit. Do not enter an email address or student ID.

@@ -1,5 +1,8 @@
 blank_issues_enabled: false
 contact_links:
+  - name: No GitHub account? Use the help and feedback form
+    url: https://diyanko.github.io/rpi-thesis-toolkit/guide/troubleshooting.html#ask-for-help
+    about: The guide's "Ask for help" section links to a form that needs no sign-in. Questions, suggestions, and tips are all welcome there.
   - name: Official formatting rulings (RPI Office of Graduate Education)
     url: https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation
     about: This community project cannot approve formatting. For official requirements and rulings, start at OGE's "Submit your thesis/dissertation" page.

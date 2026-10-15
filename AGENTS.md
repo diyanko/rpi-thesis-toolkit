@@ -72,9 +72,14 @@ name the file and the smallest useful correction.
 - Never describe the project as official, approved, endorsed, or "RPI's
   template", and never imply OGE reviewed it.
 - Never commit, push, publish, open releases, upload, or contact anyone
-  (including OGE) without explicit approval from the human maintainer.
+  (including OGE) without explicit approval from the human maintainer. If you
+  are helping an outside contributor, the person you work for approves
+  commits to a branch in their own fork and the pull request they open; never
+  push to this repository's `main` and never include their thesis or data.
 - Never add emojis, decorative symbols, or marketing language.
-- Never make the website depend on JavaScript.
+- Never make the website depend on JavaScript. Small optional enhancements
+  (such as copy buttons) are allowed when everything still works with
+  JavaScript off.
 - Never add dependencies beyond the Python standard library and Pandoc, plus
   `pypdf` for `check.py` and TeX Live for compiling.
 - Never add personal data (other than opt-in credits in `CREDITS.md` and the maintainer contact in `CODE_OF_CONDUCT.md`),
@@ -97,6 +102,9 @@ Run every gate that matches your change, and report what you ran.
 
 `check.py` needs `pypdf`; the student build script does not. Do not add tests
 that merely restate prose or trivial reversible edits.
+
+AI-assisted and first-time contributions are welcome: review them against these
+same gates, help finish them rather than reject them, and keep feedback kind and specific.
 
 ## Recording uncertainty
 
