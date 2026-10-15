@@ -24,7 +24,7 @@
 % 1. Identity and options
 % ---------------------------------------------------------------------------
 \NeedsTeXFormat{LaTeX2e}[2022-06-01]
-\ProvidesClass{rpi-thesis}[2026/10/15 v0.2.0 RPI community thesis starter]
+\ProvidesClass{rpi-thesis}[2026/10/15 v0.3.0 RPI community thesis starter]
 % Settings live in metadata.tex, so the class takes no options.
 \DeclareOption*{\ClassError{rpi-thesis}{Unsupported class option: \CurrentOption}
   {Use metadata.tex for settings. This starter uses 12pt, letterpaper, oneside.}}
