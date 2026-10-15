@@ -3,32 +3,26 @@ help with the rest.
 
 ## What does this change?
 
-<!-- A sentence or two is enough. Which student task does it help? -->
+<!-- A sentence or two. Which student task does it help? -->
 
-## How did you check it? (optional)
+## Checks
 
-<!-- For example: compiled the sample thesis, read the page on the website,
-or tried it on Overleaf. "Not sure" is a fine answer. -->
+<!-- Paste the last line of `python3 scripts/verify.py quick` (guide or
+website) or `python3 scripts/verify.py` (LaTeX or scripts). "Did not run"
+is fine: the same checks run automatically on this pull request. -->
 
-**Changes the PDF?** <!-- yes, no, or not sure -->
+**Changes the PDF?** <!-- yes, no, or not sure. Formatting changes: name the
+OGE manual or checklist section and page. -->
 
-**AI-assisted?** <!-- yes or no; optional, for the reviewer's context only -->
+**AI-assisted?** <!-- yes or no; for the reviewer's context only -->
 
-## Optional checklist
+## Before and after
 
-Tick what applies. Unticked boxes are fine; the automated checks run on
-every pull request, and the maintainer can finish any of these.
+<!-- For visible changes, drag screenshots here (scripts/ui_check.py --shots
+saves phone and laptop views in light and dark). -->
 
-- [ ] LaTeX changes: `python3 scripts/build.py` runs and the PDF looks right.
-- [ ] Formatting changes: I named the OGE manual or checklist section and
-      page (or the comparison with RPI's official LaTeX template).
-- [ ] Guide or other Markdown changes: `python3 scripts/build_site.py`
-      reports no broken links.
-- [ ] Website changes: checked on a phone-sized and a wide window, in light
-      and dark mode.
-- [ ] Scripts: `python3 scripts/package.py` and `python3 scripts/build.py` run.
-- [ ] Nothing private or RPI-owned: no private research, personal details,
-      seal, manuals, or RPI's original template files.
+- [ ] Nothing private or RPI-owned: no thesis text or data, personal
+      details, seal, manuals, or RPI's original template files.
 
-<!-- Third-party material or someone else's help? Name it here, and say
-whether they would like a credit on the credits page. -->
+<!-- Third-party material or someone's help? Name it, and say whether they
+would like a credit on the credits page. -->

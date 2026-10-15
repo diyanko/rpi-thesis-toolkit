@@ -109,6 +109,24 @@ page) or the official-template comparison, and a `CHANGELOG.md` line with
 Parallel work: one writer per checkout. A second session or agent works in
 its own git worktree and branch, and agents sharing a task own separate files.
 
+## Contributing as an agent
+
+Most outside contributions arrive through an agent working for a student.
+When the person you work for is not the maintainer:
+
+1. Fork and clone the repository; make one focused change on a new branch.
+2. Run the `verify.py` mode for the change (table above). If it fails, fix
+   it or explain the failure plainly.
+3. For a visible change, build the site and run `python3 scripts/ui_check.py
+   --shots` on `main` and on your branch, then pick one or two before/after
+   pairs.
+4. Show your person the diff, the verify summary line, and the screenshots.
+   Push and open the pull request only after their OK, using
+   `.github/pull_request_template.md`; tell them which screenshots to drag
+   into it.
+5. Never include their thesis text, data, or personal details; never touch
+   `main` of this repository directly.
+
 AI-assisted and first-time contributions are welcome: review them with the
 same command, help finish them rather than reject them, and keep feedback
 kind and specific.
