@@ -24,9 +24,11 @@ lines from `\begin{singlespace}` to `\end{singlespace}` with
   groups its settings with short tips; the class is laid out in 13 labelled
   sections that cite the OGE manual.
 - **The first compile works from a fresh download** in VS Code and other
-  editors that run latexmk (a new `latexmkrc` creates the output folders).
+  editors that run latexmk (a new `latexmkrc` creates the output folders);
+  VS Code also offers XeLaTeX and LuaLaTeX recipes and remembers your choice.
 - **Warnings that help.** LaTeX warns when your class file is older than your
-  other files; the build helper flags missing or malformed access dates.
+  other files or a committee name is blank; the build helper flags malformed
+  access dates, figures too tall for the page, and missing chapters.
 - **Clearer citations.** Which command gives "(Lamport, 1994)", how to write
   several authors or an organization, and full credits tested in each listed
   style (MLA needs a one-line fix; see the citations page).
