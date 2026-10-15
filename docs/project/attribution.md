@@ -32,9 +32,11 @@ files (names and SHA-256 hashes), so a maintainer can tell whether a local
 reference copy has changed. A hash is not a license and does not prove that a
 copy is the latest download.
 
-Decision recorded 14 Oct 2026 following advice from OGE: do not redistribute
-RPI materials. Because nothing RPI-owned is redistributed, the project does
-not need redistribution permission. This is not an endorsement by OGE.
+Maintainer decision (14 Oct 2026): do not redistribute RPI materials, and
+point students to the current seal on RPI ITS's Thesis Preparation page to
+download themselves. Because nothing RPI-owned is redistributed, the project
+does not need redistribution permission. This is a project decision, not OGE
+approval or endorsement.
 
 ## Open-source tools and fonts
 

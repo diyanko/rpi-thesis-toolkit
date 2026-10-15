@@ -4,16 +4,44 @@ How to write anything a student or contributor reads: the guide in `docs/`,
 the front-door pages, the website, LaTeX comments, issue forms, and error
 messages. When in doubt, choose the plainer sentence.
 
+## Audience
+
+- Readers are students at every level, from undergraduates to doctoral
+  students, in every department, with any technical background.
+- Write for the least technical reader first: someone who has never used a
+  terminal, has never heard of LaTeX, and may not be a native English
+  speaker. Short sentences, one idea each. Define a technical word (compile,
+  class file, package, preamble, environment, command, repository, ZIP,
+  terminal) the first time a page uses it, in a few plain words.
+- Mark every terminal command as optional or "for experienced users", and
+  give a route without it.
+- Scope formatting claims: the class formats RPI graduate theses and
+  dissertations to OGE's rules. The writing, citation, figure, and workflow
+  help suits any student and any document, but never imply the class meets
+  undergraduate or other programs' requirements.
+- Let examples span disciplines: a photo, map, or drawing as well as a plot;
+  a table of interview themes as well as numbers; APA, Chicago, or MLA as
+  well as IEEE. Prefer swapping an example word to adding a section.
+
 ## Voice
 
 - Plain, warm, and direct. Speak to the reader as "you".
 - Help the student finish their thesis; do not sell LaTeX. Mention trade-offs
   honestly, including when Word or another route is reasonable.
-- Beginner steps first, as numbered steps with one action each. Put detail for
-  experienced users in a collapsed block:
+- Beginner steps first, as numbered steps with one action each.
+- Collapse a block (`<details>`) only when its content is (a) clearly optional
+  or advanced *and* longer than about five lines, or (b) an alternative for a
+  specific system, editor, or situation that most readers skip. Leave short
+  content and anything most readers need visible. Never leave a section
+  whose only visible content is one sentence and a toggle: show the beginner
+  route and collapse only the extra detail.
+- Make the summary say who it is for and what is inside, with a consistent
+  prefix: "For experienced users: ...", "If you use Windows: ...", "If the
+  LaTeX installation fails: ...", "Example: ...", or "Optional: ...". Use the
+  clearest one rather than repeating "For experienced users".
 
   ```html
-  <details><summary>For experienced users: what latexmk does</summary>
+  <details><summary>For experienced users: convert a long draft with Pandoc</summary>
 
   Text in Markdown here.
 
@@ -23,6 +51,52 @@ messages. When in doubt, choose the plainer sentence.
   Leave a blank line after `</summary>` and before `</details>`.
 - No filler or overclaiming: avoid "simply", "just", "perfect", "guaranteed",
   "compliant", or "approved". Say what was checked and what was not.
+- Neutral voice for the project: no "we", "us", "our", or "I" in
+  suggestions or calls to action. Write "this guide suggests", "Suggested:",
+  or "the suggested workflow", and "Share how it went through the
+  [help and feedback form](../troubleshooting.md#ask-for-help)" rather than
+  "tell us" or "let us know". Neutral is not cold: keep speaking warmly to
+  the reader as "you". Recommendations are suggestions, not rules: give the
+  benefit and when another option may suit the reader better. No invented personal
+  experiences, testing history, endorsements, or quotations.
+- Qualify convenience claims instead of hiding work: "the same files make the
+  same PDF when both use the same TeX version", "reuse needs its own template,
+  some cleanup, and a requirements check", not "format once" or "the move is
+  a paste".
+
+## Core path and supporting material
+
+The core path is LaTeX for the RPI thesis: get the starter, compile a first
+PDF, write chapters, cite, submit. Keep it first and uncluttered on every
+page. Workflow advice, drafting apps, Markdown, helpers, AI, and reuse are
+supporting material: one sentence and a link where a student needs it, with
+the full explanation in one bounded place
+([how it works: the suggested workflow](../how-it-works.md#the-suggested-workflow-and-why)).
+
+- **Keep four things distinct,** in plain words rather than badges: what OGE
+  requires (link the OGE submission page), how this toolkit implements the
+  formatting, what this guide suggests for convenience, and optional external
+  helpers. Never suggest that OGE recommends Markdown, any app, AI help, or
+  this toolkit.
+- **Drafting tools:** principle first ("draft where you and your advisor can
+  work comfortably"). Then Markdown-friendly tools before Google Docs and
+  Word. Name exactly four drafting apps: Obsidian (local Markdown files; a
+  shared vault is not simultaneous same-file editing), HackMD (collaborative
+  Markdown in the browser), Google Docs (live co-writing and comments), and
+  Notion (for people already using it; block-based, with Markdown export).
+  Learning Markdown is never a prerequisite. Word stays fully supported for
+  existing drafts and advisor review; don't lead with it in general lists,
+  never disparage it, and never present the preference as an RPI rule.
+  Recommend no plugin collections, note-taking systems, or new apps just to
+  start writing.
+- **Tools by role:** tools are organized by their role in the work (draft,
+  review, cite, make figures, assemble, reuse) in one table on
+  [how it works](../how-it-works.md#the-suggested-workflow-and-why). Each tool
+  has one canonical explanation; the table and other pages link to it rather
+  than describing the tool again.
+- **Citations:** a formatted citation typed as text, a citation-manager field,
+  and a portable citation key are different things; only the key in
+  `references.bib` works with `\cite`.
 
 ## Terminology
 
@@ -34,7 +108,7 @@ messages. When in doubt, choose the plainer sentence.
 | master's, PhD, DEng | Masters, Ph.D., D.Eng. | Class options: `masters`, `doctoral`, `engineering-doctorate` |
 | Office of Graduate Education (OGE) | Graduate School, grad office | Spell out once per page, then OGE |
 | the manual | the OGE manual 2026 | First mention: the OGE *Dissertation and Thesis Manual*; no edition year in student pages |
-| RPI Thesis Toolkit | the template, the repo | The whole project. "The starter" means the downloadable files; "the class" means `rpi-thesis.cls`. |
+| RPI Thesis Toolkit | the repo | The whole project. "The starter" means the downloadable files; "the class" means `rpi-thesis.cls`. "The template" is fine in friendly, everyday wording (it's what students search for), but never "RPI's template". |
 | Overleaf | overleaf, OverLeaf | |
 | your computer | locally, local machine | |
 | compile | build, typeset, render | Making the PDF. `build.py` is only the script's name. |
@@ -59,6 +133,41 @@ recommended, or approved anything, and never quote or paraphrase private
 advice from RPI staff as an endorsement. Link to RPI's pages instead of
 copying their documents or images.
 
+## Technical help from AI
+
+Be encouraging about AI as a practical tool that saves time and makes LaTeX
+accessible to more people, and about open, free tools and plain-text files
+that keep students in control of their own work. Keep mentions practical and
+optional:
+
+- **Scope is technical help only:** explaining an error, finding a missing
+  brace or wrong command, formatting a table from data the student supplies,
+  turning a screenshot, photo, or sketch the student supplies into editable
+  code, placing or resizing an image and fixing captions or references, converting
+  an existing equation to LaTeX without changing its meaning, fixing
+  bibliography syntax or citation keys from existing records, and spotting
+  formatting problems. Do not write about AI for composing thesis prose,
+  research, or authorship, and add no AI policy or disclosure rules.
+- **Plain terms:** "AI chat" for a tool that explains and suggests; "AI
+  assistant that can edit files" for one that can change files or compile;
+  "AI assistant that accepts images" for one that reads screenshots or
+  photos. Never "agentic" or other jargon.
+- **One option among several:** list it next to web search, official
+  documentation, and [asking for help](../troubleshooting.md#ask-for-help).
+  Every core workflow must work without AI.
+- **Inclusive:** never require a subscription, paid feature, or AI account;
+  say "a tool you already have access to". No pricing, quotas, model
+  rankings, or promises that an AI tool is free. Never name an AI product.
+- **Helper websites:** name only the tools in the `helpers` list of
+  `sources.json`, each beside its task in
+  [writing basics](../writing.md#helpers-for-common-tasks); add or replace
+  one only after a re-review recorded there. Present them as optional,
+  independent third-party services, and favour tools whose output stays an
+  editable file.
+- **Benefits first, then a short check:** share the first error and a small
+  example; try one change; compile and look; undo if it does not help. One
+  line about not sharing confidential material; no long warning sections.
+
 ## Degree scope
 
 Every page serves master's and doctoral students alike. Never write a step,
@@ -67,7 +176,7 @@ step differs by degree, say so explicitly ("Doctoral students: ...").
 
 ## Formatting
 
-- No emojis or decorative symbols (such as check marks, crosses, or stars).
+- No emojis or decorative symbol characters in text (such as check-mark, cross, or star characters). Small drawn icons in the site's own style, such as the ticks in "Best if…" lists, are fine.
   The arrow → is allowed only in menu paths (**File → Download**) and step
   sequences, not as decoration.
 - Callouts use GitHub syntax (`> [!TIP]`, `> [!NOTE]`, `> [!WARNING]`,

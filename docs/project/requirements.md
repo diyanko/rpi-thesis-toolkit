@@ -58,8 +58,10 @@ official template;
 | Displays inside a lemma, algorithm, theorem, or proof may be unnumbered | §2.7 p. 27 | theorem and algorithm recipes in `docs/advanced.md` (`amsthm`, `algorithm`, `algpseudocode`; lines commented out in `preamble.tex`); `package/amsthm/before` hook lets `amsthm` load after `newtxmath` (pdfLaTeX) | visual (recipe, three engines) |
 | Lettered figure parts: only the letter in the figure, explanation in the caption, one letter style throughout | §2.5 pp. 22-23 | subfigure recipe in `docs/advanced.md` (`subcaption`, empty sub-captions print "(a)"); only the main caption enters the list of figures | visual (recipe, three engines); student (letter style) |
 | Chapter attribution at the bottom of the chapter's first page, no mark, single spaced, citation style; wording per Table 2.1 | §2.8 pp. 27-29; FC | `\chapterattribution`; wording in `chapters/02-research.tex` comment | check (unmarked, first page) |
+| Reused work needs a chapter attribution even when the student is the sole author; the Declaration of Co-Contribution lists every attributed article except sole-authored ones | §2.8.1 p. 28 | `docs/writing.md` ("Chapters based on published papers"), `docs/submission.md`; `chapters/02-research.tex` comment | student |
 | Citation style suited to the field, checked against the official guide | §3.2 pp. 32-34 | style isolated in `preamble.tex` | student |
-| Numbered styles: reference 1 is the first citation in Chapter 1; caption citations numbered where the float appears | FC | BibLaTeX ignores list-of-figures citations (tested) | student |
+| In-text citations follow the chosen style; sequential numbers for styles such as IEEE, non-sequential numbers for SIAM (alphabetical list), author-year for APA | §3.3 p. 34 | style isolated in `preamble.tex`; `docs/citations.md` ("Numbered styles: check delayed figures and tables") | student |
+| Sequential numbered styles: reference 1 is the first citation in Chapter 1; a caption's citation numbered where its table or figure appears in the body, not in the front matter | FC (does not apply to non-sequential styles such as SIAM, §3.3 p. 34) | Sample uses `sorting=none`: numbers follow source order, so a float placed on a later page can carry a lower number than nearby text (tested); list-of-figures citations do not affect numbering (tested); `docs/citations.md` explains the fixes (move the float's source or cite earlier) | student (delayed floats) |
 | Access date for every URL (not DOIs), in the style's format | §3.4 p. 34; FC | `references.bib` example; `build.py` hint | build hint; tested: numeric, IEEE, APA, Chicago author-date, chem-acs print it |
 | References before appendices; appendices lettered with titles; in contents | App. A p. 38 | `main.tex`; section comment "Appendices: lettered like chapters" (`\appendicesname`) | check |
 | Permissions appendix lists file information, not the files | §A.1 pp. 38-39 | skeleton in `appendices/additional-material.tex` | student |
@@ -102,12 +104,21 @@ from RPI ITS; files dated 2018); it is not part of this project.
 | Bibliography | Manual `thebibliography` | BibLaTeX/Biber | Same placement and spacing; style chosen per §3.2 |
 | `amsthm` with the math font | Loads without conflict (Computer Modern) | Clears `newtxmath`'s `\openbox` just before `amsthm` loads (pdfLaTeX); no effect unless `amsthm` is loaded | Compatibility only, no formatting rule: keeps the Times-like font (§2.1 p. 16) working with the theorem recipe; amsthm then supplies the proof box, as on LuaLaTeX and XeLaTeX |
 
+## Project decisions
+
+- **Seal**: the maintainer has decided that the toolkit uses the current
+  seal supplied on RPI ITS's
+  [Thesis Preparation page](https://itssc.rpi.edu/hc/en-us/articles/360010087512-Thesis-Preparation),
+  which students download themselves. This is a project decision, not OGE
+  approval and not permission to redistribute the seal: it is never in the
+  repository, the starter ZIP, the website artwork, or this project's license.
+  The class reserves the seal's space and prints a framed placeholder box
+  until the student saves `assets/rpi-seal.jpg` (or `.png`; see
+  `assets/README.md`). Source note: the 2026
+  manual's sample title page (§1.1 p. 2) shows an older design.
+
 ## Needs OGE confirmation
 
-- **Seal design**: the 2026 manual's sample title page (p. 2) shows an older
-  seal; RPI ITS's Thesis Preparation page provides the current seal, the same
-  design as the one in RPI's official template. Students download it
-  themselves; the class only reserves its space.
 - **"CONTENTS" title**: wording from RPI's official template; the manual and
   FC call the page "Table of Contents". Kept (manual not explicit).
 - **Landscape pages with bottom-center numbering**: §2.4 p. 19 says to place
@@ -133,13 +144,21 @@ from RPI ITS; files dated 2018); it is not part of this project.
   lists; the recipe's entries have no page numbers, and other titles
   (LIST OF SYMBOLS, LIST OF ABBREVIATIONS) are unconfirmed.
 
+- **Sole-authored papers not yet published**: §2.8.1 p. 28 exempts sole
+  authors from the Declaration of Co-Contribution, then says submitted,
+  in-review, or to-be-submitted articles still go on it "since you are not
+  the sole author". The guide applies the sole-author exemption whatever the
+  paper's status; confirm this for a sole-authored submitted paper.
+
 ## Students must still check
 
 Capitalization consistency, full department and committee names, caption
 wording and case, centering and legibility, every equation numbered,
-attribution wording and Declaration of Co-Contribution, permissions,
+attribution wording (also for sole-authored work) and the Declaration of
+Co-Contribution (co-authored work), permissions,
 every reference against the official style guide (including access dates
-and number format, e.g. ACS), and citation order in numbered styles.
+and number format, e.g. ACS), and citation order in sequential numbered
+styles, especially captions of floats that moved to a later page.
 
 ## How this stays current
 
