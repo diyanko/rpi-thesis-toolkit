@@ -10,38 +10,25 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/workflows.md#update-the-formatting-safely).
 
-## Unreleased
+## 0.3.0 (beta), 15 Oct 2026
 
-**Changes your PDF?** Yes, for LuaLaTeX and XeLaTeX documents using AMS math
-commands that previously failed to compile, such as `\square` and
-`\nleqslant`. The font settings are unchanged; recompile and compare your PDF.
+Published as the pre-release `v0.3.0`.
 
-- Restore conventional AMS math commands when using LuaLaTeX or XeLaTeX.
-- The build helper detects missing chapters whose names contain spaces and
-  reads compiler messages that wrap over several lines. It reads multiline
-  imports, distinguishes inactive chapters from deleted sources on cached
-  builds, and reports tools that cannot start. ZIP checks also detect missing
-  filenames with spaces; packaging refuses linked source folders as well as
-  linked files and checks the guide address before replacing either ZIP.
-- Comparison PDFs keep corrected bibliography details while retaining
-  deleted references. The slide-export recipe names the heading level that
-  starts each slide, and the citation guide clarifies manual Overleaf uploads.
-- Moving from Overleaf restores missing desktop helpers. Manual Markdown
-  imports keep one chapter heading and preserve citation punctuation.
-  Setup and troubleshooting direct old LaTeX installations to an update;
-  the fresh-machine workflow uses supported distribution packages.
-- Website caption help agrees with the writing guide, and the link checker
-  checks home and directory links without crashing. Encoded asset filenames
-  keep their meaning. Website builds refuse linked input folders and hold an
-  operating-system lock that is released when the process exits.
-- Search guide sections and individual common messages by question, topic,
-  command, or pasted error, including common spelling mistakes. Search works
-  in the website and the offline guide, with keyboard controls and one
-  search button beside the appearance switch. The task links remain
-  available without JavaScript. Pasted logs use their first error, brace and
-  dollar-sign errors stay distinct, and results open matching optional examples.
-- The offline guide's links to project files now open the matching release,
-  and Get started says which editors the step-by-step help covers.
+**Changes your PDF?** Only if you use LuaLaTeX or XeLaTeX with AMS math
+commands such as `\square` or `\nleqslant`: they now compile. Recompile and
+compare; nothing else in the layout changed.
+
+**If you started with 0.2.0,** copy the new `rpi-thesis.cls` (and, if you use
+it, `scripts/build.py`) into your project.
+
+- **Search the guide:** one search button finds sections, tasks, and pasted
+  error messages, even with typos. It works offline too.
+- **AMS math works on every engine,** including LuaLaTeX and XeLaTeX.
+- **A sharper build helper:** it spots missing chapters (even with spaces in
+  their names), multi-line error messages, and tools that will not start.
+- **Smoother moves:** from Overleaf to your computer, from Markdown drafts,
+  and when comparing two versions of your thesis.
+- **The offline guide** links to the project files of its own release.
 
 ## 0.2.0 (beta), 15 Oct 2026
 
