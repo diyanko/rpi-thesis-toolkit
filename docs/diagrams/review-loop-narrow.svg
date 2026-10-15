@@ -33,10 +33,6 @@
     .mid { text-anchor: middle; } .end { text-anchor: end; }
   </style>
   <defs>
-    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="440" height="676">
-      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
-      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
     <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
     <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -46,32 +42,32 @@
   </defs>
   <rect class="bg" width="360" height="596" rx="18"/>
   <circle class="w-blue" cx="185" cy="57" r="30"/>
-  <circle class="ln" filter="url(#r)" cx="180" cy="52" r="30"/>
-  <circle class="ln thin" filter="url(#r)" cx="180" cy="45" r="9"/>
-  <path class="ln thin" filter="url(#r)" d="M165 71 C 168 57, 192 57, 195 71"/>
+  <path class="ln" d="M149.4 54.1C149.5 48.6 150.7 42.7 153.2 38S159.9 28.5 164.4 26S175.2 22.4 180.5 22.6S191.9 24.4 196.4 27.1S205.1 34.6 207.4 39.4S210.9 50.4 210.2 55.6S206.8 66.6 203.4 70.6S194.8 78.1 189.8 79.9S178.5 82.3 173.3 81.3S162.5 77.5 158.7 73.9S151.9 64.6 150.7 59.4S150.1 48.2 152 43"/>
+  <path class="ln thin" d="M186.2 50.3C185.5 51.8 184.3 53.3 182.9 54.1S179.5 55.1 177.9 54.9S174.5 54 173.3 52.9S171.1 50.2 170.6 48.7S169.9 45.2 170.3 43.6S171.6 40.3 172.7 39.2S175.6 37.1 177.1 36.8S180.6 36.6 182.2 37.1S185.3 38.8 186.3 40S188.2 43.1 188.4 44.6S188.1 48.1 187.4 49.6S185.9 52.6 184.7 53.9"/>
+  <path class="ln thin" d="M164 71.3C164.9 68.2 167.3 65.3 169.8 63.7S176.1 61.2 179.3 61.2S186.2 61.8 188.7 63.4S193.9 67.8 194.7 70.9"/>
   <text class="h mid" x="180" y="112" style="font-size:21px">You</text>
   <text class="s mid" x="180" y="134" style="font-size:14.5px">edit the .tex files,</text>
   <text class="s mid" x="180" y="153" style="font-size:14.5px">recompile</text>
-  <path class="ln" filter="url(#r)" d="M216 44 C 336 56, 356 380, 218 458" marker-end="url(#a)"/>
-  <path class="ln terra" filter="url(#r)" d="M144 458 C 24 446, 4 112, 142 44" marker-end="url(#at)"/>
+  <path class="ln" d="M216.1 43.1C221.3 43.4 226.4 44.9 231.3 46.7S240.9 50.8 245.4 53.5S254 59.5 257.8 63S265.2 70.4 268.4 74.5S274.5 83 277.3 87.4S282.8 96.3 285.3 100.9S290.3 110.1 292.4 114.9S296 124.7 297.6 129.7S300.6 139.7 302 144.7S305 154.7 306.2 159.8S308.8 170 309.6 175.1S310.6 185.5 311 190.7S312 201.2 312.2 206.4S312.2 216.8 312.3 222.1S312.7 232.5 312.9 237.7S313.3 248.2 313.4 253.4S313.4 263.9 313.1 269.1S312.6 279.5 311.9 284.7S310.2 295 309.2 300.1S307 310.3 305.9 315.5S303.8 325.7 302.6 330.8S300 340.9 298.5 345.9S295.2 355.9 293.3 360.7S289.3 370.4 287.2 375.2S283 384.8 280.5 389.4S275.2 398.4 272.4 402.8S266.7 411.5 263.6 415.8S257.2 424 253.9 428S247.2 436.2 243.5 439.8S235.7 446.8 231.5 449.9S223 456 218.3 458.4" marker-end="url(#a)"/>
+  <path class="ln terra" d="M143.8 458.2C137.3 457.7 130.8 456.2 124.9 453.7S113.4 447.5 108.5 443.4S99.3 434.2 95.2 429.2S87.4 418.8 83.8 413.4S76.9 402.5 73.8 396.8S67.9 385.2 65.5 379.2S61.1 367 59.4 360.7S56.5 348.1 55.2 341.8S52.7 329 51.6 322.6S49.5 309.8 48.7 303.4S47 290.5 46.5 284.1S45.6 271.1 45.6 264.7S46.1 251.7 46.6 245.2S48 232.3 48.6 225.9S49.5 213 50.1 206.5S51.1 193.5 52.1 187.2S54.4 174.4 56.2 168.1S60.1 155.8 62.4 149.7S67.2 137.7 69.7 131.7S74.7 119.7 77.6 113.9S83.2 102.2 86.6 96.7S93.6 85.8 97.6 80.7S105.9 70.7 110.6 66.2S120.4 57.7 125.7 54S136.4 46.6 142.1 43.6" marker-end="url(#at)"/>
   <path class="w-butter" d="M296 178 H332 L346 192 V244 H296 Z"/>
   <path class="card" d="M290 172 H326 L340 186 V238 H290 Z"/>
-  <path class="ln" filter="url(#r)" d="M290 172 H326 L340 186 V238 H290 Z M326 172 V186 H340"/>
+  <path class="ln" d="M290.6 172.2C302.5 171.8 314.4 171.4 326.4 171.2M325.4 171.1C330.1 175.8 334.4 181 339.3 185.7M339.1 184.4C339.5 193.6 339.6 202.7 339.7 211.8S339.5 230.1 339.5 239.3M340.4 237.7C334.7 237.2 329 237.3 323.3 237.3S312 238 306.3 238.2S294.9 238.5 289.2 238.6M289.9 239.9C289.6 234.1 289.4 228.3 289.4 222.6S289.7 211 289.9 205.2S290.7 193.7 290.8 187.9S291.1 176.4 290.9 170.6M325.5 171.2C325.6 176 325.7 180.8 325.5 185.6M325.4 185.4C330 185.5 334.5 185.4 339.1 185.5"/>
   <path class="ln thin sage" d="M299 200 H330 M299 212 H334 M299 224 H322"/>
   <text class="hand end" x="280" y="210" style="font-size:17px">a dated PDF</text>
   <path class="w-terra" d="M28 324 H64 L78 338 V390 H28 Z"/>
   <path class="card" d="M22 318 H58 L72 332 V384 H22 Z"/>
-  <path class="ln" filter="url(#r)" d="M22 318 H58 L72 332 V384 H22 Z M58 318 V332 H72"/>
+  <path class="ln" d="M22.2 318.2C34.5 318.1 46.7 317.6 58.9 317.2M58 317C63.2 321.6 68.4 326.3 73.3 331.3M73.1 329.4C73.2 338.7 72.4 348.1 72.3 357.5S72.1 376.2 72.1 385.5M72.7 384.5C64 384.5 55.4 384.5 46.7 384.6S29.5 385.1 20.8 385M21.9 387C21.8 379.2 21.5 371.4 21.4 363.6S21.1 348 21.3 340.2S22.6 324.6 22.8 316.8M58.3 317.2C58.5 321.9 58.6 326.6 58.5 331.3M58.4 331.2C63.3 331.1 68.2 331.1 73.1 331.1"/>
   <path class="ln thin sage" d="M31 346 H62 M31 358 H66 M31 370 H54"/>
-  <path class="ln terra" filter="url(#r)" d="M28 362 C 38 356, 46 366, 56 360 M62 332 l8 -5"/>
+  <path class="ln terra" d="M27.4 362.9C29.5 361.6 32 360.9 34.4 360.7S39.2 361.5 41.6 361.8S46.6 362.7 48.9 362.4S53.8 361.3 55.8 360M62.6 331.1C65.4 329.4 68.2 327.8 71 326.1"/>
   <text class="hand" x="84" y="346" style="font-size:17px">marked up and</text>
   <text class="hand" x="84" y="367" style="font-size:17px">sent back</text>
   <text class="hand hs mid" x="180" y="268" style="font-size:20px">repeat until</text>
   <text class="hand hs mid" x="180" y="292" style="font-size:20px">the draft is ready</text>
   <circle class="w-plum" cx="185" cy="475" r="30"/>
-  <circle class="ln" filter="url(#r)" cx="180" cy="470" r="30"/>
-  <circle class="ln thin" filter="url(#r)" cx="180" cy="463" r="9"/>
-  <path class="ln thin" filter="url(#r)" d="M165 489 C 168 475, 192 475, 195 489"/>
+  <path class="ln" d="M209.7 475.5C208.5 479.7 206.8 483.9 204.3 487.3S198.3 494 194.6 496S186.3 499 182.1 499.1S173.2 498.6 169.2 497.1S161.3 493.1 158.3 490.1S152.6 483.2 151.3 479.3S149.5 470.5 150.1 466.4S152.6 457.9 154.8 454.3S160.1 447 163.6 444.6S171.5 440.6 175.7 440S184.6 439.7 188.6 441S196.7 444.6 199.8 447.4S205.7 454.1 207.3 458S209.8 466.6 209.6 470.8S208 479.4 205.9 483.2"/>
+  <path class="ln thin" d="M180.7 470.6C179.6 471.1 178.2 471.4 177 471.1S174.6 470 173.7 469.2S172.1 467.1 171.6 466S171 463.5 171.1 462.2S171.5 459.7 172.1 458.6S173.6 456.4 174.5 455.6S176.8 454.2 178 453.9S180.6 453.6 181.8 453.9S184.2 454.8 185.2 455.6S187 457.4 187.6 458.5S188.5 461 188.5 462.2S188.2 464.8 187.7 466S186.4 468.2 185.5 469S183.3 470.4 182.1 470.9S179.7 471.7 178.5 472"/>
+  <path class="ln thin" d="M165 488.4C166.1 484.3 169.8 480.4 173.4 478.9S182.6 477.6 186.1 479.3S193.4 484.7 194.4 488.8"/>
   <text class="h mid" x="180" y="530" style="font-size:21px">Advisor</text>
   <text class="s mid" x="180" y="552" style="font-size:14.5px">marks it up, on paper</text>
   <text class="s mid" x="180" y="571" style="font-size:14.5px">or in a PDF reader</text>

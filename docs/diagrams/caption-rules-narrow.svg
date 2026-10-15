@@ -33,10 +33,6 @@
     .mid { text-anchor: middle; } .end { text-anchor: end; }
   </style>
   <defs>
-    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="440" height="1014">
-      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
-      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
     <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
     <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -51,13 +47,15 @@
   <rect x="74" y="66" width="240" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
   <rect x="48" y="80" width="206" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
   <text x="48" y="112" style="font-size:14px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-weight="700"><tspan font-weight="700">Table 2.1:</tspan> Values for three groups.</text>
-  <path class="ln thin" d="M106 124 H256 M106 146 H256 M106 190 H256"/>
-  <text x="114" y="140" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">Group</text>
-  <text class="end" x="248" y="140" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">Value</text>
-  <text x="114" y="163" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">A</text>
-  <text class="end" x="248" y="163" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">12</text>
-  <text x="114" y="183" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">B</text>
-  <text class="end" x="248" y="183" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">18</text>
+  <path class="ln thin" d="M106 124 H256 M106 144 H256 M106 201 H256"/>
+  <text x="114" y="138" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">Group</text>
+  <text class="end" x="248" y="138" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">Value</text>
+  <text x="114" y="159" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">A</text>
+  <text class="end" x="248" y="159" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">12</text>
+  <text x="114" y="176" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">B</text>
+  <text class="end" x="248" y="176" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">18</text>
+  <text x="114" y="193" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">C</text>
+  <text class="end" x="248" y="193" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">24</text>
   <rect x="74" y="214" width="240" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
   <rect x="48" y="228" width="226" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
   <rect class="ln thin" x="106" y="244" width="150" height="60" rx="2"/>
@@ -67,7 +65,6 @@
   <rect x="74" y="352" width="240" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
   <rect x="48" y="366" width="196" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
   <text class="mid" x="181" y="402" style="font-size:16px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-style="italic">y = mx + b.</text>
-  <path class="ln thin mut dot" d="M233 397 H268"/>
   <text class="end" x="314" y="402" style="font-size:15px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">(2.1)</text>
   <rect x="48" y="428" width="246" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
   <text class="end" x="143" y="460" style="font-size:16px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-style="italic">(a + b)²</text>
@@ -75,54 +72,54 @@
   <text x="151" y="486" style="font-size:16px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-style="italic">= a² + 2ab + b².</text>
   <text class="end" x="314" y="478" style="font-size:15px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">(2.2)</text>
   <rect x="48" y="516" width="216" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
-  <path class="ln" filter="url(#r)" d="M24 40 H314 L336 62 V536 H24 Z M314 40 V62 H336"/>
+  <path class="ln" d="M21.8 40.1C30 40.3 38.1 40.2 46.3 40.2S62.6 40.2 70.8 40.1S87.1 39.7 95.3 39.6S111.6 39.7 119.8 39.7S136.1 39.4 144.3 39.6S160.6 40.5 168.8 40.7S185.1 40.6 193.3 40.3S209.6 39.2 217.8 39.1S234.1 39.5 242.2 39.7S258.6 40.5 266.7 40.4S283.1 39.7 291.2 39.6S307.6 39.6 315.7 39.7M313.9 39.4C317.7 43.2 321.1 47.3 324.9 51.2S332.7 58.6 336.6 62.3M336.4 60.5C336.3 67.7 336.3 74.9 336.3 82.1S336.3 96.6 336.3 103.8S336.4 118.2 336.3 125.5S335.8 139.9 335.7 147.1S335.3 161.5 335.2 168.8S335.3 183.2 335.4 190.4S335.6 204.9 335.6 212.1S335.2 226.5 335.2 233.8S335.3 248.2 335.5 255.4S336 269.8 336.2 277.1S336.4 291.5 336.4 298.7S336.3 313.2 336.2 320.4S335.4 334.8 335.3 342S335.5 356.5 335.5 363.7S335.7 378.1 335.9 385.4S336.4 399.8 336.6 407S337 421.4 336.9 428.7S336.4 443.1 336.3 450.3S336.2 464.8 336.2 472S336.3 486.4 336.2 493.6S335.7 508.1 335.7 515.3S336.3 529.7 336.2 536.9M337.8 535.9C333 535.9 328.2 535.7 323.4 535.6S313.9 535.8 309.1 535.8S299.5 535.6 294.7 535.6S285.1 536 280.3 536.1S270.7 536.1 266 536.1S256.4 536 251.6 536S242 535.9 237.2 536S227.6 536.1 222.8 536.2S213.3 536.5 208.5 536.4S198.9 535.7 194.1 535.6S184.5 535.3 179.7 535.3S170.2 535.3 165.4 535.3S155.8 535.6 151 535.7S141.4 535.9 136.6 536S127 536.2 122.3 536.2S112.7 536.1 107.9 536.1S98.3 535.8 93.5 535.7S83.9 535.6 79.1 535.5S69.5 535.5 64.8 535.4S55.2 535.3 50.4 535.2S40.8 535 36 535S26.4 535 21.6 535M23.5 536.2C23.4 531.9 23.5 527.5 23.6 523.1S23.7 514.4 23.8 510S24.2 501.3 24.3 496.9S24.1 488.2 24.1 483.8S24.3 475.1 24.3 470.7S24.4 462 24.4 457.6S24.8 448.9 24.8 444.5S24.8 435.8 24.7 431.4S24.4 422.7 24.2 418.3S23.8 409.6 23.8 405.2S24.1 396.5 24.1 392.1S23.9 383.4 23.8 379S23.6 370.3 23.5 365.9S23.3 357.2 23.3 352.8S23.3 344.1 23.4 339.7S24.1 331 24.3 326.6S24.8 317.9 24.9 313.5S25.1 304.8 25 300.4S24.8 291.7 24.6 287.3S24.3 278.6 24.2 274.2S24.1 265.5 24.2 261.1S24.3 252.4 24.4 248S24.6 239.3 24.8 234.9S25.1 226.2 25.1 221.8S25 213.1 25 208.7S24.8 200 24.7 195.6S24.2 186.9 24.2 182.5S24.5 173.8 24.6 169.4S24.4 160.6 24.5 156.3S24.6 147.5 24.6 143.2S24.5 134.4 24.5 130.1S24.6 121.3 24.4 117S23.8 108.2 23.7 103.9S23.7 95.1 23.7 90.8S23.7 82 23.8 77.7S24.4 68.9 24.5 64.6S24.5 55.8 24.4 51.5S24.3 42.7 23.9 38.4M314.1 39.6C314.3 47.4 313.9 55.1 313.5 62.8M313.2 62.6C320.9 62.5 328.6 62.3 336.3 62"/>
   <circle class="w-butter" cx="336" cy="107" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="336" cy="107" r="10"/>
+  <path class="ln" d="M341.5 98.1C342.9 99.3 344.1 100.7 344.9 102.3S346.2 105.9 346.2 107.6S345.6 111.3 344.7 112.8S342.2 115.6 340.6 116.3S337 117.2 335.3 116.9S331.7 115.9 330.3 114.8S327.7 112.1 327.1 110.5S326.3 106.8 326.7 105.1S328 101.6 329.2 100.3S332.2 98.1 333.9 97.7S337.7 97.2 339.3 97.8S342.4 99.7 343.4 101.2"/>
   <text class="n mid" x="336" y="111.55" style="font-size:13px">1</text>
   <circle class="w-butter" cx="336" cy="321" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="336" cy="321" r="10"/>
+  <path class="ln" d="M342.8 328C342.1 329.3 341 330.4 339.7 331.1S336.8 331.9 335.3 331.9S332.3 331.4 331 330.8S328.5 329 327.7 327.8S326.3 325.1 326 323.7S325.9 320.6 326.3 319.2S327.4 316.4 328.4 315.3S330.5 313.1 331.9 312.5S334.7 311.4 336.2 311.3S339.2 311.7 340.5 312.3S343.1 314 344 315.1S345.6 317.7 346 319.1S346.4 322.1 346.1 323.6S345 326.4 344.2 327.6S342.5 330.1 341.4 331.2"/>
   <text class="n mid" x="336" y="325.55" style="font-size:13px">2</text>
   <circle class="w-butter" cx="336" cy="397" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="336" cy="397" r="10"/>
+  <path class="ln" d="M344.7 394.2C345.4 395.3 346 396.8 346 398.2S345.4 401 344.7 402.2S342.9 404.5 341.7 405.3S339.1 406.7 337.8 406.9S334.8 407 333.5 406.6S330.9 405.3 329.8 404.4S327.9 402.2 327.3 400.9S326.5 398.1 326.5 396.7S327 393.8 327.6 392.6S329.1 390.1 330.2 389.2S332.7 387.7 334.1 387.5S337 387.3 338.4 387.6S341.2 388.5 342.3 389.4S344.2 391.5 345 392.7S346.3 395.2 346.8 396.6"/>
   <text class="n mid" x="336" y="401.55" style="font-size:13px">3</text>
   <circle class="w-butter" cx="336" cy="473" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="336" cy="473" r="10"/>
+  <path class="ln" d="M339.5 462.8C341.1 463.8 342.6 465 343.7 466.4S345.6 469.6 345.9 471.3S346.1 475.1 345.5 476.7S343.7 480 342.3 481.1S338.9 482.8 337.2 482.9S333.4 482.6 331.9 481.8S328.8 479.7 327.8 478.2S326.4 474.8 326.3 473S326.8 469.3 327.6 467.8S329.9 464.7 331.4 463.8S335 462.5 336.7 462.7S340.2 463.8 341.5 465.1"/>
   <text class="n mid" x="336" y="477.55" style="font-size:13px">4</text>
   <text class="hand" x="24" y="560" style="font-size:15px">in the list of figures:</text>
   <rect class="w-blue" x="29" y="575" width="312" height="64" rx="4"/>
   <rect class="card" x="24" y="570" width="312" height="64" rx="4"/>
-  <rect class="ln" filter="url(#r)" x="24" y="570" width="312" height="64" rx="4"/>
+  <path class="ln" d="M100.6 570C102 570 103.5 570.1 104.9 570.1S107.9 570.1 109.3 570.2S112.2 570.3 113.7 570.3S116.6 570.5 118 570.6S120.9 570.8 122.4 570.8S125.3 570.8 126.8 570.8S129.7 570.8 131.1 570.7S134 570.7 135.5 570.7S138.4 570.8 139.9 570.8S142.8 570.9 144.2 570.9S147.1 570.9 148.6 570.9S151.5 570.9 152.9 570.8S155.9 570.7 157.3 570.6S160.2 570.5 161.7 570.4S164.6 570.3 166 570.3S168.9 570.2 170.4 570.1S173.3 570 174.7 569.9S177.7 569.7 179.1 569.6S182 569.5 183.5 569.4S186.4 569.4 187.8 569.4S190.7 569.4 192.2 569.4S195.1 569.5 196.6 569.5S199.5 569.6 200.9 569.6S203.8 569.6 205.3 569.6S208.2 569.6 209.7 569.6S212.6 569.6 214 569.6S216.9 569.6 218.4 569.6S221.3 569.7 222.8 569.7S225.7 569.8 227.1 569.8S230 569.8 231.5 569.9S234.4 569.9 235.8 569.8S238.8 569.8 240.2 569.8S243.1 569.8 244.6 569.8S247.5 569.7 248.9 569.7S251.9 569.7 253.3 569.8S256.2 569.9 257.7 569.9S260.6 570.1 262 570.1S264.9 570.2 266.4 570.2S269.3 570.1 270.8 570.1S273.7 570.1 275.1 570.1S278 570.2 279.5 570.1S282.4 570 283.9 570S286.8 570 288.2 570S291.1 570.1 292.6 570.1S295.5 570.1 296.9 570.1S299.9 570.1 301.3 570.1S304.2 570.2 305.7 570.2S308.6 570.1 310 570.1S313 570.1 314.4 570.1S317.3 570.1 318.8 570.1S321.7 570 323.1 570S326 570 327.5 570S330.5 569.6 331.9 570S334.8 570.9 335.5 572S336 574.8 336.2 576.2S336.3 579.1 336.3 580.6S336.2 583.5 336.2 585S336 587.9 336 589.3S335.8 592.2 335.8 593.7S335.8 596.6 335.8 598.1S335.8 601 335.8 602.4S335.7 605.3 335.7 606.8S335.6 609.7 335.6 611.1S335.6 614.1 335.7 615.5S335.7 618.4 335.8 619.9S335.7 622.8 335.7 624.2S335.8 627.2 335.6 628.6S335.4 631.8 334.5 632.7S331.9 633.8 330.5 634S327.6 634 326.1 633.9S323.2 633.9 321.8 633.9S318.9 634 317.4 634S314.5 634 313 634S310.1 634 308.7 634S305.8 634 304.3 634S301.4 633.9 299.9 633.9S297 633.8 295.6 633.7S292.7 633.7 291.2 633.7S288.3 633.6 286.9 633.5S283.9 633.3 282.5 633.3S279.6 633.3 278.1 633.3S275.2 633.4 273.8 633.5S270.9 633.5 269.4 633.6S266.5 633.7 265 633.8S262.1 633.9 260.7 634S257.8 634.2 256.3 634.3S253.4 634.4 252 634.5S249.1 634.5 247.6 634.6S244.7 634.7 243.2 634.8S240.3 634.9 238.9 635S236 635.1 234.5 635.1S231.6 635.2 230.2 635.2S227.2 635.2 225.8 635.2S222.9 635.1 221.4 635.1S218.5 635 217.1 635.1S214.1 635.1 212.7 635.1S209.8 635.1 208.3 635.1S205.4 635.1 204 635.1S201.1 635 199.6 634.9S196.7 634.8 195.2 634.8S192.3 634.7 190.9 634.7S188 634.7 186.5 634.6S183.6 634.6 182.1 634.6S179.2 634.6 177.8 634.6S174.9 634.7 173.4 634.7S170.5 634.6 169 634.6S166.1 634.5 164.7 634.5S161.8 634.5 160.3 634.5S157.4 634.5 156 634.4S153 634.3 151.6 634.2S148.7 634 147.2 634S144.3 633.9 142.9 633.9S140 633.9 138.5 633.9S135.6 633.9 134.1 633.9S131.2 633.9 129.8 633.9S126.9 633.8 125.4 633.8S122.5 633.7 121 633.7S118.1 633.7 116.7 633.7S113.8 633.7 112.3 633.7S109.4 633.7 107.9 633.7S105 633.8 103.6 633.8S100.7 633.7 99.2 633.7S96.3 633.6 94.9 633.5S91.9 633.5 90.5 633.4S87.6 633.3 86.1 633.2S83.2 633.1 81.8 633S78.9 633 77.4 633S74.5 633 73 633S70.1 633 68.7 633S65.8 632.9 64.3 632.9S61.4 633 59.9 633S57 633.1 55.6 633.2S52.7 633.3 51.2 633.4S48.3 633.6 46.9 633.6S44 633.7 42.5 633.7S39.6 633.7 38.1 633.7S35.2 633.7 33.8 633.7S30.8 633.9 29.4 633.7S26.2 633.5 25.3 632.7S24.2 630.1 24 628.8S24.1 625.8 24.1 624.4S24.1 621.5 24.2 620S24.2 617.1 24.3 615.7S24.3 612.8 24.3 611.3S24.3 608.4 24.2 606.9S24.2 604 24.2 602.6S24.2 599.7 24.2 598.2S24.1 595.3 24.1 593.8S24 590.9 24 589.5S24.1 586.6 24.1 585.1S24.2 582.2 24.1 580.7S24 577.8 24 576.4S23.8 573.1 24.4 572.1S26.8 570.5 28.1 570.2S31 570.3 32.5 570.4S35.4 570.6 36.8 570.7S39.7 570.9 41.2 571S44.1 571.1 45.5 571.1S48.5 571.1 49.9 571S52.8 571 54.3 571S57.2 571 58.6 570.9S61.6 570.9 63 570.9S65.9 570.9 67.4 570.9S70.3 570.8 71.7 570.8S74.6 570.7 76.1 570.7S79 570.7 80.5 570.7S83.4 570.7 84.8 570.6S87.7 570.5 89.2 570.5S92.1 570.5 93.6 570.5S96.5 570.6 97.9 570.6S100.8 570.6 102.3 570.6S105.2 570.7 106.7 570.7S109.6 570.8 111 570.8S113.9 570.9 115.4 571S118.3 571.2 119.7 571.3"/>
   <text class="mid" x="180" y="594" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-weight="700">LIST OF FIGURES</text>
   <text x="38" y="618" style="font-size:14px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">2.1</text>
   <text x="70" y="618" style="font-size:14px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">A sample image.</text>
   <path class="ln thin mut dot" d="M180 615 H304"/>
   <text class="end" x="322" y="618" style="font-size:14px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">2</text>
   <circle class="w-butter" cx="336" cy="613" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="336" cy="613" r="10"/>
+  <path class="ln" d="M346.5 612.6C346 614 345.6 615.4 345 616.7S343.7 619.3 342.7 620.3S340.3 622.1 339 622.6S336.1 623.2 334.7 623.1S331.8 622.5 330.6 621.9S328.2 620.1 327.4 619S326 616.3 325.8 614.9S325.8 612 326.3 610.6S327.5 607.9 328.4 606.9S330.7 605 331.9 604.4S334.8 603.5 336.2 603.5S339.2 603.8 340.4 604.4S342.9 606 343.7 607.1S345.3 609.7 345.5 611.1S345.2 614 344.6 615.2"/>
   <text class="n mid" x="336" y="617.55" style="font-size:13px">5</text>
-  <path class="ln terra dash" filter="url(#r)" d="M22 320 C 4 386, 4 560, 18 606" marker-end="url(#at)"/>
+  <path class="ln terra dash" d="M22.7 320.1C20.7 326.2 18.6 332.3 17.3 338.5S15.3 351.1 14.6 357.5S13.7 370.2 13.1 376.6S11.9 389.3 11.4 395.7S10.3 408.4 10 414.8S9.6 427.5 9.4 433.9S8.7 446.7 8.5 453S8 465.8 7.9 472.2S7.9 485 7.9 491.3S7.7 504.1 7.8 510.5S8.1 523.3 8.4 529.7S9.3 542.4 9.8 548.8S10.8 561.5 11.5 567.8S13 580.5 14.1 586.8S16.3 599.4 18.1 605.5" marker-end="url(#at)"/>
   <circle class="w-butter" cx="34" cy="665" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="34" cy="665" r="10"/>
+  <path class="ln" d="M25.2 669.8C24.1 668.5 23.4 666.6 23.3 664.9S23.9 661.1 24.9 659.7S27.4 656.9 29 656.2S32.6 655.2 34.4 655.4S38.1 656.2 39.5 657.3S42.2 659.9 42.7 661.6S43.4 665.3 43 667S41.6 670.4 40.4 671.7S37.4 674.1 35.8 674.6S32 675 30.4 674.5S27 672.9 25.8 671.6S23.5 668.7 22.8 667"/>
   <text class="n mid" x="34" y="669.55" style="font-size:13px">1</text>
   <text class="hand" x="54" y="670" style="font-size:16px">caption above the table</text>
   <text class="s" x="54" y="690" style="font-size:14px">bold, colon after the number</text>
   <circle class="w-butter" cx="34" cy="715" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="34" cy="715" r="10"/>
+  <path class="ln" d="M31.1 725.5C29.9 724.7 28.8 723.6 27.8 722.5S25.9 720.3 25.3 718.9S24.3 716.1 24.4 714.6S24.8 711.6 25.5 710.4S27.3 708 28.5 707.1S31.1 705.7 32.5 705.4S35.6 705.2 36.9 705.5S39.7 706.6 40.8 707.6S42.8 709.8 43.4 711.2S44.3 714 44.4 715.5S44.1 718.5 43.5 719.8S41.9 722.3 40.7 723.2S38.1 724.7 36.7 725S33.6 725.4 32.3 724.9S29.8 723.4 28.9 722.3"/>
   <text class="n mid" x="34" y="719.55" style="font-size:13px">2</text>
   <text class="hand" x="54" y="720" style="font-size:16px">caption below the figure</text>
   <text class="s" x="54" y="740" style="font-size:14px">same bold label and colon</text>
   <circle class="w-butter" cx="34" cy="765" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="34" cy="765" r="10"/>
+  <path class="ln" d="M39.9 758C41.8 759.2 43.2 761.3 43.7 763.2S44.1 767.9 43.3 769.8S40.7 773.6 38.8 774.5S34.3 775.6 32.2 775.1S28 773.3 26.6 771.8S24.1 767.8 24 765.7S24.5 761.1 25.7 759.4S29.1 756.1 31.1 755.6S35.6 755.2 37.6 756S41.5 758.3 43 759.9"/>
   <text class="n mid" x="34" y="769.55" style="font-size:13px">3</text>
   <text class="hand" x="54" y="770" style="font-size:16px">number on the same line</text>
   <text class="s" x="54" y="790" style="font-size:14px">in parentheses, at the right margin</text>
   <circle class="w-butter" cx="34" cy="815" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="34" cy="815" r="10"/>
+  <path class="ln" d="M23.9 809C25.3 807.8 26.7 806.6 28.3 805.8S31.7 804.2 33.5 804.2S37.2 804.7 38.7 805.6S41.6 808 42.4 809.5S43.6 813.1 43.5 814.8S42.5 818.4 41.4 819.8S38.6 822.3 37 822.9S33.3 823.7 31.6 823.4S28.1 822.2 26.8 821.1S24.3 818.2 23.8 816.6S23.3 812.7 23.9 811.2S26 808.2 27.5 807.3"/>
   <text class="n mid" x="34" y="819.55" style="font-size:13px">4</text>
   <text class="hand" x="54" y="820" style="font-size:16px">one number, centered</text>
   <text class="s" x="54" y="840" style="font-size:14px">for a multi-line equation</text>
   <circle class="w-butter" cx="34" cy="865" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="34" cy="865" r="10"/>
+  <path class="ln" d="M43.4 868.2C43.3 869.6 42.7 871.2 41.8 872.2S39.3 874.1 37.9 874.6S34.9 875.2 33.5 875S30.5 874.3 29.2 873.6S26.7 871.8 25.8 870.6S24.3 867.9 24 866.5S23.8 863.4 24.2 862S25.3 859.1 26.2 858S28.5 855.9 29.8 855.3S32.8 854.4 34.2 854.4S37.2 855 38.5 855.7S41.1 857.4 42 858.5S43.9 861 44.3 862.4S44.7 865.4 44.6 866.9S44 869.9 43.6 871.3"/>
   <text class="n mid" x="34" y="869.55" style="font-size:13px">5</text>
   <text class="hand" x="54" y="870" style="font-size:16px">the list shows the full caption,</text>
   <text class="s" x="54" y="890" style="font-size:14px">word for word: don't use</text>

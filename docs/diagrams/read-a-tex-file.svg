@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 494" width="720" height="494" role="img" aria-labelledby="t d">
   <title id="t">How to read a .tex file</title>
-  <desc id="d">A few lines of a chapter file with six numbered pins. The lines are: \section{A figure}; Figure~\ref{fig:example} shows a layout described by Lamport~\cite{lamport1994}.; a comment line, % Ask my advisor about colors.; a blank line; The caption goes below the image.; then \begin{figure}[htbp], \includegraphics{figures/example.png}, \caption{A sample image.}, \label{fig:example}, and \end{figure}. Pin 1: a command starts with a backslash, such as \section, \cite, or \caption. Pin 2: braces hold what the command acts on, such as the section title. Pin 3: \begin and \end wrap an environment, here a figure. Pin 4: % starts a note that LaTeX ignores; it never prints. Pin 5: a blank line starts a new paragraph. Pin 6: \cite{key} and \ref{label} are filled in for you when you compile, with the citation and the figure number. A handwritten note says everything else is your own writing.</desc>
+  <desc id="d">A few lines of a chapter file with six numbered pins. The lines are: \section{A figure}; Figure~\ref{fig:example} shows a layout described by Lamport~\cite{lamport1994}.; a comment line, % Ask my advisor about colors.; a blank line; The caption goes below the image.; then \begin{figure}[htbp], \includegraphics{example-image}, \caption{A sample image.}, \label{fig:example}, and \end{figure}. Pin 1: a command starts with a backslash, such as \section, \cite, or \caption. Pin 2: braces hold what the command acts on, such as the section title. Pin 3: \begin and \end wrap an environment, here a figure. Pin 4: % starts a note that LaTeX ignores; it never prints. Pin 5: a blank line starts a new paragraph. Pin 6: \cite{key} and \ref{label} are filled in for you when you compile, with the citation and the figure number. A handwritten note says everything else is your own writing.</desc>
   <style>
     svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
       --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
@@ -33,10 +33,6 @@
     .mid { text-anchor: middle; } .end { text-anchor: end; }
   </style>
   <defs>
-    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="574">
-      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
-      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
     <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
     <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -50,7 +46,7 @@
   <path class="card" d="M16 42 H434 L454 62 V426 H16 Z"/>
   <rect class="w-butter" x="134.92000000000002" y="95.9" width="95.9" height="21.5" rx="3"/>
   <rect class="w-butter" x="19" y="216.9" width="432" height="20.5" opacity=".8"/>
-  <path class="ln" filter="url(#r)" d="M16 42 H434 L454 62 V426 H16 Z M434 42 V62 H454"/>
+  <path class="ln" d="M15 42.1C22 42.1 29 42 36 42.1S50.1 42.2 57.1 42.2S71.1 42.1 78.1 41.9S92.1 41.6 99.1 41.5S113.1 41.7 120.1 41.7S134.2 41.5 141.2 41.6S155.2 42.3 162.2 42.5S176.2 42.8 183.2 42.7S197.2 41.9 204.2 41.7S218.2 41.1 225.2 41.1S239.2 41.7 246.2 41.9S260.2 42.4 267.2 42.4S281.2 42 288.2 41.9S302.3 41.6 309.3 41.7S323.3 42.3 330.3 42.5S344.3 42.5 351.3 42.4S365.3 41.7 372.3 41.7S386.3 42.4 393.3 42.5S407.3 42.5 414.3 42.4S428.4 42.2 435.4 42M434 41.6C440.8 48.5 447.6 55.5 454.4 62.5M454.1 61.3C454.2 68.1 453.7 74.9 453.7 81.7S454.1 95.3 454.2 102.1S454.4 115.7 454.3 122.5S454 136 453.9 142.8S453.7 156.4 453.7 163.2S453.4 176.8 453.5 183.6S454.1 197.2 454.3 204S454.8 217.6 454.8 224.4S454.4 237.9 454.3 244.7S454.1 258.3 454.1 265.1S454.3 278.7 454.3 285.5S454.1 299.1 454.1 305.9S454.1 319.5 454.1 326.3S454.1 339.9 454.1 346.6S454.1 360.2 454.1 367S454.3 380.6 454.2 387.4S454 401 453.8 407.8S453 421.4 453.2 428.2M454.8 426C450 426 445.3 426.1 440.6 426S431.2 425.5 426.4 425.3S417 425.1 412.3 425.2S402.8 425.5 398.1 425.7S388.7 426.1 384 426.2S374.5 426.2 369.8 426.2S360.4 426 355.6 425.9S346.2 425.6 341.5 425.6S332 425.9 327.3 426S317.9 426.2 313.1 426.2S303.7 426 299 426S289.5 425.8 284.8 425.8S275.4 426.2 270.7 426.3S261.2 426.5 256.5 426.5S247 426.5 242.3 426.4S232.9 426.4 228.2 426.4S218.7 426.3 214 426.3S204.5 426.4 199.8 426.3S190.4 426.1 185.7 426S176.2 425.8 171.5 425.7S162 425.6 157.3 425.6S147.9 425.6 143.2 425.6S133.7 425.8 129 425.8S119.5 425.6 114.8 425.5S105.4 425.1 100.7 425S91.2 424.9 86.5 424.8S77.1 424.8 72.3 424.8S62.9 424.9 58.2 424.9S48.7 424.9 44 425S34.6 425.5 29.8 425.7S20.4 425.8 15.7 426M16.5 426.6C16.2 420.8 16 414.9 15.9 409.1S16.2 397.4 16.2 391.5S16.2 379.8 16.1 374S15.7 362.3 15.6 356.4S15.3 344.7 15.4 338.9S16.2 327.2 16.4 321.3S16.9 309.6 16.9 303.8S16.6 292.1 16.5 286.2S16.2 274.5 16.1 268.7S16.3 256.9 16.4 251.1S16.7 239.4 16.8 233.5S16.8 221.8 16.8 216S16.6 204.3 16.5 198.4S16.4 186.7 16.4 180.9S16.6 169.2 16.7 163.3S16.5 151.6 16.5 145.7S16.4 134 16.3 128.2S16.1 116.5 16 110.6S15.6 98.9 15.7 93.1S15.9 81.4 16.1 75.5S16.6 63.8 16.5 58S16 46.3 15.7 40.4M434.4 42C434.4 48.9 434.7 55.8 434.6 62.6M434.3 62.2C440.9 62.3 447.5 62.3 454.1 62.2"/>
   <text class="m" x="32" y="70" style="font-size:14px">chapters/02-research.tex</text>
   <path class="ln thin mut" d="M16 82 H454"/>
   <text class="code" x="66" y="110.4" style="font-size:14.5px" xml:space="preserve"><tspan class="k">\section</tspan><tspan class="k">{</tspan><tspan style="fill:var(--ink)" font-weight="700">A figure</tspan><tspan class="k">}</tspan></text>
@@ -59,62 +55,62 @@
   <text class="code" x="66" y="200.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--sage)" font-style="italic">% Ask my advisor about colors.</tspan></text>
   <text class="code" x="66" y="260.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">The caption goes below the image.</tspan></text>
   <text class="code" x="66" y="290.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--plum)" font-weight="700">\begin{figure}</tspan><tspan style="fill:var(--ink)">[htbp]</tspan></text>
-  <text class="code" x="66" y="320.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">  </tspan><tspan class="k">\includegraphics</tspan><tspan class="k">{</tspan><tspan style="fill:var(--ink)" font-weight="700">figures/example.png</tspan><tspan class="k">}</tspan></text>
+  <text class="code" x="66" y="320.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">  </tspan><tspan class="k">\includegraphics</tspan><tspan class="k">{</tspan><tspan style="fill:var(--ink)" font-weight="700">example-image</tspan><tspan class="k">}</tspan></text>
   <text class="code" x="66" y="350.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">  </tspan><tspan class="k">\caption</tspan><tspan class="k">{</tspan><tspan style="fill:var(--ink)" font-weight="700">A sample image.</tspan><tspan class="k">}</tspan></text>
   <text class="code" x="66" y="380.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">  </tspan><tspan class="k">\label</tspan><tspan class="k">{</tspan><tspan style="fill:var(--ink)" font-weight="700">fig:example</tspan><tspan class="k">}</tspan></text>
   <text class="code" x="66" y="410.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--plum)" font-weight="700">\end{figure}</tspan></text>
   <text class="hand end" x="440" y="230.4" style="font-size:14.5px">(blank line)</text>
-  <path class="ln thin blue" filter="url(#r)" d="M60 127.9 H56 V174.4 H60"/>
-  <path class="ln thin plum" filter="url(#r)" d="M60 277.9 H56 V414.4 H60"/>
+  <path class="ln thin blue" d="M60.6 128.6C59.3 128.6 58 128.5 56.7 128.4M56.7 127.4C56.3 135.4 56 143.4 55.7 151.4S55.1 167.4 55 175.4M55 174.4C56.4 174.5 57.8 174.5 59.1 174.6"/>
+  <path class="ln thin plum" d="M59.2 278.5C57.9 278.6 56.5 278.7 55.2 278.7M55.3 276.9C55.1 286.1 55.6 295.3 55.9 304.5S56.5 323 56.5 332.2S55.9 350.7 55.8 359.9S55.8 378.4 55.9 387.6S56.4 406.1 56.8 415.3M56.7 413.7C58.1 413.6 59.5 413.6 60.8 413.6"/>
   <circle class="w-butter" cx="38" cy="105.4" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="38" cy="105.4" r="10"/>
+  <path class="ln" d="M48.6 106.2C48.2 107.5 47.6 109 46.9 110.2S45.1 112.6 44 113.4S41.3 114.8 39.9 115S36.9 114.8 35.6 114.3S33 112.9 31.9 112S29.8 109.9 29.1 108.6S27.8 105.9 27.7 104.5S27.9 101.5 28.5 100.2S30.1 97.7 31.3 96.8S33.9 95.4 35.3 95.1S38.3 94.9 39.6 95.2S42.5 96.1 43.6 97S45.9 99 46.6 100.2S47.9 103 47.9 104.3S47.6 107.2 46.8 108.5"/>
   <text class="n mid" x="38" y="109.95" style="font-size:13px">1</text>
   <circle class="w-butter" cx="243.82" cy="105.4" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="243.82" cy="105.4" r="10"/>
+  <path class="ln" d="M251.4 100.2C252.7 101.5 253.7 103.3 253.9 105S253.5 108.8 252.7 110.3S250.5 113.5 249 114.4S245.5 115.9 243.8 115.8S240.1 115.1 238.6 114.1S236 111.4 235.3 109.8S234.4 106.1 234.7 104.3S235.7 100.7 236.8 99.3S239.6 96.6 241.2 96S245 95.3 246.7 95.8S249.9 97.5 251.2 98.7S253.7 101.6 254.4 103.2"/>
   <text class="n mid" x="243.82" y="109.95" style="font-size:13px">2</text>
   <circle class="w-butter" cx="38" cy="150.4" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="38" cy="150.4" r="10"/>
+  <path class="ln" d="M29.4 152.4C28.8 150.8 28.8 148.9 29.2 147.2S30.8 143.9 32 142.8S35.1 140.7 36.7 140.4S40.4 140.3 42 140.9S45.2 142.8 46.2 144.1S47.9 147.4 48 149.1S47.7 152.7 47 154.3S44.9 157.3 43.5 158.3S40.2 159.9 38.5 160S34.9 159.5 33.4 158.7S30.6 156.4 29.7 154.9S28.4 151.5 28.1 149.8"/>
   <text class="n mid" x="38" y="154.95" style="font-size:13px">6</text>
   <circle class="w-butter" cx="38" cy="195.4" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="38" cy="195.4" r="10"/>
+  <path class="ln" d="M40.5 184.9C42 185.9 43.5 186.9 44.7 188.3S46.8 191.2 47.3 192.8S47.9 196.5 47.5 198.1S46 201.5 44.8 202.6S41.7 204.6 40 204.8S36.4 204.7 34.8 204S31.8 202 30.8 200.6S29 197.5 28.7 195.8S28.7 192.1 29.4 190.5S31.3 187.4 32.7 186.5S36.1 185 37.7 185.1S41.2 186 42.5 187.1"/>
   <text class="n mid" x="38" y="199.95" style="font-size:13px">4</text>
   <circle class="w-butter" cx="38" cy="225.4" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="38" cy="225.4" r="10"/>
+  <path class="ln" d="M29.8 223C29.9 220.8 30.9 218.4 32.3 217S36.2 214.4 38.3 214.3S43 214.9 44.7 216.1S48 219.5 48.7 221.4S49.2 226.1 48.4 228.1S45.9 232 44.1 233.1S39.7 234.8 37.6 234.5S33.1 233 31.7 231.5S29.3 227.5 29.1 225.4S29.3 220.9 30 218.8"/>
   <text class="n mid" x="38" y="229.95" style="font-size:13px">5</text>
   <circle class="w-butter" cx="38" cy="345.4" r="10"/>
-  <circle class="ln" filter="url(#r)" cx="38" cy="345.4" r="10"/>
+  <path class="ln" d="M43.5 337.7C44.7 338.1 45.9 338.7 46.6 339.7S47.8 341.9 48 343.1S48.3 345.7 48.1 346.9S47.4 349.3 46.7 350.4S45.3 352.5 44.3 353.3S42.3 354.8 41.1 355.2S38.7 356 37.4 356S34.9 355.8 33.7 355.3S31.5 354.2 30.6 353.3S28.9 351.4 28.3 350.3S27.4 347.9 27.3 346.7S27.3 344.1 27.7 343S28.8 340.6 29.6 339.7S31.3 337.9 32.4 337.2S34.6 336 35.8 335.7S38.4 335.3 39.6 335.4S42 336.1 43.2 336.5S45.5 337.6 46.5 338.2"/>
   <text class="n mid" x="38" y="349.95" style="font-size:13px">3</text>
   <circle class="w-butter" cx="489" cy="60.75" r="11"/>
-  <circle class="ln" filter="url(#r)" cx="489" cy="60.75" r="11"/>
+  <path class="ln" d="M499 60.4C499.3 62.4 499.1 64.7 498.2 66.4S495.5 69.7 493.7 70.6S489.8 72.2 487.8 72.1S483.6 71.4 482 70.3S478.9 67.3 478.2 65.5S477.2 61.4 477.5 59.4S478.8 55.3 480 53.8S483.3 51.1 485.2 50.6S489.4 49.9 491.3 50.3S495.4 51.8 496.7 53.2S499 56.7 499.5 58.6S500 62.7 499.7 64.8"/>
   <text class="n mid" x="489" y="65.65" style="font-size:14px">1</text>
   <text x="510" y="66" style="font-size:15px" font-weight="700">A command starts</text>
   <text x="510" y="85" style="font-size:15px" font-weight="700">with a backslash</text>
   <text class="code" x="510" y="105" style="font-size:14px;fill:var(--terra);font-weight:700">\section  \cite</text>
   <circle class="w-butter" cx="489" cy="123.75" r="11"/>
-  <circle class="ln" filter="url(#r)" cx="489" cy="123.75" r="11"/>
+  <path class="ln" d="M479.8 129.4C478.6 127.9 477.8 125.8 477.7 123.9S478.5 119.8 479.5 118.2S482.2 115.1 483.9 114.2S487.8 112.9 489.8 113.1S493.9 113.9 495.4 115S498.3 118 499 119.8S499.9 123.8 499.6 125.7S498.2 129.6 496.9 131S493.7 133.6 491.8 134.2S487.7 135.1 485.9 134.6S482.1 133 480.7 131.7S478.3 128.5 477.4 126.7"/>
   <text class="n mid" x="489" y="128.65" style="font-size:14px">2</text>
   <text x="510" y="129" style="font-size:15px" font-weight="700">Braces hold what the</text>
   <text x="510" y="148" style="font-size:15px" font-weight="700">command acts on</text>
   <text class="s" x="510" y="168" style="font-size:14px">a title, a file, a key</text>
   <circle class="w-butter" cx="489" cy="186.75" r="11"/>
-  <circle class="ln" filter="url(#r)" cx="489" cy="186.75" r="11"/>
+  <path class="ln" d="M479.8 189.2C479.1 187.4 478.9 185.2 479.4 183.4S481.3 179.8 482.8 178.7S486.5 176.8 488.3 176.6S492.5 176.8 494.2 177.6S497.6 179.8 498.6 181.4S500.2 185.2 500.2 187.1S499.6 191.1 498.6 192.7S496.1 196 494.4 196.8S490.6 198.1 488.7 198S484.7 197 483.2 195.8S480.4 192.9 479.6 191.2S478.3 187.4 478.1 185.5"/>
   <text class="n mid" x="489" y="191.65" style="font-size:14px">3</text>
   <text x="510" y="192" style="font-size:15px" font-weight="700">\begin and \end wrap</text>
   <text x="510" y="211" style="font-size:15px" font-weight="700">an environment</text>
   <text class="s" x="510" y="231" style="font-size:14px">here, one figure</text>
   <circle class="w-butter" cx="489" cy="249.75" r="11"/>
-  <circle class="ln" filter="url(#r)" cx="489" cy="249.75" r="11"/>
+  <path class="ln" d="M481.5 254.6C480.2 253.1 479.2 251.1 478.9 249.3S479.3 245.2 480.2 243.5S482.6 240.2 484.3 239.3S488.2 238 490.1 238.3S494 239.5 495.5 240.7S498.2 243.7 499 245.5S500.2 249.4 499.9 251.3S498.9 255.3 497.7 256.7S494.6 259.5 492.8 260S488.7 260.3 486.9 259.7S483.4 257.8 482 256.4S479.4 253.3 478.5 251.5"/>
   <text class="n mid" x="489" y="254.65" style="font-size:14px">4</text>
   <text x="510" y="255" style="font-size:15px" font-weight="700">% starts a note</text>
   <text x="510" y="274" style="font-size:15px" font-weight="700">LaTeX ignores</text>
   <text class="s" x="510" y="294" style="font-size:14px">it never prints</text>
   <circle class="w-butter" cx="489" cy="312.75" r="11"/>
-  <circle class="ln" filter="url(#r)" cx="489" cy="312.75" r="11"/>
+  <path class="ln" d="M480.3 305.1C481.9 303.8 483.8 302.8 485.8 302.3S489.9 301.9 491.8 302.4S495.7 304.1 497 305.5S499.2 309.1 499.5 311S499.6 315.2 498.9 317S496.8 320.6 495.3 321.8S491.7 324.1 489.8 324.3S485.6 324.3 483.8 323.5S480.4 321.1 479.4 319.5S477.8 315.6 477.8 313.6S478.2 309.4 479.2 307.8S481.8 304.6 483.6 303.8"/>
   <text class="n mid" x="489" y="317.65" style="font-size:14px">5</text>
   <text x="510" y="318" style="font-size:15px" font-weight="700">A blank line starts</text>
   <text x="510" y="337" style="font-size:15px" font-weight="700">a new paragraph</text>
   <circle class="w-butter" cx="489" cy="355.75" r="11"/>
-  <circle class="ln" filter="url(#r)" cx="489" cy="355.75" r="11"/>
+  <path class="ln" d="M500.8 353.6C500.7 355.6 500.3 357.7 499.5 359.4S497.3 362.9 495.7 364S492.1 365.9 490.2 366.1S486.1 366.2 484.3 365.4S480.8 363.2 479.8 361.7S478 357.9 478 356S478.8 352 479.8 350.4S482.5 347.2 484.2 346.4S488 345 489.9 345.1S493.9 346.1 495.5 347.2S498.7 350 499.3 351.7S499.8 355.7 499.1 357.5"/>
   <text class="n mid" x="489" y="360.65" style="font-size:14px">6</text>
   <text x="510" y="361" style="font-size:15px" font-weight="700">\cite{key} and \ref{label}</text>
   <text x="510" y="380" style="font-size:15px" font-weight="700">are filled in for you</text>

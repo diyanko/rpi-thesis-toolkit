@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 616" width="360" height="616" role="img" aria-labelledby="t d">
   <title id="t">Swapping the class file</title>
-  <desc id="d">Swapping the class file. On the left, your files (metadata.tex, frontmatter, chapters, appendices, figures, references.bib, preamble.tex) stay exactly as they are. In the middle, an old rpi-thesis.cls is replaced with a new one. On the right, recompiling produces a PDF with the same words in the updated formatting.</desc>
+  <desc id="d">Swapping the class file. On the left, your files (metadata.tex, frontmatter, chapters, appendices, figures, references.bib, preamble.tex) stay exactly as they are. In the middle, an old rpi-thesis.cls is replaced with a new one. On the right, recompiling produces a PDF with the same words in the updated formatting. A note says this applies to compatible updates; check the changelog.</desc>
   <style>
     svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
       --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
@@ -33,10 +33,6 @@
     .mid { text-anchor: middle; } .end { text-anchor: end; }
   </style>
   <defs>
-    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="440" height="696">
-      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
-      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
     <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
     <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -47,7 +43,7 @@
   <rect class="bg" width="360" height="616" rx="18"/>
   <text class="hand hs mid" x="180" y="32" style="font-size:19px">your files</text>
   <path class="w-sage" transform="translate(6 6)" d="M18 50 V 214 H336 V 62 H124 L112 50 Z"/>
-  <path class="ln" filter="url(#r)" d="M18 50 V 214 H336 V 62 H124 L112 50 Z"/>
+  <path class="ln" d="M18.3 48.8C18.5 53.4 18.4 58 18.4 62.6S18.2 71.7 18.1 76.3S17.7 85.5 17.7 90.1S17.7 99.2 17.8 103.8S18.3 113 18.4 117.5S18.3 126.7 18.3 131.3S18.5 140.4 18.5 145S18.5 154.2 18.5 158.8S18.5 167.9 18.5 172.5S18.4 181.7 18.4 186.3S18.5 195.4 18.5 200S19.1 209.2 19 213.8M17 213.1C22.9 212.8 28.8 212.8 34.7 212.9S46.6 213.1 52.5 213.3S64.3 214.3 70.2 214.6S82 214.8 87.9 214.8S99.8 214.3 105.7 214.1S117.5 214 123.4 213.9S135.3 214 141.2 213.9S153 213.6 159 213.6S170.8 213.4 176.7 213.4S188.5 213.6 194.5 213.8S206.3 214.3 212.2 214.4S224.1 214.5 230 214.3S241.8 213.4 247.7 213.3S259.5 213.3 265.5 213.5S277.3 214 283.2 214.2S295 214.8 300.9 214.8S312.8 214 318.7 213.8S330.5 213.6 336.4 213.6M335.5 214.5C335.8 201.7 335.1 188.9 335.1 176.1S335.8 150.5 336 137.7S336.3 112.1 336.3 99.3S336.2 73.7 336.4 60.9M338.5 62C329.5 62.2 320.6 62.5 311.6 62.7S293.6 62.8 284.7 62.6S266.7 62.2 257.7 61.9S239.8 61.1 230.8 61.1S212.8 61.6 203.9 61.9S185.9 62.7 176.9 62.7S159 62.2 150 62S132 61.9 123.1 61.9M124.4 62.1C120.2 58 116 54 111.9 49.9M113.2 50C105.2 50 97.1 50 89 50S72.8 50.4 64.7 50.3S48.6 49.8 40.5 49.8S24.3 50.1 16.3 50.2"/>
   <text class="m" x="36" y="96" style="font-size:15px">metadata.tex</text>
   <text class="m" x="36" y="128" style="font-size:15px">frontmatter/</text>
   <text class="m" x="36" y="160" style="font-size:15px">chapters/</text>
@@ -57,23 +53,25 @@
   <text class="m" x="192" y="160" style="font-size:15px">preamble.tex</text>
   <text class="hand hs mid" x="180" y="252" style="font-size:18px">stay exactly as they are</text>
   <text class="h mid" x="180" y="290" style="font-size:30px">+</text>
-  <rect opacity=".75" class="ln thin mut dash" filter="url(#r)" x="16" y="312" width="132" height="72" rx="12"/>
+  <text class="s" x="204" y="282" style="font-size:13px">for compatible updates,</text>
+  <text class="s" x="204" y="298" style="font-size:13px">see the changelog</text>
+  <path opacity=".75" class="ln thin mut dash" d="M43 311.1C45.3 311.2 47.6 311.3 49.9 311.3S54.6 311.5 56.9 311.4S61.5 311.3 63.8 311.2S68.5 311.1 70.8 311.1S75.4 311.2 77.7 311.3S82.4 311.4 84.7 311.5S89.3 311.8 91.6 311.9S96.3 312 98.6 312.1S103.2 312.3 105.5 312.3S110.2 312.3 112.5 312.4S117.1 312.5 119.4 312.5S124.1 312.4 126.4 312.3S131 312 133.3 312S138.1 311.8 140.2 312.5S144.6 314.6 145.9 316.3S147.8 320.5 148.1 322.7S147.9 327.4 147.9 329.7S147.8 334.3 147.8 336.6S147.7 341.3 147.7 343.6S147.9 348.2 147.9 350.5S148.1 355.2 148.2 357.5S148.4 362.1 148.4 364.4S148.6 369.1 148.3 371.4S147.8 376.1 146.8 378.1S143.8 381.7 141.9 382.9S137.5 384.4 135.3 384.8S130.6 385.1 128.3 385.1S123.7 385.1 121.4 385.1S116.7 385.2 114.4 385.1S109.8 384.9 107.5 384.8S102.8 384.8 100.5 384.8S95.9 384.8 93.6 384.7S88.9 384.4 86.6 384.4S82 384.5 79.7 384.5S75 384.4 72.7 384.5S68.1 384.5 65.8 384.5S61.1 384.5 58.8 384.5S54.2 384.6 51.9 384.6S47.2 384.6 44.9 384.6S40.3 384.6 38 384.7S33.3 384.8 31 384.7S26.2 385.2 24.1 384.4S19.9 382.2 18.5 380.5S16.5 376.3 16.1 374.1S15.9 369.4 15.8 367.1S15.7 362.5 15.6 360.2S15.6 355.5 15.5 353.2S15.2 348.6 15.2 346.3S15.3 341.6 15.4 339.3S15.7 334.7 15.9 332.4S16 327.7 16.3 325.5S16.7 320.7 17.8 318.7S20.7 315 22.6 313.9S27 312.4 29.2 312.1S33.9 312.1 36.2 312.1S40.8 311.9 43.1 311.9S47.8 312 50.1 312.1S54.7 312.2 57 312.2"/>
   <text class="s m mid" x="82" y="342" style="font-size:14px">rpi-thesis.cls</text>
   <text class="s mid" x="82" y="368" style="font-size:15px">old rules</text>
-  <path opacity=".75" class="ln mut" filter="url(#r)" d="M24 338 C 60 334, 104 340, 140 336"/>
-  <path class="ln terra" filter="url(#r)" d="M154 352 C 170 348, 186 356, 204 350" marker-end="url(#at)"/>
+  <path opacity=".75" class="ln mut" d="M23.6 338.1C28.4 337.7 33.2 337.3 38.1 337S47.8 336.3 52.6 336.1S62.3 335.8 67.2 335.9S76.9 336 81.7 336.2S91.4 337 96.2 337.1S105.9 337.3 110.8 337.2S120.5 336.9 125.3 336.6S135 336 139.8 335.2"/>
+  <path class="ln terra" d="M154.3 352.1C159.7 350.9 165.3 351.5 170.9 351.6S182 352.8 187.5 352.5S198.7 351.7 203.9 349.9" marker-end="url(#at)"/>
   <text class="hand mid" x="180" y="328" style="font-size:17px">replace</text>
   <rect class="w-terra" x="218" y="316" width="132" height="76" rx="12"/>
-  <rect class="ln" filter="url(#r)" x="212" y="310" width="132" height="76" rx="12"/>
+  <path class="ln" d="M233.4 384.1C231 384 228.6 384.2 226.2 384.1S221.2 384.3 219.1 383.4S214.9 380.8 213.7 378.8S212.3 374.3 212 371.9S211.9 367.1 211.9 364.7S212 359.9 211.9 357.5S211.7 352.7 211.6 350.3S211.4 345.4 211.4 343S211.3 338.2 211.3 335.8S211.4 331 211.5 328.6S211 323.7 211.4 321.4S212.5 316.5 213.8 314.7S217.5 311.4 219.6 310.6S224.4 309.8 226.8 309.7S231.6 309.7 234 309.8S238.8 310 241.2 310S246 309.8 248.4 309.8S253.2 309.8 255.7 309.8S260.5 309.8 262.9 309.8S267.7 310 270.1 310.1S274.9 310.1 277.3 310.2S282.1 310.3 284.5 310.4S289.3 310.6 291.8 310.6S296.6 310.4 299 310.3S303.8 310.3 306.2 310.2S311 310.1 313.4 310S318.2 309.8 320.6 309.8S325.5 309.9 327.9 310S332.8 309.9 335 310.6S339.6 312.6 341.1 314.3S343.7 318.4 344.1 320.7S344 325.5 343.9 327.9S343.8 332.7 343.7 335.2S343.7 340 343.7 342.4S343.6 347.2 343.6 349.6S343.7 354.4 343.7 356.8S343.8 361.6 343.8 364S343.9 368.9 343.8 371.3S343.8 376.3 343 378.4S340.5 382.8 338.7 384.1S334.3 385.9 331.9 386.2S327.1 386.2 324.7 386.2S319.9 386.3 317.5 386.2S312.7 385.9 310.3 385.7S305.5 385.6 303.1 385.5S298.2 385.3 295.8 385.2S291 385.2 288.6 385.3S283.8 385.4 281.4 385.5S276.6 385.6 274.2 385.7S269.4 386 267 386S262.1 386 259.7 385.9S254.9 385.9 252.5 385.8S247.7 385.6 245.3 385.5S240.5 385.2 238.1 385S233.3 384.8 230.9 384.8S226 385.3 223.7 385S218.7 384.3 216.8 383.1S213.3 379.8 212.2 377.7"/>
   <text class="m mid" x="278" y="342" style="font-size:14px">rpi-thesis.cls</text>
   <text class="s mid" x="278" y="368" style="font-size:15px">new rules</text>
-  <path class="ln" filter="url(#r)" d="M262 396 C 252 420, 220 432, 190 438" marker-end="url(#a)"/>
+  <path class="ln" d="M261.7 396.1C258.9 402.6 254.1 408.3 249 413.1S237.5 421.7 231.2 425.1S218.2 431.1 211.4 433.2S197.5 436.7 190.4 437.9" marker-end="url(#a)"/>
   <text class="hand mid" x="282" y="430" style="font-size:17px">recompile</text>
   <path class="w-sage" d="M52 420 H168 L184 436 V596 H52 Z"/>
   <path class="card" d="M46 414 H162 L178 430 V590 H46 Z"/>
-  <path class="ln" filter="url(#r)" d="M46 414 H162 L178 430 V590 H46 Z M162 414 V430 H178"/>
+  <path class="ln" d="M44.8 413.2C54.7 413.2 64.6 413.1 74.5 413.1S94.4 413.2 104.3 413.4S124.1 414.2 134.1 414.3S153.9 413.4 163.8 413.7M162.6 413.6C168.2 418.9 173.6 424.4 179 430M178.9 428C178.7 433.4 178.5 438.9 178.3 444.4S177.9 455.3 177.8 460.7S177.5 471.7 177.5 477.1S177.6 488 177.7 493.5S178.1 504.4 178.1 509.9S177.7 520.8 177.5 526.3S177.1 537.2 177.2 542.6S177.4 553.6 177.6 559S178.1 569.9 178.3 575.4S178.7 586.3 178.8 591.8M179.8 590C173.4 590.4 167 590.5 160.5 590.5S147.7 590.2 141.3 590S128.4 589.4 122 589.4S109.2 589.7 102.7 589.9S89.9 590.7 83.5 590.9S70.6 590.9 64.2 590.8S51.3 590.6 44.9 590.5M45.8 591.2C46 585.3 45.9 579.3 46 573.3S46.2 561.4 46.2 555.4S45.8 543.5 45.8 537.5S45.7 525.6 45.7 519.6S46 507.7 46 501.7S45.9 489.8 45.9 483.8S46 471.8 46 465.9S46.2 453.9 46.2 448S46.5 436 46.5 430.1S46.4 418.1 46.1 412.2M162.7 413.7C162.6 419.1 162.7 424.5 162.7 429.9M162.5 429.6C167.9 429.7 173.4 429.8 178.8 429.8"/>
   <rect class="ln thin blue dash" x="58" y="430" width="108" height="146" rx="2"/>
-  <path class="ln terra" filter="url(#r)" d="M70 452 H124"/>
+  <path class="ln terra" d="M70 452C78.8 451.8 87.6 452 96.4 452S114 451.8 122.8 452"/>
   <path class="ln thin" d="M70 476 H156 M70 492 H156 M70 508 H144 M70 532 H156 M70 548 H156 M70 564 H124"/>
   <text class="hand" x="196" y="500" style="font-size:18px">same words,</text>
   <text class="hand" x="196" y="524" style="font-size:18px">updated</text>
