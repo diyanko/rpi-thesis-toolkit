@@ -113,11 +113,22 @@ START_HERE = """\
 """
 
 
-def add_text(archive, name, text):
-    info = zipfile.ZipInfo(name, date_time=(2026, 1, 1, 0, 0, 0))
+# Reproducible archives: every entry gets the same timestamp and plain permissions
+# (0755 only for files that are executable in the checkout), so the same sources
+# always give byte-identical ZIPs.
+ZIP_DATE = (2026, 1, 1, 0, 0, 0)
+
+
+def add_text(archive, name, text, mode=0o644):
+    info = zipfile.ZipInfo(name, date_time=ZIP_DATE)
     info.compress_type = zipfile.ZIP_DEFLATED
-    info.external_attr = 0o644 << 16
+    info.external_attr = mode << 16
     archive.writestr(info, text)
+
+
+def add_file(archive, path, name):
+    mode = 0o755 if path.stat().st_mode & 0o111 else 0o644
+    add_text(archive, name, path.read_bytes(), mode)
 
 
 # For "Open in Overleaf": only what the thesis needs, so the Overleaf file tree
@@ -203,7 +214,7 @@ def package_overleaf(version):
     with zipfile.ZipFile(temp, "w", zipfile.ZIP_DEFLATED) as archive:
         for name in FILES:
             if not name.startswith(OVERLEAF_SKIP):
-                archive.write(ROOT / name, name)
+                add_file(archive, ROOT / name, name)
         add_text(archive, "README.md", OVERLEAF_README.format(guide_url=public_guide))
         names = archive.namelist()
     try:
@@ -242,17 +253,17 @@ def package(dev=False):
         # The archive replaces the old one only after everything is in place.
         with zipfile.ZipFile(temp, "w", zipfile.ZIP_DEFLATED) as archive:
             for name in FILES:
-                archive.write(ROOT / name, name)
+                add_file(archive, ROOT / name, name)
             add_text(archive, ".gitignore", STUDENT_GITIGNORE)
             readme = STUDENT_README
             if with_cheatsheet:
-                archive.write(cheatsheet, CHEATSHEET_NAME)
+                add_file(archive, cheatsheet, CHEATSHEET_NAME)
                 readme += CHEATSHEET_NOTE
             add_text(archive, "README.md", readme)
             add_text(archive, "START-HERE.html", START_HERE)
             for path in sorted(guide.rglob("*")):
                 if path.is_file():
-                    archive.write(path, "guide/" + path.relative_to(guide).as_posix())
+                    add_file(archive, path, "guide/" + path.relative_to(guide).as_posix())
             names = archive.namelist()
     leaked = [
         n for n in names
