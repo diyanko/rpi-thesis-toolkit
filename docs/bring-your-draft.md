@@ -55,7 +55,9 @@ route below changes your original file.
 ### Move a section by hand
 
 1. **Copy the text** into a chapter file, below its `\chapter{...}` and
-   `\label{...}` lines ([add a chapter](writing.md#chapters)).
+   `\label{...}` lines ([add a chapter](writing.md#chapters)). If your draft
+   starts with `# Title`, use that title in the existing `\chapter{...}` and
+   leave out the `# Title` line when pasting the text.
 2. **Change the Markdown symbols** to commands, using the table below.
 3. **Put a backslash before special characters** in ordinary text:
    `%` → `\%`, `&` → `\&`, `_` → `\_`, `#` → `\#`, and `$` → `\$` unless it
@@ -64,10 +66,11 @@ route below changes your original file.
 
 | In Markdown | In your chapter file | Example |
 | --- | --- | --- |
-| `# Title` | `\chapter{...}` in CAPITALS; one chapter per file | [Headings](writing.md#paragraphs-and-headings) |
+| `# Title` | Replace the title in the existing `\chapter{...}`, in CAPITALS; keep one chapter heading per file | [Headings](writing.md#paragraphs-and-headings) |
 | `## Heading`, `### Heading` | `\section{...}`, `\subsection{...}` | [Headings](writing.md#paragraphs-and-headings) |
 | `**bold**`, `*italics*` | `\textbf{bold}`, `\emph{italics}` | [Headings](writing.md#paragraphs-and-headings) |
-| `[@key]` | `\cite{key}` (key from `references.bib`) | [Cite a source](writing.md#cite-a-source) |
+| `[@key]` | `\parencite{key}` (key from `references.bib`) | [Cite a source](writing.md#cite-a-source) |
+| `@key` as part of a sentence | `\textcite{key}` | [Cite a source](writing.md#cite-a-source) |
 | `$x$` in a sentence | `$x$`, unchanged | [Equations](writing.md#equations) |
 | `$$ ... $$` | An `equation` with a `\label` | [Equations](writing.md#equations) |
 | A table with bars | The template's `table`, caption above | [Edit a table](writing.md#edit-a-table) |

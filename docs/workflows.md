@@ -23,12 +23,20 @@ Start with [get started](get-started.md). For the bigger picture, see
 1. In Overleaf, download the project **source** as a ZIP, not just the PDF
    ([Overleaf: downloading a project](https://docs.overleaf.com/managing-projects-and-files/downloading-a-project)).
 2. Extract it into a normal folder, keeping the folders together.
-3. No LaTeX on your computer yet? Follow
+3. **Add any missing desktop build files.** The small Overleaf starter leaves
+   out the build helper and editor settings. Find your version in the
+   `\ProvidesClass` line near the top of `rpi-thesis.cls`, then download that
+   version's **starter ZIP** from [all releases](https://github.com/diyanko/rpi-thesis-toolkit/releases)
+   into a separate folder. Copy only missing `scripts/build.py`, `latexmkrc`,
+   and the `.vscode` folder into your thesis folder. Show hidden files in
+   your file manager if `.vscode` is not visible. Keep your thesis files,
+   settings, bibliography, and images.
+4. No LaTeX on your computer yet? Follow
    [the your-computer route](get-started.md#step-3a-your-computer-route).
-4. Compile `main.tex` and compare the PDF with Overleaf's.
+5. Compile `main.tex` and compare the PDF with Overleaf's.
 
-The Overleaf starter's ZIP has no VS Code settings, so your editor may put the
-PDF beside `main.tex` instead of in `build/`.
+With the copied settings, VS Code writes `build/main.pdf`. Other editors may
+put `main.pdf` beside `main.tex`.
 
 ### Your computer to Overleaf
 
@@ -147,10 +155,10 @@ The changes PDF would lose any citation whose entry you deleted from
 `references.bib`. So give it a comparison bibliography that holds the entries
 from both versions, and leave your real `references.bib` alone:
 
-1. Create `build/compare.bib` containing the text of `../old/references.bib`
-   followed by the text of `references.bib`. In a text editor, paste one under
+1. Create `build/compare.bib` containing the text of `references.bib`
+   followed by the text of `../old/references.bib`. In a text editor, paste one under
    the other; on macOS or Linux,
-   `cat ../old/references.bib references.bib > build/compare.bib`.
+   `cat references.bib ../old/references.bib > build/compare.bib`.
 2. Open `build/changes.tex` and change the line
    `\addbibresource{references.bib}` to `\addbibresource{build/compare.bib}`.
    (This is the generated file, not your thesis.)
@@ -162,6 +170,8 @@ latexmk -norc -pdf -no-shell-escape -outdir=build build/changes.tex
 ```
 
 Biber warns about duplicate keys and skips the second copy; that is expected.
+Putting the current entries first keeps any corrected source details, while
+the old file supplies entries you deleted.
 
 `--flatten` pulls the chapter files into one document, so comment out any
 `\includeonly` line in both versions first. The result is `build/changes.pdf`.
@@ -208,8 +218,9 @@ silently disappear. To fix this:
 Reuse the images in `figures/` in any slide or poster tool. To stay in LaTeX,
 start from a **Beamer** template or a poster template (Overleaf's gallery has
 many) and copy in your figures. To turn Markdown slides into PowerPoint, see
-[Pandoc](#an-advisor-wants-word-with-track-changes): `pandoc talk.md --output=talk.pptx`
-starts a new slide at each heading.
+[Pandoc](#an-advisor-wants-word-with-track-changes):
+`pandoc talk.md --slide-level=1 --output=talk.pptx` starts a new slide at each
+top-level heading (`# Slide title`). Lower-level headings stay on that slide.
 
 ## Back up your work
 

@@ -144,7 +144,7 @@ the whole PDF ([compile engines](advanced.md#choose-a-compile-engine)).
 
 | What you see | What to try |
 | --- | --- |
-| `You have requested release '2022-06-01' of LaTeX` | Your TeX Live is older than the 2022 release this starter is written for (common with Ubuntu 22.04's packages). The sample compiled with TeX Live 2021 in a test, so you can usually continue; if something looks wrong, install [TeX Live from tug.org](https://tug.org/texlive/quickinstall.html). |
+| `You have requested release '...' of LaTeX` | Your installed LaTeX is older than this starter needs. Install the current full [TeX Live from tug.org](https://tug.org/texlive/quickinstall.html), or use [Overleaf](get-started.md#step-3b-overleaf-route). |
 | `Found biblatex control file version ..., expected version ...` | Try a [clean recompile](#clean-recompile) first. If it persists, Biber and biblatex probably come from different TeX installations: keep one distribution, update it fully, and use its `biber`. |
 | On a Mac, Biber fails and the log mentions `lipo` | An older Mac build of Biber that newer macOS can't start; your thesis is fine. Update TeX Live and build again. On macOS (MacTeX), use TeX Live Utility, **Update all packages**, or run `sudo tlmgr update --self --all`. On Linux with apt, update with your package manager: first `sudo apt update`, then `sudo apt upgrade`. |
 | `I can't write on file build/chapters/...aux` (or `chapters/...aux`, `appendices/...aux`) | The starter's settings create those folders for you. If you see this, do a [clean recompile](#clean-recompile). If you typed your own `latexmk -outdir=...` command, build with `python3 scripts/build.py` (Windows: `py scripts/build.py`) or `latexmk -norc -pdf main.tex` instead. |

@@ -63,7 +63,8 @@ It is a convenience, not an OGE requirement.
       `appendices/additional-material.tex`, so every citation uses a key from
       your file.
    3. On Overleaf, upload the new file over the old one, and again whenever
-      it changes ([auto-export](#set-it-and-forget-it) can automate this).
+      it changes. [Auto-export](#set-it-and-forget-it) keeps the file on your
+      computer current; you still upload it to Overleaf.
 4. **Cite with `\parencite{your-key}`.** Choose the command by how the
    citation reads: `\parencite` for a citation in parentheses, `\textcite`
    when the author is part of the sentence (the style you agreed on in step 1
@@ -99,8 +100,8 @@ Use Zotero sync plus your [computer backup](workflows.md#back-up-your-work).
   closed ([Zotero: moving your library](https://www.zotero.org/support/kb/transferring_a_library)).
 - **Overleaf:** its built-in [Zotero integration](https://docs.overleaf.com/integrations-and-add-ons/reference-manager-integrations/zotero)
   needs some [Overleaf plans](https://docs.overleaf.com/getting-started/free-and-premium-plans).
-  Free route: upload `references.bib` again when it changes, or use
-  auto-export below.
+  Free route: export `references.bib` to your computer and upload it to
+  Overleaf again whenever it changes.
 - **Auto-export:** with [Better BibTeX](https://retorque.re/zotero-better-bibtex/exporting/auto/),
   tick **Keep updated** when exporting into your thesis folder, and Zotero
   rewrites that file whenever your library changes. On Overleaf, upload the
