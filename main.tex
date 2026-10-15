@@ -1,32 +1,31 @@
 % !TEX program = pdflatex
 % !BIB program = biber
-% Start here. Compile this file to make your PDF.
-% First change metadata.tex, then replace text in frontmatter/ and chapters/.
-\documentclass{rpi-thesis}
-\input{preamble}
-\input{metadata}
+% main.tex: compile this file to make your PDF.
+% Your details go in metadata.tex; your words in frontmatter/ and chapters/.
+% The date asks for this version of rpi-thesis.cls or newer.
+\documentclass{rpi-thesis}[2026/10/15]
+\input{preamble}   % packages and citation style
+\input{metadata}   % your title page details
 
 \begin{document}
-\maketitle
-\thesisfrontmatter
 
-% Optional sections go here, in this order: a nomenclature or list of
-% equations, then a preface or acknowledgment (each with \frontchapter).
-% Optional: remove this line if you do not want acknowledgments.
-\input{frontmatter/acknowledgments}
+% ---- Front matter: pages i, ii, iii, ... ----
+\maketitle
+\thesisfrontmatter   % copyright page (if set), contents, lists of tables and figures
+% Other front-matter sections go here, before the abstract: a list of
+% symbols, a preface, or an acknowledgment, each starting with \frontchapter.
+\input{frontmatter/acknowledgments}   % optional: delete this line to leave it out
 \input{frontmatter/abstract}
 
+% ---- Chapters: pages 1, 2, 3, ... ----
 \thesismainmatter
 \include{chapters/01-introduction}
 \include{chapters/02-research}
 \include{chapters/03-conclusion}
 
-% References belong before the appendices.
-\begin{singlespace}
-\printbibliography[heading=bibintoc,title={REFERENCES}]
-\end{singlespace}
-
-% Optional: remove these two lines if you do not need an appendix.
-\appendix
+% ---- References, then appendices ----
+\thesisreferences
+\appendix   % optional: delete this line and the next if you have no appendix
 \include{appendices/additional-material}
+
 \end{document}

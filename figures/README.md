@@ -13,6 +13,6 @@ The file extension (`.png`, `.jpg`, `.pdf`) is optional. Replace the sample
 the figure in its caption and in the nearby text; do not rely on color alone
 to communicate its meaning. Check legibility in the PDF.
 
-The repository ignores generated PDFs. If a PDF is your source figure, track
-that specific file with `git add -f figures/your-figure.pdf` when using Git.
+PDF figures inside `figures/` are not ignored, so Git tracks them like any
+other file.
 Do not upload research data or figures you are not allowed to share publicly.
