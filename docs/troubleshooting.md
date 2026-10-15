@@ -66,20 +66,24 @@ looks impossible. It never changes your writing. You can do it without a
 terminal.
 
 - **Overleaf:** open the **Recompile** menu (the small arrow beside the
-  button) and choose **Recompile from scratch**. To change engine, open
-  **Menu** (top left) and pick a **Compiler**: pdfLaTeX, XeLaTeX, or LuaLaTeX.
+  button) and choose **Recompile from scratch**. To change the engine, open
+  **Settings** (the gear icon) and, under **Compiler**, pick pdfLaTeX, XeLaTeX,
+  or LuaLaTeX ([Overleaf: selecting a compiler](https://docs.overleaf.com/getting-started/recompiling-your-project/selecting-a-tex-live-version-and-latex-compiler)).
 - **VS Code:** open the Command Palette (Ctrl+Shift+P, or Cmd+Shift+P on
   macOS), run **LaTeX Workshop: Clean up auxiliary files**, then build again.
-  The starter defines one recipe, pdfLaTeX + Biber, so VS Code has no
-  engine menu here. To use LuaLaTeX or XeLaTeX, use the
-  [optional build helper](advanced.md#choose-a-compile-engine) in a terminal,
-  or use Overleaf.
-- **TeXShop or TeXstudio:** clean the auxiliary files, then run the steps from
+  To change the engine, run **LaTeX Workshop: Build with recipe** and pick
+  **RPI Thesis Toolkit: XeLaTeX + Biber** or **LuaLaTeX + Biber**; the
+  starter's settings keep your last choice for later builds.
+  <!-- TODO(verify): recipe picker and lastUsed persistence not hand-tested in VS Code. -->
+- **TeXShop, TeXstudio, or TeXworks:** each editor has its own way to remove
+  auxiliary files and to choose an engine, and the steps differ by version.
+  Look in that editor's own documentation
+  ([TeXShop](https://pages.uoregon.edu/koch/texshop/),
+  [TeXstudio](https://texstudio.org/),
+  [TeXworks](https://tug.org/texworks/)), or use the terminal command in the
+  next item. Then run the steps from
   [Get started](get-started.md#other-editors-and-the-command-line) again.
-  <!-- TODO(verify): menu names not checked in the current apps. TeXShop is believed to offer File > Trash Aux Files, TeXstudio Tools > Clean Auxiliary Files. -->
-  In TeXShop, the engine is the menu at the top of the editor window; in
-  TeXstudio, set it under **Options → Configure TeXstudio → Build**.
-  <!-- TODO(verify): TeXstudio build-settings path. -->
+  <!-- TODO(verify): menu names in current TeXShop, TeXstudio, and TeXworks were not checked, so none are named here. -->
 - **Any editor, in a terminal (optional):** `python3 scripts/build.py --fresh`
   (on Windows, `py scripts/build.py --fresh`).
 

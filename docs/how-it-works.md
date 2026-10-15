@@ -16,7 +16,8 @@ look.
 
 *In words:* your files + `rpi-thesis.cls` give your PDF. Replace the class
 file, recompile, and the same words come out with the updated formatting
-(during beta, check the changelog for any other edit).
+(check the changelog first: an update may need other edits, see
+[update the formatting safely](workflows.md#update-the-formatting-safely)).
 
 So when OGE changes a rule or the toolkit fixes something, you usually replace **one
 file** and your chapters are untouched. While the toolkit is in beta, an
@@ -84,7 +85,8 @@ files (`.aux`, `.bbl`, `.toc`, ...) are scratch notes you never edit; the
 ## Bold citation keys and question marks
 
 These are LaTeX saying "I haven't finished filling this in yet". Start with
-your editor's compile ([first compile](get-started.md#step-4-your-first-compile));
+your editor's compile ([your computer](get-started.md#step-3a-your-computer-route)
+or [Overleaf](get-started.md#step-3b-overleaf-route));
 if it does not clear, try a [clean recompile](troubleshooting.md#clean-recompile);
 if you run each program yourself, follow the
 [other-editor compile steps](get-started.md#other-editors-and-the-command-line).
@@ -109,7 +111,7 @@ Switched methods? Open the PDF from the method you just used, not an old copy.
 
 ## Your computer or Overleaf?
 
-![Your computer compared with Overleaf. Both start from the same project files and run the same compile steps (pdfLaTeX, Biber, then pdfLaTeX twice, repeated as needed), so they produce matching PDFs when both use a current TeX setup. On your computer the files live in a folder you control, LaTeX is installed locally, and you work offline in an editor. On Overleaf the files and the LaTeX installation live on Overleaf's servers and you work in a browser.](diagrams/overleaf-vs-local.svg)
+![Your computer compared with Overleaf. Both start from the same project files and run the same compile steps (pdfLaTeX, Biber, then pdfLaTeX twice, repeated as needed), so they produce matching PDFs when both use the same files, engine, packages, and fonts. On your computer the files live in a folder you control, LaTeX is installed locally, and you work offline in an editor. On Overleaf the files and the LaTeX installation live on Overleaf's servers and you work in a browser.](diagrams/overleaf-vs-local.svg)
 
 Same files, same programs; only *where* things live differs. The PDFs match when
 both use the same TeX version (Overleaf lets you choose one in its settings).

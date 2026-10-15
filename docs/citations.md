@@ -2,18 +2,22 @@
 
 For anyone adding sources to a thesis or dissertation that already compiles
 ([get started](get-started.md) if not). List each source once in
-`references.bib`, cite it with `\cite{key}`, and LaTeX builds the reference
-list for you.
+`references.bib`, cite it with a command such as `\parencite{key}`, and
+LaTeX builds the reference list for you.
 
 ## Try the sample citation
 
 Try it on the source already in the starter. Leave `references.bib` alone.
+The sample uses a numbered style. `\parencite{key}` is the command for a
+citation in parentheses (brackets in a numbered style), and `\textcite{key}`
+is for when the author is part of your sentence
+([all the commands](#change-the-citation-style)).
 
 1. Open `chapters/01-introduction.tex`.
 2. Add this as a new paragraph:
 
    ```tex
-   This example cites the sample book~\cite{lamport1994}.
+   This example cites the sample book~\parencite{lamport1994}.
    ```
 
 3. Compile `main.tex` and find the new sentence in your PDF. You should see
@@ -26,7 +30,7 @@ then collect them with Zotero or
 ![How a citation travels. A source's record (author, title, year) gets a citation key such as lamport1994 and goes into references.bib, from Zotero or pasted by hand. The chapter contains only \cite{lamport1994}. When you compile, Biber prints [1] in the text and the full entry under REFERENCES.](diagrams/citation-flow.svg)
 
 *In words:* a source's **key** goes into `references.bib` and into
-`\cite{key}` in your chapter. Biber (the program that formats references)
+`\parencite{key}` in your chapter. Biber (the program that formats references)
 turns that into [1] and a full reference-list entry when you compile.
 
 ## Step 1: Agree on a style with your advisor
@@ -60,11 +64,15 @@ It is a convenience, not an OGE requirement.
       your file.
    3. On Overleaf, upload the new file over the old one, and again whenever
       it changes ([auto-export](#set-it-and-forget-it) can automate this).
-4. **Cite with `\cite{your-key}`.** The key is the word after `@article{` (or
+4. **Cite with `\parencite{your-key}`.** Choose the command by how the
+   citation reads: `\parencite` for a citation in parentheses, `\textcite`
+   when the author is part of the sentence (the style you agreed on in step 1
+   decides what each prints). The key is the word after `@article{` (or
    `@book{`, ...) in the exported entry. Better BibTeX also shows it in Zotero:
 
    ```tex
-   An earlier account explains this approach~\cite{your-key}.
+   An earlier account explains this approach~\parencite{your-key}.
+   \textcite{your-key} explain this approach in detail.
    ```
 
 5. **Compile.** Only sources you cite appear in the reference list.
@@ -91,8 +99,8 @@ Use Zotero sync plus your [computer backup](workflows.md#back-up-your-work).
   closed ([Zotero: moving your library](https://www.zotero.org/support/kb/transferring_a_library)).
 - **Overleaf:** its built-in [Zotero integration](https://docs.overleaf.com/integrations-and-add-ons/reference-manager-integrations/zotero)
   needs some [Overleaf plans](https://docs.overleaf.com/getting-started/free-and-premium-plans).
-  Free routes: upload `references.bib` again when it changes, or link it
-  (next bullet).
+  Free route: upload `references.bib` again when it changes, or use
+  auto-export below.
 - **Auto-export:** with [Better BibTeX](https://retorque.re/zotero-better-bibtex/exporting/auto/),
   tick **Keep updated** when exporting into your thesis folder, and Zotero
   rewrites that file whenever your library changes. On Overleaf, upload the
@@ -130,7 +138,8 @@ Scholar. They are often slightly wrong, so check each one.
 
 2. Paste your source's entry into `references.bib`. The word after `@book{`
    is the **key**, here `lamport1994`. Every key must be unique.
-3. Cite it with `\cite{key}`, using your entry's key, and compile.
+3. Cite it with `\parencite{key}` (or `\textcite{key}` when the author is
+   part of the sentence), using your entry's key, and compile.
 
 Wrap capitals that must stay capitalized in braces, like `{RPI}`. Two more
 things to get right in the `author` field:
@@ -191,11 +200,11 @@ and Overleaf. Do not also load `natbib`; it is a separate system.
 | ACS (chemistry) | `style=chem-acs` | [biblatex-chem](https://ctan.org/pkg/biblatex-chem) |
 | APA | `style=apa` | [biblatex-apa](https://ctan.org/pkg/biblatex-apa) |
 | MLA | `style=mla` | [biblatex-mla](https://ctan.org/pkg/biblatex-mla) |
-| Chicago | not a one-word swap; follow its manual | [biblatex-chicago](https://ctan.org/pkg/biblatex-chicago) |
+| Chicago | not a one-word swap; replace the whole line ([tested setup](#print-a-full-reference-in-the-text)) | [biblatex-chicago](https://ctan.org/pkg/biblatex-chicago) |
 
 These are starting points, not validated department presets; see each
-package's manual. After changing the style, the plain `\cite` may print
-differently, so choose the command by what you want to read:
+package's manual. After changing the style, check what the citation
+commands print, and choose the command by what you want to read:
 
 | You want | Type | Numeric sample | APA |
 | --- | --- | --- | --- |
@@ -205,9 +214,10 @@ differently, so choose the command by what you want to read:
 | Whatever the style calls a plain citation | `\cite{key}` | [1] | Lamport, 1994 (no parentheses) |
 | The full reference in the text | `\fullcite{key}` | see below | see below |
 
-Use `\parencite` and `\textcite` and the result looks right in every style.
-A paper template that uses classic BibTeX with `natbib` has the matching
-commands `\citep` (like `\parencite`) and `\citet` (like `\textcite`); see
+`\parencite` and `\textcite` are the usual choices in biblatex styles. Look at
+what your style prints before relying on them. A paper template that uses
+classic BibTeX with `natbib` has the matching commands `\citep` (like
+`\parencite`) and `\citet` (like `\textcite`); see
 [turn a chapter into a paper](workflows.md#turn-a-chapter-into-a-paper).
 
 ### Print a full reference in the text
@@ -215,29 +225,59 @@ commands `\citep` (like `\parencite`) and `\citet` (like `\textcite`); see
 [Chapter attribution](writing.md#chapters-based-on-published-papers) and
 [reproduced figure captions](writing.md#reproduced-figures-and-permissions)
 need the whole reference where it is cited. `\fullcite{key}` does this in the
-styles below. Tested with compiled examples of a journal article, a book,
-and a web page; check your own entries.
+styles below. It was tested with compiled examples (pdfLaTeX and Biber) of a
+journal article, books, and web pages, with personal and organization
+authors, in a chapter attribution, a figure caption, the list of figures, and
+after ordinary citations of the same source. Check your own entries.
 
 | Style | `\fullcite{key}` |
 | --- | --- |
-| numeric, authoryear, IEEE, APA, Chicago author–date | Prints the full reference |
+| numeric, authoryear, IEEE, APA | Prints the full reference |
+| Chicago author-date | **Needs the setup below.** Without it, a source cited earlier prints as "id." or a bare year |
 | ACS (`chem-acs`) | Prints the reference in ACS form, with abbreviated first names; with many authors it shortens the list to the first author and "et al.", unlike the reference list, and it omits a DOI that the reference list may show. Check that this is enough |
-| MLA (`mla`) | **Prints nothing.** Add the lines below to `preamble.tex` |
+| MLA (`mla`) | **Prints nothing, then needs the setup below** |
 
-For MLA, put this under `\addbibresource{references.bib}` in `preamble.tex`.
-It makes `\fullcite` print the full reference:
+If your style or a source does not print right, type the full reference into
+the caption or attribution by hand, copied from your reference list, in your
+style's wording.
+
+**Chicago author-date.** In `preamble.tex`, replace the `\usepackage[...]{biblatex}`
+line with the first line below (the class and the other lines stay), and put
+the rest under `\addbibresource{references.bib}`:
 
 ```tex
+\usepackage[authordate,backend=biber]{biblatex-chicago}
 \DeclareCiteCommand{\fullcite}{\usebibmacro{prenote}}
   {\usedriver{\DeclareNameAlias{sortname}{default}}{\thefield{entrytype}}}
   {\multicitedelim}{\usebibmacro{postnote}}
 ```
 
-This worked for journal articles and books. For a source whose author is an
-organization, or one you cite in full more than once, MLA may print a long
-dash in place of the author, because it hides a repeated author. Check each
-one, and write the reference out by hand if the dash is wrong.
-<!-- TODO(verify): the MLA workaround was tested with pdflatex and Biber on a small fixture only; the organization-author dash is a biblatex-mla repeated-author behavior that was not fully resolved. -->
+Tested: after the setup, every full reference printed in full (author, year,
+and title) in the text, captions, the list of figures, and a chapter
+attribution, including a source already cited with `\parencite`. Not tested:
+Chicago notes-bibliography, thesis, report, and archival entries.
+`style=chicago-authordate` alone is not the tested route.
+
+**MLA.** Put this under `\addbibresource{references.bib}` in `preamble.tex`.
+It makes `\fullcite` print the full reference, with the author's name every
+time. The two `\csgundef` lines stop MLA from replacing a repeated author
+with a long dash in a caption or attribution, and stop that dash from leaking
+into the first entry of the reference list:
+
+```tex
+\DeclareCiteCommand{\fullcite}{\usebibmacro{prenote}}
+  {\csgundef{bbx@lasthash}%
+   \usedriver{\DeclareNameAlias{sortname}{default}}{\thefield{entrytype}}%
+   \csgundef{bbx@lasthash}}
+  {\multicitedelim}{\usebibmacro{postnote}}
+```
+
+Tested with `style=mla`: articles, books, and web pages, by one person, two
+people, and an organization, cited back to back and from the same author
+repeatedly. Captions, the list of figures, and attributions kept the name,
+and the reference list kept MLA's own dash for a repeated author. Not tested:
+`mla-strict`, `mla7`, other entry types.
+<!-- TODO(verify): Chicago and MLA overrides were checked on a small fixture with pdfLaTeX and Biber only; entry types beyond article, book, and online, and other biblatex-mla variants, were not tested. -->
 
 ## Check the output yourself
 

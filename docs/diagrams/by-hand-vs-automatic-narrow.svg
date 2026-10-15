@@ -1,100 +1,58 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 642" width="360" height="642" role="img" aria-labelledby="t d">
-  <title id="t">What you keep right by hand, and what the starter does for you</title>
-  <desc id="d">Manual formatting compared with this starter. When you type numbers and apply formatting by hand, you maintain them yourself. The starter updates numbering, cross-references, contents, citations, and shared styles when you compile. Structured styles and references can also automate work in other writing tools. You still check the final PDF.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 608" width="360" height="608" role="img" aria-labelledby="t d">
+  <title id="t">Word and this LaTeX starter: keeping a thesis consistent</title>
+  <desc id="d">Both Word and LaTeX can automate numbering and references when set up correctly. Word uses heading styles, multilevel lists, captions, cross-references, paste options, and contents fields. This starter uses include lines, section commands, captions, labels, references, and compiling. In either workflow, check numbering, formatting, placement, and the final PDF.</desc>
   <style>
-    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
-      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
-      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45; --blue: #2b4d7a; --sage: #46684b; --terra: #9e4526; }
     @media (prefers-color-scheme: dark) {
-      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
-        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
-        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8; --blue: #a3c0ea; --sage: #a9c9a1; --terra: #eda482; }
     }
-    .bg { fill: var(--bg); }
-    .card { fill: var(--card); }
-    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
-    .thin { stroke-width: 1.6; }
-    .dash { stroke-dasharray: 7 7; }
-    .dot { stroke-dasharray: 1 7; }
-    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
-    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
-    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
-    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
-    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
-    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
-    .h { font-size: 22px; font-weight: 700; }
-    .s { fill: var(--muted); }
-    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
-    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
-    .k { fill: var(--terra); font-weight: 700; }
-    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
-    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
-    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
-    .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .bg { fill: var(--bg); } .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .rule { fill: none; stroke: var(--muted); stroke-width: 1; stroke-dasharray: 1 6; stroke-linecap: round; opacity: .6; }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 15px; }
+    .heading { font-weight: 700; font-size: 22px; } .task { font-weight: 700; }
+    .word { fill: var(--blue); } .latex { fill: var(--sage); }
+    .note { fill: var(--muted); font-size: 15px; }
+    .hand { fill: var(--terra); font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-style: italic; font-size: 18px; }
   </style>
-  <defs>
-    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
-    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
-    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
-    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
-    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
-    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
-  </defs>
-  <rect class="bg" width="360" height="642" rx="18"/>
-  <text class="hand" x="20" y="28" style="font-size:16px">keeping a long thesis consistent</text>
-  <rect class="w-butter" x="18" y="48" width="336" height="434" rx="12"/>
-  <rect class="card" x="12" y="42" width="336" height="434" rx="12"/>
-  <path class="ln" d="M284.9 42.8C287.2 42.6 289.4 42.4 291.7 42.3S296.2 41.9 298.5 41.9S303.1 41.7 305.3 41.7S309.9 41.7 312.2 41.7S316.7 41.7 319 41.8S323.5 42.2 325.8 42.3S330.3 42.4 332.6 42.5S337.3 42.2 339.4 42.8S343.7 44.7 345.1 46.3S347.4 50.3 348 52.4S348.2 57 348.3 59.2S348.5 63.8 348.5 66.1S348.5 70.6 348.5 72.9S348.4 77.4 348.4 79.7S348.4 84.3 348.3 86.5S348.3 91.1 348.2 93.4S348.2 97.9 348.1 100.2S348 104.7 348 107S348.3 111.6 348.3 113.8S348.3 118.4 348.4 120.7S348.4 125.2 348.5 127.5S348.5 132 348.5 134.3S348.3 138.8 348.2 141.1S348.1 145.7 348 147.9S347.9 152.5 347.8 154.8S347.5 159.3 347.4 161.6S347.3 166.1 347.3 168.4S347 172.9 347 175.2S347 179.8 347.1 182S347.3 186.6 347.5 188.9S347.7 193.4 347.8 195.7S347.9 200.2 348 202.5S348.2 207 348.2 209.3S348.1 213.9 348.1 216.1S348.1 220.7 348.1 223S348.1 227.5 348.1 229.8S348 234.3 347.9 236.6S347.7 241.1 347.7 243.4S347.8 248 347.9 250.2S348 254.8 348.1 257.1S348.1 261.6 348.1 263.9S348.1 268.4 348.1 270.7S348 275.3 348 277.5S348 282.1 347.9 284.4S347.8 288.9 347.8 291.2S347.9 295.7 347.9 298S348.1 302.5 348.2 304.8S348.2 309.4 348.2 311.6S348.4 316.2 348.3 318.5S348.2 323 348.1 325.3S347.8 329.8 347.7 332.1S347.8 336.6 347.8 338.9S347.8 343.5 347.9 345.7S347.9 350.3 347.9 352.6S348 357.1 348 359.4S348 363.9 348 366.2S347.9 370.8 347.8 373S347.7 377.6 347.7 379.9S347.7 384.4 347.7 386.7S347.8 391.2 347.8 393.5S348 398.1 348.1 400.3S348.3 404.9 348.4 407.1S348.6 411.7 348.7 414S348.9 418.5 349 420.8S348.9 425.3 348.9 427.6S348.9 432.2 348.8 434.4S348.6 439 348.4 441.2S348.2 445.8 348.1 448.1S348 452.6 348 454.9S348.1 459.4 347.9 461.7S348 466.4 347.2 468.4S344.9 472.5 343.1 473.8S338.9 475.5 336.7 475.8S332.2 475.8 329.9 475.8S325.4 475.9 323.1 475.9S318.5 476 316.3 476S311.7 475.9 309.4 475.9S304.9 475.9 302.6 475.9S298.1 475.8 295.8 475.7S291.2 475.5 289 475.4S284.4 475.4 282.2 475.3S277.6 475 275.3 474.9S270.8 474.9 268.5 474.9S264 474.8 261.7 474.8S257.1 474.7 254.9 474.8S250.3 474.9 248 474.9S243.5 475.1 241.2 475.2S236.7 475.5 234.4 475.7S229.9 475.9 227.6 476S223.1 476.3 220.8 476.3S216.2 476.4 214 476.4S209.4 476.3 207.1 476.3S202.6 476.1 200.3 476S195.8 475.8 193.5 475.7S189 475.5 186.7 475.5S182.1 475.3 179.9 475.3S175.3 475.3 173 475.4S168.5 475.6 166.2 475.6S161.7 475.7 159.4 475.8S154.8 476 152.6 476S148 476.1 145.7 476.1S141.2 476.1 138.9 476.1S134.4 475.9 132.1 475.9S127.6 476 125.3 476.1S120.7 476 118.5 476.1S113.9 476.1 111.6 476.1S107.1 476.3 104.8 476.4S100.3 476.2 98 476.3S93.4 476.4 91.2 476.4S86.6 476.7 84.4 476.8S79.8 476.9 77.5 476.9S73 477.1 70.7 477.2S66.2 477.2 63.9 477.1S59.3 477 57.1 477S52.5 476.9 50.2 476.9S45.7 476.8 43.4 476.8S38.9 476.8 36.6 476.7S32 476.6 29.8 476.6S25.1 477 23 476.5S18.4 475.3 16.7 473.9S13.6 470.5 12.8 468.5S12.1 464 12 461.7S12.1 457.2 12.2 454.9S12.4 450.4 12.5 448.1S12.7 443.6 12.7 441.3S12.6 436.7 12.6 434.5S12.6 429.9 12.6 427.6S12.3 423.1 12.3 420.8S12.2 416.3 12.2 414S12 409.4 12 407.2S12.1 402.6 12.1 400.3S12.3 395.8 12.4 393.5S12.4 389 12.4 386.7S12.4 382.1 12.4 379.9S12.4 375.3 12.3 373.1S12.2 368.5 12.1 366.2S12 361.7 11.9 359.4S11.8 354.9 11.7 352.6S11.4 348 11.3 345.8S11.4 341.2 11.5 339S11.7 334.4 11.8 332.1S12 327.6 12 325.3S12.2 320.8 12.3 318.5S12.6 314 12.6 311.7S12.7 307.1 12.7 304.9S12.7 300.3 12.7 298S12.7 293.5 12.6 291.2S12.3 286.7 12.3 284.4S12.3 279.8 12.3 277.6S12.2 273 12.2 270.7S12.2 266.2 12.2 263.9S12.3 259.4 12.3 257.1S12.3 252.5 12.3 250.3S12.4 245.7 12.4 243.5S12.4 238.9 12.5 236.6S12.7 232.1 12.7 229.8S12.7 225.3 12.6 223S12.5 218.4 12.5 216.2S12.7 211.6 12.7 209.3S12.6 204.8 12.5 202.5S12.6 198 12.6 195.7S12.5 191.1 12.5 188.9S12.5 184.3 12.5 182S12.6 177.5 12.6 175.2S12.8 170.7 12.8 168.4S12.6 163.8 12.6 161.6S12.3 157 12.3 154.8S12.3 150.2 12.4 147.9S12.4 143.4 12.4 141.1S12.2 136.6 12.1 134.3S12.1 129.7 12.2 127.5S12.3 122.9 12.3 120.6S12.3 116.1 12.3 113.8S12.2 109.3 12.1 107S12 102.4 11.9 100.2S11.7 95.6 11.6 93.4S11.7 88.8 11.7 86.5S11.9 82 11.9 79.7S12 75.2 12 72.9S12.1 68.3 12.2 66.1S12.4 61.5 12.5 59.2S12.1 54.6 12.5 52.4S13.6 47.8 15 46.2S18.6 43.3 20.7 42.6S25.2 42.3 27.5 42.2S32 42.1 34.3 42.1S38.9 42.1 41.1 42.1S45.7 42.1 48 42.1S52.5 42.1 54.8 42.1S59.3 42.2 61.6 42.2S66.1 42.3 68.4 42.2S73 42.1 75.2 42S79.8 41.9 82.1 41.8S86.6 41.8 88.9 41.7S93.4 41.6 95.7 41.6S100.3 41.5 102.5 41.5S107.1 41.6 109.4 41.6S113.9 41.8 116.2 41.7S120.7 41.6 123 41.6S127.6 41.5 129.8 41.5S134.4 41.6 136.7 41.7S141.2 41.6 143.5 41.6S148 41.7 150.3 41.8S154.8 42.2 157.1 42.3S161.6 42.5 163.9 42.5S168.5 42.8 170.7 42.8S175.3 42.8 177.6 42.8S182.1 42.7 184.4 42.6S188.9 42.5 191.2 42.4S195.7 42 198 41.9S202.6 41.8 204.8 41.7S209.4 41.5 211.6 41.4S216.2 41.1 218.5 41.1S223 41.1 225.3 41.1S229.8 41.2 232.1 41.3S236.7 41.5 238.9 41.6S243.5 41.8 245.7 41.9S250.3 42.1 252.6 42.2S257.1 42.3 259.4 42.3S263.9 42.4 266.2 42.4S270.8 42.4 273 42.3S277.6 42.2 279.9 42.2S284.4 42 286.7 41.9S291.2 41.5 293.5 41.3S298 41.1 300.3 41S304.8 41 307.1 40.9"/>
-  <rect class="w-terra" x="220" y="50" width="60" height="418" rx="8" opacity=".7"/>
-  <rect class="w-sage" x="284" y="50" width="60" height="418" rx="8" opacity=".9"/>
-  <text class="mid" x="250" y="70" style="font-size:13px" font-weight="700">Manual</text>
-  <text class="mid" x="250" y="86" style="font-size:13px" font-weight="700">format</text>
-  <text class="hand mid" x="250" y="104" style="font-size:13px">by hand</text>
-  <text class="mid" x="314" y="70" style="font-size:13px" font-weight="700">This</text>
-  <text class="mid" x="314" y="86" style="font-size:13px" font-weight="700">starter</text>
-  <text class="hand hs mid" x="314" y="104" style="font-size:13px">automatic</text>
-  <text x="26" y="86" style="font-size:15px" font-weight="700">Who keeps it right?</text>
-  <path class="ln thin mut" d="M12 112 H348"/>
-  <text x="24" y="138" style="font-size:13.5px">Chapter and section numbers</text>
-  <text x="24" y="156" style="font-size:13.5px">after you reorder</text>
-  <path class="ln thin terra" d="M257.8 149.6C257 150 256.1 149.9 255.2 149.9S253.4 149.7 252.4 149.6S250.6 149.5 249.6 149.5S247.8 149.5 246.9 149.4S244.9 149.7 244.1 149.4S242.3 148.5 242 147.8S242 146 242.1 145S242.2 143.2 242.2 142.3S242.3 140.4 242.4 139.5S242.2 137.5 242.4 136.7S243.3 135 244 134.6S245.8 134.6 246.8 134.6S248.6 134.6 249.6 134.6S251.4 134.6 252.3 134.6S254.3 134.5 255.1 134.7S257.1 135.2 257.5 135.8S257.7 137.7 257.7 138.6S257.7 140.4 257.7 141.4S257.8 143.2 257.8 144.2S258 146.1 257.8 147S257.6 149 257 149.4S255.1 149.3 254.2 149.1"/>
-  <path class="ln sage" d="M306 142 l5 6 l11 -13"/>
-  <path class="ln thin mut dot" d="M22 172 H338"/>
-  <text x="24" y="194" style="font-size:13.5px">Figure, table, equation</text>
-  <text x="24" y="212" style="font-size:13.5px">numbers, and every</text>
-  <text x="24" y="230" style="font-size:13.5px">“see Figure 3.2”</text>
-  <path class="ln thin terra" d="M249.3 214.6C248.4 214.4 247.5 214.2 246.6 214S244.6 213.9 244 213.5S243.2 211.9 243 211.1S242.8 209.3 242.7 208.4S242.6 206.6 242.5 205.7S242.3 203.9 242.4 203S242.3 201 242.8 200.4S244.4 199.8 245.3 199.6S247.1 199.6 248 199.5S249.8 199.5 250.7 199.5S252.5 199.5 253.4 199.5S255.4 199.1 256.1 199.4S257.4 200.6 257.7 201.4S257.8 203.2 257.8 204.1S258 205.9 258 206.8S258.2 208.6 258.2 209.5S258.6 211.5 258.3 212.2S257.2 213.5 256.4 213.8S254.6 213.8 253.7 213.8S251.9 213.8 251 213.8S249.2 213.7 248.3 213.6S246.6 213.2 245.7 213"/>
-  <path class="ln sage" d="M306 207 l5 6 l11 -13"/>
-  <path class="ln thin mut dot" d="M22 246 H338"/>
-  <text x="24" y="268" style="font-size:13.5px">The contents and lists of</text>
-  <text x="24" y="286" style="font-size:13.5px">figures and tables, with</text>
-  <text x="24" y="304" style="font-size:13.5px">page numbers</text>
-  <path class="ln thin terra" d="M248.7 289.8C247.8 289.6 246.9 289.4 246 289.2S244 289.2 243.4 288.7S242.7 287.1 242.5 286.2S242.4 284.4 242.4 283.5S242.3 281.7 242.3 280.8S242.2 278.9 242.3 278S242.1 276 242.6 275.4S244.1 274.6 245 274.4S246.8 274.4 247.7 274.4S249.6 274.4 250.5 274.4S252.3 274.4 253.2 274.4S255.2 274.1 255.9 274.4S257.4 275.4 257.7 276.2S257.7 278 257.7 278.9S257.6 280.8 257.6 281.7S257.6 283.5 257.6 284.4S257.9 286.4 257.6 287.2S256.7 288.7 256 289S254.1 289.1 253.2 289.1S251.4 289.1 250.5 289S248.7 289 247.8 288.9S246 288.5 245.1 288.3"/>
-  <path class="ln sage" d="M306 281 l5 6 l11 -13"/>
-  <path class="ln thin mut dot" d="M22 320 H338"/>
-  <text x="24" y="342" style="font-size:13.5px">Citation numbers and the</text>
-  <text x="24" y="360" style="font-size:13.5px">reference list</text>
-  <path class="ln thin terra" d="M249.9 338C250.8 338.2 251.7 338.4 252.6 338.5S254.6 338.3 255.3 338.6S256.9 339.6 257.2 340.4S257.5 342.2 257.6 343.1S257.7 344.9 257.8 345.8S257.8 347.7 257.9 348.6S258.2 350.6 257.9 351.3S257.1 353 256.4 353.3S254.5 353.4 253.6 353.4S251.8 353.4 250.9 353.4S249 353.4 248.1 353.4S246.2 353.4 245.3 353.3S243.3 353 242.8 352.5S242.3 350.8 242.1 349.9S242 348 242 347.1S241.9 345.3 241.8 344.4S241.6 342.5 241.7 341.6S241.7 339.5 242.2 339S243.9 338.6 244.8 338.6S246.7 338.6 247.6 338.6S249.4 338.6 250.3 338.7S252.2 339 253.1 339.2"/>
-  <path class="ln sage" d="M306 346 l5 6 l11 -13"/>
-  <path class="ln thin mut dot" d="M22 376 H338"/>
-  <text x="24" y="398" style="font-size:13.5px">Heading and caption styles</text>
-  <path class="ln thin terra" d="M258.7 386.8C258.5 387.7 258 388.5 257.9 389.4S257.7 391.2 257.7 392.1S257.5 393.9 257.5 394.8S257.5 396.6 257.4 397.5S257.3 399.5 256.8 400S255.1 400.6 254.2 400.7S252.4 400.6 251.5 400.6S249.7 400.5 248.8 400.4S247 400.3 246.1 400.2S244.1 400.2 243.5 399.7S242.8 398.1 242.7 397.3S242.7 395.5 242.8 394.6S242.8 392.8 242.9 391.9S242.9 390.1 243 389.2S242.8 387.2 243.2 386.5S244.4 385.2 245.2 385S247 385.1 247.9 385.2S249.7 385.2 250.6 385.3S252.4 385.3 253.3 385.3S255.2 385.1 256 385.3S257.8 386.2 257.9 386.8S257.4 388.5 257.1 389.4"/>
-  <path class="ln sage" d="M306 393 l5 6 l11 -13"/>
-  <path class="ln thin mut dot" d="M22 414 H338"/>
-  <text x="24" y="436" style="font-size:13.5px">Margins and page-number</text>
-  <text x="24" y="454" style="font-size:13.5px">positions</text>
-  <path class="ln thin terra" d="M252 432.3C252.8 432.5 253.8 432.5 254.5 432.9S256.1 433.9 256.4 434.6S256.5 436.3 256.5 437.2S256.6 439 256.7 439.8S256.8 441.6 256.9 442.4S257.2 444.2 257.1 445.1S256.7 446.9 256.1 447.3S254.4 447.5 253.5 447.6S251.8 447.6 250.9 447.6S249.2 447.5 248.3 447.5S246.5 447.6 245.7 447.5S243.7 447.4 243.2 446.9S242.7 445.3 242.6 444.5S242.5 442.7 242.5 441.8S242.4 440.1 242.4 439.2S242.2 437.5 242.3 436.6S242 434.6 242.4 434S243.9 433.3 244.7 433.2S246.5 433.2 247.4 433.1S249.1 433.1 250 433.1S251.7 433.1 252.6 433.2S254.3 433.6 255 434"/>
-  <path class="ln sage" d="M306 440 l5 6 l11 -13"/>
-  <path class="ln thin terra dash" d="M292.5 464.2C290.5 463.1 288.9 461.2 288 459.2S287.3 454.7 287.1 452.4S287 447.8 286.8 445.5S286.5 441 286.4 438.7S286.3 434.1 286.2 431.8S286 427.2 286 425S285.9 420.4 285.9 418.1S286.1 413.5 286.2 411.2S286.4 406.6 286.5 404.4S286.5 399.8 286.5 397.5S286.5 392.9 286.7 390.6S286.6 385.7 287.6 383.8S290.4 380 292.4 379.3S296.9 379.1 299.2 379.2S303.8 379.3 306.1 379.4S310.7 379.7 313 379.8S317.5 379.9 319.8 380S324.4 379.9 326.7 380S331.5 379.5 333.6 380.1S338 382 339.2 383.6S340.7 387.9 341 390.1S341.1 394.7 341.2 397S341.2 401.6 341.3 403.9S341.5 408.5 341.6 410.8S341.8 415.3 341.9 417.6S341.9 422.2 341.9 424.5S342 429.1 341.9 431.4S341.9 435.9 341.8 438.2S341.4 442.8 341.3 445.1S341.2 449.6 341.2 451.9S341.7 456.7 341.1 458.8S339.3 463.3 337.6 464.4S333.2 465.4 330.9 465.7S326.4 465.9 324.1 466S319.5 466.1 317.2 466.1S312.6 466.1 310.3 466.1S305.8 466.2 303.5 466.2S298.8 466.3 296.6 465.9S291.9 465.1 290.2 463.7S287.5 460 286.8 457.9S286.4 453.4 286.2 451.1"/>
-  <g transform="rotate(-2 213 527)">
-  <rect class="w-butter" x="120" y="502" width="186" height="50" rx="3"/>
-  <path class="ln thin" d="M251.5 551.4C250.4 551.4 249.2 551.4 248.1 551.4S245.7 551.4 244.6 551.5S242.2 551.6 241.1 551.6S238.7 551.7 237.6 551.7S235.2 551.7 234.1 551.7S231.7 551.8 230.6 551.8S228.3 552 227.1 552S224.8 552.1 223.6 552.2S221.3 552.3 220.1 552.3S217.8 552.4 216.6 552.4S214.3 552.3 213.1 552.3S210.8 552.2 209.6 552.2S207.3 552.1 206.1 552.1S203.8 552 202.6 552S200.3 552 199.1 552S196.8 552 195.6 551.9S193.3 551.9 192.2 551.8S189.8 551.7 188.7 551.6S186.3 551.4 185.2 551.4S182.8 551.3 181.7 551.3S179.4 551.3 178.2 551.3S175.9 551.3 174.7 551.3S172.4 551.2 171.2 551.2S168.9 551.2 167.7 551.3S165.4 551.4 164.2 551.5S161.9 551.7 160.7 551.8S158.4 552 157.2 552S154.9 552.2 153.7 552.2S151.4 552.1 150.3 552.1S147.9 552.1 146.8 552.1S144.4 552.1 143.3 552.2S140.9 552.3 139.8 552.4S137.4 552.5 136.3 552.6S134 552.7 132.8 552.7S130.5 552.8 129.3 552.7S127 552.7 125.8 552.7S123.3 552.9 122.3 552.5S120.5 551 120.2 550S120.3 547.6 120.3 546.5S120.4 544.1 120.4 543S120.5 540.6 120.5 539.5S120.5 537.1 120.5 536S120.5 533.7 120.4 532.5S120.4 530.2 120.4 529S120.4 526.7 120.4 525.5S120.4 523.2 120.4 522S120.4 519.7 120.4 518.5S120.4 516.2 120.4 515S120.3 512.7 120.3 511.5S120.2 509.2 120.2 508S119.9 505.5 120.3 504.5S121.5 502.4 122.4 502S124.7 502 125.9 502S128.2 502.1 129.4 502.2S131.7 502.2 132.9 502.2S135.2 502.2 136.4 502.2S138.7 502.1 139.9 502.1S142.2 502.1 143.4 502.1S145.7 502.1 146.9 502.1S149.2 502 150.4 502S152.7 501.9 153.8 501.8S156.2 501.7 157.3 501.7S159.7 501.6 160.8 501.6S163.2 501.5 164.3 501.4S166.7 501.3 167.8 501.3S170.1 501.2 171.3 501.2S173.6 501.2 174.8 501.2S177.1 501.2 178.3 501.2S180.6 501.2 181.8 501.2S184.1 501.2 185.3 501.3S187.6 501.4 188.8 501.4S191.1 501.5 192.3 501.6S194.6 501.7 195.8 501.8S198.1 501.8 199.3 501.9S201.6 502 202.8 502.1S205.1 502.2 206.2 502.3S208.6 502.4 209.7 502.4S212.1 502.5 213.2 502.5S215.6 502.5 216.7 502.5S219.1 502.6 220.2 502.6S222.5 502.7 223.7 502.8S226 502.8 227.2 502.8S229.5 502.8 230.7 502.7S233 502.6 234.2 502.6S236.5 502.5 237.7 502.5S240 502.4 241.2 502.4S243.5 502.3 244.7 502.2S247 502.1 248.2 502S250.5 502 251.7 502S254 501.9 255.2 501.9S257.5 501.9 258.7 501.8S261 501.8 262.1 501.8S264.5 501.7 265.6 501.7S268 501.7 269.1 501.6S271.5 501.6 272.6 501.5S275 501.5 276.1 501.5S278.5 501.6 279.6 501.6S281.9 501.7 283.1 501.7S285.4 501.8 286.6 501.8S288.9 501.8 290.1 501.8S292.4 501.8 293.6 501.8S295.9 501.9 297.1 502S299.4 502 300.6 502.1S303.2 502 304 502.5S305.4 504.3 305.7 505.4S305.8 507.7 305.8 508.9S305.8 511.2 305.8 512.4S305.9 514.7 305.9 515.9S305.9 518.2 306 519.4S306 521.7 306 522.9S306.1 525.2 306.1 526.4S306.1 528.7 306.2 529.8S306.2 532.2 306.2 533.3S306.1 535.7 306.1 536.8S306.1 539.2 306 540.3S306 542.7 305.9 543.8S306 546.2 305.9 547.3S305.8 549.9 305.2 550.7S303.3 551.8 302.2 552.1S299.8 552.1 298.7 552.1S296.3 552.2 295.2 552.3S292.9 552.3 291.7 552.3S289.4 552.3 288.2 552.3S285.9 552.3 284.7 552.3S282.4 552.4 281.2 552.4S278.9 552.4 277.7 552.4S275.4 552.4 274.2 552.4S271.9 552.3 270.7 552.3S268.4 552.3 267.2 552.3S264.9 552.4 263.7 552.4S261.4 552.4 260.2 552.4S257.9 552.4 256.7 552.4S254.4 552.3 253.2 552.3S250.9 552.1 249.8 552.1S247.4 552.1 246.3 552.1S243.9 552.2 242.8 552.2S240.4 552.3 239.3 552.4S236.9 552.4 235.8 552.4S233.4 552.4 232.3 552.5S230 552.5 228.8 552.6"/>
-  <rect class="w-terra" x="193" y="495" width="40" height="13" opacity=".9"/>
-  <text class="s" x="132" y="522" style="font-size:13px">formatting set once in</text>
-  <text class="m" x="132" y="542" style="font-size:13px">rpi-thesis.cls</text>
-  </g>
-  <path class="ln terra" d="M306 519.9C309.5 517.3 312.1 513.3 313.6 509.4S314.9 500.8 315.2 496.4S315.4 487.6 315.3 483.2S314.8 474.5 314.5 470.1" marker-end="url(#at)"/>
-  <text class="s" x="20" y="588" style="font-size:13px;font-style:italic">Other writing tools can automate this too,</text>
-  <text class="s" x="20" y="606" style="font-size:13px;font-style:italic">with structured styles and references.</text>
-  <text class="s" x="20" y="624" style="font-size:13px;font-style:italic">Always check the final PDF.</text>
+  <rect class="bg" width="360" height="608" rx="18"/>
+  <text x="20" y="27" class="hand">Keeping a long thesis consistent</text>
+  <rect class="card" x="12" y="48" width="336" height="114" rx="10"/>
+  <path class="ln" d="M23 48.4 Q156 46.9 337 48.6 Q348.7 48.5 348 60 Q347.2 103 348.5 151 Q348.2 162.8 336 162 Q169 163.2 23 161.6 Q11.1 162.5 12 150 Q12.8 98 11.7 60 Q11.3 47.7 23 48.4 Z"/>
+  <text x="26" y="70" class="task" style="font-size:15.5px">Move a chapter or section</text>
+  <text x="26" y="92" class="task word" style="font-size:14px">Word</text>
+  <text x="80" y="92" style="font-size:15.5px">Heading styles + multilevel list;</text>
+  <text x="80" y="110" style="font-size:15.5px">check numbering after the move.</text>
+  <text x="26" y="132" class="task latex" style="font-size:14px">LaTeX</text>
+  <text x="80" y="132" style="font-size:15.5px">Move include line or section;</text>
+  <text x="80" y="150" style="font-size:15.5px">compile, then check references.</text>
+  <rect class="card" x="12" y="172" width="336" height="114" rx="10"/>
+  <path class="ln" d="M23 172.4 Q156 170.9 337 172.6 Q348.7 172.5 348 184 Q347.2 227 348.5 275 Q348.2 286.8 336 286 Q169 287.2 23 285.6 Q11.1 286.5 12 274 Q12.8 222 11.7 184 Q11.3 171.7 23 172.4 Z"/>
+  <text x="26" y="194" class="task" style="font-size:15.5px">Add or move a figure</text>
+  <text x="26" y="216" class="task word" style="font-size:14px">Word</text>
+  <text x="80" y="216" style="font-size:15.5px">Insert caption + cross-reference;</text>
+  <text x="80" y="234" style="font-size:15.5px">update fields after editing.</text>
+  <text x="26" y="256" class="task latex" style="font-size:14px">LaTeX</text>
+  <text x="80" y="256" style="font-size:15.5px">Add caption + label/ref; compile</text>
+  <text x="80" y="274" style="font-size:15.5px">and check the figure placement.</text>
+  <rect class="card" x="12" y="296" width="336" height="114" rx="10"/>
+  <path class="ln" d="M23 296.4 Q156 294.9 337 296.6 Q348.7 296.5 348 308 Q347.2 351 348.5 399 Q348.2 410.8 336 410 Q169 411.2 23 409.6 Q11.1 410.5 12 398 Q12.8 346 11.7 308 Q11.3 295.7 23 296.4 Z"/>
+  <text x="26" y="318" class="task" style="font-size:15.5px">Paste text from elsewhere</text>
+  <text x="26" y="340" class="task word" style="font-size:14px">Word</text>
+  <text x="80" y="340" style="font-size:15.5px">Choose the paste formatting;</text>
+  <text x="80" y="358" style="font-size:15.5px">check styles in the pasted text.</text>
+  <text x="26" y="380" class="task latex" style="font-size:14px">LaTeX</text>
+  <text x="80" y="380" style="font-size:15.5px">Paste plain text + markup;</text>
+  <text x="80" y="398" style="font-size:15.5px">check any imported commands.</text>
+  <rect class="card" x="12" y="420" width="336" height="114" rx="10"/>
+  <path class="ln" d="M23 420.4 Q156 418.9 337 420.6 Q348.7 420.5 348 432 Q347.2 475 348.5 523 Q348.2 534.8 336 534 Q169 535.2 23 533.6 Q11.1 534.5 12 522 Q12.8 470 11.7 432 Q11.3 419.7 23 420.4 Z"/>
+  <text x="26" y="442" class="task" style="font-size:15.5px">Refresh the contents</text>
+  <text x="26" y="464" class="task word" style="font-size:14px">Word</text>
+  <text x="80" y="464" style="font-size:15.5px">Update the entire contents</text>
+  <text x="80" y="482" style="font-size:15.5px">to include added sections.</text>
+  <text x="26" y="504" class="task latex" style="font-size:14px">LaTeX</text>
+  <text x="80" y="504" style="font-size:15.5px">Compile; review the contents</text>
+  <text x="80" y="522" style="font-size:15.5px">and links after edits.</text>
+  <text x="20" y="567" class="note" style="font-size:14.5px">Both automate when set up well.</text>
+  <text x="20" y="588" class="note" style="font-size:14.5px">Check the final PDF in either workflow.</text>
 </svg>

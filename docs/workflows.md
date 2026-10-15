@@ -143,16 +143,30 @@ PowerShell 5.1, `>` writes a different encoding.
 latexdiff --flatten ../old/main.tex main.tex > build/changes.tex
 ```
 
+The changes PDF would lose any citation whose entry you deleted from
+`references.bib`. So give it a comparison bibliography that holds the entries
+from both versions, and leave your real `references.bib` alone:
+
+1. Create `build/compare.bib` containing the text of `../old/references.bib`
+   followed by the text of `references.bib`. In a text editor, paste one under
+   the other; on macOS or Linux,
+   `cat ../old/references.bib references.bib > build/compare.bib`.
+2. Open `build/changes.tex` and change the line
+   `\addbibresource{references.bib}` to `\addbibresource{build/compare.bib}`.
+   (This is the generated file, not your thesis.)
+
 Then compile it:
 
 ```sh
 latexmk -norc -pdf -no-shell-escape -outdir=build build/changes.tex
 ```
 
+Biber warns about duplicate keys and skips the second copy; that is expected.
+
 `--flatten` pulls the chapter files into one document, so comment out any
 `\includeonly` line in both versions first. The result is `build/changes.pdf`.
 The Overleaf method in the linked article has not been tested with this
-starter.
+starter, and it may not handle deleted references either.
 
 Not comfortable in a terminal? Tell an AI assistant your operating system, your
 folder names, and the goal, and ask for the exact commands and what to check.
@@ -257,13 +271,34 @@ Use one of these private routes instead:
   ([GitHub: creating a repository from a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)).
   <!-- TODO(verify): checked 14 Oct 2026 against the GitHub docs linked here. On that date the toolkit repository was not marked as a template, so the button does not appear yet. Enable "Template repository" in its settings, or remove this route. -->
 
-**Without a terminal:** to save later work, open the repository's page, choose
-**Add file → Upload files**, drag in the files you changed, and commit them.
-Check that your new commit appears in the **commit list** (the **Commits** link
-on the repository page). To get back an older chapter, open that file on
-GitHub, choose **History**, open the older version, and download it into a
-*separate* folder. Compare it with your current chapter, compile the result,
-and only then replace the file. For ongoing backups, the simpler
+**Without a terminal:** to save later work, open the repository's page.
+GitHub's uploader puts each file in the folder you are viewing, so an
+uploaded chapter lands at the top level unless you first open the matching
+folder.
+
+1. Open the folder that matches where the file lives on your computer (for
+   `chapters/02-research.tex`, open `chapters` on GitHub first). Choose
+   **Add file → Upload files**, drag in the changed file, and commit.
+2. Check the path shown above the file (for example `chapters/02-research.tex`,
+   not `02-research.tex` at the top) and open the file to confirm the content
+   is your latest.
+3. Renamed or deleted files are not updated by an upload. Open the old file on
+   GitHub, delete it there (the pencil or **…** menu), and upload the new one.
+4. Check that your commit appears in the **commit list** (the **Commits**
+   link on the repository page).
+
+The first upload of the whole project can be large: GitHub's browser upload
+is limited to 100 files at a time, so upload folders in batches, or use
+[GitHub Desktop](https://desktop.github.com/) or a
+[cloud-synced folder](#back-up-your-work) instead
+([GitHub: adding a file](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository)).
+<!-- TODO(verify): the 100-file browser-upload limit and the folder-upload behavior were not re-checked against GitHub's current documentation. -->
+
+To get back an older chapter, open that file on GitHub, choose **History**,
+open the older version, and download it. Do not work in your real folder:
+copy your whole project, put the old chapter in the *copy*, compile, and
+compare the PDF with your current one. Only then replace the file in your
+real project. For ongoing backups, the simpler
 [cloud-synced folder](#back-up-your-work) is easier to keep up.
 
 <details>

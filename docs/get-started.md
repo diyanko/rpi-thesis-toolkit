@@ -64,8 +64,8 @@ Next: [set up your computer](#step-3a-your-computer-route) or
 On Overleaf? Skip to [Step 3b](#step-3b-overleaf-route).
 
 You need **LaTeX** (the programs that make the PDF) and **an editor** (where
-you type). Every editor runs the same programs, so with the same files and
-settings they make the same PDF.
+you type). Every editor runs the same programs, so with the same files, engine,
+packages, and fonts they make the same PDF.
 
 1. **Install LaTeX**, choosing the **full** installation. Allow an hour or
    more. Use TeX Live 2022 or newer if you can.
@@ -147,7 +147,8 @@ computer). Then see [fixing problems](troubleshooting.md#common-messages).
 
 ### Other editors and the command line
 
-They run the same programs, so the PDF should match. Other editors don't read this starter's
+They run the same programs, so with the same files, engine, packages, and
+fonts the PDF should match. Other editors don't read this starter's
 `.vscode` settings, so the PDF usually appears next to `main.tex`, not in
 `build/`.
 
@@ -224,8 +225,9 @@ are the usual cause of timeouts later. -->
 
 <details><summary>What has been tested</summary>
 
-Fresh Windows 11, macOS, and Ubuntu machines: installing TeX as described
-here and compiling the starter. Overleaf's free plan: opening and compiling
+Automated runs on fresh Windows Server 2025, macOS, and Ubuntu machines:
+installing TeX as described here and compiling the starter. No separate
+Windows 11 test is recorded. Overleaf's free plan: opening and compiling
 it. A Mac: VS Code with LaTeX Workshop, and TeXShop. Other editors and
 systems should work the same way. Tried one? Tell us through the
 [help and feedback form](troubleshooting.md#ask-for-help).
