@@ -1,34 +1,36 @@
 name: Suggest an improvement
-description: Point out unclear instructions or a missing step. No LaTeX expertise needed.
+description: Point out an unclear step or a missing one, or offer to help. No LaTeX expertise needed.
 title: "Suggestion: "
 labels: ["enhancement"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping the next student. Write in your own words; short is fine. Screenshots are welcome: paste or drag them into any box. Please leave out private research and personal details.
   - type: textarea
     id: task
     attributes:
       label: What were you trying to do?
-      placeholder: For example, add my first citation, or install LaTeX on Windows.
+      placeholder: For example, add my first citation, install LaTeX on Windows, or help review pull requests.
     validations:
       required: true
   - type: textarea
     id: confusing
     attributes:
-      label: What was confusing or missing?
-      description: A page name or a short example helps. Please leave out private research and personal details.
-    validations:
-      required: true
+      label: What was confusing or missing? (optional)
+      description: A page name or a short example helps.
   - type: textarea
     id: suggestion
     attributes:
-      label: What might help?
+      label: What might help? (optional)
       placeholder: An example, a clearer sentence, a picture, or a different way to do it.
   - type: input
     id: setup
     attributes:
-      label: Your setup, if relevant
-      placeholder: For example, Overleaf; Windows with VS Code and LaTeX Workshop; macOS with TeXShop; Linux with TeXstudio.
+      label: Your setup, if relevant (optional)
+      placeholder: For example, Overleaf; Windows with VS Code; macOS with TeXShop; Linux with TeXstudio.
   - type: input
     id: credit
     attributes:
-      label: Optional public credit
-      description: If your suggestion leads to a change, the name you would like listed in the project's credits (CREDITS.md). Leave blank for no credit. Do not enter an email address or student ID.
+      label: Public credit (optional)
+      description: If your suggestion leads to a change, the name you would like listed in the project's credits. Leave blank for no credit. Do not enter an email address or student ID.

@@ -7,7 +7,8 @@ does not mean they contributed to, reviewed, or endorse this project.
 
 ## People
 
-Better instructions, patient testing, examples, and small fixes all count.
+All kinds of help get credit: feedback through the form, issues, tips,
+testing, examples, and pull requests, large or small.
 
 | Contributor | Contribution |
 | --- | --- |
@@ -33,9 +34,9 @@ include the RPI seal, which each student downloads from RPI.
 | Whose | What |
 | --- | --- |
 | Ours (the people above) | The class (`rpi-thesis.cls`), starter examples, scripts, guide, diagrams, cheat sheet, and website, under the [MIT license](LICENSE.md) |
-| RPI's | The requirements, manual, checklists, original LaTeX template, seal, and name; not covered by our license |
+| RPI's | The requirements, manual, checklists, original LaTeX template, seal, and name; not covered by this project's license |
 | Other projects' | The tools and fonts below, under their own licenses |
-| Yours | Your thesis or dissertation: your text, figures, data, and permissions; never covered by our license |
+| Yours | Your thesis or dissertation: your text, figures, data, and permissions; never covered by this project's license |
 
 The full record, with sources and how each item is treated, is the
 [attribution record](docs/project/attribution.md).
@@ -72,15 +73,18 @@ Their license texts are included with the website:
 
 ## Code of conduct
 
-Our [code of conduct](CODE_OF_CONDUCT.md) is the
+The project's [code of conduct](CODE_OF_CONDUCT.md) is the
 [Contributor Covenant](https://www.contributor-covenant.org/), version 2.1,
 used under the Creative Commons Attribution 4.0 license.
 
 ## Add or update a credit
 
-When a suggestion, test, example, or fix is used, the maintainer asks whether
-its contributor would like to appear in the table above, and adds their
-chosen public name and a short description of the help. Anonymous help is
-welcome. Do not publish an email address, student number, or inferred
+When feedback, a tip, a test, an example, or a fix is used, the maintainer
+asks whether its contributor would like to appear in the table above, and
+adds their chosen public name and a short description of the help. You can
+opt in at any time, change how you are named, or ask to be removed: say so
+on an issue, or through the form linked from
+[ask for help](docs/troubleshooting.md#ask-for-help).
+Anonymous help is welcome. Do not publish an email address, student number, or inferred
 identity, and do not turn issue authors or commit metadata into a list of
 people automatically. Ways to help are in [CONTRIBUTING.md](CONTRIBUTING.md).

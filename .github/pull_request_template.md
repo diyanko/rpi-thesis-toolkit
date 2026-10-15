@@ -1,36 +1,34 @@
-## What this changes
+Thanks for your pull request. Fill in what you can; the maintainer will
+help with the rest.
 
-<!-- Which student task does this improve, and what is different afterwards? -->
+## What does this change?
 
-**Changes your PDF?** <!-- yes or no -->
+<!-- A sentence or two is enough. Which student task does it help? -->
 
-**AI-assisted?** <!-- yes or no; if yes, which tool -->
+## How did you check it? (optional)
 
-## Evidence for formatting claims
+<!-- For example: compiled the sample thesis, read the page on the website,
+or tried it on Overleaf. "Not sure" is a fine answer. -->
 
-<!-- For any formatting change: the OGE manual or checklist, section, and
-printed page, or the comparison with RPI's official LaTeX template. Write "none" if this
-change does not affect formatting. -->
+**Changes the PDF?** <!-- yes, no, or not sure -->
 
-## Checks
+**AI-assisted?** <!-- yes or no; optional, for the reviewer's context only -->
 
-Tick what you ran. Leave the rest unticked and say why; the automated checks
-run on every pull request.
+## Optional checklist
 
-- [ ] Class, formatting, or `preamble.tex`: `scripts/build.py` and
-      `scripts/check.py` pass, I looked at every affected PDF page, and
-      `docs/project/requirements.md` has a matching row.
-- [ ] Guide or other Markdown: `scripts/build_site.py` reports no broken links.
-- [ ] Website: checked at phone, laptop, and wide widths, in light and dark
-      mode, with visible keyboard focus and JavaScript off.
-- [ ] Scripts or CI: `scripts/package.py` and `scripts/build.py` pass.
-- [ ] `CHANGELOG.md` has an entry if students will notice this change.
-- [ ] No emojis, private research, personal data, local paths, or generated
-      files (HTML, PDF, `build/`, `dist/`, `_local/`).
-- [ ] No RPI-owned files added (seal, original template, manuals, checklists,
-      slides); RPI's pages are linked instead.
+Tick what applies. Unticked boxes are fine; the automated checks run on
+every pull request, and the maintainer can finish any of these.
 
-## Attribution
+- [ ] LaTeX changes: `python3 scripts/build.py` runs and the PDF looks right.
+- [ ] Formatting changes: I named the OGE manual or checklist section and
+      page (or the comparison with RPI's official LaTeX template).
+- [ ] Guide or other Markdown changes: `python3 scripts/build_site.py`
+      reports no broken links.
+- [ ] Website changes: checked on a phone-sized and a wide window, in light
+      and dark mode.
+- [ ] Scripts: `python3 scripts/package.py` and `python3 scripts/build.py` run.
+- [ ] Nothing private or RPI-owned: no private research, personal details,
+      seal, manuals, or RPI's original template files.
 
-<!-- Name any third-party material and its terms. If someone outside the
-project helped, should we offer them a credit in CREDITS.md? -->
+<!-- Third-party material or someone else's help? Name it here, and say
+whether they would like a credit on the credits page. -->

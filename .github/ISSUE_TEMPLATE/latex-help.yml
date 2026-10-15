@@ -1,41 +1,40 @@
 name: LaTeX help or bug
-description: Ask a question, report an error, or show a PDF page that does not look right.
+description: Ask a question, report an error, or show a PDF page that does not look right. Beginners welcome.
 title: "Help: "
 labels: ["question"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for asking. This is an unofficial community project, and this form is public: use made-up text, and remove private research, names, and file paths from your computer. For an official formatting ruling, contact the Office of Graduate Education (OGE).
+        Thanks for asking; every question helps the next student. Write in your own words, and fill in only what you know. Screenshots are welcome: paste or drag them into any box.
+
+        This form is public, so use made-up text and leave out private research, names, and file paths from your computer. This is an unofficial community project; for an official formatting ruling, contact the Office of Graduate Education (OGE).
   - type: textarea
     id: expected
     attributes:
       label: What were you trying to do, and what happened?
+      placeholder: For example, I added a figure, compiled, and the PDF stopped at chapter 2.
     validations:
       required: true
   - type: textarea
     id: example
     attributes:
-      label: First error or a small example
-      description: Copy the first error with its file and line number, or describe the PDF problem and the page. Please do not upload a whole thesis.
+      label: First error or a small example (optional)
+      description: If there is an error, copy the first one with its file and line number. For a PDF problem, say which page. Please do not upload a whole thesis.
       render: text
-    validations:
-      required: true
   - type: input
     id: setup
     attributes:
-      label: Editor, operating system, and toolkit version
-      description: The toolkit version is in the first lines of rpi-thesis.cls (for example v0.1.0).
-      placeholder: For example, Overleaf; VS Code with LaTeX Workshop on Windows; or TeXShop on macOS.
-    validations:
-      required: true
+      label: Where you write (optional)
+      description: Your editor and operating system. If you know it, add the toolkit version from the first lines of rpi-thesis.cls.
+      placeholder: For example, Overleaf; VS Code on Windows; TeXShop on macOS.
   - type: input
     id: authority
     attributes:
-      label: Official requirement, if this is a formatting question
-      description: The OGE document, section, and page, if you know them.
+      label: Official requirement, if this is a formatting question (optional)
+      description: The OGE document, section, and page, if you know them. Fine to leave blank.
   - type: input
     id: credit
     attributes:
-      label: Optional public credit
-      description: If your report leads to a change, the name you would like listed in the project's credits (CREDITS.md). Leave blank for no credit. Do not enter an email address or student ID.
+      label: Public credit (optional)
+      description: If your report leads to a change, the name you would like listed in the project's credits. Leave blank for no credit. Do not enter an email address or student ID.
