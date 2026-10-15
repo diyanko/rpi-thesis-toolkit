@@ -7,12 +7,40 @@
   "use strict";
   if (typeof HTMLDialogElement !== "function") return;   // older browsers keep the plain link
 
+  // The picture sits in a scrollable box. When it is wider or taller than the
+  // screen (a phone), the box takes keyboard focus so the arrow keys, Page Up/Down,
+  // Home and End pan it; otherwise it stays out of the Tab order.
+  function pan(dialog) {
+    var box = dialog.querySelector(".viewer-pan");
+    if (!box) {
+      var img = dialog.querySelector("img");
+      if (!img) return;
+      box = document.createElement("div");
+      box.className = "viewer-pan";
+      box.setAttribute("role", "region");
+      box.setAttribute("aria-label", (dialog.getAttribute("aria-label") || "Picture") + ", scrollable");
+      img.parentNode.insertBefore(box, img);
+      box.appendChild(img);
+    }
+    var scrolls = box.scrollWidth > box.clientWidth + 1 || box.scrollHeight > box.clientHeight + 1;
+    if (scrolls) box.setAttribute("tabindex", "0"); else box.removeAttribute("tabindex");
+    return box;
+  }
+
   function openDialog(id) {
     var dialog = id && document.getElementById(id);
     if (!dialog || dialog.tagName !== "DIALOG") return false;
     if (!dialog.open) dialog.showModal();
+    var box = pan(dialog);
+    var img = dialog.querySelector("img");
+    if (box && !box.hasAttribute("tabindex") && img && !img.complete) {
+      img.addEventListener("load", function () { pan(dialog); }, { once: true });
+    }
     return true;
   }
+  window.addEventListener("resize", function () {
+    document.querySelectorAll("dialog.viewer[open]").forEach(pan);
+  });
 
   // "View larger" shows only where the dialog would really be larger: a drawing
   // already shown near its full-size width does not need the link. On phones a
@@ -36,12 +64,14 @@
 
   // An old address such as page.html#view-NAME opens its picture, then the hash goes.
   function fromHash() {
-    var id = decodeURIComponent(location.hash.slice(1));
+    var id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { return; }   // a malformed hash such as "#%"
     if (id.indexOf("view-") === 0 && openDialog(id)) {
       history.replaceState(null, "", location.pathname + location.search);
     }
   }
   fromHash();
+  window.addEventListener("hashchange", fromHash);   // a same-page #view-NAME link
 
   document.addEventListener("click", function (event) {
     // Modified clicks keep the browser's new-tab, new-window and download actions.
