@@ -8,6 +8,8 @@ import re
 import shutil
 import subprocess
 import sys
+import time
+import types
 
 if sys.version_info < (3, 9):
     sys.exit(
@@ -51,18 +53,51 @@ def read_source(path):
         return data.decode("latin-1")
 
 
+VERBATIM_ENVS = (r"verbatim\*?|Verbatim\*?|lstlisting|minted|comment|filecontents\*?|alltt"
+                 r"|tcblisting|BVerbatim|LVerbatim|VerbatimOut")
+GRAPHIC_EXTENSIONS = ("", ".pdf", ".png", ".jpg", ".jpeg", ".eps")
+
+
+def clean_tex(text):
+    """The text with everything TeX does not run as commands blanked out:
+    %-comments, \\verb, verbatim-like environments (verbatim, lstlisting,
+    minted, comment, ...) and \\iffalse ... \\fi. Line breaks are kept so line
+    numbers stay true."""
+    def blank(match):
+        return re.sub(r"[^\n]", " ", match[0])
+
+    lines = []
+    for line in text.split("\n"):
+        line = re.sub(r"\\(?:verb\*?|lstinline)\s*([^a-zA-Z\s*])(.*?)\1", blank, line)
+        lines.append(re.sub(r"((?:\\.|[^\\%])*)%.*", r"\1", line))
+    text = "\n".join(lines)
+    text = re.sub(r"\\begin\{(" + VERBATIM_ENVS + r")\}.*?\\end\{\1\}", blank, text, flags=re.S)
+    return re.sub(r"\\iffalse\b.*?\\fi\b", blank, text, flags=re.S)
+
+
 def active_sources(root, main="main.tex"):
-    """Follow literal \\input{...} and \\include{...} lines from main.tex.
+    """Follow literal \\input{...} and \\include{...} commands from main.tex.
 
     Only the document being compiled is read, so unused drafts elsewhere in
-    the folder cannot stop a build. Not followed: references built from
-    macros, \\import, \\subfile, and files TeX finds in its own installation
-    (such as \\input{glyphtounicode}). Returns (files, include_dirs,
-    problems); each problem is (where, message, stops_build).
+    the folder cannot stop a build. Comments, verbatim-like environments and
+    \\iffalse blocks are ignored. Not followed: references built from macros,
+    \\import, \\subfile, and files TeX finds in its own installation (such as
+    \\input{glyphtounicode}). The scan is a best guess, so only an unreadable
+    main.tex stops a build; everything else is advice.
+
+    Returns a namespace: files (the .tex files read), include_dirs, problems
+    [(where, message, stops_build)], missing_includes [(where, target)],
+    includeonly (a set of targets, or None), and, for packaging, assets (other
+    project files the document loads: graphics with literal paths, .bib files,
+    a local .cls or .sty) and missing_assets [(where, target, kind)].
     """
     root = root.resolve()
-    files, include_dirs, problems = [], set(), []
+    scan = types.SimpleNamespace(
+        files=[], include_dirs=set(), problems=[], missing_includes=[],
+        includeonly=None, assets=[], missing_assets=[])
     pending, seen = [(root / main, "The project folder")], set()
+    graphics_dirs = [""]
+    texts = []
     while pending:
         source, origin = pending.pop()
         if source in seen:
@@ -72,49 +107,159 @@ def active_sources(root, main="main.tex"):
         try:
             text = read_source(source)
         except OSError:
-            problems.append((origin, "cannot read " + name, source == root / main))
+            scan.problems.append((origin, "cannot read " + name, source == root / main))
             continue
-        files.append(source)
+        scan.files.append(source)
+        text = clean_tex(text)
+        texts.append((name, text))
+        for found in re.finditer(r"\\includeonly\s*\{([^}]*)\}", text):
+            scan.includeonly = (scan.includeonly or set()) | {
+                t.strip() for t in found[1].split(",") if t.strip()}
+        for found in re.finditer(r"\\graphicspath\s*\{((?:\s*\{[^}]*\})+)\s*\}", text):
+            graphics_dirs += re.findall(r"\{([^}]*)\}", found[1])
         for number, line in enumerate(text.splitlines(), 1):
-            line = re.sub(r"(?<!\\)%.*", "", line)
+            where = f"{name}, line {number}"
             for command, target in re.findall(r"\\(input|include)\s*\{([^}]+)\}", line):
-                target, where = target.strip(), f"{name}, line {number}"
+                target = target.strip()
                 path = (root / target).resolve()
                 if not path.is_relative_to(root):
                     # TeX may read a file outside the project, but an \\include
-                    # also writes an .aux file there, which TeX refuses.
+                    # also writes an .aux file there, which TeX normally refuses.
                     if command == "include":
-                        problems.append((where, f"\\include{{{target}}} points outside"
-                                         " the project folder. Move that file into the"
-                                         " project.", True))
+                        scan.problems.append((where, f"\\include{{{target}}} points outside"
+                                              " the project folder. Move that file into the"
+                                              " project.", False))
                     continue
                 if command == "include":
-                    include_dirs.add(Path(target).parent)
+                    scan.include_dirs.add(Path(target).parent)
                 candidates = (path.with_name(path.name + ".tex"), path)
                 found = next((c for c in candidates if c.is_file()), None)
                 if found:
                     pending.append((found, where))
                 elif command == "include" or "/" in target:
-                    problems.append((where, f"\\{command}{{{target}}}: there is no file"
-                                     f" {target}.tex in the project. Check the spelling"
-                                     " and the folder.", False))
-    return files, include_dirs, problems
+                    scan.problems.append((where, f"\\{command}{{{target}}}: there is no file"
+                                          f" {target}.tex in the project. Check the spelling"
+                                          " and the folder.", False))
+                    if command == "include":
+                        scan.missing_includes.append((where, target))
+            for options, target in re.findall(
+                    r"\\includegraphics\*?\s*(\[[^\]]*\])?\s*\{([^}]+)\}", line):
+                target = target.strip()
+                if "\\" in target or "#" in target:
+                    continue  # built from macros: not checked
+                scan.assets.append((where, target, "graphic"))
+            for command, target in re.findall(
+                    r"\\(addbibresource|bibliography)\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}", line):
+                for one in target.split(","):
+                    one = one.strip()
+                    if command == "bibliography" and not one.endswith(".bib"):
+                        one += ".bib"
+                    if one and "\\" not in one and not re.match(r"[a-z]+://", one):
+                        scan.assets.append((where, one, "bib"))
+            for command, target in re.findall(
+                    r"\\(documentclass|usepackage|RequirePackage)\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}", line):
+                for one in target.split(","):
+                    one = one.strip()
+                    local = root / (one + (".cls" if command == "documentclass" else ".sty"))
+                    if one and local.is_file():
+                        scan.assets.append((where, local.name, "local"))
+    resolved = []
+    for where, target, kind in scan.assets:
+        options = [target] if kind != "graphic" else [
+            prefix + target + ext for prefix in graphics_dirs for ext in GRAPHIC_EXTENSIONS]
+        found = next((o for o in options if (root / o).is_file()), None)
+        if found:
+            if (root / found).resolve().is_relative_to(root):
+                resolved.append(found)
+        else:
+            scan.missing_assets.append((where, target, kind))
+    scan.assets = sorted(set(resolved))
+    return scan
 
 
 def prepare_output(root, output):
     """Mirror \\include folders in the output folder, preventing first-pass
-    .aux write errors. Returns (active .tex files, warnings), or None if the
-    build cannot start: main.tex unreadable, or an \\include outside the project.
+    .aux write errors. Returns (active .tex files, advice, scan), or None if
+    the build cannot start: main.tex unreadable.
     """
     output.mkdir(parents=True, exist_ok=True)
-    files, include_dirs, problems = active_sources(root)
-    if any(stops for _, _, stops in problems):
-        for where, message, _ in problems:
+    scan = active_sources(root)
+    if any(stops for _, _, stops in scan.problems):
+        for where, message, _ in scan.problems:
             print(f"{where}: {message}", file=sys.stderr)
         return None
-    for folder in include_dirs:
-        (output / folder).mkdir(parents=True, exist_ok=True)
-    return files, [f"{where}: {message}" for where, message, _ in problems]
+    for folder in scan.include_dirs:
+        try:
+            (output / folder).mkdir(parents=True, exist_ok=True)
+        except OSError:
+            pass  # the scan is a guess; a real problem shows up in the build
+    return scan.files, [f"{where}: {message}" for where, message, _ in scan.problems], scan
+
+
+def unwrapped_log(output):
+    """main.log with the lines TeX wrapped at 79 characters joined again."""
+    log = output / "main.log"
+    if not log.is_file():
+        return ""
+    lines = log.read_text(encoding="utf-8", errors="replace").splitlines()
+    joined, index = [], 0
+    while index < len(lines):
+        line = lines[index]
+        while len(line) == 79 and index + 1 < len(lines):
+            index += 1
+            line += lines[index]
+        joined.append(line)
+        index += 1
+    return "\n".join(joined)
+
+
+def missing_chapters(scan, log_text, log_is_fresh):
+    """\\include files that the document asks for and LaTeX could not find.
+    The scan must say the file is missing and \\includeonly (if any) must list
+    it. When this run wrote the log, the log must also show that LaTeX skipped
+    the file (so a conditional the scan cannot see is not reported). When
+    latexmk found nothing to redo, the log is from an earlier run and the scan
+    decides."""
+    logged = set(re.findall(r"No file (\S+\.tex)\.", log_text))
+    active = {target for _, target in scan.missing_includes
+              if scan.includeonly is None or target in scan.includeonly}
+    return sorted(t for t in active if not log_is_fresh or t + ".tex" in logged)
+
+
+def layout_warnings(log_text):
+    """Figures and tables LaTeX could not fit, with the file and line when known."""
+    stack, found = [], []
+    for line in log_text.splitlines():
+        problem = re.search(r"Float too large for page by ([\d.]+pt)(?: on input line (\d+))?", line)
+        if problem:
+            where = next((name for name in reversed(stack) if name), "")
+            place = ""
+            if where:
+                place = f"{where.removeprefix('./')}, line {problem[2]}: " if problem[2] else (
+                    where.removeprefix("./") + ": ")
+            elif problem[2]:
+                place = f"line {problem[2]}: "
+            found.append(
+                f"{place}a figure or table is {problem[1]} too tall for a page, so it may be"
+                " cut off or run into the margin (see build/main.log). Make it smaller, for"
+                " example width=0.8\\linewidth or height=0.6\\textheight in \\includegraphics."
+            )
+        elif re.match(r"Overfull \\vbox \(.*too high\) has occurred while \\output is active", line):
+            found.append(
+                "a page holds more than fits (Overfull \\vbox while placing a figure or table,"
+                " see build/main.log). Make the largest figure or table on that page smaller."
+            )
+        for token in re.finditer(r"\(([^\s()]*)|\)", line):
+            if token[0] == ")":
+                if stack:
+                    stack.pop()
+            else:
+                stack.append(token[1] if token[1].endswith(".tex") else "")
+    unique = []
+    for item in found:
+        if item not in unique:
+            unique.append(item)
+    return unique[:10]
 
 
 SEAL_PAGE = "https://itssc.rpi.edu/hc/en-us/articles/360010087512-Thesis-Preparation"
@@ -211,12 +356,11 @@ def biber_warnings(output):
 
 
 def presubmission_hints(root, output, sources=None, warnings=()):
-    """Warn about common revision comments. Advice only; never fails a build."""
-    hints = list(warnings) + biber_warnings(output)
-    log = output / "main.log"
-    log_text = ""
-    if log.is_file():
-        log_text = log.read_text(encoding="utf-8", errors="replace")
+    """Warn about common revision comments. Advice only; never fails a build.
+    Returns the number of layout warnings (figures or tables that do not fit)."""
+    log_text = unwrapped_log(output)
+    layout = layout_warnings(log_text)
+    hints = list(warnings) + layout + biber_warnings(output)
     if "RPI seal not found" in log_text:
         hints.append(
             "The title page shows a placeholder box instead of the RPI seal. "
@@ -276,6 +420,7 @@ def presubmission_hints(root, output, sources=None, warnings=()):
         )
         for hint in hints:
             print("- " + hint)
+    return len(layout)
 
 
 # Known problems outside the thesis itself: (text to find, what to tell the student).
@@ -325,7 +470,7 @@ def build(root=ROOT, engine="pdflatex", fresh=False, output=None):
     prepared = prepare_output(root, output)
     if prepared is None:
         return 2
-    sources, warnings = prepared
+    sources, warnings, scan = prepared
     command = [
         shutil.which("latexmk"),
         "-norc",
@@ -358,6 +503,7 @@ def build(root=ROOT, engine="pdflatex", fresh=False, output=None):
         "Building main.tex. References and page numbers may need several passes.",
         flush=True,
     )
+    started = time.time()
     with log.open("w", encoding="utf-8") as stream:
         result = subprocess.run(
             command, cwd=root, env=environment, stdout=stream, stderr=subprocess.STDOUT
@@ -381,8 +527,26 @@ def build(root=ROOT, engine="pdflatex", fresh=False, output=None):
         for note in location_notes(root):
             print("\nNote: " + note, file=sys.stderr)
     else:
-        print("PDF ready: " + str(output / "main.pdf"))
-        presubmission_hints(root, output, sources, warnings)
+        log_text = unwrapped_log(output)
+        main_log = output / "main.log"
+        fresh = main_log.is_file() and main_log.stat().st_mtime >= started - 2
+        absent = missing_chapters(scan, log_text, fresh)
+        known = {target + ".tex" for _, target in scan.missing_includes}
+        for name in sorted(set(re.findall(r"No file (\S+\.tex)\.", log_text)) - known):
+            warnings.append(f"LaTeX could not find {name}, so it was left out of the PDF."
+                            " Check the file name in the \\include or \\input line.")
+        layout = presubmission_hints(root, output, sources, warnings)
+        if absent:
+            names = ", ".join(t + ".tex" for t in absent)
+            print(
+                f"\nPDF built WITHOUT {names}: the file is missing, so that part of your"
+                " thesis is not in the PDF. Create the file, or delete or comment out its"
+                " \\include line in main.tex.",
+                file=sys.stderr,
+            )
+            return 1
+        print("\nPDF ready: " + str(output / "main.pdf") + (
+            " (check the layout hints above: a figure or table does not fit)" if layout else ""))
     return result.returncode
 
 

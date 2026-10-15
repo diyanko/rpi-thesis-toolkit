@@ -183,6 +183,30 @@ THESIS_INPUTS = ("main.tex", "metadata.tex", "preamble.tex", "rpi-thesis.cls", "
                  "frontmatter", "chapters", "appendices", "figures", "assets")
 
 
+def fingerprint():
+    """A hash of everything the pictures depend on: every file of the thesis
+    inputs (including graphics in figures/ and nested .tex files), the guide's
+    class example, and this script. A picture made from other contents is stale."""
+    import hashlib
+
+    digest = hashlib.sha256()
+    names = [ROOT / name for name in THESIS_INPUTS] + [
+        ROOT / "docs/why-latex.md", ROOT / "scripts/previews.py"]
+    for top in names:
+        if top.is_symlink() or not top.exists():
+            continue
+        paths = sorted(p for p in top.rglob("*") if p.is_file() and not p.is_symlink()) if top.is_dir() else [top]
+        for path in paths:
+            relative = path.relative_to(ROOT)
+            if path.name.endswith(GENERATED) or "__pycache__" in relative.parts or path.name == ".DS_Store":
+                continue
+            digest.update(relative.as_posix().encode() + b"\0" + path.read_bytes() + b"\0")
+    return digest.hexdigest()
+
+
+COMPILED_FROM = {"fingerprint": None}   # set by make() while it saves pictures
+
+
 def compile_passes(work):
     """Copy the sample into `work` and return the PDF after each pdfLaTeX pass."""
     # An explicit list of thesis inputs: nothing else in the repository (virtual
@@ -315,6 +339,8 @@ def save_png(path, width, height, rgb, box=None, shades=256, meta=None):
                 + zlib.crc32(tag + body).to_bytes(4, "big"))
 
     header = width.to_bytes(4, "big") + height.to_bytes(4, "big") + bytes([depth, kind, 0, 0, 0])
+    if meta and COMPILED_FROM["fingerprint"]:
+        meta = {**meta, "fingerprint": COMPILED_FROM["fingerprint"]}
     text = chunk(b"tEXt", META + b"\0" + json.dumps(meta).encode("ascii")) if meta else b""
     Path(path).write_bytes(b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", header) + text
                            + chunk(b"IDAT", zlib.compress(raw, 9)) + chunk(b"IEND", b""))
@@ -475,6 +501,7 @@ def make(folder):
     folder = Path(folder)
     folder.mkdir(parents=True, exist_ok=True)
     made = {}
+    COMPILED_FROM["fingerprint"] = fingerprint()
     with tempfile.TemporaryDirectory() as temp:
         pdfs = compile_passes(Path(temp) / "thesis")
         # how-it-works.md shows chapter 1 before and after the citation resolves.
