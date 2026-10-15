@@ -313,12 +313,12 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   position: relative;
   max-width: var(--page-max);
   margin: 0 auto;
-  padding: 22px calc(var(--gutter) + 60px) 22px var(--gutter);
-  display: flex;
-  flex-wrap: wrap;
+  padding: 20px var(--gutter) 18px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   justify-content: space-between;
-  gap: 10px 28px;
+  gap: 12px 24px;
 }
 .wordmark {
   display: inline-flex;
@@ -333,8 +333,9 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .wordmark-logo { width: 28px; height: 28px; flex: none; }   /* site/logo.svg */
 .brand { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.header-tools { display: flex; align-items: center; gap: 10px; }
 .appearance {
-  position: absolute; top: 18px; right: var(--gutter); z-index: 20;
+  position: relative; z-index: 20;
 }
 .appearance[hidden], .appearance-menu[hidden] { display: none; }
 .diagram-open[hidden] { display: none; }   /* viewer.js hides it when the drawing is already near full size */
@@ -381,7 +382,12 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   border: 1.5px dashed var(--line-strong);
   border-radius: 999px;
 }
-.site-nav { display: flex; flex-wrap: wrap; gap: 4px 22px; }
+.site-nav { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 22px; }
+@media (min-width: 1560px) {
+  .site-header { grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px 24px; }
+  .header-tools { grid-column: 3; grid-row: 1; }
+  .site-nav { grid-column: 2; grid-row: 1; justify-self: center; }
+}
 .site-nav a {
   color: var(--ink-soft);
   text-decoration: none;
@@ -1439,6 +1445,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .guide-content td code.long { overflow-wrap: anywhere; }   /* a 50-character \includegraphics line */
 .guide-content th:empty { padding: 0; }
 @media (max-width: 640px) {   /* narrow screens or large text: a long name wraps rather than widening the page */
+  .hero-aside > span { white-space: normal; }
   .guide-content code.keep, .guide-content code.keep-path .nowrap, .anatomy code, .anatomy .nowrap, .anatomy-table tbody th,
   .guide-content td code, .guide-content td:first-child code:not(.phrase, .long) { white-space: normal; overflow-wrap: anywhere; }
 }
@@ -1485,6 +1492,60 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .footer-actions { gap: 0 24px; }
 .footer-links a { color: var(--ink-soft); display: inline-block; padding: 6px 0; }
 .site-footer a[aria-current="page"] { color: var(--ink); text-decoration-color: var(--sage); }
+
+/* Optional guide search: the same paper and ink in both themes. */
+.search-open {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--ink-soft); background: transparent;
+  border: 1px solid var(--line-strong); border-radius: 999px;
+  font: inherit; font-size: 0.95rem; cursor: pointer; min-height: 44px;
+  padding: 8px 13px; text-align: left;
+}
+.search-open:hover, .search-close:hover { color: var(--ink); background: var(--paper-2); }
+.search-icon { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.search-open[hidden], .guide-search[hidden] { display: none; }
+.search-dialog {
+  color: var(--ink); background: var(--paper);
+  border: 1.5px solid var(--line-strong); border-radius: 16px;
+  padding: 22px; width: min(680px, calc(100% - 24px));
+  max-width: none; max-height: min(760px, calc(100dvh - 64px));
+  margin: 5vh auto auto; overflow: hidden;
+  box-shadow: 0 18px 70px #0004;
+}
+.search-dialog::backdrop { background: #1119; }
+.search-dialog[open] { display: flex; flex-direction: column; }
+@media screen { html:has(.search-dialog[open]) { overflow: hidden; } }
+.search-dialog-bar { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.search-dialog-bar > span { font-family: var(--font-display); font-size: 1.3rem; font-style: italic; }
+.search-close { min-height: 44px; padding: 6px 10px; border: 0; border-radius: 6px; font: inherit; font-size: 0.9rem; color: var(--muted); background: transparent; cursor: pointer; }
+.guide-search { margin: 0 0 24px; }
+.search-dialog .guide-search { display: flex; flex-direction: column; min-height: 0; margin: 0; }
+.search-dialog .guide-search > :not(.search-results) { flex-shrink: 0; }
+.search-dialog .guide-search .search-results { overflow-y: auto; min-height: 0; padding: 0 4px; scrollbar-width: thin; }
+.guide-search label { display: block; font-weight: 700; margin-bottom: 8px; }
+.guide-search input {
+  display: block; width: 100%; min-width: 0; min-height: 50px;
+  padding: 10px 12px; border: 1.5px solid var(--control-edge); border-radius: 8px;
+  font: inherit; font-size: 1rem; color: var(--ink); background: var(--card);
+}
+.guide-search input::placeholder { color: var(--muted); opacity: 1; }
+.guide-search .search-hint, .guide-search .search-status { color: var(--muted); font-size: 0.9rem; line-height: 1.4; margin: 10px 0; }
+.guide-search .search-status { margin: 12px 0 8px; }
+.guide-search .search-results { list-style: none; padding: 0; margin: 0; }
+.guide-search .search-results li { margin: 0; border-top: 1px solid var(--line); }
+.search-result { display: block; padding: 12px 8px; color: var(--ink); text-decoration: none; border-radius: 6px; overflow-wrap: anywhere; }
+.search-result:hover, .search-result:focus-visible { background: var(--paper-2); }
+.search-result:focus-visible { outline-offset: -3px; }
+.search-result span { display: block; }
+.search-result-page { color: var(--muted); font-size: 0.8rem; }
+.search-result-title { font-weight: 700; line-height: 1.35; margin: 3px 0 5px; }
+.search-result .search-result-text { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.45; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.search-result mark { color: inherit; background: var(--butter-wash); border-radius: 2px; }
+.guide-content tr:target { outline: 2px solid var(--focus); outline-offset: 2px; scroll-margin-top: 24px; }
+@media (max-width: 600px) {
+  .search-dialog { padding: 16px; margin-top: 12px; max-height: calc(100dvh - 24px); }
+}
+@media print { .search-open, .guide-search, .search-dialog[open] { display: none; } }
 
 /* ---------- 10. Small screens ------------------------------------------- */
 @media (max-width: 1080px) {
@@ -1546,11 +1607,14 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 @media (max-width: 640px) {
   body { font-size: 1.0625rem; }   /* 17px */
   .site-header { padding-top: 16px; padding-bottom: 12px; }
-  .wordmark { font-size: 1.15rem; gap: 8px; }   /* name and "Unofficial" stay on one line beside the appearance button */
+  .site-header { gap: 10px 12px; }
+  .wordmark { font-size: 1.15rem; gap: 8px; }
   .wordmark-logo { width: 24px; height: 24px; }
   .brand { column-gap: 8px; }
-  .appearance { top: 8px; }   /* centred on the brand line */
-  .site-nav { gap: 0 16px; width: calc(100% + 60px); flex-shrink: 0; margin-right: -60px; }
+  .header-tools { gap: 6px; align-self: start; }
+  .search-header { width: 44px; padding: 10px; justify-content: center; }
+  .search-header > span { display: none; }
+  .site-nav { gap: 0 16px; }
   .site-nav a { font-size: 0.95rem; padding: 2px 0; }
   .page-guide .site-nav { display: none; }   /* "Guide topics", just below, lists every page */
   .guide-topics-here { display: none; }   /* the page title immediately below already names this page */
@@ -1762,3 +1826,27 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content details > summary { margin-bottom: 10px; border-bottom: 1px solid #bbb; }
   .guide-content summary::before { display: none; }
 }
+
+/* Clickable concept pictures use the existing optional image viewer. */
+.benefit-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 1.4em 0; }
+.guide-content .benefit-card { display: block; min-width: 0; padding: 17px 19px; color: var(--ink); text-decoration: none; border: 1.8px solid var(--ink-soft); border-radius: 11px 14px 10px 13px / 14px 10px 13px 11px; background: var(--card); }
+.benefit-card strong { display: block; color: var(--link); font-size: 1.08em; line-height: 1.35; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+.benefit-card span { display: block; margin-top: 7px; line-height: 1.45; }
+.guide-content .benefit-card:hover { background: var(--paper-2); }
+.guide-content .benefit-card:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+@media (max-width: 600px) {
+  .benefit-cards { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .guide-content .benefit-card { padding: 14px 16px; }
+}
+@media print {
+  .benefit-cards { display: block; }
+  .benefit-card { margin-bottom: 12px; }
+}
+
+/* These concept previews fit the phone drawing instead of requiring sideways pan. */
+dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12px; }
+.benefit-preview .viewer-hint { display: block; position: static; margin: 0; padding: 0; font-size: 0.9rem; line-height: 1.4; text-align: center; }
+.benefit-preview .viewer-pan { max-width: 1000px; }
+.benefit-preview picture { display: block; width: 100%; }
+.benefit-preview img, .benefit-preview img[src$=".svg"] { width: 100%; max-width: 100%; max-height: none; padding: 0; }
+@media (max-width: 600px) { dialog.benefit-preview { padding-top: 72px; } }

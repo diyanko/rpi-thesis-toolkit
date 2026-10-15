@@ -33,7 +33,6 @@ import shutil
 import subprocess
 import sys
 import tempfile
-import time
 from urllib.parse import quote, unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -117,7 +116,7 @@ ANATOMY = [
     ("chapter", "A chapter opening", "`chapters/01-introduction.tex`",
      "the chapter number, heading style and spacing"),
     ("figure-table", "Tables and figures",
-     "`chapters/02-research.tex`; images go in `figures/`; where each caption sits is your choice",
+     "`chapters/02-research.tex`; images go in `figures/`; put table captions above and figure captions below",
      "caption styling (numbering, bold label) and the lists of tables and figures"),
     ("references", "References", "`references.bib`, and `\\cite{key}` in your text",
      "the order and format of every entry, by Biber"),
@@ -125,7 +124,8 @@ ANATOMY = [
      "the letters A, B, C and the contents entry"),
 ]
 ALLOWED = {".html", ".css", ".svg", ".woff2"}  # plus fonts/*.txt, previews/*.png|webp, og-image.png,
-                                              # sitemap.xml, robots.txt, copy.js, viewer.js and theme.js
+                                              # sitemap.xml, robots.txt and the named scripts below
+SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js"}
 # The release the website links: its version, tag (always "v" + version; beta status is
 # GitHub's pre-release flag, never part of the name), and ZIP names
 # (rpi-thesis-starter-v<version>.zip). The home page's "Get the starter" button downloads
@@ -188,10 +188,21 @@ def plain(markdown):
     return " ".join(text.split())
 
 
+def source_path(source):
+    """Refuse linked inputs, including a link in an input's parent folders."""
+    path = ROOT / source
+    for part in (path, *path.parents):
+        if part == ROOT:
+            break
+        if part.is_symlink():
+            raise SystemExit(f"Website input must not be a symlink or inside a linked folder: {source}")
+    return path
+
+
 def read_markdown(source):
     """Return (title, description, Markdown text). Optional front matter:
     a leading '---' block with 'title:' or 'description:' lines."""
-    text = (ROOT / source).read_text(encoding="utf-8")
+    text = source_path(source).read_text(encoding="utf-8")
     front = {}
     match = re.match(r"---\n(.*?)\n---\n", text, re.S)
     if match:
@@ -345,9 +356,118 @@ def keep_short_code(body):
     return re.sub(r"(<pre\b[^>]*>)?<code>([^<\s]{1,28})</code>", keep, body)
 
 
+class SearchText(HTMLParser):
+    """Visible text from a small rendered fragment (never interpret markup)."""
+    def __init__(self, html):
+        super().__init__()
+        self.parts = []
+        self.ids = set()
+        self.feed(html)
+        self.text = " ".join("".join(self.parts).split())
+
+    def handle_data(self, text):
+        self.parts.append(text)
+
+    def handle_starttag(self, tag, attrs):
+        value = dict(attrs).get("id")
+        if value:
+            self.ids.add(value)
+
+
+def search_disclosures(body):
+    """Give optional examples stable destinations without changing source prose."""
+    used = SearchText(body).ids
+
+    def identify(match):
+        attrs, opening, label = match.groups()
+        if re.search(r"\bid\s*=", attrs):
+            return match[0]
+        stem = "example-" + re.sub(r"[^a-z0-9]+", "-", SearchText(label).text.lower()).strip("-")[:100]
+        anchor, number = stem, 2
+        while anchor in used:
+            anchor, number = f"{stem}-{number}", number + 1
+        used.add(anchor)
+        return f'<details{attrs} id="{anchor}">{opening}{label}</summary>'
+
+    return re.sub(r"<details\b([^>]*)>(\s*<summary\b[^>]*>)(.*?)</summary>", identify, body, flags=re.S)
+
+
+class SearchSections(HTMLParser):
+    """Read guide sections before navigation is added; Pandoc owns heading IDs.
+
+    Keep full section text so commands and errors near the end are searchable.
+    """
+    def __init__(self, body, page, title):
+        super().__init__()
+        self.entries, self.words, self.heading = [], [], []
+        self.page, self.title = page, title
+        self.anchor, self.label = "", title
+        self.level, self.parents, self.skip = 0, {}, 0
+        self.details, self.summary = [], None
+        self.feed(body)
+        self.flush()
+        # Text before and after an optional example belongs to the same
+        # section, but the example itself has its own direct destination.
+        merged = {}
+        for entry in self.entries:
+            if entry["href"] in merged:
+                merged[entry["href"]]["text"] += " " + entry["text"]
+            else:
+                merged[entry["href"]] = entry
+        self.entries = list(merged.values())
+
+    def flush(self):
+        text = " ".join(" ".join(self.words).split())
+        if self.label and (text or self.anchor):
+            self.entries.append({"page": self.title, "title": self.label,
+                                 "context": " / ".join(self.parents.values()),
+                                 "href": self.page + ("#" + quote(self.anchor) if self.anchor else ""),
+                                 "text": text})
+        self.words = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag in {"script", "style", "svg"}:
+            self.skip += 1
+        if self.skip:
+            return
+        if tag == "details":
+            self.flush()
+            self.details.append((self.anchor, self.label, self.parents.copy()))
+            self.anchor, self.label = dict(attrs).get("id", ""), ""
+        elif tag == "summary" and self.details:
+            self.summary = []
+        elif re.fullmatch(r"h[1-6]", tag):
+            self.flush()
+            self.level, self.heading = int(tag[1]), []
+            self.anchor = dict(attrs).get("id", "")
+            self.parents = {level: label for level, label in self.parents.items() if level < self.level}
+        elif tag in {"p", "li", "tr", "td", "th", "pre", "br", "summary"}:
+            self.words.append(" ")
+
+    def handle_endtag(self, tag):
+        if tag in {"script", "style", "svg"}:
+            self.skip = max(0, self.skip - 1)
+        elif not self.skip and tag == "summary" and self.summary is not None:
+            self.label = " ".join("".join(self.summary).split())
+            self.summary = None
+        elif not self.skip and tag == "details" and self.details:
+            self.flush()
+            self.anchor, self.label, self.parents = self.details.pop()
+        elif not self.skip and re.fullmatch(r"h[1-6]", tag):
+            self.label = " ".join("".join(self.heading).split())
+            self.parents[self.level] = self.label
+            self.level = 0
+        elif tag in {"p", "li", "tr", "td", "th", "pre", "summary"}:
+            self.words.append(" ")
+
+    def handle_data(self, data):
+        if not self.skip:
+            (self.summary if self.summary is not None else self.heading if self.level else self.words).append(data)
+
+
 class Site:
     def __init__(self, offline):
-        config = json.loads((SITE / "site.json").read_text(encoding="utf-8"))
+        config = json.loads(source_path("site/site.json").read_text(encoding="utf-8"))
         self.repo = config.get("repository_url", "").rstrip("/")
         self.url = "" if offline else config.get("site_url", "").rstrip("/")
         self.offline = offline
@@ -356,6 +476,8 @@ class Site:
         self.cheatsheet = ""     # where the cheat sheet PDF is, relative to the site root
         self.edition = edition()
         self.meta = {}           # output page -> (title, description), checked after the build
+        self.search = []         # guide sections only; never project or local files
+        self.search_tasks = []   # task-link labels also describe their destinations
         guide = "" if offline else "guide/"
         self.pages = {"site/index.html": "index.html"}
         # A guide page in NAV whose Markdown file is not written yet is left
@@ -375,7 +497,8 @@ class Site:
         self.assets = {"site/site.css": "site.css", "site/logo.svg": "logo.svg",
                        "site/copy.js": "copy.js",       # optional "Copy" buttons on code blocks
                        "site/viewer.js": "viewer.js",   # optional: full-size pictures open as a dialog
-                       "site/theme.js": "theme.js"}     # optional: saved System/Light/Dark appearance
+                       "site/theme.js": "theme.js",     # optional: saved System/Light/Dark appearance
+                       "site/search.js": "search.js"}   # optional: offline section search
         self.starter_zip = ""
         if not offline and self.repo:
             version = RELEASE_VERSION
@@ -396,13 +519,13 @@ class Site:
             ("site/art", "art", {".svg"}),  # landing-page drawings
             ("docs/diagrams", "diagrams", {".svg"}),
         ):
-            for path in sorted((ROOT / folder).glob("*")):
+            for path in sorted(source_path(folder).glob("*")):
                 if path.is_file() and path.suffix in suffixes:
                     self.assets[f"{folder}/{path.name}"] = f"{output}/{path.name}"
         self.theme_assets = {
             output for source, output in self.assets.items()
             if Path(source).suffix == ".svg"
-            and SVG_SCHEME.search((ROOT / source).read_text(encoding="utf-8"))
+            and SVG_SCHEME.search(source_path(source).read_text(encoding="utf-8"))
         }
         source, heading = FEEDBACK
         self.feedback = self.pages[source]
@@ -456,13 +579,13 @@ class Site:
         fragment = ("?" + parts.query if parts.query else "") + (
             "#" + parts.fragment if parts.fragment else "")
         if target in self.pages:
-            return self.relative(here, self.pages[target]) + fragment
+            return quote(self.relative(here, self.pages[target])) + fragment
         if target in self.assets:
-            return self.relative(here, self.assets[target]) + fragment
+            return quote(self.relative(here, self.assets[target])) + fragment
         if target in CHEATSHEET_SOURCES and self.cheatsheet:  # the PDF, when built
             return self.relative(here, self.cheatsheet) + fragment
         if target.startswith("docs/diagrams/"):  # planned diagram, not drawn yet
-            return self.relative(here, "diagrams/" + posixpath.basename(target)) + fragment
+            return quote(self.relative(here, "diagrams/" + posixpath.basename(target))) + fragment
         if target in self.planned:  # planned guide page, not written yet
             self.warnings.append(f"{source}: link to a guide page not written yet: {href}")
             return None
@@ -488,6 +611,12 @@ class Site:
         if not markdown_only:
             html = re.sub(
                 r'(<img\b[^>]*?\ssrc=")([^"]*)(")',
+                lambda m: m[1] + escape(self.link(m[2], source, here, base) or m[2]) + m[3],
+                html,
+            )
+            # Authored picture sources use one URL, like the generated diagrams.
+            html = re.sub(
+                r'(<source\b[^>]*?\ssrcset=")([^"\s,]+)(")',
                 lambda m: m[1] + escape(self.link(m[2], source, here, base) or m[2]) + m[3],
                 html,
             )
@@ -685,6 +814,35 @@ class Site:
         return re.sub(r'<a\b([^>]*?)\shref="([^"]*)"([^>]*)>(.*?)</a>',
                       external_tab, html, flags=re.S)
 
+    def search_messages(self, body, here, title):
+        """Make each troubleshooting row a precise, searchable destination."""
+        context, used = title, set()
+
+        def row(match):
+            nonlocal context
+            html = match[0]
+            if html.startswith("<h"):
+                context = SearchText(html).text
+                return html
+            cells = re.findall(r"<td\b[^>]*>(.*?)</td>", html, flags=re.S)
+            if len(cells) < 2:
+                return html
+            label = SearchText(cells[0]).text
+            stem = "message-" + re.sub(r"[^a-z0-9]+", "-", label.lower()).strip("-")[:100]
+            anchor, number = stem, 2
+            while anchor in used:
+                anchor, number = f"{stem}-{number}", number + 1
+            used.add(anchor)
+            self.search.append({"page": title, "title": label, "context": context,
+                                "href": here + "#" + anchor, "kind": "message",
+                                "signatures": [SearchText(code).text for code in re.findall(
+                                    r"<code>(.*?)</code>", cells[0], flags=re.S)
+                                    if len(SearchText(code).text) >= 10],
+                                "text": " ".join(SearchText(cell).text for cell in cells[1:])})
+            return html.replace("<tr", f'<tr id="{anchor}"', 1)
+
+        return re.sub(r"<h[1-6]\b[^>]*>.*?</h[1-6]>|<tr\b[^>]*>.*?</tr>", row, body, flags=re.S)
+
     def render(self, source):
         here = self.pages[source]
         if source == "site/index.html":
@@ -699,6 +857,14 @@ class Site:
                 title = PROJECT[source][1]
             body = pandoc(["--from=gfm", "--to=html5", "--wrap=none", "--syntax-highlighting=none"], text)
             body = self.rewrite(body, source, here, posixpath.dirname(source))
+            if source == "docs/troubleshooting.md":
+                body = self.search_messages(body, here, title)
+            if source == f"docs/{QUICK[0]}.md":
+                for href, label in re.findall(r'<a\b[^>]*href="([^"]+)"[^>]*>(.*?)</a>', body, flags=re.S):
+                    address = urlsplit(unescape(href))
+                    if not address.scheme and not address.netloc:
+                        target = posixpath.normpath(posixpath.join(posixpath.dirname(here), address.path))
+                        self.search_tasks.append((target, address.fragment, SearchText(label).text))
             body = self.diagrams(body)
             body = self.pictures(body, source, here)
             body = responsive_tables(body)
@@ -710,6 +876,8 @@ class Site:
             body = re.sub(r'<ul class="task-list"', '<ul role="list" class="task-list"', body)
             toc = []
             if kind == "guide":
+                body = search_disclosures(body)
+                self.search.extend(SearchSections(body, here, title).entries)
                 body, toc = self.page_top(body, Path(source).stem)
 
         def item(path, label, name=None):
@@ -740,6 +908,7 @@ class Site:
             "pagetitle": escape(HOME_TITLE if kind == "home" else f"{title} · {NAME}"),
             "description": escape(description),
             "root": self.relative(here, "x")[:-1],
+            "search_root": (self.url or "") + "/" if kind == "notfound" else self.relative(here, "x")[:-1],
             "nav": nav + ([quick] if quick else []),
             "navgroups": groups,
             "header": header,
@@ -750,6 +919,7 @@ class Site:
             ],
             "edition": escape(self.edition),
             "feedback_url": self.relative(here, self.feedback),
+            "search_field": search_field("dialog-search"),
         }
         if quick:
             values["quick"] = quick
@@ -799,7 +969,7 @@ class Site:
         elif self.repo:
             values["cheatsheet_url"] = f"{self.repo}/tree/main/cheatsheet"
         args = ["--from=markdown", "--to=html5", "--quiet"]
-        args.append("--template=" + str(SITE / "guide-template.html"))
+        args.append("--template=" + str(source_path("site/guide-template.html")))
         args += [f"--variable-json={key}:{json.dumps(value)}" for key, value in values.items()]
         html = pandoc(args, f"{FENCE}{{=html}}\n{body}\n{FENCE}\n")
         if kind in ("home", "notfound"):  # these link guide pages by their Markdown file
@@ -809,6 +979,19 @@ class Site:
             html = re.sub(r'((?:href|src)=")(?![a-z]+:|/|#)', r"\g<1>" + base, html)
         html = self.external_links(html)
         return self.theme_pictures(html, here, absolute=kind == "notfound")
+
+
+def search_field(name):
+    """The dialog's ordinary input and real result links."""
+    return ('<section class="guide-search" data-search hidden aria-label="Search the guide">'
+            f'<label for="{name}" class="visually-hidden">Search the guide</label>'
+            f'<input id="{name}" type="search" placeholder="Try a topic or paste an error" '
+            f'autocomplete="off" spellcheck="false" maxlength="4000" '
+            f'aria-describedby="{name}-hint {name}-status" aria-controls="{name}-results">'
+            f'<p class="search-hint" id="{name}-hint">Keywords, questions, commands, or pasted errors.</p>'
+            f'<p class="search-status" id="{name}-status" role="status" aria-live="polite" '
+            'aria-atomic="true"></p>'
+            f'<ol class="search-results" id="{name}-results" role="list"></ol></section>')
 
 
 def make_previews(destination):
@@ -896,10 +1079,10 @@ SVG_REF = re.compile(r'\b(?:xlink:)?href="([^"]*)"')
 SVG_ID = re.compile(r'\bid="([^"]*)"')
 
 
-def validate(destination, beside=()):
+def validate(destination, beside=(), search=()):
     """Check links and anchors offline, and that nothing private or binary is staged.
     `beside` names files the caller puts next to the website folder (the offline
-    cheat sheet); links to them are allowed. Returns (errors, warnings); missing
+    cheat sheet); links to them are allowed. Returns (errors, warnings, page count); missing
     diagrams/ files are only warnings."""
     errors, warnings, parsed = [], [], {}
     root = destination.resolve()
@@ -917,6 +1100,14 @@ def validate(destination, beside=()):
         return svg_ids[svg]
 
     pages = sorted(root.rglob("*.html"))
+    # Generated search links need the same anchor checks as page links.
+    for entry in search:
+        address = urlsplit(entry["href"])
+        target = (root / unquote(address.path)).resolve()
+        if not target.is_relative_to(root) or not target.is_file():
+            errors.append(f"search-index.js: missing guide page: {entry['href']}")
+        elif address.fragment and unquote(address.fragment) not in parse(target).ids:
+            errors.append(f"search-index.js: missing heading: {entry['href']}")
     for page in pages:
         name = page.relative_to(root).as_posix()
         for duplicate in sorted(parse(page).duplicates):
@@ -931,8 +1122,13 @@ def validate(destination, beside=()):
                 continue
             if not target.is_relative_to(root):
                 errors.append(f"{name}: link leaves the website: {link}")
-            elif not target.is_file():
-                planned = target.relative_to(root).parts[0] == "diagrams"
+                continue
+            # Web servers serve index.html for the home URL and directory
+            # links; check that page and its anchors rather than the folder.
+            if target.is_dir():
+                target = target / "index.html"
+            if not target.is_file():
+                planned = target.relative_to(root).parts[:1] == ("diagrams",)
                 (warnings if planned else errors).append(f"{name}: missing file: {link}")
             elif address.fragment and target.suffix == ".html":
                 if unquote(address.fragment) not in parse(target).ids:
@@ -975,7 +1171,7 @@ def validate(destination, beside=()):
             errors.append(f"Private or source folder in the website: {relative}")
         elif path.is_dir() or suffix in ALLOWED:
             pass
-        elif relative.as_posix() in ("og-image.png", CHEATSHEET_PDF, "sitemap.xml", "robots.txt", "copy.js", "viewer.js", "theme.js"):
+        elif relative.as_posix() in {"og-image.png", CHEATSHEET_PDF, "sitemap.xml", "robots.txt"} | SITE_SCRIPTS:
             pass
         elif not (top == "previews" and suffix in {".png", ".webp"}) and not (
             top == "fonts" and suffix == ".txt"
@@ -1011,96 +1207,39 @@ def write_sitemap(site, destination):
     )
 
 
-def pid_running(pid):
-    try:
-        os.kill(pid, 0)
-    except ProcessLookupError:
-        return False
-    except OSError:
-        return True
-    return True
-
-
-def lock_owner(lock):
-    """(process number or 0, seconds since the lock changed) for an existing lock."""
-    try:
-        age = time.time() - lock.stat().st_mtime
-    except OSError:
-        return 0, 0.0
-    try:
-        return int(lock.read_text().strip() or 0), age
-    except (OSError, ValueError):
-        return 0, age
-
-
-def lock_is_live(owner, age):
-    """A lock whose owner runs is live. One that is empty or unreadable is
-    live for a minute: its writer may be about to put its number in."""
-    return pid_running(owner) if owner else age < LOCK_GRACE
-
-
-LOCK_GRACE = 60  # seconds an unreadable or empty lock counts as in use
-
-
-def take_lock(lock):
-    """Create `lock` already holding this process's number, or raise
-    FileExistsError. The number is written to a private file first and linked
-    into place, so no other process can ever see an empty lock."""
-    private = lock.with_name(f"{lock.name}.{os.getpid()}.new")
-    private.write_text(str(os.getpid()))
-    try:
-        try:
-            os.link(private, lock)  # atomic: fails if the lock exists
-        except FileExistsError:
-            raise
-        except OSError:  # no hard links here: exclusive create (the number follows at once)
-            handle = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-            with os.fdopen(handle, "w") as out:
-                out.write(str(os.getpid()))
-    finally:
-        private.unlink(missing_ok=True)
-
-
 @contextlib.contextmanager
 def build_lock(destination):
-    """One build at a time per destination: a lock file beside it, with this process's
-    number. A lock left by a process that is gone is replaced."""
+    """Hold an OS lock for the build; process exit releases it after a crash.
+
+    Keep the lock file in place: unlinking or renaming it can let concurrent
+    builders lock different files at the same pathname. Its PID is advisory.
+    """
     lock = destination.parent / f".{destination.name}.lock"
     destination.parent.mkdir(parents=True, exist_ok=True)
-    for _ in range(5):
+    with os.fdopen(os.open(lock, os.O_CREAT | os.O_RDWR, 0o644), "r+b") as handle:
+        handle.seek(0)
         try:
-            take_lock(lock)
-            break
-        except FileExistsError:
-            owner, age = lock_owner(lock)
-            if lock_is_live(owner, age):
-                raise SystemExit(f"Another build of {destination.name} is running"
-                                 + (f" (process {owner})" if owner else "") + ". "
-                                 f"Wait for it to finish; if it is not running, delete {lock}.")
-            # Stale. Move it aside (atomic) so two waiters cannot both delete a
-            # lock a third has just taken, then check what was moved.
-            aside = lock.with_name(f"{lock.name}.{os.getpid()}.stale")
-            try:
-                lock.rename(aside)
-            except OSError:
-                continue
-            moved, moved_age = lock_owner(aside)
-            if moved != owner and lock_is_live(moved, moved_age):
-                try:
-                    os.link(aside, lock)  # we took a live lock: put it back
-                except OSError:
-                    pass
-                aside.unlink(missing_ok=True)
-                raise SystemExit(f"Another build of {destination.name} is running (process {moved}).")
-            aside.unlink(missing_ok=True)
-    else:
-        raise SystemExit(f"Could not take the build lock {lock}; delete it if no build is running.")
-    try:
-        yield
-    finally:
-        owner, _ = lock_owner(lock)
-        if owner == os.getpid():
-            lock.unlink(missing_ok=True)
+            if os.name == "nt":
+                import msvcrt
+                msvcrt.locking(handle.fileno(), msvcrt.LK_NBLCK, 1)
+            else:
+                import fcntl
+                fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except OSError as error:
+            raise SystemExit(f"Cannot take the build lock for {destination.name}: {error}. "
+                             "Wait for any other build to finish, then retry.") from None
+        try:
+            handle.seek(0)
+            handle.write(str(os.getpid()).encode("ascii"))
+            handle.truncate()
+            handle.flush()
+            yield
+        finally:
+            handle.seek(0)
+            if os.name == "nt":
+                msvcrt.locking(handle.fileno(), msvcrt.LK_UNLCK, 1)
+            else:
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
 def build_site(destination=None, offline=False, previews=False, cheatsheet=False, publish=False,
@@ -1118,8 +1257,7 @@ def build_site(destination=None, offline=False, previews=False, cheatsheet=False
     destination = Path(destination or ROOT / "dist/site").absolute()
     with build_lock(destination):
         for old in destination.parent.glob(f"{destination.name}.tmp-*"):  # left by a killed build
-            owner = old.name.rsplit("-", 1)[-1]
-            if old.is_dir() and not old.is_symlink() and not (owner.isdigit() and pid_running(int(owner))):
+            if old.is_dir() and not old.is_symlink():
                 shutil.rmtree(old, ignore_errors=True)
         stage = destination.parent / f"{destination.name}.tmp-{os.getpid()}"
         try:
@@ -1157,8 +1295,7 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
                 f"(v{RELEASE_VERSION}): publish the matching release first, then update "
                 "RELEASE_TAG and RELEASE_VERSION in scripts/build_site.py.")
     for source, output in site.assets.items():
-        if (ROOT / source).is_symlink():
-            raise SystemExit(f"Website input must not be a symlink: {source}")
+        source_path(source)
         (destination / output).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / source, destination / output)
         if output in site.theme_assets:
@@ -1187,8 +1324,18 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
         if not site.cheatsheet:
             site.errors.append("--publish needs the cheat sheet PDF (run with --previews or --cheatsheet and LaTeX).")
     for source, output in site.pages.items():
+        source_path(source)
         (destination / output).parent.mkdir(parents=True, exist_ok=True)
         (destination / output).write_text(site.render(source), encoding="utf-8")
+    by_link = {entry["href"]: entry for entry in site.search}
+    for page, anchor, task in site.search_tasks:
+        target = by_link.get(page + "#" + anchor) if anchor else next(
+            (entry for entry in site.search if entry["href"].split("#")[0] == page), None)
+        if target is not None:
+            target["tasks"] = (target.get("tasks", "") + " " + task).strip()
+    # A classic script also loads from file: URLs, with no fetch or server.
+    index = json.dumps(site.search, ensure_ascii=True, separators=(",", ":"))
+    (destination / "search-index.js").write_text("window.GUIDE_SEARCH = " + index + ";\n", encoding="utf-8")
     for position, label in ((0, "title"), (1, "description")):
         seen = {}
         for page, meta in site.meta.items():
@@ -1201,7 +1348,7 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
     if site.url:  # search engines only; the offline guide has no address
         write_sitemap(site, destination)
     beside = {OFFLINE_CHEATSHEET} if site.cheatsheet.startswith("../") else set()
-    errors, warnings, count = validate(destination, beside)
+    errors, warnings, count = validate(destination, beside, site.search)
     problems = site.warnings + warnings
     for warning in problems:
         print(("ERROR (" + ("--publish" if publish else "complete guide") + "): " if strict
