@@ -18,7 +18,8 @@ It saves:
 
 - class-demo-ams.png and class-demo-ieee.png: the first page of the same
   teaching example, compiled with only its class name changed. Its source
-  lives in the optional example in docs/why-latex.md.
+  lives in the optional example in docs/why-latex.md. The corresponding
+  -crop pictures show the upper content for the inline comparison.
 
 Every picture is a greyscale PNG (16 shades for the anatomy pictures, which
 keeps them small) and carries its details (page number, alt text, where the
@@ -440,12 +441,26 @@ def class_demo(folder, work):
         if re.search(r"Overfull \\[hv]box|LaTeX Warning:.*(?:undefined|Rerun)", log):
             raise SystemExit(f"Previews: inspect the {cls} example; its final log has overflow or unsettled references.")
         pdf = directory / "example.pdf"
-        pages = len(text_lines(pdf))
+        lines = text_lines(pdf)
+        pages = len(lines)
         width, height, rgb = render(pdf, 1, FULL_DPI, directory)
         meta = {"page": 1, "pages": pages, "class": cls}
         key = "class-demo-" + name
         save_png(folder / (key + ".png"), width, height, rgb, meta=meta)   # 256 shades: the figure has soft tones
         made[key] = {"width": width, "height": height, **meta}
+        # Keep the complete page for View larger. Inline, show the upper
+        # content in a consistent 4:3 window so switching does not jump in height.
+        body = [line for line in lines[0] if line.text and not re.fullmatch(r"\d+", line.text)]
+        if body:
+            box = (min(line.left for line in body) - 20,
+                   min(line.top for line in body) - 20,
+                   max(line.right for line in body) + 20,
+                   max(line.bottom for line in body) + 20)
+            box = (*box[:3], min(box[3], box[1] + (box[2] - box[0]) * 0.75))
+            cropped = key + "-crop"
+            w, h = save_png(folder / (cropped + ".png"), width, height, rgb,
+                            [n * FULL_DPI / 72 for n in box], meta={**meta, "cropped": True})
+            made[cropped] = {"width": w, "height": h, **meta, "cropped": True}
     return made
 
 
