@@ -107,7 +107,7 @@ follow the class's structure.
 | Rule | Manual | Where | Checked by |
 | --- | --- | --- | --- |
 | Chapter attribution at the bottom of the chapter's first page, no mark, single spaced, citation style; wording per Table 2.1 | §2.8 pp. 27-29; FC | cls §12: `\chapterattribution`; wording in `chapters/02-research.tex` comment | check (unmarked, first page) |
-| Reused work needs a chapter attribution even when the student is the sole author; the Declaration of Co-Contribution lists every attributed article except sole-authored ones | §2.8.1 p. 28 | `docs/writing.md` ("Chapters based on published papers"), `docs/submission.md`; `chapters/02-research.tex` comment | student |
+| Reused work needs a chapter attribution even when the student is the sole author; the Declaration of Co-Contribution lists co-authored articles; a sole-authored published paper is exempt, and a sole-authored paper submitted or under review but not yet published is unresolved (see Needs OGE confirmation) | §2.8.1 p. 28 | `docs/writing.md` ("Chapters based on published papers"), `docs/submission.md`; `chapters/02-research.tex` comment | student |
 
 Chapter attribution wording (manual Table 2.1, p. 29), followed by the full
 citation in the chosen style:
@@ -212,8 +212,12 @@ from RPI ITS; files dated 2018); it is not part of this project.
 - **Sole-authored papers not yet published**: §2.8.1 p. 28 exempts sole
   authors from the Declaration of Co-Contribution, then says submitted,
   in-review, or to-be-submitted articles still go on it "since you are not
-  the sole author". The guide applies the sole-author exemption whatever the
-  paper's status; confirm this for a sole-authored submitted paper.
+  the sole author". The guide states the exemption only for a published
+  sole-authored paper, calls a sole-authored paper that is submitted or under
+  review but not yet published unresolved, and sends students to OGE's
+  current checklist or to OGE (`docs/submission.md`, `docs/writing.md`,
+  `chapters/02-research.tex`, and the cheat sheet carry the same wording).
+  Confirm with OGE which reading applies.
 
 ## Students must still check
 
