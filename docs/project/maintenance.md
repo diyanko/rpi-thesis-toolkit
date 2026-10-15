@@ -102,10 +102,39 @@ How the website is put together:
 - Every footer shows the edition line, read from `docs/project/sources.json`
   (first document and `last_reviewed`) and the `\ProvidesClass` line of
   `rpi-thesis.cls`. Update those, never the template, when they change.
+- Two more optional scripts: `site/copy.js` adds labelled Copy buttons to code
+  blocks, and `site/viewer.js` opens "View larger" pictures as a dialog (and
+  hides the link when a drawing is already shown near full size). Without
+  JavaScript, code stays selectable and the same links open the picture
+  through CSS (`:target`), with Close going back.
+- The optional `site/theme.js` restores a saved Light or Dark choice before
+  the stylesheet loads; System leaves appearance to the device. The header
+  button appears only after its handlers are ready. Its panel closes with
+  Escape or a click outside, and the current choice is labeled for screen
+  readers. Storage failures leave
+  switching usable on the current page; saved choices across offline
+  `file:` pages depend on the browser. Light tokens and the `--dark-*`
+  palette live in section 2 of `site/site.css`. Both automatic and explicit
+  dark modes map to that same palette. When changing themes, also check
+  checkmarks, embedded SVG diagrams, native controls, and print with Dark
+  selected. The site build makes fixed Light/Dark SVG copies under `themes/`
+  and checks their links. The optional script selects those copies for manual
+  choices, including responsive images and the favicon; System and no-script
+  pages retain the original SVGs. This avoids relying on browsers to pass a
+  manual theme into an SVG's media query. Keep actual PDF previews white. See
+  [MDN on embedded SVG appearance](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-color-scheme)
+  and [browser storage limits](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).
 - `--previews` compiles the sample thesis and saves the contents page, a
   chapter opening, a table/figure page, and the references as PNGs in
   `previews/` (needs TeX Live and poppler's `pdftoppm`/`pdftotext`; skipped with
   a note if missing). The title page is never used.
+  It also compiles the marked `class-demo-source` code block in
+  `docs/why-latex.md` twice, changing only `amsart` to `IEEEtran`, and saves
+  each first page and its total page count. The optional layout switcher uses
+  native radio buttons and CSS; plain builds without previews omit it, and
+  the explanation and copyable source remain available. Missing article
+  classes skip this comparison without affecting thesis previews. Keep the
+  source free of class-specific adapters so the one-word claim stays true.
   With TeX present it also compiles `cheatsheet/cheatsheet.tex` to
   `downloads/rpi-thesis-cheatsheet.pdf`.
 - The site may contain only HTML, CSS, SVG, WOFF2 fonts (with their license
@@ -202,18 +231,25 @@ PDF text cannot judge layout quality, so also look at the pages.
 
 ## Compatibility promise
 
-Students copy a newer `rpi-thesis.cls` into an existing thesis, so within one
-major version (the first number in `v0.1.0`) these stay backward compatible:
+**During the beta (versions 0.x), there is no compatibility promise.**
+Settings, commands, and files may be renamed, simplified, or removed between
+versions whenever that makes the starter cleaner. Each such change goes in
+`CHANGELOG.md` with **Changes your PDF?** and the exact edit a student needs
+to make, and the class reports old or unknown settings with an error that
+names the fix.
+
+From version 1.0.0, students copy a newer `rpi-thesis.cls` into an existing
+thesis, so within one major version these stay backward compatible:
 
 - every setting in `metadata.tex`, that is, the `\thesissetup` keys and their
   accepted values;
-- the `\chapterattribution`, `\frontchapter`, and `\committeemember` commands.
+- the commands the starter files use (for example `\committeemember`,
+  `\frontchapter`, `\chapterattribution`).
 
 New keys and commands may be added, and formatting may be corrected to match
 OGE requirements. Removing or renaming any of the above, or changing what an
-existing value means, is a breaking change: bump the major version in
-`\ProvidesClass` and explain the change and the fix in `CHANGELOG.md`. Before
-version 1.0.0, a breaking change bumps the middle number instead.
+existing value means, is a breaking change: bump the major version and
+explain the change and the fix in `CHANGELOG.md`.
 
 ## Repository settings checklist (when first pushing)
 
@@ -264,42 +300,64 @@ downloadable release.
 
 Until then, do not call a release compliant, approved, or fully tested.
 
+## Versions
+
+One version number, everywhere a student or maintainer might look:
+
+- **The class is the version.** The `\ProvidesClass` line in `rpi-thesis.cls`
+  holds a date and `vX.Y.Z`. The website footer, the ZIP names
+  (`rpi-thesis-starter-vX.Y.Z.zip`), and `CITATION.cff` use the same number,
+  and every PDF records it in its document properties (Creator).
+- **`main.tex` asks for that date:** `\documentclass{rpi-thesis}[YYYY/MM/DD]`.
+  If a student's `rpi-thesis.cls` is older than their starter files, LaTeX
+  warns on every compile. `scripts/package.py` refuses to build a release
+  when the two dates differ.
+- **What changes the number** (see the [compatibility promise](#compatibility-promise)):
+  - `Z` (patch): fixes that do not change any PDF, and guide-only changes;
+  - `Y` (minor): new settings, or formatting corrected to match OGE; the
+    change-log entry says **Changes your PDF? Yes**;
+  - `X` (major): from 1.0.0, a breaking change to settings or commands.
+    During the beta, breaking changes are allowed and bump `Y`.
+- **Beta releases** use the same `vX.Y.Z` tag, marked as a pre-release on
+  GitHub; the version itself never carries `-beta`. Versions below 1.0.0 are
+  the beta: the website and change log say so in words.
+
 ## Make a release
 
 Short on purpose, so it still works in a few years. Do it only with the
 maintainer's authorization.
 
-1. **Fresh-machine test.** In the **Actions** tab, run **Fresh-machine test**
-   (about an hour). It installs TeX on clean Windows, macOS, and Ubuntu
-   machines as the guide says and compiles the starter. All four must pass.
-1. **Update the download links** to the new tag: `docs/get-started.md`
-   (Step 2 and Step 3b) and `README.md` ("Download") point at the release
-   files `rpi-thesis-starter-v<version>.zip` and `rpi-thesis-overleaf-v<version>.zip`.
-   After publishing, open both links and the "Open the starter in Overleaf"
-   link once to confirm they work.
-1. **Real-student test.** Someone new to the toolkit completes
-   [Get started](../get-started.md) unaided, on Overleaf and on a computer,
-   up to a PDF with their name on it. Fix what made them pause.
-2. **OGE preliminary review of the sample PDF** (master's and doctoral), when
-   authorized; see [OGE review packet](#oge-review-packet). Record the date
-   and the outcome in the change-log entry and, for open points, in
-   [requirements.md](requirements.md) (**Needs OGE confirmation**). Silence
-   is not approval.
-3. **Version and change log.** Set the version in the `\ProvidesClass` line
-   of `rpi-thesis.cls` (see the [compatibility promise](#compatibility-promise))
-   and in `CITATION.cff`. In `CHANGELOG.md`, replace "unreleased" with the
-   date; the entry starts with **Changes your PDF?**
-4. **Tag** the release commit on `main` as `vX.Y.Z`, matching the class
-   version, and push the tag.
-5. **Attach the CI-built ZIP.** From that commit's workflow run, download
-   the `starter-zip` artifact and attach the ZIP inside it to a new GitHub
-   Release for the tag, with the change-log entry as the release notes.
-6. **Point "Get the starter" at the release.** The first time only: in
-   `docs/get-started.md` (Step 2) and the `README.md` download section,
-   replace the "not published yet" note with a link to
-   `<repository_url>/releases/latest`. The landing page's **Get the starter**
-   button opens Step 2, so it follows.
+1. **Test.** In the **Actions** tab, run **Fresh-machine test** (about an
+   hour): it installs TeX on clean Windows, macOS, and Ubuntu machines as the
+   guide says and compiles the starter. All must pass. Before a minor or
+   major release, also have someone new complete [Get started](../get-started.md)
+   unaided, and, when authorized, request OGE's preliminary review of the
+   sample PDF ([OGE review packet](#oge-review-packet)); record the outcome in
+   the change-log entry and in [requirements.md](requirements.md). Silence is
+   not approval.
+2. **Set the version** ([versions](#versions)): the `\ProvidesClass` line in
+   `rpi-thesis.cls` (date and `vX.Y.Z`), the date in `main.tex`'s
+   `\documentclass{rpi-thesis}[...]`, and `version` and `date-released` in
+   `CITATION.cff`.
+3. **Change log.** In `CHANGELOG.md`, replace "unreleased" with the date; the
+   entry starts with **Changes your PDF?**
+4. **Download links.** Set `RELEASE_TAG` and `RELEASE_VERSION` in
+   `scripts/build_site.py` (the home page's "Get the starter" button downloads
+   from them), then point
+   `docs/get-started.md` (Step 2 and Step 3b) and `README.md` ("Download") at
+   the same release files. `build_site.py` stops if the three disagree.
+5. **Build and tag.** Run `python3 scripts/build_site.py --previews` and
+   `python3 scripts/package.py`, commit, tag the commit on `main` as
+   `vX.Y.Z`, and push the tag.
+6. **Publish the release** on GitHub for that tag with both ZIPs from
+   `dist/` and the change-log entry as the notes (mark beta releases as
+   pre-releases). Open both download links and the "Open the starter in
+   Overleaf" link once to confirm they work.
 7. **Publish the website** from the **Actions** tab ([the website](#the-website)).
+   Its deploy step runs `build_site.py --previews --publish`, which refuses
+   to publish while the class version differs from `RELEASE_VERSION` or any
+   guide page, diagram, preview, or the cheat sheet is missing. So the
+   website never describes files that the download does not contain.
 
 <!-- Maintainer: at each release, add date-released (YYYY-MM-DD) to CITATION.cff. -->
 

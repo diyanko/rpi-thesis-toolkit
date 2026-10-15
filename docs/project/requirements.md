@@ -27,44 +27,87 @@ official template;
 
 ## Requirements map
 
-| Requirement | Source | Implementation | Verification |
+How to read this page: **FC** is the Formatting Checklist and **LT** is
+*LaTeX Formatting Tips & Tricks* (both listed above); section and page
+numbers without a prefix are the manual's printed pages. "cls §N" in the
+**Where** column is the numbered section of `rpi-thesis.cls` (each starts
+with a banner comment such as `% 4. Page layout and spacing`). The tables
+follow the class's structure.
+
+### Page layout and spacing
+
+| Rule | Manual | Where | Checked by |
 | --- | --- | --- | --- |
-| US letter, 1 in margins on every page | §2.2 p. 16; FC | `geometry` options | check (paper size); visual |
-| Level-1 headings start at the top margin, not lower | §2.2; LT ("known glitch") | `\titleformat{\chapter}` | check (heading baseline 84 pt on every opening page) |
-| Front matter lowercase Roman; title is i, unnumbered; next page ii | §1.1 p. 1; FC | `\maketitle` (`\pagenumbering{roman}`) | check |
-| Body Arabic from 1 on the first page of Chapter 1 | §2.2 p. 16 | `\thesismainmatter` | check |
-| Page numbers 0.75 in from the edge; bottom center on front matter and on the first page of each chapter, references, appendix; top right elsewhere | §2.2 pp. 16-17; FC | `geometry` options; `\ps@rpibody`; `\pagestyle{plain}` | check (position on every page) |
-| Same font for text and page numbers; text ≥ 10 pt (12 pt Times-like) | §2.1 p. 16; FC | `newtxtext` (pdfLaTeX), `\setmainfont` (LuaLaTeX, XeLaTeX); `\ps@rpibody` | visual; fonts embedded (pdfTeX default) |
-| All text black, including URLs and links | §2.1 p. 16; §1.3 p. 4; FC | `hyperref` option `hidelinks` | visual |
-| URLs in the text font | FC ("same font throughout") | `\urlstyle{same}` | visual |
-| Body double spaced (≤ 4 lines/in) | §2.1 p. 16; FC | `\doublespacing` | visual |
-| Single spaced: captions, footnotes, block quotes, chapter attributions; references single with a blank line between | §2.1 p. 16 | `\AtBeginEnvironment` (`\singlespacing`), `\chapterattribution`; `main.tex` `singlespace`; `preamble.tex` `\bibitemsep` | visual (stress test incl. longtable and rotated table) |
-| Title page: title caps bold; name bold; degree caps italic; "Approved by:"; names single spaced with ", Chair"; department italic; RPI, Troy, New York; [Month Year]; seal | §1.1 pp. 1-2; FC | `\maketitle`, seal box `\rpi_seal:` and `\rpi_seal_placeholder:`; `metadata.tex`; seal downloaded by the student (`assets/README.md`) | check (degree, date, placeholder exactly when the seal is absent); visual |
-| Degree wording: Master of Science / Doctor of Philosophy / Doctor of Engineering | §1.1 p. 1 | `\thesissetup` key `degree` | check (three degree cases) |
-| Graduation month only May, August, December; four-digit year; chair present | §1.1 p. 1 | `\thesissetup` key `graduation-month`; `\rpi_validate:` | check (rejections) |
+| US letter, 1 in margins on every page | §2.2 p. 16; FC | cls §4: `geometry` options | check (paper size); visual |
+| Level-1 headings start at the top margin, not lower | §2.2; LT ("known glitch") | cls §5: `\titleformat{\chapter}` | check (heading baseline 84 pt on every opening page) |
+| Body double spaced (≤ 4 lines/in) | §2.1 p. 16; FC | cls §4: `\doublespacing` | visual |
+| Single spaced: captions, footnotes, block quotes, chapter attributions; references single with a blank line between | §2.1 p. 16 | cls §4, §7: `\AtBeginEnvironment` (`\singlespacing`); cls §12: `\chapterattribution`, `\thesisreferences`; `preamble.tex`: `\bibitemsep` | visual (stress test incl. longtable and rotated table) |
+
+### Fonts
+
+| Rule | Manual | Where | Checked by |
+| --- | --- | --- | --- |
+| Same font for text and page numbers; text ≥ 10 pt (12 pt Times-like) | §2.1 p. 16; FC | cls §2: `newtxtext` (pdfLaTeX), `\setmainfont` (LuaLaTeX, XeLaTeX); cls §8: `\ps@rpibody` | visual; fonts embedded (pdfTeX default) |
+| All text black, including URLs and links | §2.1 p. 16; §1.3 p. 4; FC | cls §13: `hyperref` option `hidelinks` | visual |
+| URLs in the text font | FC ("same font throughout") | cls §13: `\urlstyle{same}` | visual |
+
+### Page numbers
+
+| Rule | Manual | Where | Checked by |
+| --- | --- | --- | --- |
+| Front matter lowercase Roman; title is i, unnumbered; next page ii | §1.1 p. 1; FC | cls §8, §12: `\maketitle` (`\pagenumbering{roman}`) | check |
+| Body Arabic from 1 on the first page of Chapter 1 | §2.2 p. 16 | cls §12: `\thesismainmatter` | check |
+| Page numbers 0.75 in from the edge; bottom center on front matter and on the first page of each chapter, references, appendix; top right elsewhere | §2.2 pp. 16-17; FC | cls §4: `geometry` options; cls §8: `\ps@rpibody`, `\pagestyle{plain}` | check (position on every page) |
+
+### Title page and copyright
+
+| Rule | Manual | Where | Checked by |
+| --- | --- | --- | --- |
+| Title page: title caps bold; name bold; degree caps italic; "Approved by:"; names single spaced with ", Chair"; department italic; RPI, Troy, New York; [Month Year]; seal | §1.1 pp. 1-2; FC | cls §11: `\maketitle`, seal box `\rpi_seal:` and `\rpi_seal_placeholder:`; `metadata.tex`; seal downloaded by the student (`assets/README.md`) | check (degree, date, placeholder exactly when the seal is absent); visual |
+| Degree wording: Master of Science / Doctor of Philosophy / Doctor of Engineering | §1.1 p. 1 | cls §10: `\thesissetup` key `degree` | check (three degree cases) |
+| Graduation month only May, August, December; four-digit year; chair present | §1.1 p. 1 | cls §10: `\thesissetup` key `graduation-month`; `\rpi_validate:` | check (rejections) |
 | Full department name | §1.1 p. 1 | `metadata.tex` comment | student |
-| Copyright page optional; page ii; "© year / By / Name / All rights reserved" | §1.2 p. 3; FC | `\thesisfrontmatter` (key `copyright-page`) | check (page ii, text) |
-| Front-matter order: title, copyright, contents, tables, figures, (nomenclature), preface/acknowledgment, abstract | Table 1.1 p. 15; FC | `\thesisfrontmatter`; `main.tex` | check (order) |
-| Contents lists all front matter except title, copyright, itself; all chapters, sections, references, appendices; plain weight; numbers right aligned; text clear of number column | §1.3 p. 4; FC | section comment "Contents and lists (tocloft)"; `\frontchapter` | check (entries); stress test to 12.10.10.10 |
-| Contents entries identical to body headings | §1.3 p. 4 | `\cftchapaftersnum` ("1." and "A.") | check |
-| Lists of tables/figures when present; full caption; entries separated by a space; appendix objects included | §§1.4-1.5 pp. 7-10; FC | section comment "Contents and lists (tocloft)"; `\thesisfrontmatter` (`\listoftables`, `\listoffigures`); `build.py` short-caption hint | check (full captions); visual |
-| Nomenclature/list of equations optional, after lists, in contents, formatted like the lists | §1.6 p. 13; FC | `main.tex` comment; `\frontchapter`; recipe in `docs/advanced.md` (`longtable`, single spaced by the class, 10 pt between entries like the lists) | visual (recipe, three engines); student |
+| Copyright page optional; page ii; "© year / By / Name / All rights reserved" | §1.2 p. 3; FC | cls §12: `\thesisfrontmatter` (key `copyright-page`) | check (page ii, text) |
+
+### Contents and lists
+
+| Rule | Manual | Where | Checked by |
+| --- | --- | --- | --- |
+| Front-matter order: title, copyright, contents, tables, figures, (nomenclature), preface/acknowledgment, abstract | Table 1.1 p. 15; FC | cls §12: `\thesisfrontmatter`; `main.tex` | check (order) |
+| Contents lists all front matter except title, copyright, itself; all chapters, sections, references, appendices; plain weight; numbers right aligned; text clear of number column | §1.3 p. 4; FC | cls §6 "Contents and lists"; `\frontchapter` | check (entries); stress test to 12.10.10.10 |
+| Contents entries identical to body headings | §1.3 p. 4 | cls §6: `\cftchapaftersnum` ("1." and "A.") | check |
+| Lists of tables/figures when present; full caption; entries separated by a space; appendix objects included | §§1.4-1.5 pp. 7-10; FC | cls §6 "Contents and lists"; cls §12: `\thesisfrontmatter` (`\listoftables`, `\listoffigures`); `build.py` short-caption hint | check (full captions); visual |
+| Nomenclature/list of equations optional, after lists, in contents, formatted like the lists | §1.6 p. 13; FC | `main.tex` comment; cls §12: `\frontchapter`; recipe in `docs/advanced.md` (`longtable`, single spaced by the class, 10 pt between entries like the lists) | visual (recipe, three engines); student |
 | Abstract required; no length limit; no figures, references, attributions | §1.8 p. 14 | `frontmatter/abstract.tex` | student |
-| Level-1 titles formatted alike in body and contents; levels 2-4 one case; every level distinct; none smaller than text | §2.3 pp. 17-18; FC | section comment "Headings follow RPI's original thesis.cls"; level 4 italic `\titleformat{\subsubsection}` | visual; student (case) |
-| Tables/figures centered; table captions above, figure captions below; bold; one alignment; colon delimiter; chapter numbering with periods; no color | §§2.4-2.5 pp. 18-22; FC | `\captionsetup`; sample floats | visual |
-| Landscape table: caption "above" (left); page number placement | §2.4 p. 19, Fig. 2.4 | `rotating` `sidewaystable`; top-right number stays in place | visual (stress test); see confirmation list |
+
+### Headings
+
+| Rule | Manual | Where | Checked by |
+| --- | --- | --- | --- |
+| Level-1 titles formatted alike in body and contents; levels 2-4 one case; every level distinct; none smaller than text | §2.3 pp. 17-18; FC | cls §5 "Headings"; level 4 italic `\titleformat{\subsubsection}` | visual; student (case) |
+
+### Captions, tables and figures
+
+| Rule | Manual | Where | Checked by |
+| --- | --- | --- | --- |
+| Tables/figures centered; table captions above, figure captions below; bold; one alignment; colon delimiter; chapter numbering with periods; no color | §§2.4-2.5 pp. 18-22; FC | cls §7: `\captionsetup`; sample floats | visual |
+| Landscape table: caption "above" (left); page number placement | §2.4 p. 19, Fig. 2.4 | cls §7: `rotating` `sidewaystable`; top-right number stays in place | visual (stress test); see confirmation list |
+| Lettered figure parts: only the letter in the figure, explanation in the caption, one letter style throughout | §2.5 pp. 22-23 | subfigure recipe in `docs/advanced.md` (`subcaption`, empty sub-captions print "(a)"); only the main caption enters the list of figures | visual (recipe, three engines); student (letter style) |
 | Reproduced tables/figures: full citation and permission or license wording in caption | §2.6 pp. 24-25 | `chapters/02-research.tex` example | student |
+
+### Equations
+
+| Rule | Manual | Where | Checked by |
+| --- | --- | --- | --- |
 | Equations centered, numbered right in parentheses, multi-line number centered, every display numbered | §2.7 pp. 26-27; FC | amsmath defaults; sample `split` | visual; student |
 | Displays inside a lemma, algorithm, theorem, or proof may be unnumbered | §2.7 p. 27 | theorem and algorithm recipes in `docs/advanced.md` (`amsthm`, `algorithm`, `algpseudocode`; lines commented out in `preamble.tex`); `package/amsthm/before` hook lets `amsthm` load after `newtxmath` (pdfLaTeX) | visual (recipe, three engines) |
-| Lettered figure parts: only the letter in the figure, explanation in the caption, one letter style throughout | §2.5 pp. 22-23 | subfigure recipe in `docs/advanced.md` (`subcaption`, empty sub-captions print "(a)"); only the main caption enters the list of figures | visual (recipe, three engines); student (letter style) |
-| Chapter attribution at the bottom of the chapter's first page, no mark, single spaced, citation style; wording per Table 2.1 | §2.8 pp. 27-29; FC | `\chapterattribution`; wording in `chapters/02-research.tex` comment | check (unmarked, first page) |
+
+### Chapter attributions
+
+| Rule | Manual | Where | Checked by |
+| --- | --- | --- | --- |
+| Chapter attribution at the bottom of the chapter's first page, no mark, single spaced, citation style; wording per Table 2.1 | §2.8 pp. 27-29; FC | cls §12: `\chapterattribution`; wording in `chapters/02-research.tex` comment | check (unmarked, first page) |
 | Reused work needs a chapter attribution even when the student is the sole author; the Declaration of Co-Contribution lists every attributed article except sole-authored ones | §2.8.1 p. 28 | `docs/writing.md` ("Chapters based on published papers"), `docs/submission.md`; `chapters/02-research.tex` comment | student |
-| Citation style suited to the field, checked against the official guide | §3.2 pp. 32-34 | style isolated in `preamble.tex` | student |
-| In-text citations follow the chosen style; sequential numbers for styles such as IEEE, non-sequential numbers for SIAM (alphabetical list), author-year for APA | §3.3 p. 34 | style isolated in `preamble.tex`; `docs/citations.md` ("Numbered styles: check delayed figures and tables") | student |
-| Sequential numbered styles: reference 1 is the first citation in Chapter 1; a caption's citation numbered where its table or figure appears in the body, not in the front matter | FC (does not apply to non-sequential styles such as SIAM, §3.3 p. 34) | Sample uses `sorting=none`: numbers follow source order, so a float placed on a later page can carry a lower number than nearby text (tested); list-of-figures citations do not affect numbering (tested); `docs/citations.md` explains the fixes (move the float's source or cite earlier) | student (delayed floats) |
-| Access date for every URL (not DOIs), in the style's format | §3.4 p. 34; FC | `references.bib` example; `build.py` hint | build hint; tested: numeric, IEEE, APA, Chicago author-date, chem-acs print it |
-| References before appendices; appendices lettered with titles; in contents | App. A p. 38 | `main.tex`; section comment "Appendices: lettered like chapters" (`\appendicesname`) | check |
-| Permissions appendix lists file information, not the files | §A.1 pp. 38-39 | skeleton in `appendices/additional-material.tex` | student |
 
 Chapter attribution wording (manual Table 2.1, p. 29), followed by the full
 citation in the chosen style:
@@ -74,6 +117,28 @@ citation in the chosen style:
 | Published in a journal, presented at a conference, or a preprint | Portions of this chapter (or This chapter) have (has) previously appeared as: |
 | Accepted, not yet published | Portions of this chapter (or This chapter) are (is) to appear as: |
 | Submitted or under review | Portions of this chapter (or This chapter) are (is) under review as: — or — have (has) been submitted as: (with the journal or conference name) |
+
+### Citations and references
+
+| Rule | Manual | Where | Checked by |
+| --- | --- | --- | --- |
+| Citation style suited to the field, checked against the official guide | §3.2 pp. 32-34 | style isolated in `preamble.tex` | student |
+| In-text citations follow the chosen style; sequential numbers for styles such as IEEE, non-sequential numbers for SIAM (alphabetical list), author-year for APA | §3.3 p. 34 | style isolated in `preamble.tex`; `docs/citations.md` ("Numbered styles: check delayed figures and tables") | student |
+| Access date for every URL (not DOIs), in the style's format | §3.4 p. 34; FC | `references.bib` example; `build.py` hint | build hint; tested: numeric, IEEE, APA, Chicago author-date, chem-acs print it |
+| Sequential numbered styles: reference 1 is the first citation in Chapter 1; a caption's citation numbered where its table or figure appears in the body, not in the front matter | FC (does not apply to non-sequential styles such as SIAM, §3.3 p. 34) | See note below | student (delayed floats) |
+
+Note on the sequential-numbering row: the sample uses `sorting=none`, so
+numbers follow source order, and a float placed on a later page can carry a
+lower number than nearby text (tested). List-of-figures citations do not
+affect numbering (tested). `docs/citations.md` explains the fixes (move the
+float's source or cite earlier).
+
+### Appendices and permissions
+
+| Rule | Manual | Where | Checked by |
+| --- | --- | --- | --- |
+| References before appendices; appendices lettered with titles; in contents | App. A p. 38 | `main.tex` (`\thesisreferences`, cls §12); cls §9 "Appendices: lettered like chapters" (`\appendicesname`) | check |
+| Permissions appendix lists file information, not the files | §A.1 pp. 38-39 | skeleton in `appendices/additional-material.tex` | student |
 
 ## Differences from RPI's official LaTeX template
 

@@ -13,8 +13,9 @@ messages. When in doubt, choose the plainer sentence.
   speaker. Short sentences, one idea each. Define a technical word (compile,
   class file, package, preamble, environment, command, repository, ZIP,
   terminal) the first time a page uses it, in a few plain words.
-- Mark every terminal command as optional or "for experienced users", and
-  give a route without it.
+- Mark every terminal command as optional ("Optional:", "If you already use
+  LaTeX:"), and give a route without it. Never gatekeep ("for experienced
+  users", "for experts").
 - Scope formatting claims: the class formats RPI graduate theses and
   dissertations to OGE's rules. The writing, citation, figure, and workflow
   help suits any student and any document, but never imply the class meets
@@ -36,12 +37,13 @@ messages. When in doubt, choose the plainer sentence.
   whose only visible content is one sentence and a toggle: show the beginner
   route and collapse only the extra detail.
 - Make the summary say who it is for and what is inside, with a consistent
-  prefix: "For experienced users: ...", "If you use Windows: ...", "If the
-  LaTeX installation fails: ...", "Example: ...", or "Optional: ...". Use the
-  clearest one rather than repeating "For experienced users".
+  prefix: "Optional: ...", "If you already use LaTeX: ...", "If you use
+  Windows: ...", "If the LaTeX installation fails: ...", or "Example: ...".
+  Use the clearest one; avoid gatekeeping labels such as "For experienced
+  users".
 
   ```html
-  <details><summary>For experienced users: convert a long draft with Pandoc</summary>
+  <details><summary>Optional: convert a long draft with Pandoc</summary>
 
   Text in Markdown here.
 
@@ -89,11 +91,12 @@ the full explanation in one bounded place
   never disparage it, and never present the preference as an RPI rule.
   Recommend no plugin collections, note-taking systems, or new apps just to
   start writing.
-- **Tools by role:** tools are organized by their role in the work (draft,
-  review, cite, make figures, assemble, reuse) in one table on
-  [how it works](../how-it-works.md#the-suggested-workflow-and-why). Each tool
-  has one canonical explanation; the table and other pages link to it rather
-  than describing the tool again.
+- **Tools by task:** keep the practical helper picker visible in
+  [writing basics](../writing.md#helpers-for-common-tasks), with direct links
+  from [How do I…?](../how-do-i.md) and the relevant writing steps. Drafting
+  choices stay in How it works; review and conversion help stay in Workflows.
+  Each tool has one canonical explanation; link to it rather than repeating
+  a catalog across pages.
 - **Citations:** a formatted citation typed as text, a citation-manager field,
   and a portable citation key are different things; only the key in
   `references.bib` works with `\cite`.
@@ -164,6 +167,11 @@ optional:
   one only after a re-review recorded there. Present them as optional,
   independent third-party services, and favour tools whose output stays an
   editable file.
+- **Conversions:** students can describe an input, desired output, operating
+  system, and target example in ordinary words. Explain that some assistants
+  suggest steps and some can work on supplied files. Keep the original and
+  compare the output; do not call AI deterministic or promise lossless
+  conversion. Link one reusable prompt rather than adding one for each format.
 - **Benefits first, then a short check:** share the first error and a small
   example; try one change; compile and look; undo if it does not help. One
   line about not sharing confidential material; no long warning sections.
@@ -220,6 +228,23 @@ first. End it so the next step is obvious: the previous/next links follow
 Every page stands alone: a student may arrive from a search engine, so link to
 the exact section instead of writing "as described above" or "on the previous
 page".
+
+Direct section links need the same care: name the prerequisite, where a
+snippet belongs, and the next action. Let a reader choose a route before a
+large diagram or reference table; keep required steps outside disclosures.
+Put optional examples and uncommon troubleshooting details behind clear
+summaries.
+
+## Copyable terminal commands
+
+Keep commands optional and link to the route without a terminal. Before a
+command, name the folder to run it from, what to replace, and the expected
+output. Use one line per command and quote example file names when they can
+contain spaces. Put explanations outside the copyable block, not in inline
+shell comments. Check syntax against macOS, Windows, and Linux; where the
+shell matters, name it and give the appropriate route. Do not assume that
+redirection, comments, or line continuations behave alike in every shell.
+Record which systems were actually tested rather than implying all were.
 
 ## Error messages and LaTeX comments
 

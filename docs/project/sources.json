@@ -163,7 +163,7 @@
           "https://pandoc.org/installing.html"
         ],
         "task": "optional first pass of a long Markdown chapter into chapter content",
-        "status": "optional, experienced users only",
+        "status": "optional, for students comfortable with a terminal",
         "verified": "Pandoc 3.11, command: pandoc my-chapter.md --to=latex --biblatex --top-level-division=chapter --output=my-chapter.tex. Output is a fragment (no preamble) without --standalone. [@key] -> \\autocite{key}, @key -> \\textcite{key}; without --biblatex citations stay as text. # -> \\chapter, ## -> \\section (default: # -> \\section). $$...$$ -> \\[ \\] (unnumbered). Pipe table -> longtable with \\noalign{} and \\endhead; caption only from a ': Caption' line; class does not load longtable, so compile fails (Environment longtable undefined); it compiles when \\usepackage{longtable} is uncommented in preamble.tex. Image -> \\pandocbounded{\\includegraphics[keepaspectratio,alt={...}]{...}} in figure without placement; \\pandocbounded undefined. {#fig:x} -> \\label{fig:x}. Tight lists emit \\tightlist (undefined); loose lists do not. Raw \\ref passes through; ~ becomes \\textasciitilde{}. %, &, _, #, $ escaped. After the cleanup listed in the guide, a converted chapter compiled with latexmk -norc -pdf in a scratch copy of the starter: no errors, citation printed [1], equation, table, and figure numbered 4.1 and listed in the lists of tables and figures."
       },
       {
