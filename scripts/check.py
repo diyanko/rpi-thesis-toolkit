@@ -418,6 +418,7 @@ def main():
         for name, before, after, error in [
             ("invalid-year", "{2027}", "{27}", "Graduation year must have four digits"),
             ("missing-chair", "[Chair]", "", "Committee chair is missing"),
+            ("blank-member", "[Chair]{Your committee chair}", "[Chair]{}", "Blank committee member name"),
             (
                 "invalid-degree",
                 "degree = doctoral",
