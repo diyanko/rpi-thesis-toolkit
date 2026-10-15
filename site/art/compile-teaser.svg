@@ -47,6 +47,10 @@
       .code { fill: #e4dccf; }
       .muted { fill: #c3b8a8; }
     }
+    /* A halo the color of the page behind each handwritten note keeps it readable
+       where it crosses a line, and if a browser draws this picture in the other theme. */
+    .hand { paint-order: stroke; stroke: #f3ecdf; stroke-width: 5px; stroke-linejoin: round; }
+    @media (prefers-color-scheme: dark) { .hand { stroke: #24211d; } }
   </style>
   <defs>
     <filter id="rough" filterUnits="userSpaceOnUse" x="-300" y="-300" width="1200" height="900">

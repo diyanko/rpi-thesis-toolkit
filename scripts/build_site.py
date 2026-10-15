@@ -37,9 +37,10 @@ HOME_DESCRIPTION = (
 # The guide, in reading order, grouped into stages: (stage, [(file in docs/,
 # label, also in the header?), ...]). The sidebar, header, previous/next links
 # and every page list come from here; the landing page's "Help at your level"
-# cards (site/index.html) follow the same four stages.
+# cards (site/index.html) list each stage's pages from here too.
 NAV = [
     ("Start", [
+        ("why-latex", "Why LaTeX for your thesis?", False),
         ("get-started", "Get started", True),
         ("bring-your-draft", "Bring your draft", False),
     ]),
@@ -58,6 +59,25 @@ NAV = [
     ]),
 ]
 GUIDE = [page for _, pages in NAV for page in pages]  # the same pages, in one list
+# Quick answers: a guide page outside the stages and the previous/next chain.
+# It sits above the stages in the sidebar, last in the header, and in the
+# "Stuck, or nearly done" card on the landing page.
+QUICK = ("how-do-i", "How do I…?", True)
+# When a student needs each page, shown as a small tag beside every link to
+# it in the sidebar, and under the page title. The landing-page cards leave
+# it out: each card's stage already says when you need its pages.
+# Tag -> (CSS class in site.css, pages). Every guide page has exactly one tag.
+TAGS = {
+    "Start here": ("start", ["why-latex"]),
+    "Need now": ("now", ["get-started", "writing", "citations"]),
+    "If you have a draft": ("draft", ["bring-your-draft"]),
+    "When stuck": ("stuck", ["troubleshooting", "how-do-i"]),
+    "Need later": ("later", ["submission"]),
+    "Optional": ("optional", ["how-it-works", "workflows", "advanced"]),
+}
+PAGE_TAGS = {page: (tag, css) for tag, (css, pages) in TAGS.items() for page in pages}
+# Guide pages with at least this many ## sections get an "On this page" list.
+TOC_MIN = 5
 # Project pages: source -> (name in project/, footer label or None). Pages
 # with None are built and linked from other pages, but are not in the footer.
 # docs/project/ pages are for maintainers and stay out of the starter ZIP.
@@ -74,9 +94,10 @@ PROJECT = {
 # Footer "Help & feedback" link: the one place the help/feedback form URL lives.
 FEEDBACK = ("docs/troubleshooting.md", "Ask for help")
 # "Anatomy of your thesis" on the landing page: (picture name in previews.py,
-# label, what you edit, what is automatic). `code` becomes <code>. Without
-# --previews the same rows show as a small table. The title page, which
-# carries the RPI seal, is never pictured.
+# label, what you edit, what is automatic). `code` becomes <code>. With
+# --previews each row shows the whole page, a close-up you can read, and a
+# link to the page at full size; without, the same rows show as a small table.
+# The title page, which carries the RPI seal, is never pictured.
 ANATOMY = [
     ("contents", "Contents", "nothing; your `\\chapter` and `\\section` headings fill it in",
      "titles, dot leaders and page numbers"),
@@ -89,7 +110,8 @@ ANATOMY = [
     ("appendix", "An appendix", "`appendices/additional-material.tex`",
      "the letters A, B, C and the contents entry"),
 ]
-ALLOWED = {".html", ".css", ".svg", ".woff2"}  # plus fonts/*.txt, previews/*.png|webp, og-image.png
+ALLOWED = {".html", ".css", ".svg", ".woff2"}  # plus fonts/*.txt, previews/*.png|webp, og-image.png,
+                                              # sitemap.xml, robots.txt and copy.js
 # The one PDF the website may hold: the cheat sheet (no RPI artwork), built
 # from cheatsheet/cheatsheet.tex with --previews or --cheatsheet. The offline
 # guide never holds it; package.py puts it at the ZIP root, beside guide/, as
@@ -180,19 +202,32 @@ def edition():
     )
 
 
-def last_updated(source):
-    """'14 Oct 2026' from the last commit that changed `source`; '' without Git history."""
+def last_commit(source):
+    """Date of the last commit that changed `source`; None without Git history."""
     try:
         day = subprocess.run(
             ["git", "log", "-1", "--format=%cs", "--", source],
             cwd=ROOT, capture_output=True, text=True, timeout=20,
         ).stdout.strip()
-        if not day:
-            return ""
-        day = date.fromisoformat(day)
-        return f"{day.day} {day:%b %Y}"
+        return date.fromisoformat(day) if day else None
     except (OSError, ValueError, subprocess.SubprocessError):
-        return ""
+        return None
+
+
+def last_updated(source):
+    """'14 Oct 2026' from the last commit that changed `source`; '' without Git history."""
+    day = last_commit(source)
+    return f"{day.day} {day:%b %Y}" if day else ""
+
+
+def svg_size(path):
+    """(width, height) from an SVG's viewBox, so the page reserves its space; None if unknown."""
+    try:
+        match = re.search(r'viewBox="\s*[\d.-]+[\s,]+[\d.-]+[\s,]+([\d.]+)[\s,]+([\d.]+)',
+                          path.read_text(encoding="utf-8"))
+    except OSError:
+        return None
+    return (round(float(match[1])), round(float(match[2]))) if match else None
 
 
 def slug(heading):
@@ -210,13 +245,25 @@ class Site:
         self.previews = {}       # name -> {width, height, page}, from previews.make()
         self.cheatsheet = ""     # where the cheat sheet PDF is, relative to the site root
         self.edition = edition()
+        self.meta = {}           # output page -> (title, description), checked after the build
         guide = "" if offline else "guide/"
         self.pages = {"site/index.html": "index.html"}
-        self.pages.update({f"docs/{name}.md": f"{guide}{name}.html" for name, _, _ in GUIDE})
+        # A guide page in NAV whose Markdown file is not written yet is left
+        # out with a warning, and links to it keep only their text.
+        self.planned = set()
+        for name, _, _ in GUIDE + [QUICK]:
+            if name not in PAGE_TAGS:
+                self.errors.append(f"docs/{name}.md: give the page a tag in TAGS in scripts/build_site.py.")
+            if (ROOT / f"docs/{name}.md").is_file():
+                self.pages[f"docs/{name}.md"] = f"{guide}{name}.html"
+            else:
+                self.planned.add(f"docs/{name}.md")
+                self.warnings.append(f"docs/{name}.md is in NAV but not written yet; left out of the guide.")
         for source, (name, _) in PROJECT.items():
             if not (offline and source.startswith("docs/project/")):
                 self.pages[source] = f"project/{name}.html"
-        self.assets = {"site/site.css": "site.css", "site/logo.svg": "logo.svg"}
+        self.assets = {"site/site.css": "site.css", "site/logo.svg": "logo.svg",
+                       "site/copy.js": "copy.js"}  # optional "Copy" buttons on code blocks
         if not offline:  # GitHub Pages serves /404.html; the link-preview picture is online only
             self.pages["site/404.html"] = "404.html"
             self.assets["site/og-image.png"] = "og-image.png"
@@ -257,6 +304,9 @@ class Site:
             return self.relative(here, self.cheatsheet)
         if target.startswith("docs/diagrams/"):  # planned diagram, not drawn yet
             return self.relative(here, "diagrams/" + posixpath.basename(target))
+        if target in self.planned:  # planned guide page, not written yet
+            self.warnings.append(f"{source}: link to a guide page not written yet: {href}")
+            return None
         if target.startswith("..") or not (ROOT / target).exists():
             self.errors.append(f"{source}: link to a missing file: {href}")
             return None
@@ -321,8 +371,8 @@ class Site:
         return re.sub(r"<!--\s*preview ([\w-]+):(.*?)-->", figure, html, flags=re.S)
 
     def anatomy(self, here):
-        """Rows for "Anatomy of your thesis" on the landing page, with a picture
-        of each page when --previews made one."""
+        """Rows for "Anatomy of your thesis" on the landing page, with pictures
+        of each page when previews.py made them."""
         def code(text):
             # A long path may break only after a slash, never at its hyphen
             def path(match):
@@ -332,19 +382,67 @@ class Site:
 
             return re.sub(r"`([^`]+)`", path, escape(text))
 
+        def picture(name):
+            size = self.previews[name]
+            return {"src": self.relative(here, f"previews/{name}.png"),
+                    "width": size["width"], "height": size["height"]}
+
         rows = []
         for name, label, edit, auto in ANATOMY:
             row = {"label": escape(label), "edit": code(edit), "auto": code(auto)}
-            size = self.previews.get(name)
-            if size:
-                row["img"] = {
-                    "src": self.relative(here, f"previews/{name}.png"),
-                    "alt": escape(f"Page {size['page']} of the sample thesis: {label.lower()}"),
-                    "width": size["width"],
-                    "height": size["height"],
-                }
+            names = [f"anatomy-{name}", f"anatomy-{name}-lens", f"anatomy-{name}-full"]
+            if all(n in self.previews for n in names):
+                whole, lens, full = (picture(n) for n in names)
+                details = self.previews[names[1]]
+                whole["alt"] = escape(f"Whole page {details['printed']} of the sample thesis, "
+                                      "with the close-up area outlined")
+                lens["alt"] = escape(details["alt"])
+                x, y, w, h = details["spot"]
+                # On phones a close-up is shown larger, its right edge cut off,
+                # except where the right edge matters (the contents' page numbers)
+                row["img"] = {"page": whole, "lens": lens, "full": full["src"], "whole": name == "contents",
+                              "spot": f"left: {x}%; top: {y}%; width: {w}%; height: {h}%"}
             rows.append(row)
         return rows
+
+    @staticmethod
+    def page_top(body, name):
+        """Put the page's tag under its title and, on a page with TOC_MIN or more
+        ## sections, an "On this page" list after the opening paragraph. Returns
+        (body, [{href, label}]); the template also shows the list beside the
+        text on wide screens."""
+        if name in PAGE_TAGS:
+            tag, css = PAGE_TAGS[name]
+            badge = (f'<p class="page-tag"><span class="tag tag-{css}">'
+                     f'<span class="visually-hidden">When you need this page: </span>{escape(tag)}</span></p>')
+            body = re.sub(r"</h1>", lambda m: m[0] + "\n" + badge, body, count=1)
+        toc = [
+            {"href": "#" + anchor, "label": escape(unescape(re.sub(r"<[^>]+>", "", text)).strip())}
+            for anchor, text in re.findall(r'<h2 id="([^"]+)"[^>]*>(.*?)</h2>', body, flags=re.S)
+        ]
+        if len(toc) < TOC_MIN:
+            return body, []
+        links = "".join(f'<li><a href="{entry["href"]}">{entry["label"]}</a></li>' for entry in toc)
+        box = (f'<details class="page-toc"><summary>On this page</summary>'
+               f'<nav aria-label="On this page"><ol>{links}</ol></nav></details>')
+        opening = re.search(r'</h1>\s*(?:<p class="page-tag">.*?</p>\s*)?(?:<p>.*?</p>)?', body, flags=re.S)
+        if opening:
+            body = body[: opening.end()] + "\n" + box + body[opening.end() :]
+        return body, toc
+
+    def timeline(self, here):
+        """The "Your thesis, start to finish" drawing on the landing page, with
+        the taller -narrow version for phones when it exists."""
+        name = "docs/diagrams/thesis-timeline"
+        entry = {"src": self.relative(here, "diagrams/thesis-timeline.svg")}
+        size = svg_size(ROOT / f"{name}.svg")
+        if size:
+            entry.update(width=size[0], height=size[1])
+        else:
+            self.warnings.append(f"{name}.svg is not drawn yet; the landing page links to it anyway.")
+        if (ROOT / f"{name}-narrow.svg").is_file():
+            entry["narrow"] = self.relative(here, "diagrams/thesis-timeline-narrow.svg")
+        return entry
 
     def render(self, source):
         here = self.pages[source]
@@ -364,16 +462,31 @@ class Site:
             body = self.pictures(body, source, here)
             # A scroll box lets wide tables scroll on phones without losing table semantics.
             body = re.sub(r"<table\b.*?</table>", r'<div class="table-wrap">\g<0></div>', body, flags=re.S)
+            toc = []
+            if kind == "guide":
+                body, toc = self.page_top(body, Path(source).stem)
 
-        def item(path, label):
+        def item(path, label, name=None):
             entry = {"href": self.relative(here, path), "label": escape(label)}
+            if name in PAGE_TAGS:
+                entry.update(tag=escape(PAGE_TAGS[name][0]), tagclass=PAGE_TAGS[name][1])
             return {**entry, "current": True} if path == here else entry
 
-        nav = [item(self.pages[f"docs/{name}.md"], label) for name, label, _ in GUIDE]
-        groups, start = [], 0
+        def guide_item(name, label):
+            source = f"docs/{name}.md"
+            return item(self.pages[source], label, name) if source in self.pages else None
+
+        chain = [(name, label, top) for name, label, top in GUIDE if f"docs/{name}.md" in self.pages]
+        nav = [guide_item(name, label) for name, label, _ in chain]
+        quick = guide_item(*QUICK[:2])
+        groups, stages = [], {}
         for stage, pages in NAV:
-            groups.append({"label": escape(stage), "pages": nav[start : start + len(pages)]})
-            start += len(pages)
+            entries = [entry for entry in (guide_item(name, label) for name, label, _ in pages) if entry]
+            groups.append({"label": escape(stage), "pages": entries})
+            stages[re.sub(r"\W+", "_", stage.lower())] = entries  # Fix and finish -> fix_and_finish
+        header = [entry for entry, (_, _, top) in zip(nav, chain) if top]
+        if quick and QUICK[2]:
+            header.append(quick)
         values = {
             "lang": "en",
             "kind": kind,
@@ -381,9 +494,9 @@ class Site:
             "pagetitle": escape(HOME_TITLE if kind == "home" else f"{title} · {NAME}"),
             "description": escape(description),
             "root": self.relative(here, "x")[:-1],
-            "nav": nav,
+            "nav": nav + ([quick] if quick else []),
             "navgroups": groups,
-            "header": [entry for entry, (_, _, top) in zip(nav, GUIDE) if top],
+            "header": header,
             "project": [
                 item(self.pages[path], label)
                 for path, (_, label) in PROJECT.items()
@@ -392,21 +505,33 @@ class Site:
             "edition": escape(self.edition),
             "feedback_url": self.relative(here, self.feedback),
         }
+        if quick:
+            values["quick"] = quick
         if kind == "home":
             values["home"] = True
+            values["stages"] = stages
             values["anatomy"] = self.anatomy(here)
-            if self.previews:
+            values["timeline"] = self.timeline(here)
+            if all("img" in row for row in values["anatomy"]):
                 values["pictures"] = True
         if kind == "guide":
-            index = [name for name, _, _ in GUIDE].index(Path(source).stem)
-            if index > 0:
-                values["prev"] = nav[index - 1]
-            if index + 1 < len(nav):
-                values["next"] = nav[index + 1]
+            names = [name for name, _, _ in chain]
+            if Path(source).stem in names:
+                index = names.index(Path(source).stem)
+                if index > 0:
+                    values["prev"] = nav[index - 1]
+                if index + 1 < len(nav):
+                    values["next"] = nav[index + 1]
+            elif nav:  # quick answers sit outside the chain: offer the start of the guide
+                values.update(next=nav[0], next_label="Start the guide")
             values["pager"] = True
             values["updated"] = last_updated(source)
+            if toc:
+                values["toc"] = toc
         if kind == "notfound":
             values["notfound"] = True
+        else:  # every indexed page needs its own title and description
+            self.meta[here] = (values["pagetitle"], values["description"])
         if self.url and (ROOT / "site/og-image.png").exists():
             values.update(og_image=self.url + "/og-image.png", og_image_alt=escape(OG_ALT))
         if self.url and kind != "notfound":
@@ -438,6 +563,21 @@ def make_previews(destination):
     from previews import make
 
     return make(destination / "previews")
+
+
+def reuse_previews(destination):
+    """The offline guide reuses the pictures of the last build_site.py --previews
+    run (dist/site/previews), as package.py reuses its cheat sheet; {} if none."""
+    from previews import read
+
+    source = ROOT / "dist/site/previews"
+    if not source.is_dir() or source.is_symlink() or destination.resolve() == source.parent.resolve():
+        return {}
+    (destination / "previews").mkdir()
+    for path in source.glob("*.png"):
+        if path.is_file() and not path.is_symlink():
+            shutil.copyfile(path, destination / "previews" / path.name)
+    return read(destination / "previews")
 
 
 def build_cheatsheet(destination):
@@ -526,7 +666,7 @@ def validate(destination, beside=()):
             errors.append(f"Private or source folder in the website: {relative}")
         elif path.is_dir() or suffix in ALLOWED:
             pass
-        elif relative.as_posix() in ("og-image.png", CHEATSHEET_PDF):
+        elif relative.as_posix() in ("og-image.png", CHEATSHEET_PDF, "sitemap.xml", "robots.txt", "copy.js"):
             pass
         elif not (top == "previews" and suffix in {".png", ".webp"}) and not (
             top == "fonts" and suffix == ".txt"
@@ -538,6 +678,28 @@ def validate(destination, beside=()):
         if suffix == ".svg" and re.search(r"<image\b|data:image", path.read_text(encoding="utf-8")):
             errors.append(f"{relative}: embedded picture in a diagram; draw it with vector shapes")
     return errors, warnings, len(pages)
+
+
+def write_sitemap(site, destination):
+    """sitemap.xml (every page but 404.html, with its canonical address) and a
+    robots.txt that allows everything and points to it."""
+    entries = []
+    for source, output in site.pages.items():
+        if source == "site/404.html":
+            continue
+        address = site.url + "/" + ("" if output == "index.html" else output)
+        day = last_commit(source)
+        lastmod = f"<lastmod>{day.isoformat()}</lastmod>" if day else ""
+        entries.append(f"  <url><loc>{escape(address)}</loc>{lastmod}</url>")
+    (destination / "sitemap.xml").write_text(
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + "\n".join(entries) + "\n</urlset>\n",
+        encoding="utf-8",
+    )
+    (destination / "robots.txt").write_text(
+        f"User-agent: *\nAllow: /\n\nSitemap: {site.url}/sitemap.xml\n", encoding="utf-8"
+    )
 
 
 def build_site(destination=None, offline=False, previews=False, cheatsheet=False):
@@ -557,6 +719,8 @@ def build_site(destination=None, offline=False, previews=False, cheatsheet=False
         shutil.copyfile(ROOT / source, destination / output)
     if previews:
         site.previews = make_previews(destination)
+    elif offline:
+        site.previews = reuse_previews(destination)
     if cheatsheet and offline:  # package.py adds the PDF beside guide/
         site.cheatsheet = "../" + OFFLINE_CHEATSHEET
     elif cheatsheet and build_cheatsheet(destination):
@@ -564,6 +728,17 @@ def build_site(destination=None, offline=False, previews=False, cheatsheet=False
     for source, output in site.pages.items():
         (destination / output).parent.mkdir(parents=True, exist_ok=True)
         (destination / output).write_text(site.render(source), encoding="utf-8")
+    for position, label in ((0, "title"), (1, "description")):
+        seen = {}
+        for page, meta in site.meta.items():
+            if not meta[position]:
+                site.errors.append(f"{page}: no {label}; add a first paragraph or a 'description:' line.")
+            elif meta[position] in seen:
+                problem = f"{page} and {seen[meta[position]]} share the {label} {meta[position]!r}"
+                (site.errors if label == "title" else site.warnings).append(problem)
+            seen.setdefault(meta[position], page)
+    if site.url:  # search engines only; the offline guide has no address
+        write_sitemap(site, destination)
     beside = {OFFLINE_CHEATSHEET} if site.cheatsheet.startswith("../") else set()
     errors, warnings, count = validate(destination, beside)
     for warning in site.warnings + warnings:
