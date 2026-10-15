@@ -1,12 +1,40 @@
-% Copyright (c) 2026 Diyanko Bhowmik and contributors. See LICENSE.md.
+% rpi-thesis.cls: the formatting for an RPI master's thesis or doctoral
+% dissertation. You normally never edit this file: your words go in chapters/,
+% your details in metadata.tex, and extra packages in preamble.tex.
+%
 % Unofficial community class; not affiliated with or endorsed by RPI or OGE.
+% Copyright (c) 2026 Diyanko Bhowmik and contributors. See LICENSE.md.
+%
+% For reviewers, including OGE staff: the class is the standard report class
+% plus only what RPI's rules require. Each section below names the part of
+% the Dissertation and Thesis Manual (2026) it follows; to adjust a rule,
+% change only that section. docs/project/requirements.md maps every rule to
+% its source and to how it is tested.
+%
+% What is in this file:
+%    1. Identity and options          8. Page numbers
+%    2. Fonts                         9. Appendices
+%    3. Packages                     10. Your thesis settings (metadata.tex)
+%    4. Page layout and spacing      11. Title page and seal
+%    5. Headings                     12. Commands for main.tex
+%    6. Contents and lists           13. Links and PDF properties
+%    7. Captions and floats
+
+% ---------------------------------------------------------------------------
+% 1. Identity and options
+% ---------------------------------------------------------------------------
 \NeedsTeXFormat{LaTeX2e}[2022-06-01]
-\ProvidesClass{rpi-thesis}[2026/10/14 v0.1.0 RPI community thesis starter]
+\ProvidesClass{rpi-thesis}[2026/10/15 v0.2.0 RPI community thesis starter]
+% Settings live in metadata.tex, so the class takes no options.
 \DeclareOption*{\ClassError{rpi-thesis}{Unsupported class option: \CurrentOption}
   {Use metadata.tex for settings. This starter uses 12pt, letterpaper, oneside.}}
 \ProcessOptions\relax
 \LoadClass[12pt,letterpaper,oneside]{report}
 
+% ---------------------------------------------------------------------------
+% 2. Fonts: Times-style text and math at 12 pt (manual 2.1, p. 16).
+%    pdfLaTeX (the default) or, for Unicode input, LuaLaTeX and XeLaTeX.
+% ---------------------------------------------------------------------------
 \RequirePackage{iftex}
 \ifPDFTeX
   \RequirePackage[T1]{fontenc}
@@ -23,41 +51,72 @@
   \RequirePackage{unicode-math}
   \setmathfont{texgyretermes-math.otf}
 \fi
-% The math fonts above already provide every amssymb and amsfonts symbol.
-% Mark both packages as loaded, so a pasted \usepackage{amssymb} is harmless
+% These math fonts already provide every amssymb and amsfonts symbol. Mark
+% both packages as loaded, so a pasted \usepackage{amssymb} is harmless
 % instead of stopping the build with "Command ... already defined".
 \@namedef{ver@amssymb.sty}{2013/01/14 v3.01 (symbols provided by rpi-thesis)}
 \@namedef{ver@amsfonts.sty}{2013/01/14 v3.01 (symbols provided by rpi-thesis)}
+
+% ---------------------------------------------------------------------------
+% 3. Packages every thesis uses. Add your own in preamble.tex.
+% ---------------------------------------------------------------------------
+\RequirePackage{etoolbox}    % hooks used below
+\RequirePackage{graphicx}    % \includegraphics
+\RequirePackage{amsmath}     % equations
+\RequirePackage{booktabs}    % \toprule, \midrule, \bottomrule
+\RequirePackage{url}         % \url
+\RequirePackage{setspace}    % double and single spacing
+\RequirePackage{titlesec}    % section 5
+\RequirePackage[titles]{tocloft}  % section 6
+\RequirePackage{caption}     % section 7
+
+% ---------------------------------------------------------------------------
+% 4. Page layout and spacing: 1 in margins (manual 2.2, p. 16); double-
+%    spaced text, single-spaced quotations, captions, tables, and figures
+%    (manual 2.1, p. 16).
+% ---------------------------------------------------------------------------
 % Page numbers sit 0.75 in from the page edge (footer and header baselines).
 \RequirePackage[margin=1in,footskip=0.25in,headheight=12pt,headsep=0.25in]
   {geometry}
-\RequirePackage{setspace}
-\RequirePackage{graphicx}
-\RequirePackage{amsmath}
-\RequirePackage{booktabs}
-\RequirePackage{titlesec}
-\RequirePackage[titles]{tocloft}
-\RequirePackage{caption}
-\RequirePackage{etoolbox}
+\AtBeginDocument{\doublespacing\pagestyle{plain}}
+\setlength{\parindent}{0.4in}
+\raggedbottom
+\AtBeginEnvironment{quote}{\singlespacing}
+\AtBeginEnvironment{quotation}{\singlespacing}
+% Space around displayed equations grows with the line spacing.
+\everydisplay\expandafter{\the\everydisplay
+  \abovedisplayskip\baselinestretch\abovedisplayskip
+  \belowdisplayskip\abovedisplayskip
+  \abovedisplayshortskip\baselinestretch\abovedisplayshortskip
+  \belowdisplayshortskip\baselinestretch\belowdisplayshortskip}
+% Footnotes are numbered through the whole document, not per chapter.
+\counterwithout{footnote}{chapter}
+% URLs in the text font: one font throughout (OGE checklist).
+\urlstyle{same}
+% Reference lists are left-aligned, so long URLs do not stretch the spacing.
+\AtEndPreamble{\@ifpackageloaded{biblatex}{\appto\bibsetup{\raggedright}}{}}
 
-% Headings follow RPI's original thesis.cls: large bold centered level-1
-% titles, numbered "1. TITLE", and the same \chapter* style for CONTENTS,
-% the lists, front-matter sections, and REFERENCES. The space before cancels
-% the empty first line that otherwise pushes headings below the 1 in margin
-% (OGE's LaTeX tips sheet calls this a known glitch of the original class).
+% ---------------------------------------------------------------------------
+% 5. Headings (manual 2.3, pp. 17-18), following RPI's original thesis.cls:
+%    large bold centered chapter titles numbered "1. TITLE", and the same
+%    style for CONTENTS, the lists, front-matter sections, and REFERENCES.
+% ---------------------------------------------------------------------------
+% The space before a chapter title cancels the empty first line that
+% otherwise pushes it below the 1 in margin (OGE's LaTeX tips sheet calls
+% this a known glitch of the original class).
 \titleformat{\chapter}[hang]
   {\vskip-\baselinestretch\dimexpr18pt\relax\centering\normalfont\large\bfseries}
   {\thechapter.}{0.4em}{}
 \titlespacing*{\chapter}{0pt}{0pt}{15pt}
 \titleformat{\section}{\normalfont\large\bfseries}{\thesection}{1em}{}
 \titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
-% Level 4 is italic so that every heading level looks different (OGE manual).
+% Level 4 is italic, so that every heading level looks different (OGE manual).
 \titleformat{\subsubsection}{\normalfont\normalsize\itshape}{\thesubsubsection}{1em}{}
 \titlespacing*{\section}{0pt}{3.5ex plus 1ex minus .2ex}{.5ex plus .3ex}
 \titlespacing*{\subsection}{0pt}{3.25ex plus 1ex minus .2ex}{.3ex plus .2ex}
 \titlespacing*{\subsubsection}{0pt}{3.25ex plus 1ex minus .2ex}{.2ex plus .1ex}
 \setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{3}
+% Names printed by LaTeX, in capitals as on RPI's sample pages.
 \renewcommand{\contentsname}{CONTENTS}
 \renewcommand{\listtablename}{LIST OF TABLES}
 \renewcommand{\listfigurename}{LIST OF FIGURES}
@@ -65,11 +124,16 @@
 \renewcommand{\appendixname}{APPENDIX}
 \renewcommand{\abstractname}{ABSTRACT}
 \newcommand{\appendicesname}{APPENDICES}
-% Contents and lists (tocloft): entry fonts, spacing, and number columns.
+\newcommand{\referencesname}{REFERENCES}   % used by \thesisreferences
+
+% ---------------------------------------------------------------------------
+% 6. Contents and lists of tables and figures (manual 1.3-1.5, pp. 4-10)
+% ---------------------------------------------------------------------------
+\setcounter{tocdepth}{3}
 \renewcommand{\cftchapfont}{\normalfont}
 \renewcommand{\cftchappagefont}{\normalfont}
 \renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
-% Contents entries read exactly like the body headings: "1." and "A.".
+% Entries read exactly like the body headings: "1." and "A.".
 \renewcommand{\cftchapaftersnum}{.}
 \setlength{\cftbeforechapskip}{10pt}
 \setlength{\cftbeforesecskip}{6pt}
@@ -87,6 +151,11 @@
 \cftsetindents{subsec}{4.3em}{3.8em}
 \cftsetindents{subsubsec}{8.1em}{5em}
 \cftsetrmarg{4em}
+
+% ---------------------------------------------------------------------------
+% 7. Captions and floats (manual 2.4-2.5, pp. 18-22): bold captions, tables
+%    captioned above and figures below, both single-spaced.
+% ---------------------------------------------------------------------------
 \captionsetup{format=hang,font={normalfont,bf},labelfont=bf,labelsep=colon,
   justification=raggedright,singlelinecheck=false}
 \captionsetup[table]{position=top}
@@ -95,8 +164,7 @@
 \AtBeginEnvironment{longtable}{\singlespacing}
 \AtBeginEnvironment{sidewaysfigure}{\singlespacing}
 \AtBeginEnvironment{sidewaystable}{\singlespacing}
-\AtBeginEnvironment{quote}{\singlespacing}
-\AtBeginEnvironment{quotation}{\singlespacing}
+% Let floats fill more of a page, so fewer drift away from their text.
 \setcounter{topnumber}{2}
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{4}
@@ -104,34 +172,34 @@
 \renewcommand{\bottomfraction}{.8}
 \renewcommand{\textfraction}{.2}
 \renewcommand{\floatpagefraction}{.8}
-\setlength{\parindent}{0.4in}
-% Space around displayed equations grows with the line spacing.
-\everydisplay\expandafter{\the\everydisplay
-  \abovedisplayskip\baselinestretch\abovedisplayskip
-  \belowdisplayskip\abovedisplayskip
-  \abovedisplayshortskip\baselinestretch\abovedisplayshortskip
-  \belowdisplayshortskip\baselinestretch\belowdisplayshortskip}
-\counterwithout{footnote}{chapter}
-% Body pages: number at the top right. Front matter and the first page of
-% every chapter, the references, and each appendix: bottom center (plain).
+
+% ---------------------------------------------------------------------------
+% 8. Page numbers (manual 2.2, pp. 16-17): roman (i, ii, ...) in the front
+%    matter, arabic from chapter 1, 0.75 in from the page edge. Body pages:
+%    top right. Front matter and the first page of every chapter, the
+%    references, and each appendix: bottom center (plain).
+% ---------------------------------------------------------------------------
 \newcommand{\ps@rpibody}{\let\@mkboth\@gobbletwo
   \renewcommand{\@oddhead}{\hfil\normalfont\thepage}%
   \renewcommand{\@evenhead}{\@oddhead}%
   \renewcommand{\@oddfoot}{}\renewcommand{\@evenfoot}{}}
-\AtBeginDocument{\doublespacing\pagestyle{plain}}
-\raggedbottom
-% Appendices: lettered like chapters; one APPENDICES line in the contents,
-% written on the first appendix page so it carries that page number.
+
+% ---------------------------------------------------------------------------
+% 9. Appendices: lettered like chapters ("A. TITLE"), with one APPENDICES
+%    line in the contents, written on the first appendix page so it carries
+%    that page number (manual 1.3, p. 4).
+% ---------------------------------------------------------------------------
 \newif\ifrpi@appendixline
 \appto\appendix{\global\rpi@appendixlinetrue}
 \pretocmd{\chapter}{\ifrpi@appendixline
     \global\rpi@appendixlinefalse\clearpage\phantomsection
     \addcontentsline{toc}{chapter}{\appendicesname}\fi}{}
   {\ClassError{rpi-thesis}{Could not set up appendices}{}}
-\RequirePackage{url}
-\urlstyle{same}% URLs in the text font: one font throughout (OGE checklist)
-\AtEndPreamble{\@ifpackageloaded{biblatex}{\appto\bibsetup{\raggedright}}{}}
 
+% ---------------------------------------------------------------------------
+% 10. Your thesis settings: \thesissetup{...} and \committeemember in
+%     metadata.tex. Every key is listed in docs/advanced.md.
+% ---------------------------------------------------------------------------
 \ExplSyntaxOn
 \tl_new:N \g_rpi_title_tl
 \tl_new:N \g_rpi_author_tl
@@ -145,6 +213,7 @@
 \bool_new:N \g_rpi_figures_bool
 \seq_new:N \g_rpi_committee_seq
 \int_new:N \g_rpi_chairs_int
+\tl_new:N \l_rpi_setup_tl
 
 \keys_define:nn { rpi/thesis }
   {
@@ -175,10 +244,19 @@
     list-of-tables .bool_gset:N = \g_rpi_tables_bool,
     list-of-figures .bool_gset:N = \g_rpi_figures_bool,
   }
+% Defaults
 \keys_set:nn { rpi/thesis }
   { degree=doctoral, seal-file=assets/rpi-seal.jpg,
     copyright-page=false, list-of-tables=true, list-of-figures=true }
-\NewDocumentCommand \thesissetup { m } { \keys_set:nn { rpi/thesis } {#1} }
+
+% Blank lines may group the settings, and a comma after the last one is fine.
+\NewDocumentCommand \thesissetup { +m }
+  {
+    \tl_set:Nn \l_rpi_setup_tl {#1}
+    \tl_replace_all:Nnn \l_rpi_setup_tl { \par } { }
+    \keys_set:nV { rpi/thesis } \l_rpi_setup_tl
+  }
+% \committeemember[Chair]{Name}, [Co-Chair], or no role for other members.
 \NewDocumentCommand \committeemember { O{} m }
   {
     \seq_gput_right:Nn \g_rpi_committee_seq
@@ -186,6 +264,8 @@
     \str_if_eq:nnT {#1} {Chair} { \int_gincr:N \g_rpi_chairs_int }
     \str_if_eq:nnT {#1} {Co-Chair} { \int_gincr:N \g_rpi_chairs_int }
   }
+
+% Errors name the setting and the fix, before anything is printed.
 \cs_new_protected:Npn \rpi_require:Nn #1#2
   {
     \tl_if_blank:VT #1
@@ -210,6 +290,10 @@
       { \ClassError{rpi-thesis}{Committee~chair~is~missing}
           {Use~committeemember[Chair]~or~committeemember[Co-Chair].} }
   }
+
+% ---------------------------------------------------------------------------
+% 11. Title page and seal (manual 1.1, pp. 1-2)
+% ---------------------------------------------------------------------------
 % The seal belongs to RPI and is not part of this starter: each student
 % downloads it (assets/README.md). If seal-file is missing, a PNG named
 % assets/rpi-seal.png is used instead; failing that, a framed box the size of
@@ -293,8 +377,14 @@
     \end{singlespace}
     \clearpage
   }
-% One even gap between list entries: ignore the extra gap report.cls adds
-% at each new chapter, as RPI's original class did.
+
+% ---------------------------------------------------------------------------
+% 12. Commands for main.tex, in the order they appear there
+% ---------------------------------------------------------------------------
+% \thesisfrontmatter: copyright page (if set; manual 1.2, p. 3), contents,
+% and the lists.
+% One even gap between list entries: ignore the extra gap report.cls adds at
+% each new chapter, as RPI's original class did.
 \cs_new_protected:Npn \rpi_even_list: { \cs_set_eq:NN \addvspace \use_none:n }
 \NewDocumentCommand \thesisfrontmatter { }
   {
@@ -322,18 +412,21 @@
         \begin{singlespace}\rpi_even_list:\listoffigures\end{singlespace}\clearpage
       }
   }
+% \thesismainmatter: arabic page numbers, top right, from chapter 1.
 \NewDocumentCommand \thesismainmatter { }
   { \clearpage\pagenumbering{arabic}\pagestyle{rpibody} }
 \ExplSyntaxOff
 
-% The link target goes at the top of the new page, before the heading, so the
-% contents and the PDF bookmark open at the heading rather than just below it.
-% \chapter*'s own \clearpage adds no page: the target alone leaves it empty.
+% \frontchapter{ABSTRACT}: an unnumbered front-matter section, listed in the
+% contents. The link target goes at the top of the new page, before the
+% heading, so the contents and the PDF bookmark open at the heading.
+% (\chapter*'s own \clearpage adds no page: the target alone leaves it empty.)
 \NewDocumentCommand{\frontchapter}{m}{%
   \clearpage\phantomsection\addcontentsline{toc}{chapter}{#1}\chapter*{#1}}
-% Chapter attribution: a single-spaced note at the foot of the current page,
-% like a footnote but with no number or mark. Put it directly after \chapter
-% so it lands on the chapter's first page. Repeat it for several attributions.
+
+% \chapterattribution{...} (manual 2.8, pp. 27-29): a single-spaced note at
+% the foot of the current page, like a footnote but with no number or mark. Put it directly after
+% \chapter so it lands on the chapter's first page. Repeat for several.
 \NewDocumentCommand{\chapterattribution}{+m}{%
   \insert\footins{%
     \def\baselinestretch{1}\reset@font\footnotesize
@@ -342,10 +435,24 @@
     \floatingpenalty\@MM \hsize\columnwidth \@parboxrestore
     \color@begingroup\noindent\rule{\z@}{\footnotesep}\ignorespaces
       #1\@finalstrut\strutbox\par\color@endgroup}}
-% Hyperlinks and PDF bookmarks stay black in the printed and electronic copy.
+
+% \thesisreferences: the reference list, single-spaced, titled REFERENCES
+% (to change it: \renewcommand{\referencesname}{...} in preamble.tex),
+% and listed in the contents. It needs biblatex, which preamble.tex loads.
+\NewDocumentCommand{\thesisreferences}{}{%
+  \@ifundefined{printbibliography}
+    {\ClassError{rpi-thesis}{\string\thesisreferences\space needs biblatex}
+      {Keep the biblatex line in preamble.tex, or use your own bibliography commands.}}
+    {\begin{singlespace}\printbibliography[heading=bibintoc,title={\referencesname}]\end{singlespace}}}
+
+% ---------------------------------------------------------------------------
+% 13. Links and PDF properties. Links stay black in print and on screen
+%     (manual 2.1, p. 16). hyperref loads last among the class's packages.
+% ---------------------------------------------------------------------------
 \RequirePackage[hidelinks,unicode]{hyperref}
-% Title, author, and language in the PDF's document properties, which screen
-% readers and library catalogs read. Use \texorpdfstring for math in a title.
+% Title, author, and language for screen readers and library catalogs, and
+% the class version (shown as "Creator"). Use \texorpdfstring for math in a
+% title.
 \ExplSyntaxOn
 \AtBeginDocument
   {
@@ -354,7 +461,9 @@
         pdftitle = \tl_use:N \g_rpi_title_tl ,
         pdfauthor = \tl_use:N \g_rpi_author_tl ,
         pdflang = en-US ,
-        pdfdisplaydoctitle = true
+        pdfdisplaydoctitle = true ,
+        pdfcreator = LaTeX~with~rpi-thesis~\use:c { ver@rpi-thesis.cls }
       }
   }
 \ExplSyntaxOff
+\endinput
