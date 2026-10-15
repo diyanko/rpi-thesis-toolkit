@@ -594,7 +594,10 @@ class Site:
             return None
         if self.repo:  # a file outside the website, e.g. main.tex: link to GitHub
             kind = "tree" if (ROOT / target).is_dir() else "blob"
-            return f"{self.repo}/{kind}/main/{quote(target)}{fragment}"
+            # The offline guide is frozen with its release: link that release's files,
+            # not the moving main branch. The website follows main.
+            ref = "v" + class_version()[0] if self.offline else "main"
+            return f"{self.repo}/{kind}/{ref}/{quote(target)}{fragment}"
         return None
 
     def rewrite(self, html, source, here, base, markdown_only=False):
@@ -1002,15 +1005,16 @@ def make_previews(destination):
 
 
 def reuse_previews(destination, final):
-    """The offline guide reuses the pictures of the last build_site.py --previews
-    run (dist/site/previews), as package.py reuses its cheat sheet; {} if none.
+    """Builds without --previews (quick website builds and the offline guide) reuse
+    the pictures of the last build_site.py --previews run (dist/site/previews),
+    as package.py reuses its cheat sheet; {} if none.
     Each picture records a hash of the thesis files and of previews.py it was
     made from (previews.fingerprint); pictures made from anything else are
     stale and left out."""
     from previews import fingerprint, read
 
     source = ROOT / "dist/site/previews"
-    if not source.is_dir() or source.is_symlink() or final.resolve() == source.parent.resolve():
+    if not source.is_dir() or source.is_symlink():
         return {}
     pictures = [path for path in source.glob("*.png") if path.is_file() and not path.is_symlink()]
     current = fingerprint()
@@ -1024,6 +1028,18 @@ def reuse_previews(destination, final):
     for path in pictures:
         shutil.copyfile(path, destination / "previews" / path.name)
     return read(destination / "previews")
+
+
+def reuse_cheatsheet(destination):
+    """Copy the last built cheat sheet into a build without --cheatsheet, if it is
+    newer than its source; False otherwise (the website then links the source)."""
+    pdf = ROOT / "dist/site" / CHEATSHEET_PDF
+    if not pdf.is_file() or pdf.stat().st_mtime < (ROOT / "cheatsheet/cheatsheet.tex").stat().st_mtime:
+        return False
+    target = destination / CHEATSHEET_PDF
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(pdf, target)
+    return True
 
 
 def build_cheatsheet(destination):
@@ -1306,11 +1322,13 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
                 target.write_text(svg_appearance(text, theme), encoding="utf-8")
     if previews:
         site.previews = make_previews(destination)
-    elif offline:
+    else:  # reuse the last --previews pictures if they still match their sources
         site.previews = reuse_previews(destination, final)
     if cheatsheet and offline:  # package.py adds the PDF beside guide/
         site.cheatsheet = "../" + OFFLINE_CHEATSHEET
     elif cheatsheet and build_cheatsheet(destination):
+        site.cheatsheet = CHEATSHEET_PDF
+    elif not offline and reuse_cheatsheet(destination):  # quick builds keep a current PDF
         site.cheatsheet = CHEATSHEET_PDF
     strict = publish or complete  # missing content stops the build instead of warning
     if strict:
