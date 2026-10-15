@@ -8,13 +8,17 @@ one step at a time: pdfLaTeX, Biber, pdfLaTeX, pdfLaTeX. The programs are run
 directly, not through latexmk, so a personal latexmkrc cannot move the output.
 It saves:
 
-- compile-pass-N-chapter.png and compile-pass-N-contents.png: crops of the
-  chapter 1 paragraph with a citation and of the contents page after each pass
-  (shown in docs/how-it-works.md);
+- compile-pass-1-chapter.png and compile-pass-2-chapter.png: crops of the
+  chapter 1 paragraph with a citation, before and after the reference
+  resolves (shown in docs/how-it-works.md);
 - for each page in PAGES, from the finished PDF, three pictures for "Anatomy of
   your thesis" on the landing page: anatomy-NAME.png (the whole page, small),
   anatomy-NAME-lens.png (a close-up of the part LENSES picks, sharp enough to
   read) and anatomy-NAME-full.png (the whole page, large, opened from the card).
+
+- class-demo-ams.png and class-demo-ieee.png: the first page of the same
+  teaching example, compiled with only its class name changed. Its source
+  lives in the optional example in docs/why-latex.md.
 
 Every picture is a greyscale PNG (16 shades for the anatomy pictures, which
 keeps them small) and carries its details (page number, alt text, where the
@@ -35,17 +39,14 @@ import tempfile
 import zlib
 
 ROOT = Path(__file__).resolve().parents[1]
-# Top-level folders that are not part of the thesis.
-NOT_THESIS = {".git", ".github", ".vscode", "_local", "build", "dist", "docs", "site",
-              "scripts", "reference", "cheatsheet", "__pycache__"}
 # Files an earlier editor or build.py run leaves behind. They are not copied,
 # so the first pass starts clean: unresolved citations and an empty contents page.
 GENERATED = (".aux", ".bbl", ".bcf", ".blg", ".toc", ".lof", ".lot", ".out", ".run.xml",
              ".fls", ".fdb_latexmk", ".synctex.gz", ".log")
-CROP_DPI = 144   # about 940 pixels across the text column
+CROP_DPI = 192   # about 1250 pixels across the text column: sharp at 2x on screen
 THUMB_DPI = 40   # anatomy-NAME.png: whole page, 340 pixels wide (shown about 90 wide)
 LENS_DPI = 200   # anatomy-NAME-lens.png: 12 pt text stays sharp at 2x on screen
-FULL_DPI = 120   # anatomy-NAME-full.png: whole page, 1020 pixels wide
+FULL_DPI = 180   # anatomy-NAME-full.png: whole page, 1530 pixels wide, sharp when opened large
 LENS_PAD = 7     # points of white above and below a close-up
 META = b"rpi-thesis-preview"   # PNG text chunk keyword for the picture's details
 
@@ -177,16 +178,27 @@ def run(command, cwd, what):
         raise SystemExit(f"Previews: {what} failed while compiling the sample thesis.\n{tail}")
 
 
+THESIS_INPUTS = ("main.tex", "metadata.tex", "preamble.tex", "rpi-thesis.cls", "references.bib",
+                 "frontmatter", "chapters", "appendices", "figures", "assets")
+
+
 def compile_passes(work):
     """Copy the sample into `work` and return the PDF after each pdfLaTeX pass."""
-    def skip(folder, names):
-        top = Path(folder) == ROOT
-        # PDFs are skipped only at the top level: figures may be PDFs.
-        return [name for name in names
-                if (top and (name in NOT_THESIS or name.endswith(".pdf")))
-                or name == "build" or name.endswith(GENERATED)]
-
-    shutil.copytree(ROOT, work, ignore=skip, dirs_exist_ok=True)
+    # An explicit list of thesis inputs: nothing else in the repository (virtual
+    # environments, agent folders, output) can leak into the scratch copy, and
+    # symbolic links are never followed.
+    work = Path(work)
+    work.mkdir(parents=True, exist_ok=True)
+    for name in THESIS_INPUTS:
+        source = ROOT / name
+        if source.is_symlink() or not source.exists():
+            continue
+        if source.is_dir():
+            def skip(folder, names):
+                return [n for n in names if n.endswith(GENERATED) or (Path(folder) / n).is_symlink()]
+            shutil.copytree(source, work / name, ignore=skip, symlinks=False, dirs_exist_ok=True)
+        else:
+            shutil.copyfile(source, work / name)
     latex = ["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "-no-shell-escape", "main.tex"]
     pdfs = []
     for step in ("pdflatex", "biber", "pdflatex", "pdflatex"):
@@ -400,6 +412,43 @@ def anatomy(pdf, folder, temp):
     return made
 
 
+def class_demo(folder, work):
+    """Compile the guide's shared source with AMS and IEEE classes; save page 1.
+    Keep the source in Markdown, alongside the explanation students read.
+    Do not adapt commands, packages, content or options between the versions.
+    """
+    markdown = (ROOT / "docs/why-latex.md").read_text(encoding="utf-8")
+    match = re.search(r"<!-- class-demo-source -->\s*```latex\n(.*?)\n```", markdown, re.S)
+    if not match or not match[1].startswith(r"\documentclass{amsart}" + "\n"):
+        raise SystemExit("Previews: docs/why-latex.md needs the marked class example, starting with \\documentclass{amsart}.")
+    if shutil.which("kpsewhich"):
+        missing = [cls for cls in ("amsart", "IEEEtran")
+                   if subprocess.run(["kpsewhich", cls + ".cls"], capture_output=True).returncode]
+        if missing:
+            print("SKIP class example: missing " + ", ".join(missing) + ". Thesis previews are unaffected.")
+            return {}
+    made = {}
+    for name, cls in (("ams", "amsart"), ("ieee", "IEEEtran")):
+        directory = work / name
+        directory.mkdir(parents=True)
+        source = match[1].replace(r"\documentclass{amsart}", "\\documentclass{" + cls + "}", 1)
+        (directory / "example.tex").write_text(source + "\n", encoding="utf-8")
+        command = ["pdflatex", "-interaction=nonstopmode", "-halt-on-error", "-no-shell-escape", "example.tex"]
+        for number in (1, 2):
+            run(command, directory, f"{cls} class example, pass {number}")
+        log = (directory / "example.log").read_text(encoding="utf-8", errors="replace")
+        if re.search(r"Overfull \\[hv]box|LaTeX Warning:.*(?:undefined|Rerun)", log):
+            raise SystemExit(f"Previews: inspect the {cls} example; its final log has overflow or unsettled references.")
+        pdf = directory / "example.pdf"
+        pages = len(text_lines(pdf))
+        width, height, rgb = render(pdf, 1, FULL_DPI, directory)
+        meta = {"page": 1, "pages": pages, "class": cls}
+        key = "class-demo-" + name
+        save_png(folder / (key + ".png"), width, height, rgb, meta=meta)   # 256 shades: the figure has soft tones
+        made[key] = {"width": width, "height": height, **meta}
+    return made
+
+
 def make(folder):
     """Save the pictures in `folder`. Returns {name: {"width", "height", "page", ...}};
     {} if skipped."""
@@ -413,8 +462,8 @@ def make(folder):
     made = {}
     with tempfile.TemporaryDirectory() as temp:
         pdfs = compile_passes(Path(temp) / "thesis")
-        # The crop shows what changes on each pass; pass 3 needs only the contents.
-        wanted = {1: ("chapter", "contents"), 2: ("chapter", "contents"), 3: ("contents",)}
+        # how-it-works.md shows chapter 1 before and after the citation resolves.
+        wanted = {1: ("chapter",), 2: ("chapter",), 3: ()}
         for number, pdf in enumerate(pdfs, start=1):
             boxes = crops(text_lines(pdf))
             for part in wanted[number]:
@@ -428,7 +477,8 @@ def make(folder):
                                          [n * CROP_DPI / 72 for n in box], meta={"page": page + 1})
                 made[name] = {"width": width, "height": height, "page": page + 1}
         made.update(anatomy(pdfs[-1], folder, temp))
-    print(f"Previews: {len(made)} pictures of the sample thesis in {folder}")
+        made.update(class_demo(folder, Path(temp) / "class-demo"))
+    print(f"Previews: {len(made)} pictures of the sample thesis and class example in {folder}")
     return made
 
 

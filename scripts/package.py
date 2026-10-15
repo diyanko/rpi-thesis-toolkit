@@ -4,8 +4,13 @@
     python3 scripts/package.py
 
 Needs Pandoc (the guide is rendered by build_site.py). Nothing is uploaded.
+A release needs a current cheat sheet: run build_site.py --cheatsheet (needs
+TeX) first. For a quick local test without it, add --dev.
 """
+import argparse
 from pathlib import Path
+import json
+import re
 import tempfile
 import zipfile
 
@@ -30,6 +35,7 @@ FILES = [
     "figures/README.md",
     "assets/README.md",
     "scripts/build.py",
+    "latexmkrc",
     ".vscode/settings.json",
     ".vscode/extensions.json",
     "LICENSE.md",
@@ -73,12 +79,14 @@ STUDENT_README = """\
 # RPI Thesis Toolkit: starter files
 
 1. Open START-HERE.html in a web browser. The guide works offline.
-2. Add the RPI seal: see assets/README.md.
-3. Compile main.tex once to see the sample PDF.
+2. Compile main.tex once to see the sample PDF with a seal placeholder.
+3. Add the RPI seal: see assets/README.md.
 4. Put your details in metadata.tex, then write in chapters/.
 
-Formatting lives in rpi-thesis.cls. To update the formatting later, replace
-that one file; your writing stays untouched.
+Formatting lives in rpi-thesis.cls. To update the formatting later, follow
+"Update the formatting safely" in the guide (workflows page). During the beta,
+a new version can change more than that one file; its changelog lists every
+other edit to make.
 
 This is an unofficial, community-made starter. It is not affiliated with or
 endorsed by Rensselaer Polytechnic Institute or its Office of Graduate
@@ -112,7 +120,7 @@ def add_text(archive, name, text):
 
 # For "Open in Overleaf": only what the thesis needs, so the Overleaf file tree
 # stays short. Overleaf opens it from a link (overleaf.com/docs?snip_uri=...).
-OVERLEAF_SKIP = ("scripts/", ".vscode/")
+OVERLEAF_SKIP = ("scripts/", ".vscode/", "latexmkrc")
 OVERLEAF_README = """\
 # RPI Thesis Toolkit: Overleaf starter
 
@@ -120,10 +128,27 @@ OVERLEAF_README = """\
 2. Add the RPI seal: see assets/README.md.
 3. Put your details in metadata.tex, then write in chapters/.
 
-The full guide: https://diyanko.github.io/rpi-thesis-toolkit/
+The full guide: {guide_url}
+To update the formatting later, follow "Update the formatting safely" in the
+guide (workflows page); the changelog lists any other files a version changes.
 This is a community project, not approved by RPI or the Office of Graduate
 Education. Check the current OGE requirements before you submit.
 """
+
+
+def guide_url():
+    """The public guide address, from site/site.json (one place to change it)."""
+    config = json.loads((ROOT / "site/site.json").read_text(encoding="utf-8"))
+    return config["site_url"].rstrip("/") + "/"
+
+
+def cheatsheet_state(path):
+    """'missing', 'stale' (older than its TeX sources), or 'fresh'."""
+    if not path.is_file() or path.is_symlink():
+        return "missing"
+    sources = [p for p in (ROOT / "cheatsheet").glob("*.tex") if p.is_file()]
+    newest = max((p.stat().st_mtime for p in sources), default=0)
+    return "stale" if path.stat().st_mtime < newest else "fresh"
 
 
 def package_overleaf(version):
@@ -133,21 +158,32 @@ def package_overleaf(version):
         for name in FILES:
             if not name.startswith(OVERLEAF_SKIP):
                 archive.write(ROOT / name, name)
-        add_text(archive, "README.md", OVERLEAF_README)
+        add_text(archive, "README.md", OVERLEAF_README.format(guide_url=guide_url()))
     temp.replace(destination)
     return destination
 
 
-def package():
+def package(dev=False):
     missing = [name for name in FILES if not (ROOT / name).is_file()]
     if missing:
         raise FileNotFoundError("Starter files missing: " + ", ".join(missing))
-    version = class_version()[0]
+    version, released = class_version()
+    # main.tex asks for the class date, so LaTeX warns students whose rpi-thesis.cls is older.
+    wanted = re.search(r"\\documentclass\{rpi-thesis\}\[(\d{4})/(\d\d)/(\d\d)\]", (ROOT / "main.tex").read_text(encoding="utf-8"))
+    if not wanted or wanted.groups() != (f"{released:%Y}", f"{released:%m}", f"{released:%d}"):
+        raise SystemExit(f"main.tex: write \\documentclass{{rpi-thesis}}[{released:%Y/%m/%d}], the date in rpi-thesis.cls's \\ProvidesClass line.")
     destination = ROOT / f"dist/rpi-thesis-starter-v{version}.zip"
     destination.parent.mkdir(exist_ok=True)
     temp = destination.with_suffix(".tmp")
     cheatsheet = ROOT / CHEATSHEET
-    with_cheatsheet = cheatsheet.is_file() and not cheatsheet.is_symlink()
+    state = cheatsheet_state(cheatsheet)
+    if state != "fresh" and not dev:
+        raise SystemExit(
+            f"The cheat sheet PDF is {state} ({CHEATSHEET}). Run"
+            " python3 scripts/build_site.py --cheatsheet (needs TeX) to rebuild it,"
+            " or add --dev to package without it for a local test."
+        )
+    with_cheatsheet = state == "fresh"
     with tempfile.TemporaryDirectory() as folder:
         guide = build_site(Path(folder) / "guide", offline=True, cheatsheet=with_cheatsheet)
         # The archive replaces the old one only after everything is in place.
@@ -179,10 +215,15 @@ def package():
     overleaf = package_overleaf(version)
     print(f"Overleaf archive (thesis files only): {overleaf}")
     if CHEATSHEET_NAME not in names:
-        print("Cheat sheet PDF not included: run build_site.py --cheatsheet (needs TeX) first.")
+        print(f"Cheat sheet PDF not included ({state}): run build_site.py --cheatsheet (needs TeX) first.")
     print("No RPI seal or original template included; students download the seal (assets/README.md).")
     return destination
 
 
 if __name__ == "__main__":
-    package()
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument(
+        "--dev", action="store_true",
+        help="allow a missing or stale cheat sheet (leaves it out); not for releases",
+    )
+    package(parser.parse_args().dev)

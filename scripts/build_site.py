@@ -7,15 +7,25 @@
                                                  or Ghostscript; see previews.py)
                                                  and the cheat sheet PDF
     python3 scripts/build_site.py --cheatsheet   only the cheat sheet PDF (needs LaTeX)
+    python3 scripts/build_site.py --previews --publish
+                                                 strict mode for deployment: also fails
+                                                 when the class version is not the
+                                                 published release, a guide page or
+                                                 diagram is missing, or the pictures or
+                                                 cheat sheet were not built
 
+The site is built in a sibling folder (dist/site.tmp-PID) and replaces dist/site only
+after every check passes, so a failed build keeps the previous good site.
 Needs Pandoc (CI uses 3.11). Nothing is published or uploaded. package.py calls
 build_site(offline=True) to put the same guide into the starter ZIP.
 """
 import argparse
+import contextlib
 from datetime import date
 from html import escape, unescape
 from html.parser import HTMLParser
 import json
+import os
 from pathlib import Path
 import posixpath
 import re
@@ -63,9 +73,10 @@ GUIDE = [page for _, pages in NAV for page in pages]  # the same pages, in one l
 # It sits above the stages in the sidebar, last in the header, and in the
 # "Stuck, or nearly done" card on the landing page.
 QUICK = ("how-do-i", "How do I…?", True)
-# When a student needs each page, shown as a small tag beside every link to
-# it in the sidebar, and under the page title. The landing-page cards leave
-# it out: each card's stage already says when you need its pages.
+# When a student needs each page, shown as a small tag under the page title.
+# The sidebar lists pages without tags (SIDEBAR_TAGS is empty): its numbers and
+# stage names already give the order, and tags of different widths made the
+# list re-wrap. The landing-page cards leave tags out for the same reason.
 # Tag -> (CSS class in site.css, pages). Every guide page has exactly one tag.
 TAGS = {
     "Start here": ("start", ["why-latex"]),
@@ -76,6 +87,7 @@ TAGS = {
     "Optional": ("optional", ["how-it-works", "workflows", "advanced"]),
 }
 PAGE_TAGS = {page: (tag, css) for tag, (css, pages) in TAGS.items() for page in pages}
+SIDEBAR_TAGS = set()
 # Guide pages with at least this many ## sections get an "On this page" list.
 TOC_MIN = 5
 # Project pages: source -> (name in project/, footer label or None). Pages
@@ -103,15 +115,29 @@ ANATOMY = [
      "titles, dot leaders and page numbers"),
     ("chapter", "A chapter opening", "`chapters/01-introduction.tex`",
      "the chapter number, heading style and spacing"),
-    ("figure-table", "Tables and figures", "`chapters/02-research.tex`; images go in `figures/`",
-     "numbers, caption placement, and the lists of tables and figures"),
+    ("figure-table", "Tables and figures",
+     "`chapters/02-research.tex`; images go in `figures/`; where each caption sits is your choice",
+     "caption styling (numbering, bold label) and the lists of tables and figures"),
     ("references", "References", "`references.bib`, and `\\cite{key}` in your text",
      "the order and format of every entry, by Biber"),
     ("appendix", "An appendix", "`appendices/additional-material.tex`",
      "the letters A, B, C and the contents entry"),
 ]
 ALLOWED = {".html", ".css", ".svg", ".woff2"}  # plus fonts/*.txt, previews/*.png|webp, og-image.png,
-                                              # sitemap.xml, robots.txt and copy.js
+                                              # sitemap.xml, robots.txt, copy.js, viewer.js and theme.js
+# The release the website links: its version, tag (always "v" + version; beta status is
+# GitHub's pre-release flag, never part of the name), and ZIP names
+# (rpi-thesis-starter-v<version>.zip). The home page's "Get the starter" button downloads
+# from it; README.md and docs/get-started.md link the same files by hand, and the build
+# stops if they differ. --publish also requires the class version to match, so the site
+# never describes files the download does not contain (docs/project/maintenance.md).
+RELEASE_VERSION = "0.2.0"
+RELEASE_TAG = "v" + RELEASE_VERSION
+# Pictures the guide pages and landing page ask for; --publish fails without them.
+REQUIRED_PREVIEWS = (
+    ["compile-pass-1-chapter", "compile-pass-2-chapter", "class-demo-ams", "class-demo-ieee"]
+    + [f"anatomy-{name}{suffix}" for name, *_ in ANATOMY for suffix in ("", "-lens", "-full")]
+)
 # The one PDF the website may hold: the cheat sheet (no RPI artwork), built
 # from cheatsheet/cheatsheet.tex with --previews or --cheatsheet. The offline
 # guide never holds it; package.py puts it at the ZIP root, beside guide/, as
@@ -123,6 +149,12 @@ OG_ALT = ("RPI Thesis Toolkit, an unofficial community starter: write your RPI t
           "dissertation in LaTeX, even if you've never used it.")
 FORBIDDEN_FOLDERS = {".git", "_local", "reference", "assets", "build"}
 FENCE = "`" * 12
+SVG_SCHEME = re.compile(r"@media\s*\(\s*prefers-color-scheme\s*:\s*(light|dark)\s*\)")
+
+
+def svg_appearance(text, theme):
+    """Freeze only our SVG's appearance queries; keep the authored file intact."""
+    return SVG_SCHEME.sub(lambda match: "@media " + ("all" if match[1] == theme else "not all"), text)
 
 
 def pandoc(args, text):
@@ -197,8 +229,9 @@ def edition():
     name = Path(manual["title"]).stem.removesuffix(manual["version"]).strip()
     reviewed = date.fromisoformat(sources["last_reviewed"])
     return (
-        f"Checked against the RPI OGE {name} ({manual['version']}) · "
+        f"Based on the RPI OGE {name} ({manual['version']}) · "
         f"last reviewed {reviewed.day} {reviewed:%b %Y} · template v{class_version()[0]}"
+        + (" (beta)" if class_version()[0].startswith("0.") else "")
     )
 
 
@@ -235,6 +268,82 @@ def slug(heading):
     return re.sub(r"[^\w\- ]", "", heading.strip().lower()).replace(" ", "-")
 
 
+def viewer_link(css_class, dialog_id, back_id, file_url, text):
+    """The link that opens a full-size picture. Its address is the picture file, so
+    without JavaScript it simply shows the picture; viewer.js opens the dialog
+    named by data-viewer instead."""
+    return (f'<a class="{css_class}" id="{back_id}" href="{escape(file_url)}" '
+            f'data-viewer="{dialog_id}">{text}</a>')
+
+
+def viewer_dialog(dialog_id, back_id, label, picture):
+    """A full-size picture on the same page, closed until viewer.js opens it as a
+    modal dialog (Escape, Close or a click outside closes it, and focus returns to
+    the link). Without JavaScript the dialog stays hidden and the link goes to the
+    picture file."""
+    return (f'<dialog class="viewer" id="{dialog_id}" aria-label="{label}">'
+            f'<a class="viewer-close" href="#{back_id}">Close<span class="visually-hidden"> the full-size picture</span></a>'
+            '<p class="viewer-hint">Scroll sideways to see the whole picture.</p>'
+            f'{picture}</dialog>')
+
+
+def size_attrs(size):
+    return f' width="{size[0]}" height="{size[1]}"' if size else ""
+
+
+def responsive_tables(body):
+    """A scroll box lets wide tables scroll on phones without losing table semantics.
+    In a table, code with spaces (a whole error message) is marked so it may wrap,
+    and a long token such as an \\includegraphics line may break anywhere; names
+    and keys such as graduation-month stay on one line (site.css)."""
+    def table_code(code):
+        text = code[1]
+        style = "phrase" if re.search(r"\s", text) else "long" if len(text) > 32 else ""
+        return f'<code class="{style}">{text}</code>' if style else code[0]
+
+    def label_cells(table):
+        # data-label repeats each column header on phones, where rows stack (site.css)
+        head = re.search(r"<thead>(.*?)</thead>", table, flags=re.S)
+        if not head:
+            return table
+        labels = [re.sub(r"<[^>]+>", "", th).strip()
+                  for th in re.findall(r"<th\b[^>]*>(.*?)</th>", head[1], flags=re.S)]
+
+        def row(match):
+            index = iter(range(len(labels) + 99))
+
+            def cell(td):
+                column = next(index)
+                if column == 0 or column >= len(labels) or not labels[column]:
+                    return td[0]
+                return f'<td data-label="{escape(unescape(labels[column]))}"{td[1]}'
+            return re.sub(r"<td\b([^>]*>)", cell, match[0])
+        return re.sub(r"<tbody>.*?</tbody>",
+                      lambda part: re.sub(r"<tr\b.*?</tr>", row, part[0], flags=re.S), table, flags=re.S)
+
+    return re.sub(r"<table\b.*?</table>",
+                  lambda m: '<div class="table-wrap" tabindex="0" role="group" aria-label="Table, scroll horizontally if needed">'
+                  + label_cells(re.sub(r"<code>([^<]*)</code>", table_code, m[0]))
+                  + "</div>", body, flags=re.S)
+
+
+def keep_short_code(body):
+    """Short code such as rpi-thesis.cls or graduation-month never breaks at a hyphen.
+    A path such as chapters/01-introduction.tex may still break after a slash, so
+    it cannot push a phone screen wider than the screen."""
+    def keep(match):
+        if match[1]:
+            return match[0]
+        text = match[2]
+        if "/" in text:
+            parts = text.split("/")
+            pieces = [f'<span class="nowrap">{part}</span>' if part else "" for part in parts]
+            return '<code class="keep-path">' + "/<wbr>".join(pieces) + "</code>"
+        return f'<code class="keep">{text}</code>'
+
+    return re.sub(r"(<pre\b[^>]*>)?<code>([^<\s]{1,28})</code>", keep, body)
+
+
 class Site:
     def __init__(self, offline):
         config = json.loads((SITE / "site.json").read_text(encoding="utf-8"))
@@ -263,7 +372,21 @@ class Site:
             if not (offline and source.startswith("docs/project/")):
                 self.pages[source] = f"project/{name}.html"
         self.assets = {"site/site.css": "site.css", "site/logo.svg": "logo.svg",
-                       "site/copy.js": "copy.js"}  # optional "Copy" buttons on code blocks
+                       "site/copy.js": "copy.js",       # optional "Copy" buttons on code blocks
+                       "site/viewer.js": "viewer.js",   # optional: full-size pictures open as a dialog
+                       "site/theme.js": "theme.js"}     # optional: saved System/Light/Dark appearance
+        self.starter_zip = ""
+        if not offline and self.repo:
+            version = RELEASE_VERSION
+            base = f"{self.repo}/releases/download/{RELEASE_TAG}"
+            self.starter_zip = f"{base}/rpi-thesis-starter-v{version}.zip"
+            overleaf = "https://www.overleaf.com/docs?snip_uri=" + quote(f"{base}/rpi-thesis-overleaf-v{version}.zip", safe="")
+            for source, links in (("README.md", [self.starter_zip]), ("docs/get-started.md", [self.starter_zip, overleaf])):
+                text = (ROOT / source).read_text(encoding="utf-8")
+                for link in links:
+                    if link not in text:
+                        self.errors.append(f"{source}: link the release files of {RELEASE_TAG} "
+                                           f"(RELEASE_TAG and RELEASE_VERSION in scripts/build_site.py): {link}")
         if not offline:  # GitHub Pages serves /404.html; the link-preview picture is online only
             self.pages["site/404.html"] = "404.html"
             self.assets["site/og-image.png"] = "og-image.png"
@@ -275,6 +398,11 @@ class Site:
             for path in sorted((ROOT / folder).glob("*")):
                 if path.is_file() and path.suffix in suffixes:
                     self.assets[f"{folder}/{path.name}"] = f"{output}/{path.name}"
+        self.theme_assets = {
+            output for source, output in self.assets.items()
+            if Path(source).suffix == ".svg"
+            and SVG_SCHEME.search((ROOT / source).read_text(encoding="utf-8"))
+        }
         source, heading = FEEDBACK
         self.feedback = self.pages[source]
         if re.search(rf"(?m)^#+ {re.escape(heading)}\s*$", (ROOT / source).read_text(encoding="utf-8")):
@@ -288,6 +416,34 @@ class Site:
     @staticmethod
     def relative(here, target):
         return posixpath.relpath(target, posixpath.dirname(here) or ".")
+
+    def theme_pictures(self, html, here, absolute=False):
+        """Manual choices use fixed SVG copies, including Safari and offline files.
+        Original SVG URLs remain the no-JavaScript and System fallback."""
+        def url(path):
+            return (self.url or "") + "/" + path if absolute else self.relative(here, path)
+
+        variants = {url(path): (url(f"themes/light/{path}"), url(f"themes/dark/{path}"))
+                    for path in self.theme_assets}
+
+        def picture(match):
+            tag = match[0]
+            attribute = "srcset" if tag.startswith("<source") else "src"
+            if tag.startswith("<link"):
+                if not re.search(r'\brel="icon"', tag):
+                    return tag
+                attribute = "href"
+            source = re.search(rf'\b{attribute}="([^"]+)"', tag)
+            if not source or unescape(source[1]) not in variants:
+                return tag
+            original = unescape(source[1])
+            light, dark = variants[original]
+            attributes = (f' data-theme-asset="{attribute}" data-theme-system="{escape(original)}"'
+                          f' data-theme-light="{escape(light)}" data-theme-dark="{escape(dark)}"')
+            ending = "/>" if tag.endswith("/>") else ">"
+            return tag[:-len(ending)] + attributes + ending
+
+        return re.sub(r"<(?:img|source|link)\b[^>]*>", picture, html)
 
     def link(self, href, source, here, base):
         """Rewrite a link from `source` for output page `here`. None = keep the text only."""
@@ -336,17 +492,32 @@ class Site:
 
     @staticmethod
     def diagrams(html):
-        """Each diagram from docs/diagrams/ becomes a figure with an "Open full size"
-        link, so readers can zoom. If docs/diagrams/NAME-narrow.svg exists, phones
-        get that taller drawing instead (the <picture> element picks it)."""
+        """Each diagram from docs/diagrams/ becomes a figure with a "View larger"
+        link under it that shows the drawing large on the same page (viewer_dialog).
+        If docs/diagrams/NAME-narrow.svg exists, phones get that taller drawing
+        instead (the <picture> element picks it)."""
+        seen = {}
+
         def figure(match):
             tag, src, name = match[1], match[2], match[3]
-            if (ROOT / f"docs/diagrams/{name}-narrow.svg").is_file():
+            seen[name] = seen.get(name, 0) + 1
+            key = name if seen[name] == 1 else f"{name}-{seen[name]}"
+            alt = re.search(r'\salt="([^"]*)"', tag)
+            wide = svg_size(ROOT / f"docs/diagrams/{name}.svg")
+            if wide and not re.search(r"\swidth=", tag):  # reserve the space before the drawing loads
+                tag = tag[:-1].rstrip("/").rstrip() + size_attrs(wide) + ">"
+            big = f'<img src="{src}" alt="{alt[1] if alt else ""}"{size_attrs(wide)} loading="lazy">'
+            narrow_path = ROOT / f"docs/diagrams/{name}-narrow.svg"
+            narrow_file = narrow_path.is_file()
+            if narrow_file:
                 narrow = src[: -len(".svg")] + "-narrow.svg"
-                tag = f'<picture><source media="(max-width: 600px)" srcset="{narrow}">{tag}</picture>'
+                tag = (f'<picture><source media="(max-width: 600px)" srcset="{narrow}"'
+                       f'{size_attrs(svg_size(narrow_path))}>{tag}</picture>')
             return (
-                f'<figure class="diagram"><a class="diagram-zoom" href="{src}" tabindex="-1">{tag}</a>'
-                f'<a class="diagram-open" href="{src}">Open full size</a></figure>'
+                f'<figure class="diagram{" has-narrow" if narrow_file else ""}" id="fig-{key}">{tag}'
+                + viewer_link("diagram-open", f"view-{key}", f"open-{key}", src, "View larger")
+                + viewer_dialog(f"view-{key}", f"open-{key}", "Diagram, full size", big)
+                + "</figure>"
             )
 
         return re.sub(r'<p>(<img\b[^>]*?\ssrc="([^"]*?diagrams/([\w-]+)\.svg)"[^>]*>)</p>', figure, html)
@@ -365,10 +536,46 @@ class Site:
                     self.warnings.append(f"{source}: no preview picture named {name}")
                 return ""
             src = self.relative(here, f"previews/{name}.png")
-            return (f'<figure class="shot"><img src="{src}" alt="{escape(alt)}" '
+            return (f'<figure class="shot" tabindex="0" role="group" aria-label="PDF example, scroll horizontally if needed"><img src="{src}" alt="{escape(alt)}" '
                     f'width="{size["width"]}" height="{size["height"]}" loading="lazy"></figure>')
 
+        html = html.replace("<!-- class-demo -->", self.class_demo(here))
         return re.sub(r"<!--\s*preview ([\w-]+):(.*?)-->", figure, html, flags=re.S)
+
+    def class_demo(self, here):
+        """CSS-only class switcher, absent when its previews were not made.
+        Native radios provide keyboard selection without JavaScript; without
+        CSS both labeled versions remain visible.
+        """
+        variants = (("ams", "amsart", "AMS: one column"),
+                    ("ieee", "IEEEtran", "IEEE: two columns"))
+        if not all("class-demo-" + key in self.previews for key, _, _ in variants):
+            return ""
+        controls, panels = [], []
+        for key, cls, label in variants:
+            name = "class-demo-" + key
+            size = self.previews[name]
+            selected = ' checked' if key == "ams" else ""
+            controls.append(f'<input type="radio" name="class-demo" id="choose-{name}"{selected}>'
+                            f'<label for="choose-{name}">{label}</label>')
+            src = self.relative(here, f"previews/{name}.png")
+            count = size["pages"]
+            caption = f'Page 1 of {count}. Same words, equation, table and figure.'
+            alt = (f'First page of the shared teaching example in {cls}: '
+                   + ("one column, centered headings." if key == "ams" else "two columns, Roman-numbered headings."))
+            picture = (f'<img src="{src}" alt="{escape(alt)}" width="{size["width"]}" '
+                       f'height="{size["height"]}" loading="eager">')
+            panels.append(
+                f'<div class="class-demo-panel class-demo-{key}">'
+                f'<p class="class-demo-line"><code>\\documentclass{{<mark>{cls}</mark>}}</code></p>'
+                f'<figure>{picture}<figcaption>{caption}</figcaption></figure>'
+                + viewer_link("diagram-open", f"view-{name}", f"open-{name}", src,
+                              f'View larger<span class="visually-hidden">: {cls} example</span>')
+                + viewer_dialog(f"view-{name}", f"open-{name}", f"{cls} example, full size", picture)
+                + '</div>')
+        return ('<fieldset class="class-demo"><legend>Choose a layout. Watch the page change.</legend>'
+                + ''.join(controls) + '<div class="class-demo-panels">' + ''.join(panels)
+                + '</div></fieldset>')
 
     def anatomy(self, here):
         """Rows for "Anatomy of your thesis" on the landing page, with pictures
@@ -398,10 +605,9 @@ class Site:
                                       "with the close-up area outlined")
                 lens["alt"] = escape(details["alt"])
                 x, y, w, h = details["spot"]
-                # On phones a close-up is shown larger, its right edge cut off,
-                # except where the right edge matters (the contents' page numbers)
-                row["img"] = {"page": whole, "lens": lens, "full": full["src"], "whole": name == "contents",
-                              "spot": f"left: {x}%; top: {y}%; width: {w}%; height: {h}%"}
+                full["alt"] = escape(f"Page {details['printed']} of the sample thesis, full size")
+                row["img"] = {"page": whole, "lens": lens, "full": full,
+                              "name": name, "spot": f"left: {x}%; top: {y}%; width: {w}%; height: {h}%"}
             rows.append(row)
         return rows
 
@@ -424,7 +630,7 @@ class Site:
             return body, []
         links = "".join(f'<li><a href="{entry["href"]}">{entry["label"]}</a></li>' for entry in toc)
         box = (f'<details class="page-toc"><summary>On this page</summary>'
-               f'<nav aria-label="On this page"><ol>{links}</ol></nav></details>')
+               f'<nav aria-label="On this page"><ol role="list">{links}</ol></nav></details>')
         opening = re.search(r'</h1>\s*(?:<p class="page-tag">.*?</p>\s*)?(?:<p>.*?</p>)?', body, flags=re.S)
         if opening:
             body = body[: opening.end()] + "\n" + box + body[opening.end() :]
@@ -442,7 +648,34 @@ class Site:
             self.warnings.append(f"{name}.svg is not drawn yet; the landing page links to it anyway.")
         if (ROOT / f"{name}-narrow.svg").is_file():
             entry["narrow"] = self.relative(here, "diagrams/thesis-timeline-narrow.svg")
+            narrow = svg_size(ROOT / f"{name}-narrow.svg")
+            if narrow:
+                entry.update(narrow_width=narrow[0], narrow_height=narrow[1])
         return entry
+
+    def external_links(self, html):
+        """Keep the guide available when students visit a tool or official resource.
+        Internal navigation, email links and downloads keep their normal behavior."""
+        def external_tab(match):
+            before, href, after, text = match.groups()
+            url = unescape(href)
+            parts = urlsplit(url)
+            internal = self.url and (url == self.url or url.startswith(self.url + "/"))
+            download = (re.search(r"\bdownload(?:\s|=|$)", before + after)
+                        or parts.path.lower().endswith(".zip")
+                        or "/releases/download/" in parts.path)
+            if parts.scheme not in ("http", "https") or internal or download:
+                return match[0]
+            attrs = re.sub(r'\s+(?:target|rel)="[^"]*"', "", before + after)
+            # The last word carries the new-tab arrow (site.css), so the arrow never wraps alone.
+            last = re.search(r"(<code\b[^>]*>[^<]*</code>|[^\s<>]+)(\s*)$", text)
+            if last and len(last[1]) <= 30:  # a long address may wrap (site.css)
+                text = text[:last.start()] + f'<span class="ext-last">{last[1]}</span>' + last[2]
+            return (f'<a{attrs} href="{href}" target="_blank" rel="noopener">{text}'
+                    '<span class="visually-hidden"> (opens in a new tab)</span></a>')
+
+        return re.sub(r'<a\b([^>]*?)\shref="([^"]*)"([^>]*)>(.*?)</a>',
+                      external_tab, html, flags=re.S)
 
     def render(self, source):
         here = self.pages[source]
@@ -460,15 +693,20 @@ class Site:
             body = self.rewrite(body, source, here, posixpath.dirname(source))
             body = self.diagrams(body)
             body = self.pictures(body, source, here)
-            # A scroll box lets wide tables scroll on phones without losing table semantics.
-            body = re.sub(r"<table\b.*?</table>", r'<div class="table-wrap">\g<0></div>', body, flags=re.S)
+            body = responsive_tables(body)
+            body = keep_short_code(body)
+            # Keyboard users must also be able to pan long code lines without
+            # JavaScript, including Safari's non-focusable scroll containers.
+            body = re.sub(r"<pre\b", '<pre tabindex="0"', body)
+            # Safari drops list semantics from lists without bullets unless told.
+            body = re.sub(r'<ul class="task-list"', '<ul role="list" class="task-list"', body)
             toc = []
             if kind == "guide":
                 body, toc = self.page_top(body, Path(source).stem)
 
         def item(path, label, name=None):
             entry = {"href": self.relative(here, path), "label": escape(label)}
-            if name in PAGE_TAGS:
+            if name in PAGE_TAGS and PAGE_TAGS[name][0] in SIDEBAR_TAGS:
                 entry.update(tag=escape(PAGE_TAGS[name][0]), tagclass=PAGE_TAGS[name][1])
             return {**entry, "current": True} if path == here else entry
 
@@ -512,6 +750,8 @@ class Site:
             values["stages"] = stages
             values["anatomy"] = self.anatomy(here)
             values["timeline"] = self.timeline(here)
+            if self.starter_zip:
+                values["starter_zip"] = self.starter_zip
             if all("img" in row for row in values["anatomy"]):
                 values["pictures"] = True
         if kind == "guide":
@@ -522,9 +762,13 @@ class Site:
                     values["prev"] = nav[index - 1]
                 if index + 1 < len(nav):
                     values["next"] = nav[index + 1]
-            elif nav:  # quick answers sit outside the chain: offer the start of the guide
-                values.update(next=nav[0], next_label="Start the guide")
-            values["pager"] = True
+                    next_tag = PAGE_TAGS[chain[index + 1][0]][0]
+                    if next_tag == "If you have a draft":
+                        values["next_label"] = next_tag
+                    elif next_tag == "Optional":
+                        values["next_label"] = "Optional next page"
+            # Quick answers are a task index, not a step in the linear guide.
+            values["pager"] = bool(values.get("prev") or values.get("next"))
             values["updated"] = last_updated(source)
             if toc:
                 values["toc"] = toc
@@ -555,7 +799,8 @@ class Site:
         if kind == "notfound":  # served at any depth, so every local link starts from the site root
             base = (self.url or "") + "/"
             html = re.sub(r'((?:href|src)=")(?![a-z]+:|/|#)', r"\g<1>" + base, html)
-        return html
+        html = self.external_links(html)
+        return self.theme_pictures(html, here, absolute=kind == "notfound")
 
 
 def make_previews(destination):
@@ -565,13 +810,23 @@ def make_previews(destination):
     return make(destination / "previews")
 
 
-def reuse_previews(destination):
+def reuse_previews(destination, final):
     """The offline guide reuses the pictures of the last build_site.py --previews
     run (dist/site/previews), as package.py reuses its cheat sheet; {} if none."""
     from previews import read
 
     source = ROOT / "dist/site/previews"
-    if not source.is_dir() or source.is_symlink() or destination.resolve() == source.parent.resolve():
+    if not source.is_dir() or source.is_symlink() or final.resolve() == source.parent.resolve():
+        return {}
+    sources = [ROOT / name for name in ("rpi-thesis.cls", "main.tex", "metadata.tex", "preamble.tex",
+                                        "references.bib", "docs/why-latex.md")]
+    for folder in ("frontmatter", "chapters", "appendices"):
+        sources += (ROOT / folder).glob("*.tex")
+    pictures = [path for path in source.glob("*.png") if path.is_file()]
+    newest = max((path.stat().st_mtime for path in sources if path.is_file()), default=0)
+    if pictures and newest > min(path.stat().st_mtime for path in pictures):
+        print("WARNING: the sample-thesis pictures in dist/site/previews are older than the thesis "
+              "files, so the offline guide leaves them out. Run build_site.py --previews first.")
         return {}
     (destination / "previews").mkdir()
     for path in source.glob("*.png"):
@@ -609,20 +864,28 @@ def build_cheatsheet(destination):
 class PageLinks(HTMLParser):
     def __init__(self, path):
         super().__init__()
-        self.links, self.ids = [], set()
+        self.links, self.ids, self.duplicates = [], set(), set()
         self.feed(path.read_text(encoding="utf-8"))
 
     def handle_starttag(self, tag, attrs):
         attributes = dict(attrs)
-        for name in ("id", "name") if tag == "a" else ("id",):
-            if attributes.get(name):
-                self.ids.add(attributes[name])
-        for name in ("href", "src"):
+        if attributes.get("id"):
+            if attributes["id"] in self.ids:
+                self.duplicates.add(attributes["id"])
+            self.ids.add(attributes["id"])
+        if tag == "a" and attributes.get("name"):
+            self.ids.add(attributes["name"])
+        for name in ("href", "src", "data-theme-light", "data-theme-dark", "data-theme-system"):
             if attributes.get(name):
                 self.links.append(attributes[name])
         for candidate in (attributes.get("srcset") or "").split(","):
             if candidate.strip():
                 self.links.append(candidate.split()[0])
+
+
+CSS_URL = re.compile(r"url\(\s*(['\"]?)([^'\")]+)\1\s*\)")
+SVG_REF = re.compile(r'\b(?:xlink:)?href="([^"]*)"')
+SVG_ID = re.compile(r'\bid="([^"]*)"')
 
 
 def validate(destination, beside=()):
@@ -641,6 +904,8 @@ def validate(destination, beside=()):
     pages = sorted(root.rglob("*.html"))
     for page in pages:
         name = page.relative_to(root).as_posix()
+        for duplicate in sorted(parse(page).duplicates):
+            errors.append(f"{name}: the id {duplicate!r} is used more than once")
         for link in parse(page).links:
             address = urlsplit(link)
             if address.scheme or address.netloc:
@@ -657,6 +922,31 @@ def validate(destination, beside=()):
             elif address.fragment and target.suffix == ".html":
                 if unquote(address.fragment) not in parse(target).ids:
                     errors.append(f"{name}: missing heading or anchor: {link}")
+    # Files that other files load: fonts and pictures named in CSS url(...), and
+    # local files or #fragments named by an SVG's href / xlink:href.
+    for path in sorted(root.rglob("*")):
+        if path.suffix not in (".css", ".svg") or path.is_symlink():
+            continue
+        name = path.relative_to(root).as_posix()
+        text = path.read_text(encoding="utf-8")
+        if path.suffix == ".css":
+            references = [match[2] for match in CSS_URL.finditer(text)]
+        else:
+            references = SVG_REF.findall(text)
+        ids = set(SVG_ID.findall(text))
+        for reference in references:
+            address = urlsplit(unescape(reference.strip()))
+            if address.scheme or address.netloc or address.path.startswith("/") or (
+                    not address.path and not address.fragment):
+                continue  # data: URIs, web addresses
+            target = (path.parent / unquote(address.path)).resolve() if address.path else path
+            if not target.is_relative_to(root):
+                errors.append(f"{name}: reference leaves the website: {reference}")
+            elif not target.is_file():
+                errors.append(f"{name}: missing file: {reference}")
+            elif address.fragment and path.suffix == ".svg" and target == path.resolve():
+                if unquote(address.fragment) not in ids:
+                    errors.append(f"{name}: missing id: {reference}")
     for path in sorted(root.rglob("*")):
         relative = path.relative_to(root)
         top, suffix = relative.parts[0], path.suffix.lower()
@@ -666,7 +956,7 @@ def validate(destination, beside=()):
             errors.append(f"Private or source folder in the website: {relative}")
         elif path.is_dir() or suffix in ALLOWED:
             pass
-        elif relative.as_posix() in ("og-image.png", CHEATSHEET_PDF, "sitemap.xml", "robots.txt", "copy.js"):
+        elif relative.as_posix() in ("og-image.png", CHEATSHEET_PDF, "sitemap.xml", "robots.txt", "copy.js", "viewer.js", "theme.js"):
             pass
         elif not (top == "previews" and suffix in {".png", ".webp"}) and not (
             top == "fonts" and suffix == ".txt"
@@ -702,29 +992,112 @@ def write_sitemap(site, destination):
     )
 
 
-def build_site(destination=None, offline=False, previews=False, cheatsheet=False):
+def pid_running(pid):
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except OSError:
+        return True
+    return True
+
+
+@contextlib.contextmanager
+def build_lock(destination):
+    """One build at a time per destination: a lock file beside it, with this process's
+    number. A lock left by a process that is gone is replaced."""
+    lock = destination.parent / f".{destination.name}.lock"
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    for _ in range(2):
+        try:
+            handle = os.open(lock, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            try:
+                owner = int(lock.read_text().strip() or 0)
+            except (OSError, ValueError):
+                owner = 0
+            if owner and pid_running(owner):
+                raise SystemExit(f"Another build of {destination.name} is running (process {owner}). "
+                                 f"Wait for it to finish; if it is not running, delete {lock}.")
+            lock.unlink(missing_ok=True)
+        else:
+            with os.fdopen(handle, "w") as out:
+                out.write(str(os.getpid()))
+            break
+    else:
+        raise SystemExit(f"Could not take the build lock {lock}; delete it if no build is running.")
+    try:
+        yield
+    finally:
+        lock.unlink(missing_ok=True)
+
+
+def build_site(destination=None, offline=False, previews=False, cheatsheet=False, publish=False):
     """Build the website, or with offline=True the guide for the starter ZIP.
     Offline, cheatsheet=True means the caller puts OFFLINE_CHEATSHEET beside
-    the destination folder, so the guide links to it."""
+    the destination folder, so the guide links to it. The build happens in a
+    sibling folder, which replaces `destination` only after every check passes.
+    publish=True is the strict mode for deployment (see the module docstring)."""
     check_pandoc()
-    destination = Path(destination or ROOT / "dist/site")
+    destination = Path(destination or ROOT / "dist/site").absolute()
+    with build_lock(destination):
+        for old in destination.parent.glob(f"{destination.name}.tmp-*"):  # left by a killed build
+            owner = old.name.rsplit("-", 1)[-1]
+            if old.is_dir() and not old.is_symlink() and not (owner.isdigit() and pid_running(int(owner))):
+                shutil.rmtree(old, ignore_errors=True)
+        stage = destination.parent / f"{destination.name}.tmp-{os.getpid()}"
+        try:
+            shutil.rmtree(stage, ignore_errors=True)
+            stage.mkdir()
+            build_into(stage, destination, offline, previews, cheatsheet, publish)
+            old = destination.parent / f"{destination.name}.old-{os.getpid()}"
+            if destination.exists():
+                destination.rename(old)
+            stage.rename(destination)
+            shutil.rmtree(old, ignore_errors=True)
+        finally:
+            shutil.rmtree(stage, ignore_errors=True)
+    print(f"Site ready: {destination}")
+    return destination
+
+
+def build_into(destination, final, offline, previews, cheatsheet, publish):
+    """Write and check the site in `destination` (the staging folder); `final` is
+    where it will end up."""
     site = Site(offline)
-    if destination.exists():
-        shutil.rmtree(destination)
-    destination.mkdir(parents=True)
+    if publish:
+        version = class_version()[0]
+        if version != RELEASE_VERSION:
+            site.errors.append(
+                f"rpi-thesis.cls is v{version} but the website links release {RELEASE_TAG} "
+                f"(v{RELEASE_VERSION}): publish the matching release first, then update "
+                "RELEASE_TAG and RELEASE_VERSION in scripts/build_site.py.")
     for source, output in site.assets.items():
         if (ROOT / source).is_symlink():
             raise SystemExit(f"Website input must not be a symlink: {source}")
         (destination / output).parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / source, destination / output)
+        if output in site.theme_assets:
+            text = (destination / output).read_text(encoding="utf-8")
+            for theme in ("light", "dark"):
+                target = destination / "themes" / theme / output
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text(svg_appearance(text, theme), encoding="utf-8")
     if previews:
         site.previews = make_previews(destination)
     elif offline:
-        site.previews = reuse_previews(destination)
+        site.previews = reuse_previews(destination, final)
     if cheatsheet and offline:  # package.py adds the PDF beside guide/
         site.cheatsheet = "../" + OFFLINE_CHEATSHEET
     elif cheatsheet and build_cheatsheet(destination):
         site.cheatsheet = CHEATSHEET_PDF
+    if publish and not offline:
+        missing = [name for name in REQUIRED_PREVIEWS if name not in site.previews]
+        if missing:
+            site.errors.append("--publish needs every sample-thesis picture (run with --previews and LaTeX); "
+                               "missing: " + ", ".join(missing))
+        if not site.cheatsheet:
+            site.errors.append("--publish needs the cheat sheet PDF (run with --previews or --cheatsheet and LaTeX).")
     for source, output in site.pages.items():
         (destination / output).parent.mkdir(parents=True, exist_ok=True)
         (destination / output).write_text(site.render(source), encoding="utf-8")
@@ -741,13 +1114,16 @@ def build_site(destination=None, offline=False, previews=False, cheatsheet=False
         write_sitemap(site, destination)
     beside = {OFFLINE_CHEATSHEET} if site.cheatsheet.startswith("../") else set()
     errors, warnings, count = validate(destination, beside)
-    for warning in site.warnings + warnings:
-        print("WARNING: " + warning)
+    problems = site.warnings + warnings
+    for warning in problems:
+        print(("ERROR (--publish): " if publish else "WARNING: ") + warning)
+    if publish:  # a missing page, diagram or picture must stop a deployment
+        errors = errors + problems
     if site.errors or errors:
-        raise SystemExit("Website check failed:\n- " + "\n- ".join(site.errors + errors))
-    print(f"PASS: {count} pages; local links and anchors work; no LaTeX sources, archives, "
+        raise SystemExit("Website check failed (the previous site, if any, is untouched):\n- "
+                         + "\n- ".join(site.errors + errors))
+    print(f"PASS: {count} pages; local links, anchors and ids work; no LaTeX sources, archives, "
           "RPI artwork, or PDFs other than the cheat sheet staged.")
-    return destination
 
 
 def main():
@@ -761,8 +1137,15 @@ def main():
         "--cheatsheet", action="store_true",
         help="compile cheatsheet/cheatsheet.tex into the website (needs LaTeX)",
     )
+    parser.add_argument(
+        "--publish", action="store_true",
+        help="strict mode for deployment: fail when the class version is not the published "
+        f"release (v{RELEASE_VERSION}), a guide page or diagram is missing, or the sample-thesis "
+        "pictures or cheat sheet were not built (use with --previews)",
+    )
     args = parser.parse_args()
-    destination = build_site(previews=args.previews, cheatsheet=args.cheatsheet or args.previews)
+    destination = build_site(previews=args.previews, cheatsheet=args.cheatsheet or args.previews,
+                             publish=args.publish)
     print("Open in a browser: " + str(destination / "index.html"))
 
 
