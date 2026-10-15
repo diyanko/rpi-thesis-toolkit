@@ -4,28 +4,35 @@ For anyone adding sources to a thesis or dissertation that already compiles
 ([get started](get-started.md) if not). List each source once in
 `references.bib`, cite it with `\cite{key}`, and LaTeX builds the reference list.
 
-![How a citation travels. A source's details go into references.bib, either pasted by hand or exported from a citation manager such as Zotero. In a chapter you write \cite with the source's key. When you compile, Biber matches the key to the entry and formats it in your chosen style. The PDF shows the in-text citation and the entry in the reference list.](diagrams/citation-flow.svg)
+![How a citation travels. A Zotero record (author, title, year) has a citation key, lamport1994, pinned with Better BibTeX and exported into references.bib, or you paste an entry by hand. The chapter contains only \cite{lamport1994}. When you compile, Biber prints [1] in the text and the full entry under REFERENCES. The record, the key, and the formatted citation are different things; only the key goes in your chapter.](diagrams/citation-flow.svg)
 
-*In words:* `references.bib` → `\cite{key}` in a chapter → Biber formats the
-entry when you compile → citation and reference list in the PDF.
+*In words:* a source's record lives in Zotero; its **key** goes into
+`references.bib` and into `\cite{key}` in your chapter; Biber (the program
+that formats references) turns that into [1] and a full reference-list entry
+when you compile.
 
 ## Step 1: Agree on a style with your advisor
 
-The sample's numbered style only shows citations working; it is **not** an
-official style for any department, and neither are LaTeX defaults such as
-`plain`. RPI's citation guidance is under *Additional Resources* on the
+Fields differ: the humanities often use Chicago or MLA, the social sciences
+APA, and engineering IEEE. The sample's numbered style only shows citations
+working; it is **not** an official style for any department, and neither are
+LaTeX defaults such as `plain`. RPI's citation guidance is under *Additional Resources* on the
 [OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation).
 Use one style throughout ([change the citation style](#change-the-citation-style)).
 
 ## Step 2: Collect and cite sources with Zotero
 
-We recommend [Zotero](https://www.zotero.org/): free, keeps your papers and
-PDFs together, shares libraries with co-authors, and also works with Word.
+This guide suggests [Zotero](https://www.zotero.org/), a free citation
+manager: it keeps your papers and PDFs together, shares libraries with
+co-authors, and also works with Word. It is a convenience, not an OGE requirement. Starting
+early pays off: real records saved while you read, with stable keys, are
+easy to cite in any chapter later.
 
 1. **Install Zotero and its browser connector**
    ([Zotero quick start](https://www.zotero.org/support/quick_start_guide)).
    Optionally add [Better BibTeX](https://retorque.re/zotero-better-bibtex/)
-   for stable citation keys.
+   for stable citation keys, so a key you cite today still matches after
+   later exports.
 2. **Save sources while you read** with the connector button, into one
    thesis collection. Check each item; imported details are often incomplete.
 3. **Export the collection to `references.bib`** in your thesis folder, in
@@ -127,7 +134,8 @@ The build helper flags any `url` without a `urldate`. DOIs need no access date.
 
 ## Change the citation style
 
-In `preamble.tex`, find this line; it is the only one you need to change:
+In `preamble.tex` (the file for the citation style and extra packages), find
+this line; it is the only one you need to change:
 
 ```tex
 \usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
@@ -135,12 +143,14 @@ In `preamble.tex`, find this line; it is the only one you need to change:
 
 Replace `style=numeric,sorting=none` with a starting point from this table:
 
-| Style family | Replace with | Package (included in full TeX Live and Overleaf) |
+| Style family | Replace with | Package, an add-on (included in full TeX Live and Overleaf) |
 | --- | --- | --- |
 | Numbered in order of citation (sample) | `style=numeric,sorting=none` | built in |
 | Generic author–year | `style=authoryear` | built in |
 | IEEE | `style=ieee` | [biblatex-ieee](https://ctan.org/pkg/biblatex-ieee) |
+| ACS (chemistry) | `style=chem-acs` | [biblatex-chem](https://ctan.org/pkg/biblatex-chem) |
 | APA | `style=apa` | [biblatex-apa](https://ctan.org/pkg/biblatex-apa) |
+| MLA | `style=mla` | [biblatex-mla](https://ctan.org/pkg/biblatex-mla) |
 | Chicago | not a one-word swap; follow its manual | [biblatex-chicago](https://ctan.org/pkg/biblatex-chicago) |
 
 These are starting points, not validated department presets; see each
@@ -153,9 +163,30 @@ Citation managers handle journal articles well but are much less reliable for
 **websites, reports, theses, datasets, software, standards, and archival
 sources**. Compare every reference in the PDF with your official style guide.
 
-OGE expects reference 1 to be the first citation in Chapter 1. BibLaTeX
-numbers a citation in a caption where the figure or table appears, not in
-the list of figures, so keep citations out of the front matter.
+### Numbered styles: check delayed figures and tables
+
+In a style numbered in order of first citation (such as IEEE, or the
+sample), OGE's formatting checklist expects reference 1 to be the first
+citation in Chapter 1, and a caption's citation to be numbered where its
+figure or table appears in the body. The list of figures does not change the
+numbers, and the abstract has no citations (OGE manual §1.8).
+
+LaTeX numbers citations in the order they appear in your `.tex` files, not
+where they land in the PDF. A figure that floats to a later page can show
+[2] after text that already shows [3]. If your style requires order of first
+appearance, look at every figure and table that moved away from its first
+mention. To fix one:
+
+- move its whole `figure` or `table` block (from `\begin` to `\end`) to
+  directly after the paragraph that first mentions it, then compile; or
+- cite the same source in that paragraph, before the figure.
+
+Don't renumber references by hand; LaTeX renumbers them when you compile.
+
+Not every style numbers in order: SIAM, for example, uses numbers from an
+alphabetical reference list, so they are not sequential in the text (OGE
+manual §3.3), and author–year styles have no numbers. Use the style you
+agreed with your advisor ([step 1](#step-1-agree-on-a-style-with-your-advisor)).
 
 ## If co-authors use Word
 
