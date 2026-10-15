@@ -64,67 +64,18 @@ jobs:
           echo "${PANDOC_SHA256}  /tmp/pandoc.deb" | sha256sum -c -
           dpkg -i /tmp/pandoc.deb
           pandoc --version | head -1
-      - name: Compile the sample thesis
-        run: python3 scripts/build.py --fresh
-      - name: Check thesis variants and PDF structure
-        run: python3 scripts/check.py
-      - name: Build and link-check the website with page previews and the cheat sheet
-        # With TeX present (this container), --previews also compiles
-        # cheatsheet/cheatsheet.tex into the website's downloads.
-        run: python3 scripts/build_site.py --previews
+      - name: Verify (thesis, PDF checks, regressions, website, ZIPs, fresh archive compiles)
+        # The same command maintainers run locally: python3 scripts/verify.py
+        run: python3 scripts/verify.py full --keep-going
       - name: Rebuild the website in publish mode (strict checks)
         if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
         run: python3 scripts/build_site.py --previews --publish
-      - name: Check that the cheat sheet compiled
-        run: |
-          test -s dist/site/downloads/rpi-thesis-cheatsheet.pdf || {
-            echo "Cheat sheet PDF missing: compile cheatsheet/cheatsheet.tex (see cheatsheet/README.md)."
-            exit 1
-          }
-      - name: Package the student starter ZIP
-        run: python3 scripts/package.py
-      - name: Smoke-test both ZIPs (extract into empty folders, compile, check the offline guide)
-        run: |
-          set -e
-          root="$PWD"
-          work="$(mktemp -d)"
-          mkdir "$work/starter" "$work/overleaf"
-          starter_zip="$(ls dist/rpi-thesis-starter-v*.zip | sort | tail -1)"
-          overleaf_zip="$(ls dist/rpi-thesis-overleaf-v*.zip | sort | tail -1)"
-          python3 -m zipfile -e "$starter_zip" "$work/starter"
-          python3 -m zipfile -e "$overleaf_zip" "$work/overleaf"
-          # Starter: the exact command the VS Code recipe runs (.vscode/settings.json),
-          # on the first run, with the starter's own latexmkrc.
-          cd "$work/starter"
-          test -f START-HERE.html -a -f guide/index.html -a -f latexmkrc
-          latexmk -pdf -no-shell-escape -synctex=1 -interaction=nonstopmode -halt-on-error -file-line-error -outdir="$work/starter/build" main.tex
-          test -s build/main.pdf
-          # Exit code 0 is not enough: LaTeX only warns "No file chapters/x.tex."
-          # when an \include'd file is missing from the ZIP, and still writes a PDF.
-          if grep -En 'No file .+\.(tex|bib)|File .[^ ]+. not found|Package biblatex Warning: File' build/main.log; then
-            echo "The starter ZIP builds without a file main.tex asks for (see the lines above)."
-            exit 1
-          fi
-          # The offline guide: every link and anchor resolves.
-          python3 -I -c "
-          import sys
-          sys.path.insert(0, sys.argv[1] + '/scripts')
-          from pathlib import Path
-          from build_site import validate
-          errors, warnings, pages = validate(Path('guide'), beside=('rpi-thesis-cheatsheet.pdf',))
-          print(pages, 'guide pages checked')
-          # A guide with a missing page, diagram or picture is incomplete: warnings fail too.
-          problems = errors + warnings
-          sys.exit('\n'.join(problems) if problems else 0)
-          " "$root"
-          # Overleaf ZIP: plain latexmk, as Overleaf runs it.
-          cd "$work/overleaf"
-          latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
-          test -s main.pdf
-          if grep -En 'No file .+\.(tex|bib)|File .[^ ]+. not found|Package biblatex Warning: File' main.log; then
-            echo "The Overleaf ZIP builds without a file main.tex asks for (see the lines above)."
-            exit 1
-          fi
+      - name: Keep the verify logs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: verify-logs
+          path: build/verify
       - name: Keep the starter ZIP
         uses: actions/upload-artifact@v7
         with:
