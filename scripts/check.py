@@ -39,6 +39,10 @@ def fixture(folder):
         shutil.copy2(ROOT / name, folder / name)
     for name in ["chapters", "frontmatter", "appendices", "assets"]:
         shutil.copytree(ROOT / name, folder / name)
+    # Students often paste these lines; the class must tolerate them on every
+    # engine (its math fonts already provide the symbols).
+    with (folder / "preamble.tex").open("a", encoding="utf-8") as preamble:
+        preamble.write("\\usepackage{amssymb}\n\\usepackage{amsfonts}\n")
 
 
 def multiply(m, n):
@@ -190,7 +194,7 @@ def check_pdf(folder, degree, copyright=False, minimal=False):
         )
         for caption, index in [
             ("Illustrative values for three example groups.", toc + 1),
-            ("A placeholder demonstrating the position of a figure caption.", toc + 2),
+            ("A sample image demonstrating the position of a figure caption.", toc + 2),
             ("An example caption for a reproduced figure.", toc + 2),
         ]:
             # Text extraction may drop word spaces in tightly set lines.
@@ -353,7 +357,7 @@ def main():
             text = (
                 (folder / "metadata.tex")
                 .read_text(encoding="utf-8")
-                .replace("degree = masters", "degree = " + choice)
+                .replace("degree = doctoral", "degree = " + choice)
             )
             if copyright:
                 text = text.replace("copyright-page = false", "copyright-page = true")
@@ -416,7 +420,7 @@ def main():
             ("missing-chair", "[Chair]", "", "Committee chair is missing"),
             (
                 "invalid-degree",
-                "degree = masters",
+                "degree = doctoral",
                 "degree = unknown",
                 "Unknown degree choice",
             ),
