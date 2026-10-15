@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 602" width="720" height="602" role="img" aria-labelledby="t d">
   <title id="t">From your draft to the project files</title>
-  <desc id="d">Where each part of a Word or Google Docs draft goes in the project. Numbered pins match the parts of the draft on one side to the files on the other. 1: the title, your name, degree, and committee go in metadata.tex. 2: the abstract goes in frontmatter/abstract.tex. 3: the acknowledgments go in frontmatter/acknowledgments.tex. 4: each chapter, Chapter 1 to N, goes in its own file in chapters/, such as 01-introduction.tex, and each chapter file is listed in main.tex; its tables and equations come along but are marked rebuild in LaTeX. 5: figures are saved as image files in figures/. 6: the reference list goes into Zotero and is exported to references.bib, and each citation in the text becomes \cite{key}. 7: appendices go in appendices/. A handwritten note says text pastes in; equations, tables and citations are rebuilt.</desc>
+  <desc id="d">Where each part of your draft goes in the project, whether you drafted in Markdown, Google Docs, or Word. The draft is shown with three tabs, thesis.md first, then Google Doc, then Word. Numbered pins match the parts of the draft on one side to the files on the other. 1: the title, your name, degree, and committee go in metadata.tex. 2: the abstract goes in frontmatter/abstract.tex. 3: the acknowledgments go in frontmatter/acknowledgments.tex. 4: each chapter, Chapter 1 to N, goes in its own file in chapters/, such as 01-introduction.tex, and each chapter file is listed in main.tex; its tables and equations come along but are marked rebuild or check in LaTeX. 5: figures are saved as image files in figures/. 6: the reference list goes into Zotero and is exported to references.bib, and each citation in the text becomes \cite{key}. 7: appendices go in appendices/. The in-text citation is marked check. A handwritten note says text moves in; rebuild or check equations, tables and citations.</desc>
   <style>
     svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
       --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
@@ -45,11 +45,15 @@
     <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
   </defs>
   <rect class="bg" width="720" height="602" rx="18"/>
-  <text class="hand" x="40" y="28" style="font-size:17px">your draft (Word or Google Docs)</text>
+  <text class="hand" x="40" y="28" style="font-size:17px">your draft (Markdown, Google Docs, or Word)</text>
   <text class="hand" x="422" y="28" style="font-size:17px">your project files</text>
   <path class="w-butter" transform="translate(6 6)" d="M40 44 H296 L318 66 V518 H40 Z"/>
   <path class="card" d="M40 44 H296 L318 66 V518 H40 Z"/>
-  <text class="m" x="56" y="70" style="font-size:15px">my-thesis.docx</text>
+  <rect class="w-sage" x="50" y="54" width="88" height="22" rx="11"/>
+  <text class="m" x="56" y="70" style="font-size:14px">thesis.md</text>
+  <path class="ln thin mut" d="M146 56 V73 M238 56 V73"/>
+  <text class="s" x="156" y="70" style="font-size:14px">Google Doc</text>
+  <text class="s" x="248" y="70" style="font-size:14px">Word</text>
   <path class="ln thin mut" d="M40 82 H318"/>
   <rect class="w-butter" x="43" y="88" width="274" height="60"/>
   <rect class="w-butter" x="43" y="154" width="274" height="32"/>
@@ -78,9 +82,9 @@
   <path class="ln thin" d="M56 349 H110 M56 362 H110 M78 336 V376"/>
   <text x="122" y="351" style="font-size:15px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-style="italic">y = mx + b</text>
   <text class="end" x="304" y="351" style="font-size:14px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">(1)</text>
-  <text class="hand" x="122" y="373" style="font-size:15px">rebuild in LaTeX</text>
+  <text class="hand" x="122" y="373" style="font-size:15px">rebuild or check in LaTeX</text>
   <text x="56" y="408" style="font-size:13.5px">…as shown (Lamport, 1994).</text>
-  <text class="hand end" x="304" y="408" style="font-size:15px">rebuild</text>
+  <text class="hand end" x="304" y="408" style="font-size:15px">check</text>
   <text x="56" y="444" style="font-size:15px" font-weight="700">References</text>
   <text class="s" x="56" y="462" style="font-size:13px">Lamport, L. (1994). LaTeX…</text>
   <text x="56" y="498" style="font-size:15px" font-weight="700">Appendix A</text>
@@ -164,6 +168,6 @@
   <circle class="w-butter" cx="398" cy="524" r="10"/>
   <circle class="ln" filter="url(#r)" cx="398" cy="524" r="10"/>
   <text class="n mid" x="398" y="528.55" style="font-size:13px">7</text>
-  <path class="ln" filter="url(#r)" d="M300 22 C 330 12, 380 12, 410 22" marker-end="url(#a)"/>
-  <text class="hand" x="40" y="580" style="font-size:17px">text pastes in; equations, tables and citations are rebuilt</text>
+  <path class="ln" filter="url(#r)" d="M362 22 C 376 13, 398 13, 412 21" marker-end="url(#a)"/>
+  <text class="hand" x="40" y="580" style="font-size:17px">text moves in; rebuild or check equations, tables and citations</text>
 </svg>

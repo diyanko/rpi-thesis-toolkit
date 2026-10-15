@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 346" width="720" height="346" role="img" aria-labelledby="t d">
+  <title id="t">From a rough sketch to a figure in your thesis</title>
+  <desc id="d">You supply a rough sketch: three boxes, Collect, Analyze, and Report, joined by arrows. Redraw it in draw.io, save the .drawio file, and export a PDF. The clean version has tidy boxes and straight arrows; keep labels readable at final size. Add the PDF like any figure. The thesis page shows the diagram with its caption below it, in bold: Figure 2.3: Example workflow.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="426">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="rr" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="426">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="9"/>
+      <feDisplacementMap in="SourceGraphic" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="346" rx="18"/>
+  <path class="ln terra" filter="url(#r)" d="M170 86 C184 60, 240 60, 254 84" marker-end="url(#at)"/>
+  <text class="hand mid" x="212" y="40" style="font-size:15px">draw.io: save .drawio,</text>
+  <text class="hand mid" x="212" y="58" style="font-size:15px">export PDF</text>
+  <path class="ln terra" filter="url(#r)" d="M430 86 C444 60, 500 60, 514 84" marker-end="url(#at)"/>
+  <text class="hand mid" x="472" y="40" style="font-size:15px">add it like</text>
+  <text class="hand mid" x="472" y="58" style="font-size:15px">any figure</text>
+  <rect class="w-butter" x="17" y="97" width="184" height="190" rx="4"/><rect class="card" x="12" y="92" width="184" height="190" rx="4"/><rect class="ln" filter="url(#r)" x="12" y="92" width="184" height="190" rx="4"/>
+  <g filter="url(#rr)"><rect class="ln blue" x="50" y="124" width="92" height="30" rx="3"/><text class="hand mid" x="96" y="144" style="font-size:16px;fill:var(--blue)">Collect</text><path class="ln blue" d="M101 156 C107 162, 96 166, 102 169 M96 163 L102 169 L107 162"/><rect class="ln blue" x="60" y="172" width="92" height="30" rx="3"/><text class="hand mid" x="106" y="192" style="font-size:16px;fill:var(--blue)">Analyze</text><path class="ln blue" d="M102 204 C108 210, 97 214, 103 217 M97 211 L103 217 L108 210"/><rect class="ln blue" x="52" y="220" width="92" height="30" rx="3"/><text class="hand mid" x="98" y="240" style="font-size:16px;fill:var(--blue)">Report</text></g>
+  <text class="mid" x="104" y="312" style="font-size:15px;font-weight:700">You supply</text>
+  <text class="s mid" x="104" y="332" style="font-size:13.5px">a rough sketch</text>
+  <rect class="w-blue" x="233" y="97" width="228" height="190" rx="4"/><rect class="card" x="228" y="92" width="228" height="190" rx="4"/><rect class="ln" filter="url(#r)" x="228" y="92" width="228" height="190" rx="4"/>
+  <rect class="w-blue" x="292" y="124" width="100" height="30" rx="5"/>
+  <rect class="ln thin blue" x="292" y="124" width="100" height="30" rx="5"/>
+  <text class="mid" x="342" y="144.2" style="font-size:15px;font-weight:600">Collect</text>
+  <path class="ln thin" d="M342 157 V168" marker-end="url(#a)"/>
+  <rect class="w-blue" x="292" y="172" width="100" height="30" rx="5"/>
+  <rect class="ln thin blue" x="292" y="172" width="100" height="30" rx="5"/>
+  <text class="mid" x="342" y="192.2" style="font-size:15px;font-weight:600">Analyze</text>
+  <path class="ln thin" d="M342 205 V216" marker-end="url(#a)"/>
+  <rect class="w-blue" x="292" y="220" width="100" height="30" rx="5"/>
+  <rect class="ln thin blue" x="292" y="220" width="100" height="30" rx="5"/>
+  <text class="mid" x="342" y="240.2" style="font-size:15px;font-weight:600">Report</text>
+  <text class="mid" x="342" y="312" style="font-size:15px;font-weight:700">Clean diagram</text>
+  <text class="s mid" x="342" y="332" style="font-size:13.5px">keep labels readable at final size</text>
+  <path class="w-sage" transform="translate(5 5)" d="M488 92 H690 L708 110 V282 H488 Z"/><path class="card" d="M488 92 H690 L708 110 V282 H488 Z"/><path class="ln" filter="url(#r)" d="M488 92 H690 L708 110 V282 H488 Z M690 92 V110 H708"/>
+  <rect x="502" y="114" width="174" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.45"/>
+  <rect class="w-blue" x="563" y="128" width="70" height="21" rx="5"/>
+  <rect class="ln thin blue" x="563" y="128" width="70" height="21" rx="5"/>
+  <text class="mid" x="598" y="143.1" style="font-size:13px;font-weight:600">Collect</text>
+  <path class="ln thin" d="M598 152 V162" marker-end="url(#a)"/>
+  <rect class="w-blue" x="563" y="166" width="70" height="21" rx="5"/>
+  <rect class="ln thin blue" x="563" y="166" width="70" height="21" rx="5"/>
+  <text class="mid" x="598" y="181.1" style="font-size:13px;font-weight:600">Analyze</text>
+  <path class="ln thin" d="M598 190 V200" marker-end="url(#a)"/>
+  <rect class="w-blue" x="563" y="204" width="70" height="21" rx="5"/>
+  <rect class="ln thin blue" x="563" y="204" width="70" height="21" rx="5"/>
+  <text class="mid" x="598" y="219.1" style="font-size:13px;font-weight:600">Report</text>
+  <text x="502" y="249" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-weight="700">Figure 2.3: Example workflow.</text>
+  <rect x="502" y="264" width="160" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.45"/>
+  <text class="mid" x="598" y="312" style="font-size:15px;font-weight:700">Your PDF</text>
+  <text class="s mid" x="598" y="332" style="font-size:13.5px">caption below, in bold</text>
+</svg>

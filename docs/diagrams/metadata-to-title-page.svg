@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 448" width="720" height="448" role="img" aria-labelledby="t d">
   <title id="t">From metadata.tex to the title page</title>
-  <desc id="d">How the lines in metadata.tex fill the title page. Pin 1: title = {Your thesis title} becomes the title, printed in capitals at the top of the page. Pin 2: author = {Your full name} becomes your name below the title. Pin 3: degree = masters becomes MASTER OF SCIENCE under the fixed words Submitted in Partial Fulfillment of the Requirements for the Degree of (doctoral gives Doctor of Philosophy, engineering-doctorate gives Doctor of Engineering). Pin 4: each committeemember line becomes one name in the list under Approved by, and the chair's name is followed by Chair. Pin 5: department becomes the department name near the bottom of the page, above Rensselaer Polytechnic Institute, Troy, New York. Pin 6: graduation-month and graduation-year become the bracketed date at the bottom, such as [May 2027]. The RPI seal, drawn as an empty dashed circle, is added by the class. A handwritten note says the fixed wording and layout come from the class file.</desc>
+  <desc id="d">How the lines in metadata.tex fill the title page. Pin 1: title = {Your thesis title} becomes the title, printed in capitals at the top of the page. Pin 2: author = {Your full name} becomes your name below the title. Pin 3: degree = doctoral becomes DOCTOR OF PHILOSOPHY under the fixed words Submitted in Partial Fulfillment of the Requirements for the Degree of (masters gives Master of Science, engineering-doctorate gives Doctor of Engineering). Pin 4: each committeemember line becomes one name in the list under Approved by, and the chair's name is followed by Chair. Pin 5: department becomes the department name near the bottom of the page, above Rensselaer Polytechnic Institute, Troy, New York. Pin 6: graduation-month and graduation-year become the bracketed date at the bottom, such as [May 2027]. The RPI seal, drawn as an empty dashed circle, is added by the class. A handwritten note says the fixed wording and layout come from the class file.</desc>
   <style>
     svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
       --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
@@ -60,7 +60,7 @@
   <text class="code" x="54" y="97" style="font-size:12.5px" xml:space="preserve">\thesissetup{</text>
   <text class="code" x="54" y="120" style="font-size:12.5px" xml:space="preserve">  title = <tspan style="fill:var(--ink)" font-weight="700">{Your thesis title},</tspan></text>
   <text class="code" x="54" y="143" style="font-size:12.5px" xml:space="preserve">  author = <tspan style="fill:var(--ink)" font-weight="700">{Your full name},</tspan></text>
-  <text class="code" x="54" y="166" style="font-size:12.5px" xml:space="preserve">  degree = <tspan style="fill:var(--ink)" font-weight="700">masters,</tspan></text>
+  <text class="code" x="54" y="166" style="font-size:12.5px" xml:space="preserve">  degree = <tspan style="fill:var(--ink)" font-weight="700">doctoral,</tspan></text>
   <text class="code" x="54" y="189" style="font-size:12.5px" xml:space="preserve">  department = <tspan style="fill:var(--ink)" font-weight="700">{Department of Your</tspan></text>
   <text class="code" x="54" y="212" style="font-size:12.5px" xml:space="preserve">    <tspan style="fill:var(--ink)" font-weight="700">Full Department Name},</tspan></text>
   <text class="code" x="54" y="235" style="font-size:12.5px" xml:space="preserve">  graduation-month = <tspan style="fill:var(--ink)" font-weight="700">May,</tspan></text>
@@ -95,7 +95,7 @@
   <text class="mid" x="585" y="95.7118" style="font-size:13.5px" font-weight="700">Your full name</text>
   <rect x="508.74" y="108.924" width="152.52" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
   <rect x="548.1" y="117.838" width="73.8" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
-  <text class="mid" x="585" y="137.098" style="font-size:13px" font-style="italic">MASTER OF SCIENCE</text>
+  <text class="mid" x="585" y="137.098" style="font-size:13px" font-style="italic">DOCTOR OF PHILOSOPHY</text>
   <rect x="553.02" y="152.857" width="63.96" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.5"/>
   <text class="mid" x="585" y="168.933" style="font-size:13px">Your committee chair, Chair</text>
   <text class="mid" x="585" y="185.933" style="font-size:13px">Committee member two</text>

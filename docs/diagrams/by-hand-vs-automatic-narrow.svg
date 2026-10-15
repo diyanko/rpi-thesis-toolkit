@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 642" width="360" height="642" role="img" aria-labelledby="t d">
+  <title id="t">What you keep right by hand, and what the starter does for you</title>
+  <desc id="d">Two columns compare who keeps a long thesis consistent. Left, in a word processor, you keep these right yourself: chapter and section numbers after you reorder chapters; figure, table, and equation numbers and every cross-reference such as see Figure 3.2; the contents and the lists of figures and tables, with page numbers; citation numbers and the reference list after you add a source; consistent heading and caption styles; and margins and page-number positions across sections. Right, with this LaTeX starter, the same six items each have a check mark and update on every compile, and a note says the formatting is set once, in rpi-thesis.cls. A footnote says Word can automate some of this with styles and fields, but it takes care to keep it right across 150 or more pages.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="440" height="722">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="360" height="642" rx="18"/>
+  <text class="hand" x="20" y="28" style="font-size:16px">keeping a long thesis consistent</text>
+  <rect class="w-butter" x="18" y="48" width="336" height="434" rx="12"/>
+  <rect class="card" x="12" y="42" width="336" height="434" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="12" y="42" width="336" height="434" rx="12"/>
+  <rect class="w-terra" x="220" y="50" width="60" height="418" rx="8" opacity=".7"/>
+  <rect class="w-sage" x="284" y="50" width="60" height="418" rx="8" opacity=".9"/>
+  <text class="mid" x="250" y="70" style="font-size:13px" font-weight="700">Word</text>
+  <text class="mid" x="250" y="86" style="font-size:13px" font-weight="700">processor</text>
+  <text class="hand mid" x="250" y="104" style="font-size:13px">by hand</text>
+  <text class="mid" x="314" y="70" style="font-size:13px" font-weight="700">This</text>
+  <text class="mid" x="314" y="86" style="font-size:13px" font-weight="700">starter</text>
+  <text class="hand hs mid" x="314" y="104" style="font-size:13px">automatic</text>
+  <text x="26" y="86" style="font-size:15px" font-weight="700">Who keeps it right?</text>
+  <path class="ln thin mut" d="M12 112 H348"/>
+  <text x="24" y="138" style="font-size:13.5px">Chapter and section numbers</text>
+  <text x="24" y="156" style="font-size:13.5px">after you reorder</text>
+  <rect class="ln thin terra" filter="url(#r)" x="242.5" y="134.5" width="15" height="15" rx="2"/>
+  <path class="ln sage" d="M306 142 l5 6 l11 -13"/>
+  <path class="ln thin mut dot" d="M22 172 H338"/>
+  <text x="24" y="194" style="font-size:13.5px">Figure, table, equation</text>
+  <text x="24" y="212" style="font-size:13.5px">numbers, and every</text>
+  <text x="24" y="230" style="font-size:13.5px">“see Figure 3.2”</text>
+  <rect class="ln thin terra" filter="url(#r)" x="242.5" y="199.5" width="15" height="15" rx="2"/>
+  <path class="ln sage" d="M306 207 l5 6 l11 -13"/>
+  <path class="ln thin mut dot" d="M22 246 H338"/>
+  <text x="24" y="268" style="font-size:13.5px">The contents and lists of</text>
+  <text x="24" y="286" style="font-size:13.5px">figures and tables, with</text>
+  <text x="24" y="304" style="font-size:13.5px">page numbers</text>
+  <rect class="ln thin terra" filter="url(#r)" x="242.5" y="273.5" width="15" height="15" rx="2"/>
+  <path class="ln sage" d="M306 281 l5 6 l11 -13"/>
+  <path class="ln thin mut dot" d="M22 320 H338"/>
+  <text x="24" y="342" style="font-size:13.5px">Citation numbers and the</text>
+  <text x="24" y="360" style="font-size:13.5px">reference list</text>
+  <rect class="ln thin terra" filter="url(#r)" x="242.5" y="338.5" width="15" height="15" rx="2"/>
+  <path class="ln sage" d="M306 346 l5 6 l11 -13"/>
+  <path class="ln thin mut dot" d="M22 376 H338"/>
+  <text x="24" y="398" style="font-size:13.5px">Heading and caption styles</text>
+  <rect class="ln thin terra" filter="url(#r)" x="242.5" y="385.5" width="15" height="15" rx="2"/>
+  <path class="ln sage" d="M306 393 l5 6 l11 -13"/>
+  <path class="ln thin mut dot" d="M22 414 H338"/>
+  <text x="24" y="436" style="font-size:13.5px">Margins and page-number</text>
+  <text x="24" y="454" style="font-size:13.5px">positions</text>
+  <rect class="ln thin terra" filter="url(#r)" x="242.5" y="432.5" width="15" height="15" rx="2"/>
+  <path class="ln sage" d="M306 440 l5 6 l11 -13"/>
+  <rect class="ln thin terra dash" filter="url(#r)" x="287" y="380" width="54" height="86" rx="8"/>
+  <g transform="rotate(-2 213 527)">
+  <rect class="w-butter" x="120" y="502" width="186" height="50" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="120" y="502" width="186" height="50" rx="3"/>
+  <rect class="w-terra" x="193" y="495" width="40" height="13" opacity=".9"/>
+  <text class="s" x="132" y="522" style="font-size:13px">formatting set once in</text>
+  <text class="m" x="132" y="542" style="font-size:13px">rpi-thesis.cls</text>
+  </g>
+  <path class="ln terra" filter="url(#r)" d="M306 520 C 318 512, 316 496, 314 470" marker-end="url(#at)"/>
+  <text class="s" x="20" y="588" style="font-size:13px;font-style:italic">Word can automate some of this with styles</text>
+  <text class="s" x="20" y="606" style="font-size:13px;font-style:italic">and fields; it takes care to keep it right</text>
+  <text class="s" x="20" y="624" style="font-size:13px;font-style:italic">across 150+ pages.</text>
+</svg>
