@@ -17,7 +17,9 @@
 % \fullcite{key} prints a full citation from references.bib. Delete the % signs:
 % \chapterattribution{Portions of this chapter have previously appeared as:
 %   \fullcite{your-article-key}.}
-% Also list every attributed article on the Declaration of Co-Contribution.
+% Co-authored work also goes on the Declaration of Co-Contribution. If you are
+% the sole author, keep the attribution; the declaration is not needed (OGE
+% manual 2026, section 2.8.1).
 Replace this chapter with your analysis, methods, findings, or argument.
 The examples below are teaching examples, not research results.
 Delete any examples you do not need.
@@ -31,6 +33,8 @@ list of tables automatically.
   \centering
   \caption{Illustrative values for three example groups.}
   \label{tab:example}
+  % One letter per column (l, c, r: alignment); & next column, \\ ends a row.
+  % Table too wide for the page? See "Figures and tables" in docs/writing.md.
   \begin{tabular}{lr}
     \toprule
     Group & Example value \\
@@ -43,16 +47,16 @@ list of tables automatically.
 \end{table}
 
 \section{A figure}
-Figure~\ref{fig:example} is a placeholder for your own image. Upload your image
-to the figures folder and follow the instructions in figures/README.md.
+Figure~\ref{fig:example} shows a sample image that comes with LaTeX. Upload
+your own image to the figures folder (see figures/README.md).
 Put figure captions below the image.
 
 \begin{figure}[htbp]
   \centering
-  \fbox{\parbox[c][1in][c]{0.8\linewidth}{\centering Your figure goes here.}}
-  % Replace the fbox line above with, for example:
-  % \includegraphics[width=0.8\linewidth]{figures/my-figure.png}
-  \caption{A placeholder demonstrating the position of a figure caption.}
+  % For your own image: \includegraphics[width=\linewidth]{figures/my-plot}
+  % (the .png, .jpg, or .pdf extension is optional).
+  \includegraphics[width=0.4\linewidth]{example-image}
+  \caption{A sample image demonstrating the position of a figure caption.}
   \label{fig:example}
 \end{figure}
 
@@ -68,7 +72,8 @@ not a real source.
 % Creative Commons or open access (state the exact license):
 %   Reproduced from [full citation] under the [CC BY 4.0] license.
 % \fullcite{key} inside \caption{...} prints the full citation for you.
-% Never use \caption[short]{long}: the list must match the caption exactly.
+% A long caption is fine. Never use \caption[short]{long}: the list of
+% figures must match the caption exactly.
 % List your permission files in an appendix; see appendices/.
 \begin{figure}[htbp]
   \centering
