@@ -10,7 +10,9 @@ you add the seal.
 
 1. Open RPI ITS's
    [Thesis Preparation page](https://itssc.rpi.edu/hc/en-us/articles/360010087512-Thesis-Preparation)
-   and download the RPI seal image from it.
+   and download the current RPI seal image from it. (The sample title page in
+   the OGE manual shows an older design; use the one from the Thesis
+   Preparation page.)
 2. Rename the file to exactly **`rpi-seal.jpg`** (all lower case, with a
    hyphen).
 3. Put it in this `assets/` folder, next to this README.
