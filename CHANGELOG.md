@@ -40,6 +40,8 @@ commands that previously failed to compile, such as `\square` and
   search button beside the appearance switch. The task links remain
   available without JavaScript. Pasted logs use their first error, brace and
   dollar-sign errors stay distinct, and results open matching optional examples.
+- The offline guide's links to project files now open the matching release,
+  and Get started says which editors the step-by-step help covers.
 
 ## 0.2.0 (beta), 15 Oct 2026
 
