@@ -48,6 +48,12 @@ def run(step, command, cwd=ROOT, env=None):
     return result.returncode == 0, ((useful or lines or [""])[-1]).strip()
 
 
+def git(*args):
+    # CI containers check out as another user; trust this checkout explicitly.
+    return subprocess.run(["git", "-c", f"safe.directory={ROOT}", *args], cwd=ROOT,
+                          capture_output=True, text=True)
+
+
 def pypdf_python():
     for candidate in (os.environ.get("VERIFY_PYTHON"), str(ROOT / ".venv/bin/python"), PY):
         if candidate and Path(candidate).exists() and subprocess.run(
@@ -63,11 +69,13 @@ def hygiene():
     problems = []
     if not (ROOT / ".git").exists():
         return None, "not a git checkout"
-    if subprocess.run(["git", "diff", "--check", "HEAD"], cwd=ROOT, capture_output=True).returncode:
-        problems.append("trailing whitespace or conflict markers (git diff --check HEAD)")
-    tracked = subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True, text=True).stdout.split()
-    tracked += subprocess.run(["git", "ls-files", "--others", "--exclude-standard"], cwd=ROOT,
-                              capture_output=True, text=True).stdout.split()  # new, not yet committed
+    check = git("diff", "--check", "HEAD")
+    if check.returncode >= 128:
+        return False, "git failed: " + check.stderr.strip()[:120]
+    if check.returncode:
+        problems.append("trailing whitespace or conflict markers: " + check.stdout.strip()[:120])
+    tracked = git("ls-files").stdout.split()
+    tracked += git("ls-files", "--others", "--exclude-standard").stdout.split()  # new, not yet committed
     forbidden = [f for f in tracked if f.startswith(("_local/", "build/", "dist/", ".claude/", ".codex/"))
                  or re.match(r"assets/rpi-seal\.", f)]
     if forbidden:
