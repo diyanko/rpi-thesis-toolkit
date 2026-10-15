@@ -88,23 +88,30 @@ name the file and the smallest useful correction.
 - Never imply the toolkit is only for master's or only for doctoral students.
 - Never claim the starter is approved, compliant, guaranteed, or fully tested.
 
-## Verification gates
+## Verification
 
-Run every gate that matches your change, and report what you ran.
+One command, three sizes. Run the smallest that covers your change and report
+its summary line (full logs land in `build/verify/`).
 
-| Change | Required before review |
+| Change | Run |
 | --- | --- |
-| Class, formatting, or `preamble.tex` | `python3 scripts/build.py`, `python3 scripts/check.py`, visual inspection of every affected PDF page, and a row in `docs/project/requirements.md` citing the manual section and printed page or the comparison with RPI's official template; for title-page changes, `check.py` both with and without `assets/rpi-seal.jpg` (CI has no seal); `CHANGELOG.md` entry with **Changes your PDF?** yes |
-| Student `.tex` content | `python3 scripts/build.py` and a look at the changed pages |
-| Guide or any Markdown page | `python3 scripts/build_site.py` (checks every link and anchor); reread as a first-time LaTeX user |
-| Website (`site/`, templates, CSS) | `python3 scripts/build_site.py`; screenshots at phone (390 px), laptop (1280 px), and wide (1920 px) widths, in light and dark mode; visible keyboard focus; works with JavaScript off |
-| Scripts or CI | `python3 scripts/package.py` and `python3 scripts/build.py`; also `check.py` if checks or the build changed |
+| Guide text, diagrams, website CSS/JS/templates | `python3 scripts/verify.py quick` (seconds), then look at the changed pages: `python3 scripts/ui_check.py --shots` saves phone and laptop screenshots in light and dark |
+| Class, starter `.tex` files, `preamble.tex`, scripts, CI | `python3 scripts/verify.py` (full, a few minutes) |
+| Cutting a release | `python3 scripts/bump.py X.Y.Z`, then `python3 scripts/verify.py release` |
 
-`check.py` needs `pypdf`; the student build script does not. Do not add tests
-that merely restate prose or trivial reversible edits.
+Class or formatting changes also need a look at every affected PDF page, a
+row in `docs/project/requirements.md` citing the manual (section and printed
+page) or the official-template comparison, and a `CHANGELOG.md` line with
+**Changes your PDF?** Title-page changes: also run `check.py` with
+`assets/rpi-seal.jpg` present (CI has no seal). A bug worth fixing twice gets a case in
+`scripts/regressions.py`; do not add tests that merely restate prose.
 
-AI-assisted and first-time contributions are welcome: review them against these
-same gates, help finish them rather than reject them, and keep feedback kind and specific.
+Parallel work: one writer per checkout. A second session or agent works in
+its own git worktree and branch, and agents sharing a task own separate files.
+
+AI-assisted and first-time contributions are welcome: review them with the
+same command, help finish them rather than reject them, and keep feedback
+kind and specific.
 
 ## Recording uncertainty
 
@@ -128,7 +135,7 @@ same gates, help finish them rather than reject them, and keep feedback kind and
 ## Before you say "done"
 
 - [ ] I changed only files in my scope and listed every file I changed.
-- [ ] Every gate for my change type passed, and I said which ones I ran.
+- [ ] The right `verify.py` mode passed, and I reported its summary line.
 - [ ] Every formatting claim cites the manual (section and printed page).
 - [ ] No emojis, local paths, personal data, secrets, or generated files.
 - [ ] No overclaiming: nothing says approved, compliant, or guaranteed.
