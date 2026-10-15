@@ -26,7 +26,8 @@ jobs:
           - { name: "Windows Server 2025 (windows-2025) + TeX Live (official installer)", os: windows-2025 }
           - { name: "macOS 15 (Apple Silicon, macos-15) + MacTeX", os: macos-15 }
           - { name: "Ubuntu 24.04 + distribution TeX Live", os: ubuntu-24.04 }
-          - { name: "Ubuntu 22.04 + distribution TeX Live", os: ubuntu-22.04 }
+          # Jammy's TeX Live 2021 is older than the class's minimum kernel.
+          # https://packages.ubuntu.com/jammy/texlive-base
     steps:
       - uses: actions/checkout@v7
         with:

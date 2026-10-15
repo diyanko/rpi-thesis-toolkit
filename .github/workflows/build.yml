@@ -101,7 +101,7 @@ jobs:
           test -s build/main.pdf
           # Exit code 0 is not enough: LaTeX only warns "No file chapters/x.tex."
           # when an \include'd file is missing from the ZIP, and still writes a PDF.
-          if grep -En 'No file [^ ]+\.(tex|bib)|File .[^ ]+. not found|Package biblatex Warning: File' build/main.log; then
+          if grep -En 'No file .+\.(tex|bib)|File .[^ ]+. not found|Package biblatex Warning: File' build/main.log; then
             echo "The starter ZIP builds without a file main.tex asks for (see the lines above)."
             exit 1
           fi
@@ -121,7 +121,7 @@ jobs:
           cd "$work/overleaf"
           latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
           test -s main.pdf
-          if grep -En 'No file [^ ]+\.(tex|bib)|File .[^ ]+. not found|Package biblatex Warning: File' main.log; then
+          if grep -En 'No file .+\.(tex|bib)|File .[^ ]+. not found|Package biblatex Warning: File' main.log; then
             echo "The Overleaf ZIP builds without a file main.tex asks for (see the lines above)."
             exit 1
           fi
