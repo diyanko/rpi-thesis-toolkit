@@ -6,7 +6,6 @@
       "name": "rpi-latexmk",
       "command": "latexmk",
       "args": [
-        "-norc",
         "-pdf",
         "-no-shell-escape",
         "-synctex=1",
