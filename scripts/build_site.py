@@ -547,33 +547,38 @@ class Site:
         Native radios provide keyboard selection without JavaScript; without
         CSS both labeled versions remain visible.
         """
-        variants = (("ams", "amsart", "AMS: one column"),
-                    ("ieee", "IEEEtran", "IEEE: two columns"))
-        if not all("class-demo-" + key in self.previews for key, _, _ in variants):
+        variants = (("ams", "amsart"), ("ieee", "IEEEtran"))
+        if not all("class-demo-" + key in self.previews for key, _ in variants):
             return ""
         controls, panels = [], []
-        for key, cls, label in variants:
+        for key, cls in variants:
             name = "class-demo-" + key
             size = self.previews[name]
+            crop = name + "-crop"
+            inline = self.previews.get(crop, size)
             selected = ' checked' if key == "ams" else ""
             controls.append(f'<input type="radio" name="class-demo" id="choose-{name}"{selected}>'
-                            f'<label for="choose-{name}">{label}</label>')
+                            f'<label for="choose-{name}">{cls}</label>')
             src = self.relative(here, f"previews/{name}.png")
+            inline_src = self.relative(here, f"previews/{crop if crop in self.previews else name}.png")
             count = size["pages"]
-            caption = f'Page 1 of {count}. Same words, equation, table and figure.'
+            caption = (f'Top of page 1 of {count}.' if crop in self.previews
+                       else f'Page 1 of {count}.') + ' Same source; only the class name changes.'
             alt = (f'First page of the shared teaching example in {cls}: '
                    + ("one column, centered headings." if key == "ams" else "two columns, Roman-numbered headings."))
             picture = (f'<img src="{src}" alt="{escape(alt)}" width="{size["width"]}" '
                        f'height="{size["height"]}" loading="eager">')
+            inline_picture = (f'<img src="{inline_src}" alt="{escape(alt)}" width="{inline["width"]}" '
+                              f'height="{inline["height"]}" loading="eager">')
             panels.append(
                 f'<div class="class-demo-panel class-demo-{key}">'
                 f'<p class="class-demo-line"><code>\\documentclass{{<mark>{cls}</mark>}}</code></p>'
-                f'<figure>{picture}<figcaption>{caption}</figcaption></figure>'
+                f'<figure>{inline_picture}<figcaption>{caption}</figcaption></figure>'
                 + viewer_link("diagram-open", f"view-{name}", f"open-{name}", src,
                               f'View larger<span class="visually-hidden">: {cls} example</span>')
                 + viewer_dialog(f"view-{name}", f"open-{name}", f"{cls} example, full size", picture)
                 + '</div>')
-        return ('<fieldset class="class-demo"><legend>Choose a layout. Watch the page change.</legend>'
+        return ('<fieldset class="class-demo"><legend>Change the class name</legend>'
                 + ''.join(controls) + '<div class="class-demo-panels">' + ''.join(panels)
                 + '</div></fieldset>')
 
