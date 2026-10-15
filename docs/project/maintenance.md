@@ -400,42 +400,29 @@ One version number, everywhere a student or maintainer might look:
 
 ## Make a release
 
-Short on purpose, so it still works in a few years. Do it only with the
-maintainer's authorization.
+Only with the maintainer's authorization. Everyday changes need none of this:
+merge them to `main` and they ship with the next release.
 
-1. **Test.** In the **Actions** tab, run **Fresh-machine test** (about an
-   hour): it installs TeX on clean Windows, macOS, and Ubuntu machines as the
-   guide says and compiles the starter. All must pass. Before a minor or
-   major release, also have someone new complete [Get started](../get-started.md)
-   unaided, and, when authorized, request OGE's preliminary review of the
-   sample PDF ([OGE review packet](#oge-review-packet)); record the outcome in
-   the change-log entry and in [requirements.md](requirements.md). Silence is
-   not approval.
-2. **Set the version** ([versions](#versions)): the `\ProvidesClass` line in
-   `rpi-thesis.cls` (date and `vX.Y.Z`), the date in `main.tex`'s
-   `\documentclass{rpi-thesis}[...]`, and `version` and `date-released` in
-   `CITATION.cff`.
-3. **Change log.** In `CHANGELOG.md`, replace "unreleased" with the date; the
-   entry starts with **Changes your PDF?**
-4. **Download links.** Set `RELEASE_TAG` and `RELEASE_VERSION` in
-   `scripts/build_site.py` (the home page's "Get the starter" button downloads
-   from them), then point
-   `docs/get-started.md` (Step 2 and Step 3b) and `README.md` ("Download") at
-   the same release files. `build_site.py` stops if the three disagree.
-5. **Build and tag.** Run `python3 scripts/build_site.py --previews` and
-   `python3 scripts/package.py`, commit, tag the commit on `main` as
-   `vX.Y.Z`, and push the tag.
-6. **Publish the release** on GitHub for that tag with both ZIPs from
-   `dist/` and the change-log entry as the notes (mark beta releases as
-   pre-releases). Open both download links and the "Open the starter in
-   Overleaf" link once to confirm they work.
-7. **Publish the website** from the **Actions** tab ([the website](#the-website)).
-   Its deploy step runs `build_site.py --previews --publish`, which refuses
-   to publish while the class version differs from `RELEASE_VERSION` or any
-   guide page, diagram, preview, or the cheat sheet is missing. So the
-   website never describes files that the download does not contain.
+1. **Bump:** `python3 scripts/bump.py X.Y.Z` sets the version everywhere (class
+   line and date, `main.tex`, download links, `CITATION.cff`, and the change
+   log's "Unreleased" heading). Check the change-log entry reads well.
+2. **Verify:** `python3 scripts/verify.py release`. Before a minor or major
+   release, also run **Fresh-machine test** in the Actions tab (about an hour)
+   on the branch.
+3. **Merge** the pull request to `main`.
+4. **Publish** from an up-to-date `main`: `python3 scripts/package.py`, then
+   `gh release create vX.Y.Z --prerelease --title vX.Y.Z --notes-file <entry>
+   dist/rpi-thesis-starter-vX.Y.Z.zip dist/rpi-thesis-overleaf-vX.Y.Z.zip`
+   (the ZIPs are reproducible, so they match what CI tested).
+5. **Deploy the website:** Actions, **Build thesis, website, and starter ZIP**,
+   run on `main` with "publish" ticked. Its strict build refuses to publish a
+   site that links a different version than the class.
+6. **Check** the live home page's download and "Open in Overleaf" links once.
 
-<!-- Maintainer: at each release, add date-released (YYYY-MM-DD) to CITATION.cff. -->
+Feedback that changes formatting (for example from OGE's preliminary review)
+goes in the change-log entry and in [requirements.md](requirements.md).
+Silence is not approval.
+
 
 ## Roadmap and not yet covered
 
