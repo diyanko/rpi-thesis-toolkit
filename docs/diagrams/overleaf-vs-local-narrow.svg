@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640" width="360" height="640" role="img" aria-labelledby="t d">
   <title id="t">Your computer compared with Overleaf</title>
-  <desc id="d">Your computer compared with Overleaf. Both start from the same project files and run the same compile steps (pdfLaTeX, Biber, then pdfLaTeX twice, repeated as needed) to produce matching PDFs when both use a current TeX setup. On your computer the files live in a folder you control, LaTeX is installed locally, and you work offline in an editor. On Overleaf the files and the LaTeX installation live on Overleaf's servers and you work in a browser.</desc>
+  <desc id="d">Your computer compared with Overleaf. Both start from the same project files and run the same compile steps (pdfLaTeX, Biber, then pdfLaTeX twice, repeated as needed) so the PDFs match when the engine, packages, and fonts match too. On your computer the files live in a folder you control, LaTeX is installed locally, and you work offline in an editor. On Overleaf the files and the LaTeX installation live on Overleaf's servers and you work in a browser.</desc>
   <style>
     svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
       --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;

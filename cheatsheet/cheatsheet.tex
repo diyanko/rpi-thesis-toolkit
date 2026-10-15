@@ -58,7 +58,7 @@
   showstringspaces=false,
   keywordstyle=\color{inkblue},texcsstyle=*\color{inkblue},
   moretexcs={thesissetup,committeemember,frontchapter,chapterattribution,
-    fullcite,cite,eqref,enquote,includegraphics,toprule,midrule,bottomrule,
+    fullcite,cite,parencite,textcite,eqref,enquote,includegraphics,toprule,midrule,bottomrule,
     subsection,emph,textbf,centering,caption,label,ref,item,section,chapter},
   commentstyle=\color{terra!82!black},
   breaklines=false,aboveskip=0pt,belowskip=0pt,
@@ -150,7 +150,7 @@
 \row{assets/}{The RPI seal: download it (see README).}
 \end{tabular}
 \begin{snip}
-% metadata.tex: change only what is inside { }
+% metadata.tex: change only the values after =
 \thesissetup{
   title  = {Your thesis title},
   author = {Your full name},
@@ -163,7 +163,7 @@
 \end{snip}
 \note{List every approved member, with \code{[Chair]} on one line. Front-matter
 pages begin \cs{frontchapter}\code{\{ABSTRACT\}}.}
-\note{New chapter? Copy one, retitle it, add its \cs{include} to \file{main.tex}.}
+\note{New chapter? Start empty, not a copy; add it to \file{main.tex}.}
 \end{fg}
 \gap
 % ============================ 2. WRITE
@@ -209,7 +209,8 @@ numbers by hand. Prefixes: \code{chap: sec: fig: tab: eq:}}
 % ============================ 4. CITE
 \begin{fg}{4}{Cite}{one entry, one key}
 \begin{snip}
-An earlier account explains this~\cite{lamport1994}.
+An earlier account~\parencite{lamport1994}.
+\textcite{lamport1994} explain this.  % author in sentence
 \fullcite{lamport1994}  % the whole entry, in text
 \end{snip}
 \begin{bibsnip}
@@ -228,10 +229,10 @@ An earlier account explains this~\cite{lamport1994}.
 \end{bibsnip}
 \note{OGE wants an \textbf{access date for every URL} (not for DOIs):
 \code{urldate} is the day \emph{you} read it. Check that it prints.}
-\note{In \file{references.bib}, the key follows \code{@book\{}. Keys must be
-unique; only cited sources are listed. Braces keep capitals: \code{\{RPI\}}.}
-\note{Agree on a style with your advisor and set it in \file{preamble.tex}.
-The sample's numeric style is not an official one.}
+\note{Keys must be unique. Braces keep capitals: \code{\{RPI\}}.}
+\note{Agree on a style with your advisor first (\file{preamble.tex}); it
+decides what each command prints. The sample style is only an example.
+\cs{fullcite} needs setup in MLA and Chicago (see the guide).}
 \end{fg}
 \gap
 % ============================ 5. FIGURE
@@ -244,6 +245,7 @@ The sample's numeric style is not an official one.}
   \label{fig:x}
 \end{figure}
 \end{snip}
+\note{Tall image? Add \code{height=0.7\textbackslash textheight,keepaspectratio}.}
 \note{\cs{label} goes \emph{after} \cs{caption}. Never use
 \cs{caption}\code{[short]\{long\}}: the list of figures must match the caption.}
 \note{Someone else's figure, or one from your paper? Its caption needs the full
@@ -266,8 +268,7 @@ citation and a permission or license statement.}
   \end{tabular}
 \end{table}
 \end{snip}
-\note{The class loads \file{booktabs}, which gives \cs{toprule},
-\cs{midrule} and \cs{bottomrule}.}
+\note{\file{booktabs} gives \cs{toprule}, \cs{midrule}, \cs{bottomrule}.}
 \end{fg}
 \end{minipage}%
 \hfill
@@ -304,7 +305,8 @@ displays inside a lemma, theorem, proof or algorithm may go unnumbered.}
 \end{snip}
 \note{\textbf{Copy the exact OGE wording} for your article's status
 (published, accepted or submitted). Co-authored? Also list it on the
-Declaration of Co-Contribution (not needed if you are the sole author).}
+Declaration of Co-Contribution. Sole author of a published paper: attribution
+only. Sole-authored but submitted or under review? Unclear; check OGE's checklist or ask OGE.}
 \end{fg}
 \gap
 % ============================ 9. COMPILE

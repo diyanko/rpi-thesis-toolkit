@@ -16,7 +16,7 @@ code listing? Jump to [helpers for common tasks](#helpers-for-common-tasks).
 | `\section{...}` | Starts a section (`\subsection` goes one level down) | `\section{Research question}` |
 | A blank line | Starts a new paragraph | Leave one empty line between paragraphs |
 | `\emph{...}` | *Emphasis*, in italics (`\textbf{...}` gives bold) | `\emph{not}` |
-| `\cite{...}` | Cites a source from `references.bib` | `\cite{lamport1994}` |
+| `\parencite{...}` | Cites a source from `references.bib`, in parentheses or brackets (`\textcite` puts the author in the sentence) | `\parencite{lamport1994}` |
 | `\label{...}` and `\ref{...}` | Names something, then prints its number | `Figure~\ref{fig:plot}` |
 | `figure` | A figure with its caption | See [add a figure](#add-a-figure) |
 | `table` | A table with its caption | See [edit a table](#edit-a-table) |
@@ -103,16 +103,20 @@ and [fixing problems](troubleshooting.md#common-messages).
 1. Add the source to `references.bib`, by exporting from Zotero or pasting an
    entry ([citations and references](citations.md)).
 2. Find its **key**, the word after `@book{` or `@article{` in that entry.
-3. Cite it where you need it, then compile:
+3. Cite it where you need it, then compile. Use `\parencite` for a citation
+   in parentheses and `\textcite` when the author is part of the sentence:
 
    ```tex
-   An earlier study describes this approach~\cite{your-key}.
+   An earlier study describes this approach~\parencite{your-key}.
+   \textcite{your-key} describe this approach in detail.
    ```
 
-   Replace `your-key` with the key from your source's entry.
+   Replace `your-key` with the key from your source's entry. Check how your
+   style prints both ([the citation commands](citations.md#change-the-citation-style)).
 
 Only sources you cite appear in the reference list. Agree on a citation style
-with your advisor ([agree on a style](citations.md#step-1-agree-on-a-style-with-your-advisor)).
+with your advisor first ([agree on a style](citations.md#step-1-agree-on-a-style-with-your-advisor)),
+because the style decides what each command prints.
 
 ## Quote a source
 
@@ -162,12 +166,19 @@ one where it fits, so it may move to the next page. That is normal.
    \end{figure}
    ```
 
-   The file extension (`.png`, `.jpg`, `.pdf`) is optional.
+   The file extension (`.png`, `.jpg`, `.pdf`) is optional. This fits images
+   that are wider than tall. For a **tall (portrait) image**, such as a
+   scanned page, a phone photo, or a tall map, use this line instead so the
+   image and its caption fit on one page:
+
+   ```tex
+   \includegraphics[width=\linewidth,height=0.7\textheight,keepaspectratio]{figures/my-scan}
+   ```
 3. Refer to it in your text: `Figure~\ref{fig:my-plot} shows …`
 4. Compile, and check that the figure is legible.
 
-A plot, photo, map, scanned artwork, or architectural drawing all use this same
-example. For a flowchart, see [draw a diagram](#draw-a-diagram); for a chart
+A plot, photo, map, scanned artwork, or architectural drawing all use these
+same examples. For a flowchart, see [draw a diagram](#draw-a-diagram); for a chart
 from data or another image format, see
 [export a chart or convert an image](#export-a-chart-or-convert-an-image).
 Credit material that is not yours ([permissions](#reproduced-figures-and-permissions)).
@@ -227,7 +238,8 @@ Replace the `tabular` part of the sample with this.
 ### Too wide for the page?
 
 Nothing may run into the margins. `width=\linewidth` keeps an image inside
-them. For a wide table, wrap long text in `p{}` columns, shorten headings
+them sideways; the height limit in [add a figure](#add-a-figure) keeps a tall
+image on its page. For a wide table, wrap long text in `p{}` columns, shorten headings
 (explain abbreviations in the caption), drop columns you don't need, or split
 it into two tables. Keep the text the same size as in your other tables rather
 than shrinking it. An `Overfull \hbox` message points to anything still too
@@ -256,9 +268,10 @@ caption (see `chapters/02-research.tex`):
 - **Creative Commons or open access:** "Reproduced from [full citation] under
   the CC BY 4.0 license." Name the exact license.
 
-`\fullcite{key}` prints the full citation in most styles, but not in MLA, and
-ACS shortens long author lists
-([print a full reference](citations.md#print-a-full-reference-in-the-text)).
+`\fullcite{key}` prints the full citation in the styles listed in
+[print a full reference](citations.md#print-a-full-reference-in-the-text);
+MLA and Chicago author-date need a setup there, and ACS shortens long author
+lists. Check the printed caption.
 Keep permission
 emails or license text, and follow OGE's current instructions for the
 permissions appendix ([submitting](submission.md)). With a numbered citation

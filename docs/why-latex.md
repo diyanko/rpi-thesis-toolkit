@@ -8,20 +8,31 @@ You type or paste your text, and one file of formatting rules (the *class
 file*, `rpi-thesis.cls`) keeps headings, numbering, and spacing consistent.
 You still check the PDF.
 
-## What you stop doing by hand
+<span id="what-you-stop-doing-by-hand"></span>
 
-![Two columns compare manual formatting with this starter. Left: you maintain chapter and section numbers, figure, table, and equation numbers and their cross-references, the contents and lists, citation numbering and the reference list, and consistent styles and margins yourself. Right: these items update when you compile, with formatting set in rpi-thesis.cls. A note says structured styles and references also automate work in other writing tools.](diagrams/by-hand-vs-automatic.svg)
+## When your thesis changes
 
-*In words:* numbering, cross-references, the contents, citations, and
-consistent styles update every time you compile (turn your files into a PDF),
-instead of by hand.
+Moving a chapter, inserting a figure, or pasting a section from another file
+can affect numbering, references, and formatting. Word and this LaTeX starter
+can both manage these; the setup and the checks you make differ.
+
+![Word and this LaTeX starter compared through four edits: moving a chapter or section, adding a figure, pasting outside text, and refreshing the contents. Word uses heading styles, captions, cross-references, and field updates; this starter uses structured commands, labels, and compilation. Both need a check after changes.](diagrams/by-hand-vs-automatic.svg)
+
+*In words:* in Word, use its structured features and refresh fields after
+edits. In this starter, edit the source and compile (turn it into a PDF),
+then check the result. Typed numbers and copied formatting need attention
+in either workflow.
+
+For Word's controls, Microsoft explains
+[updating fields and the entire contents table](https://support.microsoft.com/en-au/word/update-fields)
+and [choosing how pasted text is formatted](https://support.microsoft.com/en-us/word/control-the-formatting-when-you-paste-text).
 
 - **Citations.** Cite a source by its short name (its key); the citation and
   the reference list follow your field's style, such as APA, Chicago, MLA,
   or IEEE ([citation styles](citations.md#change-the-citation-style)).
 - **Margins, spacing, and the title page.** Set once in the class file. If a
-  rule changes, you [replace one file](workflows.md#update-the-formatting-safely)
-  and your chapters stay untouched.
+  rule changes, you usually replace the class file and your chapters stay untouched; check
+  the steps first ([update the formatting safely](workflows.md#update-the-formatting-safely)).
 - **Equations.** LaTeX was built for mathematics; displayed equations are
   laid out and numbered for you.
 
