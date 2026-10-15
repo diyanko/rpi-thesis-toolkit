@@ -156,7 +156,9 @@ fonts the PDF should match. Other editors don't read this starter's
 - **Apps that need no setup:** [TeXShop](https://pages.uoregon.edu/koch/texshop/)
   (macOS), [TeXworks](https://tug.org/texworks/) (comes with TeX Live on
   Windows), and [TeXstudio](https://www.texstudio.org/) (all systems). Open
-  `main.tex` and run pdfLaTeX, then Biber, then pdfLaTeX twice.
+  `main.tex` and run pdfLaTeX, then Biber, then pdfLaTeX twice. This guide's
+  step-by-step help (cleaning up, changing the engine) covers VS Code and
+  Overleaf; for these apps, use their own help pages.
 - **Your own editor with a LaTeX plugin,** such as Vim ([VimTeX](https://github.com/lervag/vimtex)),
   Emacs ([AUCTeX](https://www.gnu.org/software/auctex/)), or Sublime Text
   ([LaTeXTools](https://github.com/SublimeText/LaTeXTools)).
