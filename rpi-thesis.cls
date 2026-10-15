@@ -42,7 +42,14 @@
   % newtxmath defines \openbox, which amsthm defines again. Clear it only if
   % amsthm is loaded later, so \usepackage{amsthm} in preamble.tex just works.
   \AddToHook{package/amsthm/before}{\let\openbox\relax}
+  % newtxmath provides the AMS commands. Avoid redefinitions if a student
+  % pastes \usepackage{amssymb} or \usepackage{amsfonts} into preamble.tex.
+  \@namedef{ver@amssymb.sty}{2013/01/14 v3.01 (symbols provided by rpi-thesis)}
+  \@namedef{ver@amsfonts.sty}{2013/01/14 v3.01 (symbols provided by rpi-thesis)}
 \else
+  % Establish conventional AMS command names before unicode-math replaces
+  % their Unicode equivalents; it does not define every traditional alias.
+  \RequirePackage{amssymb}
   \RequirePackage{fontspec}
   % Load the files from the TeX distribution; do not depend on OS font discovery.
   \setmainfont{texgyretermes}[
@@ -51,11 +58,6 @@
   \RequirePackage{unicode-math}
   \setmathfont{texgyretermes-math.otf}
 \fi
-% These math fonts already provide every amssymb and amsfonts symbol. Mark
-% both packages as loaded, so a pasted \usepackage{amssymb} is harmless
-% instead of stopping the build with "Command ... already defined".
-\@namedef{ver@amssymb.sty}{2013/01/14 v3.01 (symbols provided by rpi-thesis)}
-\@namedef{ver@amsfonts.sty}{2013/01/14 v3.01 (symbols provided by rpi-thesis)}
 
 % ---------------------------------------------------------------------------
 % 3. Packages every thesis uses. Add your own in preamble.tex.
