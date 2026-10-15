@@ -2,8 +2,8 @@ $-- Landing page content. The build wraps it in site/guide-template.html
 $-- (head, header, footer), and site/site.css styles it.
 $-- - Link guide pages by their Markdown file from the repository root, e.g.
 $--   href="docs/writing.md"; the build turns these into working .html links.
-$-- - root, nav, anatomy and cheatsheet_url are template variables from
-$--   scripts/build_site.py.
+$-- - root, nav, stages, quick, anatomy, timeline and cheatsheet_url are
+$--   template variables from scripts/build_site.py.
 $-- - Drawings live in site/art/ and are linked as root + "art/name.svg".
 $-- - Write a literal dollar sign as two dollar signs. Lines starting with
 $--   dollar-dash-dash are comments and are left out of the page.
@@ -16,15 +16,16 @@ $-- ============ Hero ============
     <p class="lead">A free LaTeX starter and a plain-language guide, even if you have never used LaTeX. You write the words; the template takes care of margins, headings, page numbers, the contents and your reference list.</p>
     <p class="hero-actions">
       <a class="button" href="docs/get-started.md#step-2-get-the-files">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 4v11"/><path d="M7 10.5l5 5 5-5"/><path d="M4.5 19.5h15"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12.1 4.2C11.8 7.8 12.2 11.3 12 14.9"/><path d="M7.3 10.6C8.9 12.1 10.4 13.6 12 15.2C13.6 13.6 15 12.1 16.7 10.4"/><path d="M4.4 19.5C9.5 19.8 14.5 19.2 19.6 19.6"/></svg>
         Get the starter
       </a>
       <a class="button button-secondary" href="docs/get-started.md#step-3b-overleaf-route">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 18.5h10.5a4 4 0 0 0 .4-8A5.5 5.5 0 0 0 7.3 9 4.8 4.8 0 0 0 7 18.5z"/></svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7.2 18.6C10.6 18.4 14 18.7 17.4 18.5C19.8 18.4 21.4 16.5 21.2 14.4C21 12.3 19.4 10.7 17.6 10.6C16.9 7.8 14.6 5.8 11.9 5.9C9.4 6 7.6 7.6 7.1 9.4C4.7 9.6 2.9 11.6 3 14.1C3.1 16.6 5 18.6 7.4 18.5"/></svg>
         Start on Overleaf
       </a>
     </p>
-    <p class="hero-aside">Already have a draft? <a href="docs/bring-your-draft.md">Bring it with you</a>. Stuck on an error? <a href="docs/troubleshooting.md">Fix it here</a>.</p>
+    <p class="hero-aside">New to LaTeX? <a href="docs/why-latex.md">See why it's worth it</a>.<br>Already have a draft? <a href="docs/bring-your-draft.md">Bring it with you</a>. Stuck on an error? <a href="docs/troubleshooting.md">Fix it here</a>.</p>
+    <p class="hero-scope">Writing an undergraduate thesis, a course paper, or a poster? The writing and citation help works for you too; the title page and layout follow RPI's graduate rules.</p>
   </div>
   <figure class="hero-art">
     <img src="${root}art/hero-page.svg" width="600" height="480" alt="Sketch of a thesis page. A note says you write the words and points to the paragraphs. Other notes say the template sets the margins and headings, and handles page numbers, the contents and the reference list.">
@@ -36,18 +37,20 @@ $-- ============ Pick your path ============
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow">Step one</p>
-      <h2 id="path-title">Pick where you'll write</h2>
-      <p>Both routes use the same files and make the same PDF. You can switch later.</p>
+      <h2 id="path-title">Choose your LaTeX workspace</h2>
+      <p>This is where your thesis compiles into a PDF. Both routes use the same files and programs, and you can switch later. Draft wherever you and your advisor work best.</p>
     </div>
     <div class="routes">
       <article class="card tinted route-card local">
-        <p class="route-badge">Recommended for a full thesis</p>
+        <p class="route-badge">Suggested for a full thesis</p>
         <div class="route-top">
           <svg class="doodle" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
             <g class="dd" filter="url(#sk)">
-              <rect class="f-blue" x="10" y="13" width="44" height="30" rx="4"/>
-              <path class="f-card" d="M4 47 H60 L56 53 H8 Z"/>
-              <path d="M18 23 H40 M18 29 H44 M18 35 H34"/>
+              <path class="w-blue" d="M15 16.5C28.3 16.2 41.7 16.3 55 16L55.4 45L14.6 45.4Z"/>
+              <path d="M12 13.5C25.3 13.2 38.7 13.3 52 13C52.2 22.7 52.1 32.3 52.4 42C38.8 42 25.2 42.2 11.6 42.4C11.8 32.8 11.7 23.1 12 13.5Z"/>
+              <path class="ln" d="M18 22.3C25.3 21.9 32.6 22.2 40 21.9M18 28.4C26.6 28.1 35.3 28.3 44 28M18 34.4C23 34.2 28 34.4 33 34.2"/>
+              <path class="k" d="M5.2 46.6C23.1 46.2 41.1 46.5 59 46.2L55.2 52.5C40 52.7 24.2 52.5 8.8 52.7Z"/>
+              <path d="M5.2 46.6C23.1 46.2 41.1 46.5 59 46.2L55.2 52.5C40 52.7 24.2 52.5 8.8 52.7Z"/>
             </g>
           </svg>
           <div>
@@ -60,15 +63,17 @@ $-- ============ Pick your path ============
           <li>you'd like your unpublished research to stay on your machine</li>
           <li>you want your own tools: Git, Zotero, scripts</li>
         </ul>
-        <p class="tradeoff">Free, after a one-time install and a little setup.<br><a class="text-link" href="docs/get-started.md#step-3a-your-computer-route">Start on your computer<span class="arrow" aria-hidden="true">→</span></a></p>
+        <p class="tradeoff">Free, after a one-time install and a little setup.</p>
+        <p class="route-go"><a class="text-link" href="docs/get-started.md#step-3a-your-computer-route">Start on your computer<span class="arrow" aria-hidden="true">→</span></a></p>
       </article>
       <article class="card tinted route-card">
         <div class="route-top">
           <svg class="doodle" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
             <g class="dd" filter="url(#sk)">
-              <rect class="f-card" x="5" y="10" width="54" height="42" rx="5"/>
-              <path d="M5 19 H59"/>
-              <path class="f-sage" d="M22 42 h21 a6 6 0 0 0 .6-12 a8 8 0 0 0-15.4-1.6 A6.8 6.8 0 0 0 22 42z"/>
+              <path d="M5 10.5C23 10.2 41 10.4 59 10C59.3 24 59.1 38 59.4 52C41.3 52.3 23.1 52.1 5 52.4C5.2 38.4 4.9 24.5 5 10.5Z"/>
+              <path d="M5.3 19C23.2 18.6 41.1 19.2 59.1 18.8M10.4 14.8H10.6M15 14.7H15.2M19.6 14.8H19.8"/>
+              <path class="w-sage" d="M24.5 46.5C31.5 46.4 38.5 46.6 45.6 46.4C49.4 46.3 51.6 43.3 51.3 40.4C51 37.6 48.6 35.6 46.1 35.4C45.2 31.4 42 29 38.4 29.1C34.8 29.2 32.2 31.4 31.5 33.6C27.8 33.8 25 36.6 25.1 40.2C25.2 43.6 27.8 46.5 31.2 46.5"/>
+              <path d="M22 44C29 43.9 36 44.1 43.1 43.9C46.9 43.8 49.1 40.8 48.8 37.9C48.5 35.1 46.1 33.1 43.6 32.9C42.7 28.9 39.5 26.5 35.9 26.6C32.3 26.7 29.7 28.9 29 31.1C25.3 31.3 22.5 34.1 22.6 37.7C22.7 41.1 25.3 44 28.7 44"/>
             </g>
           </svg>
           <div>
@@ -81,10 +86,11 @@ $-- ============ Pick your path ============
           <li>you write from more than one computer</li>
           <li>you co-write live with an advisor or co-authors</li>
         </ul>
-        <p class="tradeoff">Needs internet; the free plan limits compile time and collaborators.<br><a class="text-link" href="docs/get-started.md#step-3b-overleaf-route">Start on Overleaf<span class="arrow" aria-hidden="true">→</span></a></p>
+        <p class="tradeoff">Needs internet; the free plan limits compile time and collaborators.</p>
+        <p class="route-go"><a class="text-link" href="docs/get-started.md#step-3b-overleaf-route">Start on Overleaf<span class="arrow" aria-hidden="true">→</span></a></p>
       </article>
     </div>
-    <p class="routes-foot margin-note">Overleaf is a great place to start, and you can <a href="docs/workflows.md#use-your-computer-and-overleaf">move between them</a> at any time.</p>
+    <p class="routes-foot margin-note">Still drafting somewhere else? Set up now and <a href="docs/how-it-works.md#the-suggested-workflow-and-why">bring chapters in as they settle</a>. You can <a href="docs/workflows.md#use-your-computer-and-overleaf">move between them</a> at any time.</p>
   </div>
 </section>
 
@@ -106,7 +112,7 @@ $-- ============ Your first hour ============
       <li>
         <span class="step-bubble" aria-hidden="true">2</span>
         <h3>Compile once</h3>
-        <p>Open <code>main.tex</code> and compile it before you change anything.</p>
+        <p>Open <code>main.tex</code> and compile it (turn your files into a PDF) before you change anything.</p>
         <p class="see">You should see the sample PDF.</p>
       </li>
       <li>
@@ -134,7 +140,6 @@ $-- ============ Behind the scenes ============
       <p class="eyebrow">Behind the scenes</p>
       <h2 id="scenes-title">What happens when you press Compile?</h2>
       <p>Your thesis is a handful of plain-text files. Compiling turns them into one formatted PDF, and knowing how makes error messages much less mysterious.</p>
-      <p>Draft wherever you like, typing citations as <code>\cite{key}</code> so they paste straight in. The formatting lives in one file, so it can be swapped when the rules change.</p>
       <a class="text-link" href="docs/how-it-works.md">See how it works<span class="arrow" aria-hidden="true">→</span></a>
     </div>
     <figure>
@@ -145,14 +150,16 @@ $-- ============ Behind the scenes ============
 
 $-- ============ Anatomy of your thesis ============
 $-- Rows come from ANATOMY in scripts/build_site.py. With --previews each row
-$-- gets a picture of that page; without, the rows show as a small table.
+$-- shows the whole page (small, the close-up area outlined), a close-up you
+$-- can read, and a link to the page at full size; without, the rows show as a
+$-- small table.
 <section class="section anatomy" aria-labelledby="anatomy-title">
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow">From the sample thesis</p>
       <h2 id="anatomy-title">Anatomy of your thesis</h2>
 $if(pictures)$
-      <p>Real pages from the compiled sample. Under each one: the file you edit, and what the template does for you.</p>
+      <p>Real pages from the compiled sample, each with a close-up you can read. Select a page to open all of it. With each: the file you edit, and what the template does for you.</p>
 $else$
       <p>Five parts of the compiled sample: the file you edit for each, and what the template does for you.</p>
 $endif$
@@ -161,14 +168,18 @@ $if(pictures)$
     <ol class="anatomy-pages">
 $for(anatomy)$
       <li>
-$if(it.img)$
-        <img src="$it.img.src$" alt="$it.img.alt$" width="$it.img.width$" height="$it.img.height$" loading="lazy">
-$endif$
-        <h3>$it.label$</h3>
-        <dl>
-          <dt>You edit</dt><dd>$it.edit$</dd>
-          <dt>Automatic</dt><dd>$it.auto$</dd>
-        </dl>
+        <a class="anatomy-shot" href="$it.img.full$">
+          <span class="anatomy-page"><img src="$it.img.page.src$" alt="$it.img.page.alt$" width="$it.img.page.width$" height="$it.img.page.height$" loading="lazy"><span class="anatomy-spot" style="$it.img.spot$"></span></span>
+          <span class="anatomy-lens$if(it.img.whole)$ anatomy-lens-whole$endif$"><img src="$it.img.lens.src$" alt="$it.img.lens.alt$" width="$it.img.lens.width$" height="$it.img.lens.height$" loading="lazy"></span>
+          <span class="anatomy-open">Open the full page<span class="visually-hidden">: $it.label$</span></span>
+        </a>
+        <div class="anatomy-text">
+          <h3>$it.label$</h3>
+          <dl>
+            <dt>You edit</dt><dd>$it.edit$</dd>
+            <dt>Automatic</dt><dd>$it.auto$</dd>
+          </dl>
+        </div>
       </li>
 $endfor$
     </ol>
@@ -187,82 +198,127 @@ $endif$
   </div>
 </section>
 
-$-- ============ Help at your level: all nine student guide pages ============
+$-- ============ Your thesis, start to finish ============
+$-- The drawing is docs/diagrams/thesis-timeline.svg; phones get the
+$-- -narrow version when it exists (timeline in scripts/build_site.py).
+<section class="section band timeline" aria-labelledby="timeline-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow">The big picture</p>
+      <h2 id="timeline-title">Your thesis, start to finish</h2>
+    </div>
+    <figure class="timeline-figure">
+      <a class="diagram-zoom" href="$timeline.src$" tabindex="-1"><picture>
+$if(timeline.narrow)$
+        <source media="(max-width: 600px)" srcset="$timeline.narrow$">
+$endif$
+        <img src="$timeline.src$"$if(timeline.width)$ width="$timeline.width$" height="$timeline.height$"$endif$ loading="lazy" alt="Timeline of a thesis or dissertation, with the guide page for each step: 1, decide (Why LaTeX for your thesis?); 2, set up (Get started, and Bring your draft if you have one); 3, write (Writing basics and Citations); 4, share drafts with your advisor (Workflows); 5, preliminary formatting review before you defend (Submitting); 6, defend; 7, submit (Submitting). Any time you are stuck, Fixing problems and How do I…? help at every step.">
+      </picture></a>
+    </figure>
+    <p class="timeline-today margin-note">You only need the first two pages today: <a href="docs/why-latex.md">Why LaTeX for your thesis?</a> and <a href="docs/get-started.md">Get started</a>.</p>
+  </div>
+</section>
+
+$-- ============ Help at your level: every student guide page ============
 $-- One card per stage of NAV in scripts/build_site.py (Start, Write, Fix and
-$-- finish, Go further), in the same order. Keep them in step.
+$-- finish, Go further), in the same order. Each card's page list comes from
+$-- stages.<stage name>; quick is "How do I…?". The card's stage says when
+$-- you need its pages, so the TAGS pills are left out here (they show in the
+$-- sidebar and under each guide page's title).
 <section class="section guide-overview" aria-labelledby="guide-title">
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow">Wherever you are</p>
       <h2 id="guide-title">Help at your level</h2>
-      <p>The guide has four stages. Begin at the start, or go straight to what you need. Every page opens with the simplest steps; detail for experienced users is tucked away until you want it.</p>
+      <p>Four stages, from your first PDF to submission. Every page opens with the simplest steps, and detail for experienced users stays tucked away until you want it.</p>
     </div>
     <ul class="guide-list">
       <li class="card help-card">
         <svg class="doodle" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
           <g class="dd" filter="url(#sk)">
-            <path class="f-card" d="M26 14 C 20 10, 12 10, 7 12 V40 C 12 38, 20 38, 26 42 Z"/>
-            <path class="f-card" d="M26 14 C 32 10, 40 10, 45 12 V40 C 40 38, 32 38, 26 42 Z"/>
-            <path d="M11 19 H21 M11 25 H21 M11 31 H18 M31 19 H41 M31 25 H41 M31 31 H37"/>
+            <path class="w-butter" d="M28.5 17.5C23 13.7 16 13.3 10 15.1L10.4 43.1C16.5 41.5 23 42.1 28.5 45.5C34 42.1 40.5 41.5 46.6 43.1L47 15.1C41 13.3 34 13.7 28.5 17.5Z"/>
+            <path d="M26 15C20.5 11.2 13.5 10.8 7.5 12.6L7.9 40.6C14 39 20.5 39.6 26 43"/>
+            <path d="M26 15C31.5 11.2 38.5 10.8 44.5 12.6L44.1 40.6C38 39 31.5 39.6 26 43"/>
+            <path d="M26 15.6C25.6 24 26.3 33 26 42.4"/>
+            <path class="ln" d="M12 19.6C15.1 19 18.3 19.2 21.6 20.1M12 25.4C15.2 24.9 18.4 25.1 21.4 25.8M12.2 31.2C14.2 30.8 16.3 30.9 18.2 31.4M30.4 20.1C33.6 19.2 36.9 19 40 19.6M30.6 25.8C33.5 25 36.6 24.9 39.8 25.3"/>
           </g>
         </svg>
         <p class="kicker">Start</p>
-        <h3>New here</h3>
-        <p>Compile the sample with your name on it, on your computer or Overleaf. Have a draft in Word or Google Docs? Bring it along.</p>
+        <div class="help-text">
+          <h3>New here</h3>
+          <p>See why LaTeX suits a long thesis, then compile the sample with your name on it. Have a draft in Markdown, Google Docs, or Word? Bring it along.</p>
+        </div>
         <ul>
-          <li><a href="docs/get-started.md">Get started</a></li>
-          <li><a href="docs/bring-your-draft.md">Bring your draft</a></li>
+$for(stages.start)$
+          <li><a href="$it.href$">$it.label$</a></li>
+$endfor$
         </ul>
       </li>
       <li class="card help-card">
         <svg class="doodle" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
           <g class="dd" filter="url(#sk)">
-            <rect class="f-card" x="8" y="8" width="28" height="36" rx="3"/>
-            <path d="M14 17 H30 M14 23 H30 M14 29 H24"/>
-            <path class="f-butter-strong" d="M30 44 L32 37 L44 21 L49 25 L37 41 Z"/>
-            <path d="M41 25 L46 29"/>
+            <path class="w-blue" d="M11.5 11.1L37.5 10.5L38.1 46.7L11.9 47.1Z"/>
+            <path d="M9 8.6C17.6 8.2 26.3 8.3 35 8C35.4 20 35.3 32 35.6 44.2C26.9 44.2 18.1 44.4 9.4 44.6C9.6 32.6 9.2 20.6 9 8.6Z"/>
+            <path class="ln" d="M14 16.6C19.3 16.3 24.7 16.5 30 16.2M14 22.6C19.3 22.3 24.7 22.6 30 22.3M14 28.6C17.3 28.4 20.7 28.5 24 28.3"/>
+            <path class="f-butter-strong" d="M30 45L30.5 38.1L42.8 19.8L48.6 23.8L36.3 42Z"/>
+            <path d="M30.5 38.1L36.3 42M40 24L45.8 28"/>
           </g>
         </svg>
         <p class="kicker">Write</p>
-        <h3>Writing chapters</h3>
-        <p>Headings, figures, tables, equations and citations, and what happens when you compile.</p>
+        <div class="help-text">
+          <h3>Writing chapters</h3>
+          <p>Headings, quotations, figures, tables, equations and citations, and what happens when you compile.</p>
+        </div>
         <ul>
-          <li><a href="docs/writing.md">Writing basics</a></li>
-          <li><a href="docs/citations.md">Citations</a></li>
-          <li><a href="docs/how-it-works.md">How it works</a></li>
+$for(stages.write)$
+          <li><a href="$it.href$">$it.label$</a></li>
+$endfor$
         </ul>
       </li>
       <li class="card help-card">
         <svg class="doodle" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
           <g class="dd" filter="url(#sk)">
-            <rect class="f-card" x="13" y="5" width="28" height="36" rx="3" transform="rotate(6 27 23)"/>
-            <rect class="f-card" x="10" y="8" width="28" height="36" rx="3"/>
-            <circle class="f-sage" cx="34" cy="32" r="9"/>
-            <path d="M30 32 l3.5 3.5 l6 -7"/>
-            <path d="M15 16 H31 M15 22 H27"/>
+            <path class="f-card" d="M16.4 5.4C24.9 6.1 33.4 6.9 41.9 7.8C41.1 19.8 40.3 31.8 39.4 43.8C30.9 43.1 22.4 42.4 13.9 41.6"/>
+            <path class="k" d="M9.6 9.2C18.4 8.9 27.3 9.1 36 8.8L36.6 45C27.8 45.2 19 45.1 10.2 45.4Z"/>
+            <path d="M9.6 9.2C18.4 8.9 27.3 9.1 36 8.8C36.2 20.9 36.3 32.9 36.6 45C27.8 45.2 19 45.1 10.2 45.4C10.1 33.3 9.7 21.3 9.6 9.2Z"/>
+            <path class="ln" d="M15 17.4C20.3 17.1 25.7 17.3 31 17.1M15 23.4C19 23.2 23 23.4 27 23.2"/>
+            <circle class="k" cx="36.4" cy="35.6" r="9"/>
+            <circle class="w-sage" cx="38.9" cy="38.1" r="9"/>
+            <path d="M45.3 34.6C45.7 39.6 41.8 44.3 36.7 44.5C31.5 44.7 27.4 40.7 27.5 35.6C27.6 30.6 31.5 26.7 36.4 26.6C41 26.5 44.5 29.8 45.4 33.5"/>
+            <path d="M32.2 35.6C33.4 36.8 34.6 38 35.8 39.2C37.8 36.7 39.6 34.3 41.6 31.8"/>
           </g>
         </svg>
         <p class="kicker">Fix and finish</p>
-        <h3>Stuck, or nearly done</h3>
-        <p>Read an error and fix it, ask for help, and check your PDF before you submit.</p>
+        <div class="help-text">
+          <h3>Stuck, or nearly done</h3>
+          <p>Read an error and fix it, find a quick answer, and check your PDF before you submit.</p>
+        </div>
         <ul>
-          <li><a href="docs/troubleshooting.md">Fixing problems</a></li>
-          <li><a href="docs/submission.md">Submitting</a></li>
+$for(stages.fix_and_finish)$
+          <li><a href="$it.href$">$it.label$</a></li>
+$endfor$
+$if(quick)$
+          <li><a href="$quick.href$">$quick.label$</a></li>
+$endif$
         </ul>
       </li>
       <li class="card help-card">
         <svg class="doodle" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
-          <g class="dd" filter="url(#sk)" transform="translate(26 26) scale(0.82)">
-            <path class="f-blue" d="M-4 -22 L4 -22 L5 -15 L11 -12 L17 -16 L22 -10 L17 -5 L19 1 L25 3 L24 11 L17 11 L14 17 L18 22 L12 27 L7 22 L0 24 L-2 30 L-10 29 L-10 22 L-16 19 L-22 23 L-27 17 L-22 12 L-24 6 L-30 4 L-29 -4 L-22 -4 L-19 -10 L-23 -15 L-17 -20 L-12 -15 L-6 -17 Z"/>
-            <circle class="f-card" cx="-2" cy="3" r="8"/>
+          <g class="dd" filter="url(#sk)">
+            <path class="w-blue" transform="translate(2.5 2.5)" d="M21.6 11.6L22.1 6.8L29.9 7.3L30.3 11.4L32.9 12.9L37 9.8L42.5 15.2L39.4 19.1L40.4 21.5L45.1 22.1L45.3 29.8L40.6 30.5L39.1 32.8L42.5 36.8L36.9 42.5L33.1 39.6L30.4 40.6L29.9 45.5L22.1 44.8L21.7 40.1L18.8 39.2L15.2 42.1L9.7 36.7L12.9 33L11.6 30.5L6.7 30L6.6 22L11.5 21.7L12.4 18.8L9.4 15.2L15.1 10L18.9 12.7Z"/>
+            <path d="M21.6 11.6L22.1 6.8L29.9 7.3L30.3 11.4L32.9 12.9L37 9.8L42.5 15.2L39.4 19.1L40.4 21.5L45.1 22.1L45.3 29.8L40.6 30.5L39.1 32.8L42.5 36.8L36.9 42.5L33.1 39.6L30.4 40.6L29.9 45.5L22.1 44.8L21.7 40.1L18.8 39.2L15.2 42.1L9.7 36.7L12.9 33L11.6 30.5L6.7 30L6.6 22L11.5 21.7L12.4 18.8L9.4 15.2L15.1 10L18.9 12.7Z"/>
+            <path d="M31.6 25.6C31.8 28.8 29.3 31.6 26.1 31.6C22.9 31.6 20.4 29.2 20.4 26C20.4 22.9 22.8 20.4 25.9 20.3C28.6 20.2 31 22.1 31.5 24.6"/>
           </g>
         </svg>
         <p class="kicker">Go further</p>
-        <h3>Reviews and expert use</h3>
-        <p>Advisor reviews, your computer and Overleaf together, backups, every setting and build commands.</p>
+        <div class="help-text">
+          <h3>Reviews and expert use</h3>
+          <p>Advisor reviews, your computer and Overleaf together, backups, AI help with LaTeX problems, and every setting.</p>
+        </div>
         <ul>
-          <li><a href="docs/workflows.md">Workflows</a></li>
-          <li><a href="docs/advanced.md">Advanced use</a></li>
+$for(stages.go_further)$
+          <li><a href="$it.href$">$it.label$</a></li>
+$endfor$
         </ul>
       </li>
     </ul>

@@ -6,6 +6,9 @@
 <meta name="color-scheme" content="light dark">
 <title>$pagetitle$</title>
 <meta name="description" content="$description$">
+$if(notfound)$
+<meta name="robots" content="noindex">
+$endif$
 $if(canonical)$
 <link rel="canonical" href="$canonical$">
 <meta property="og:url" content="$canonical$">
@@ -23,8 +26,9 @@ $if(og_image)$
 $endif$
 <link rel="icon" href="${root}logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="${root}site.css">
+<script src="${root}copy.js" defer></script>
 </head>
-<body class="page-$kind$">
+<body class="page-$kind$" id="top">
 <a class="skip-link" href="#main">Skip to content</a>
 $-- One shared "hand-drawn" wobble for the small inline doodles (class="dd").
 <svg class="doodle-defs" width="0" height="0" aria-hidden="true" focusable="false">
@@ -56,17 +60,21 @@ $elseif(notfound)$
 $body$
 </main>
 $else$
-<div class="guide-frame">
+<div class="guide-frame$if(toc)$ has-toc$endif$">
 $-- Wide screens: this sidebar. Narrow screens: the "Guide topics" disclosure below.
-$-- Both lists come from NAV in scripts/build_site.py: stages, then pages.
+$-- Both lists come from NAV in scripts/build_site.py: quick answers (QUICK),
+$-- then stages and their pages, each with its tag from TAGS.
   <nav class="guide-sidebar" aria-label="Guide">
     <p class="guide-sidebar-title">The guide</p>
+$if(quick)$
+    <a class="guide-quick" href="$quick.href$"$if(quick.current)$ aria-current="page"$endif$><span class="guide-quick-mark" aria-hidden="true">?</span><span class="nav-text">$quick.label$$if(quick.tag)$ <span class="tag tag-$quick.tagclass$"><span class="visually-hidden">(</span>$quick.tag$<span class="visually-hidden">)</span></span>$endif$</span></a>
+$endif$
     <ol class="guide-groups">
 $for(navgroups)$
       <li><span class="guide-group">$it.label$</span>
         <ol class="guide-nav">
 $for(it.pages)$
-          <li><a href="$it.href$"$if(it.current)$ aria-current="page"$endif$>$it.label$</a></li>
+          <li><a href="$it.href$"$if(it.current)$ aria-current="page"$endif$><span class="nav-text">$it.label$$if(it.tag)$ <span class="tag tag-$it.tagclass$"><span class="visually-hidden">(</span>$it.tag$<span class="visually-hidden">)</span></span>$endif$</span></a></li>
 $endfor$
         </ol>
       </li>
@@ -76,12 +84,15 @@ $endfor$
   <details class="guide-topics">
     <summary>Guide topics <span class="guide-topics-here">$for(nav)$$if(it.current)$$it.label$$endif$$endfor$</span></summary>
     <nav aria-label="Guide topics">
+$if(quick)$
+    <a class="guide-quick" href="$quick.href$"$if(quick.current)$ aria-current="page"$endif$><span class="guide-quick-mark" aria-hidden="true">?</span><span class="nav-text">$quick.label$$if(quick.tag)$ <span class="tag tag-$quick.tagclass$"><span class="visually-hidden">(</span>$quick.tag$<span class="visually-hidden">)</span></span>$endif$</span></a>
+$endif$
       <ol class="guide-groups">
 $for(navgroups)$
         <li><span class="guide-group">$it.label$</span>
           <ol class="guide-nav">
 $for(it.pages)$
-            <li><a href="$it.href$"$if(it.current)$ aria-current="page"$endif$>$it.label$</a></li>
+            <li><a href="$it.href$"$if(it.current)$ aria-current="page"$endif$><span class="nav-text">$it.label$$if(it.tag)$ <span class="tag tag-$it.tagclass$"><span class="visually-hidden">(</span>$it.tag$<span class="visually-hidden">)</span></span>$endif$</span></a></li>
 $endfor$
           </ol>
         </li>
@@ -91,17 +102,32 @@ $endfor$
   </details>
   <main class="guide-content" id="main">
 $body$
+$-- Long pages (those with "On this page") end with a way back up.
+$if(toc)$
+    <p class="to-top"><a href="#top">Back to top</a></p>
+$endif$
 $if(pager)$
     <nav class="pager" aria-label="Previous and next page">
 $if(prev)$
       <a class="pager-prev" rel="prev" href="$prev.href$"><span class="pager-label">Previous</span> $prev.label$</a>
 $endif$
 $if(next)$
-      <a class="pager-next" rel="next" href="$next.href$"><span class="pager-label">Next</span> $next.label$</a>
+      <a class="pager-next" rel="next" href="$next.href$"><span class="pager-label">$if(next_label)$$next_label$$else$Next$endif$</span> $next.label$</a>
 $endif$
     </nav>
 $endif$
   </main>
+$if(toc)$
+$-- Wide screens: "On this page" beside the text. Narrower: the box the build puts in the text.
+  <nav class="page-toc-wide" aria-label="On this page">
+    <p class="guide-sidebar-title">On this page</p>
+    <ol>
+$for(toc)$
+      <li><a href="$it.href$">$it.label$</a></li>
+$endfor$
+    </ol>
+  </nav>
+$endif$
 </div>
 $endif$
 <footer class="site-footer">
