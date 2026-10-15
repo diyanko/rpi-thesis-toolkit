@@ -1199,6 +1199,12 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   border-radius: 6px;
   box-shadow: 0 10px 40px rgb(0 0 0 / 0.45);
 }
+.viewer-pan {   /* viewer.js wraps the picture so it can be panned from the keyboard */
+  display: grid; justify-items: center;
+  width: 100%; max-height: calc(100vh - 96px); max-height: calc(100dvh - 96px);
+  overflow: auto;
+}
+.viewer-pan:focus-visible { outline: 3px solid #f4efe6; outline-offset: 2px; }
 .viewer img[src$=".svg"] { width: min(100%, 1400px); object-fit: contain; padding: clamp(8px, 2vw, 20px); }
 .viewer-close {
   display: inline-flex; align-items: center; min-height: 44px;
@@ -1229,6 +1235,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 }
 @media (max-width: 600px) {   /* phones: show it larger and let readers pan */
   dialog.viewer[open] { justify-items: start; }
+  .viewer-pan { justify-items: start; max-height: calc(100vh - 140px); max-height: calc(100dvh - 140px); }
   .viewer img, .viewer img[src$=".svg"] { width: 760px; max-width: none; max-height: none; }
   .viewer-hint {
     display: block;
@@ -1431,6 +1438,10 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .guide-content td:first-child code:not(.phrase, .long) { white-space: nowrap; }   /* keys and file names; messages wrap */
 .guide-content td code.long { overflow-wrap: anywhere; }   /* a 50-character \includegraphics line */
 .guide-content th:empty { padding: 0; }
+@media (max-width: 640px) {   /* narrow screens or large text: a long name wraps rather than widening the page */
+  .guide-content code.keep, .guide-content code.keep-path .nowrap, .anatomy code, .anatomy .nowrap, .anatomy-table tbody th,
+  .guide-content td code, .guide-content td:first-child code:not(.phrase, .long) { white-space: normal; overflow-wrap: anywhere; }
+}
 
 /* ---------- 9. Footer ---------------------------------------------------- */
 .site-footer { background: var(--paper-2); border-top: 1px solid var(--line); }
