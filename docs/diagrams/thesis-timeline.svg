@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 478" width="720" height="478" role="img" aria-labelledby="t d">
+  <title id="t">Which guide page you need when</title>
+  <desc id="d">A timeline through the thesis or dissertation, with the guide page for each stage. 1, Decide: Why LaTeX for your thesis? 2, Set up: Get started, and Bring your draft if you have one. 3, Write: Writing basics and Citations. 4, Share drafts with your advisor: Workflows. 5, Preliminary formatting review, before you defend: Submitting. 6, Defend. 7, Submit: Submitting. A band under the whole timeline, labelled any time you're stuck, holds two pages that help at every stage: Fixing problems and How do I…?</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="558">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="478" rx="18"/>
+  <text class="hand mid" x="360" y="30" style="font-size:17px">which guide page you need, and when</text>
+  <path class="ln sage dash" filter="url(#r)" d="M110 206 C 124 202, 144 210, 158 206" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M200 206 C 214 210, 234 202, 248 206" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M290 206 C 304 202, 324 210, 338 206" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M380 206 C 394 210, 414 202, 428 206" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M470 206 C 484 202, 504 210, 518 206" marker-end="url(#as)"/>
+  <path class="ln sage dash" filter="url(#r)" d="M560 206 C 574 210, 594 202, 608 206" marker-end="url(#as)"/>
+  <circle class="w-butter" cx="90" cy="206" r="17"/>
+  <circle class="ln" filter="url(#r)" cx="90" cy="206" r="17"/>
+  <text class="n mid" x="90" y="212.3" style="font-size:18px">1</text>
+  <text class="mid" x="90" y="174" style="font-size:15.5px" font-weight="700">Decide</text>
+  <g transform="rotate(-2 90 122)">
+  <rect class="w-butter" x="21.4" y="98" width="137.2" height="48" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="21.4" y="98" width="137.2" height="48" rx="3"/>
+  <rect class="w-terra" x="70" y="91" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="90" y="119" style="font-size:15px">Why LaTeX for</text>
+  <text class="mid" x="90" y="138" style="font-size:15px">your thesis?</text>
+  </g>
+  <circle class="w-butter" cx="180" cy="206" r="17"/>
+  <circle class="ln" filter="url(#r)" cx="180" cy="206" r="17"/>
+  <text class="n mid" x="180" y="212.3" style="font-size:18px">2</text>
+  <text class="mid" x="180" y="250" style="font-size:15.5px" font-weight="700">Set up</text>
+  <g transform="rotate(-1 180 284)">
+  <rect class="w-butter" x="119.8" y="268" width="120.4" height="32" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="119.8" y="268" width="120.4" height="32" rx="3"/>
+  <rect class="w-terra" x="160" y="261" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="180" y="289" style="font-size:15px">Get started</text>
+  </g>
+  <g transform="rotate(1.5 180 338)">
+  <rect class="w-butter" x="98.8" y="314" width="162.4" height="48" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="98.8" y="314" width="162.4" height="48" rx="3"/>
+  <rect class="w-terra" x="160" y="307" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="180" y="335" style="font-size:15px">Bring your draft</text>
+  <text class="s mid" x="180" y="354" style="font-size:14px;font-style:italic">if you have one</text>
+  </g>
+  <circle class="w-butter" cx="270" cy="206" r="17"/>
+  <circle class="ln" filter="url(#r)" cx="270" cy="206" r="17"/>
+  <text class="n mid" x="270" y="212.3" style="font-size:18px">3</text>
+  <text class="mid" x="270" y="174" style="font-size:15.5px" font-weight="700">Write</text>
+  <g transform="rotate(-1.5 270 130)">
+  <rect class="w-butter" x="218.2" y="114" width="103.6" height="32" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="218.2" y="114" width="103.6" height="32" rx="3"/>
+  <rect class="w-terra" x="250" y="107" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="270" y="135" style="font-size:15px">Citations</text>
+  </g>
+  <g transform="rotate(2 270 80)">
+  <rect class="w-butter" x="197.2" y="64" width="145.6" height="32" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="197.2" y="64" width="145.6" height="32" rx="3"/>
+  <rect class="w-terra" x="250" y="57" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="270" y="85" style="font-size:15px">Writing basics</text>
+  </g>
+  <circle class="w-butter" cx="360" cy="206" r="17"/>
+  <circle class="ln" filter="url(#r)" cx="360" cy="206" r="17"/>
+  <text class="n mid" x="360" y="212.3" style="font-size:18px">4</text>
+  <text class="mid" x="360" y="250" style="font-size:15.5px" font-weight="700">Share drafts</text>
+  <text class="mid" x="360" y="269" style="font-size:15.5px" font-weight="700">with your advisor</text>
+  <g transform="rotate(-2 360 303)">
+  <rect class="w-butter" x="308.2" y="287" width="103.6" height="32" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="308.2" y="287" width="103.6" height="32" rx="3"/>
+  <rect class="w-terra" x="340" y="280" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="360" y="308" style="font-size:15px">Workflows</text>
+  </g>
+  <circle class="w-butter" cx="450" cy="206" r="17"/>
+  <circle class="ln" filter="url(#r)" cx="450" cy="206" r="17"/>
+  <text class="n mid" x="450" y="212.3" style="font-size:18px">5</text>
+  <text class="hand mid" x="450" y="174" style="font-size:15px">before you defend</text>
+  <text class="mid" x="450" y="154" style="font-size:15.5px" font-weight="700">formatting review</text>
+  <text class="mid" x="450" y="135" style="font-size:15.5px" font-weight="700">Preliminary</text>
+  <g transform="rotate(-1 450 91)">
+  <rect class="w-butter" x="394" y="75" width="112" height="32" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="394" y="75" width="112" height="32" rx="3"/>
+  <rect class="w-terra" x="430" y="68" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="450" y="96" style="font-size:15px">Submitting</text>
+  </g>
+  <circle class="w-terra" cx="540" cy="206" r="17"/>
+  <circle class="ln" filter="url(#r)" cx="540" cy="206" r="17"/>
+  <text class="n mid" x="540" y="212.3" style="font-size:18px">6</text>
+  <text class="mid" x="540" y="250" style="font-size:15.5px" font-weight="700">Defend</text>
+  <circle class="w-butter" cx="630" cy="206" r="17"/>
+  <circle class="ln" filter="url(#r)" cx="630" cy="206" r="17"/>
+  <text class="n mid" x="630" y="212.3" style="font-size:18px">7</text>
+  <text class="mid" x="630" y="174" style="font-size:15.5px" font-weight="700">Submit</text>
+  <g transform="rotate(-2 630 130)">
+  <rect class="w-butter" x="574" y="114" width="112" height="32" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="574" y="114" width="112" height="32" rx="3"/>
+  <rect class="w-terra" x="610" y="107" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="630" y="135" style="font-size:15px">Submitting</text>
+  </g>
+  <rect class="w-plum" x="22" y="396" width="682" height="62" rx="14"/>
+  <rect class="ln plum dash" filter="url(#r)" x="16" y="390" width="682" height="62" rx="14"/>
+  <text class="hand hp" x="40" y="427" style="font-size:18px">any time you're stuck, at every stage</text>
+  <g transform="rotate(-1.5 462 421)">
+  <rect class="w-butter" x="370" y="405" width="184" height="32" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="370" y="405" width="184" height="32" rx="3"/>
+  <rect class="w-plum" x="442" y="398" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="462" y="426" style="font-size:15px">Fixing problems</text>
+  </g>
+  <g transform="rotate(2 626 421)">
+  <rect class="w-butter" x="568" y="405" width="116" height="32" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="568" y="405" width="116" height="32" rx="3"/>
+  <rect class="w-plum" x="606" y="398" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="626" y="426" style="font-size:15px">How do I…?</text>
+  </g>
+</svg>

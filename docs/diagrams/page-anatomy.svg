@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 486" width="720" height="486" role="img" aria-labelledby="t d">
+  <title id="t">What the class handles on every page</title>
+  <desc id="d">Two sketched thesis pages. Left, a front-matter page titled ABSTRACT: the heading sits at the top margin, centered and bold; the text is double spaced; a dashed line shows 1 inch margins on all sides; the page number, a lowercase roman numeral such as vi, is at the bottom center, 0.75 inch from the bottom edge. Right, a body page that is not a chapter opening: the arabic page number is at the top right, 0.75 inch from the top edge; a bold table caption sits above its table and a bold figure caption below its figure; footnotes at the foot of the page are single spaced. A note says the first page of each chapter has its number at the bottom center, like the front matter. A second note says margins, page numbers, spacing, and caption style are set once in rpi-thesis.cls, so you write the words.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="566">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="486" rx="18"/>
+  <text class="hand hp mid" x="213" y="44" style="font-size:17px">a front-matter page</text>
+  <text class="hand hp mid" x="515" y="44" style="font-size:17px">a body page</text>
+  <path class="w-plum" transform="translate(6 6)" d="M118 66 H294 L308 80 V312.4 H118 Z"/>
+  <path class="card" d="M118 66 H294 L308 80 V312.4 H118 Z"/>
+  <path class="ln" filter="url(#r)" d="M118 66 H294 L308 80 V312.4 H118 Z M294 66 V80 H308"/>
+  <rect class="ln thin blue dash" x="140.4" y="88.4" width="145.2" height="201.6"/>
+  <text class="n mid" x="213" y="98.9" style="font-size:13px">ABSTRACT</text>
+  <path class="ln thin mut" d="M153.4 116.9 H282.6 M143.4 130.9 H276.6 M143.4 144.9 H282.6 M143.4 158.9 H282.6 M143.4 172.9 H276.6 M143.4 186.9 H282.6 M143.4 200.9 H282.6 M143.4 214.9 H276.6 M143.4 228.9 H282.6 M143.4 242.9 H282.6 M143.4 256.9 H276.6 M143.4 270.9 H242.6"/>
+  <text class="mid" x="213" y="295.6" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">vi</text>
+  <path class="ln thin terra" d="M231 295.6 V312.4 M227 295.6 H235 M227 312.4 H235"/>
+  <text class="hand" x="239" y="307.6" style="font-size:14px">0.75 in</text>
+  <path class="ln thin terra" d="M118 207.9 H140.4 M118 203.9 V211.9 M140.4 203.9 V211.9"/>
+  <path class="w-sage" transform="translate(6 6)" d="M420 66 H596 L610 80 V312.4 H420 Z"/>
+  <path class="card" d="M420 66 H596 L610 80 V312.4 H420 Z"/>
+  <path class="ln" filter="url(#r)" d="M420 66 H596 L610 80 V312.4 H420 Z M596 66 V80 H610"/>
+  <rect class="ln thin blue dash" x="442.4" y="88.4" width="145.2" height="201.6"/>
+  <text class="end" x="587.6" y="82.8" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">3</text>
+  <path class="ln thin terra" d="M571.6 66 V82.8 M568.6 66 H574.6 M568.6 82.8 H574.6"/>
+  <text class="hand end" x="563.6" y="81.8" style="font-size:14px">0.75 in</text>
+  <path class="ln thin mut" d="M445.4 98.4 H584.6 M445.4 112.4 H564.6"/>
+  <text x="446.4" y="131.4" style="font-size:13px" font-weight="700">Table 2.1: Sites</text>
+  <path class="ln thin" d="M473 137.4 H557 M473 144.4 H557 M473 163.4 H557"/>
+  <path class="ln thin mut" d="M481 150.4 H503 M523 150.4 H549 M481 157.4 H499 M523 157.4 H545"/>
+  <path class="ln thin mut" d="M455.4 179.4 H584.6 M445.4 193.4 H534.6"/>
+  <rect class="ln thin" x="475" y="201.4" width="80" height="32"/>
+  <path class="ln thin mut" d="M475 233.4 L501 215.8 L517 225.4 L531 211 L555 233.4"/>
+  <text x="446.4" y="249.4" style="font-size:13px" font-weight="700">Figure 2.1: Map</text>
+  <path class="ln thin" d="M445.4 264 H486.4"/>
+  <path class="ln thin mut" d="M445.4 271 H584.6 M445.4 278 H584.6 M445.4 285 H554.6"/>
+  <text class="hand" x="14" y="92" style="font-size:16px">heading at</text>
+  <text class="hand" x="14" y="111" style="font-size:16px">the top margin</text>
+  <path class="ln thin terra" d="M104 96 L173 94.9"/>
+  <circle class="f-terra" cx="173" cy="94.9" r="2.6"/>
+  <text class="hand" x="14" y="150" style="font-size:16px">double-</text>
+  <text class="hand" x="14" y="169" style="font-size:16px">spaced text</text>
+  <path class="ln thin terra" d="M96 158 L180.4 144.9"/>
+  <circle class="f-terra" cx="180.4" cy="144.9" r="2.6"/>
+  <text class="hand" x="14" y="222" style="font-size:16px">1 in margins</text>
+  <text class="hand" x="14" y="241" style="font-size:16px">on all sides</text>
+  <path class="ln thin terra" d="M100 230 L123 207.9"/>
+  <circle class="f-terra" cx="123" cy="207.9" r="2.6"/>
+  <text class="hand mid" x="213" y="344" style="font-size:16px">front matter: ii, iii, …</text>
+  <text class="hand mid" x="213" y="363" style="font-size:16px">at the bottom center</text>
+  <text class="hand" x="324" y="120" style="font-size:16px">caption above</text>
+  <text class="hand" x="324" y="139" style="font-size:16px">a table, bold</text>
+  <path class="ln thin terra" d="M412 122 L440.4 127.4"/>
+  <circle class="f-terra" cx="440.4" cy="127.4" r="2.6"/>
+  <text class="hand" x="324" y="238" style="font-size:16px">caption below</text>
+  <text class="hand" x="324" y="257" style="font-size:16px">a figure, bold</text>
+  <path class="ln thin terra" d="M412 240 L440.4 245.4"/>
+  <circle class="f-terra" cx="440.4" cy="245.4" r="2.6"/>
+  <text class="hand" x="620" y="82" style="font-size:16px">body pages:</text>
+  <text class="hand" x="620" y="101" style="font-size:16px">1, 2, 3 …</text>
+  <text class="hand" x="620" y="120" style="font-size:16px">at the top right</text>
+  <path class="ln thin terra" d="M618 76 L592.6 77.8"/>
+  <circle class="f-terra" cx="592.6" cy="77.8" r="2.6"/>
+  <text class="hand" x="626" y="258" style="font-size:16px">footnotes</text>
+  <text class="hand" x="626" y="277" style="font-size:16px">single-</text>
+  <text class="hand" x="626" y="296" style="font-size:16px">spaced</text>
+  <path class="ln thin terra" d="M622 262 L585.6 278"/>
+  <circle class="f-terra" cx="585.6" cy="278" r="2.6"/>
+  <text class="hand mid" x="515" y="344" style="font-size:16px">chapter-opening pages:</text>
+  <text class="hand mid" x="515" y="363" style="font-size:16px">at the bottom center</text>
+  <g transform="rotate(-1.2 360 422)">
+  <rect class="w-butter" x="150" y="392" width="420" height="60" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="150" y="392" width="420" height="60" rx="3"/>
+  <rect class="w-terra" x="340" y="385" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="360" y="417" style="font-size:15.5px">margins, page numbers, spacing, caption style:</text>
+  <text class="mid" x="360" y="438" style="font-size:15.5px">set once in rpi-thesis.cls, so you write the words</text>
+  </g>
+</svg>

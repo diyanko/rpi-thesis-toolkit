@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 516" width="720" height="516" role="img" aria-labelledby="t d">
+  <title id="t">Research workflow: separate pieces come together, and you iterate</title>
+  <desc id="d">The thesis grows from several independent pieces. On the left, under "draft and discuss": Markdown notes, for example in Obsidian or HackMD; Google Docs with advisor comments; and an existing Word draft. Below them, references kept in a Zotero library, and figure sources such as data, plotting scripts, and .drawio diagrams. Stable sections move gradually from the drafts into separate chapter files in chapters/, such as 01-introduction.tex, 02-research.tex, and 03. Zotero exports references.bib, and figures are exported as image files into figures/. main.tex brings the chapters, references, and figures together and is compiled into one thesis PDF. A loop arrow runs from the PDF back to the drafts: read, get feedback, revise. A note says to check the assembled PDF throughout.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="596">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="516" rx="18"/>
+  <text class="hand" x="20" y="28" style="font-size:17px">draft and discuss</text>
+  <text class="hand" x="300" y="28" style="font-size:17px">your thesis files</text>
+  <rect class="w-sage" x="21" y="47" width="190" height="50" rx="12"/>
+  <rect class="card" x="16" y="42" width="190" height="50" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="16" y="42" width="190" height="50" rx="12"/>
+  <text x="30" y="63" style="font-size:16px" font-weight="700">Markdown notes</text>
+  <text class="s" x="30" y="82" style="font-size:13.5px">e.g. Obsidian or HackMD</text>
+  <rect class="w-blue" x="21" y="107" width="190" height="50" rx="12"/>
+  <rect class="card" x="16" y="102" width="190" height="50" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="16" y="102" width="190" height="50" rx="12"/>
+  <text x="30" y="123" style="font-size:16px" font-weight="700">Google Docs</text>
+  <text class="s" x="30" y="142" style="font-size:13.5px">with advisor comments</text>
+  <rect class="w-butter" x="21" y="167" width="190" height="50" rx="12"/>
+  <rect class="card" x="16" y="162" width="190" height="50" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="16" y="162" width="190" height="50" rx="12"/>
+  <text x="30" y="183" style="font-size:16px" font-weight="700">Word draft</text>
+  <text class="s" x="30" y="202" style="font-size:13.5px">an existing .docx</text>
+  <rect class="w-plum" x="21" y="267" width="190" height="56" rx="12"/>
+  <rect class="card" x="16" y="262" width="190" height="56" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="16" y="262" width="190" height="56" rx="12"/>
+  <text x="30" y="285" style="font-size:16px" font-weight="700">References</text>
+  <text class="s" x="30" y="305" style="font-size:13.5px">Zotero library</text>
+  <rect class="w-terra" x="21" y="335" width="190" height="72" rx="12"/>
+  <rect class="card" x="16" y="330" width="190" height="72" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="16" y="330" width="190" height="72" rx="12"/>
+  <text x="30" y="353" style="font-size:16px" font-weight="700">Figure sources</text>
+  <text class="s" x="30" y="373" style="font-size:13.5px">data, plotting scripts,</text>
+  <text class="s" x="30" y="392" style="font-size:13.5px">.drawio diagrams</text>
+  <path class="ln thin dash" filter="url(#r)" d="M214 67 C 250 70, 262 104, 294 112" marker-end="url(#a)"/>
+  <path class="ln thin dash" filter="url(#r)" d="M214 127 C 246 127, 266 127, 294 127" marker-end="url(#a)"/>
+  <path class="ln thin dash" filter="url(#r)" d="M214 187 C 250 184, 262 150, 294 142" marker-end="url(#a)"/>
+  <text class="hand mid" x="253" y="244" style="font-size:16px">move stable sections in</text>
+  <path class="w-sage" transform="translate(5 5)" d="M300 42 V 212 H498 V 54 H400 L388 42 Z"/>
+  <path class="card" d="M300 42 V 212 H498 V 54 H400 L388 42 Z"/>
+  <path class="ln" filter="url(#r)" d="M300 42 V 212 H498 V 54 H400 L388 42 Z"/>
+  <text class="m" x="314" y="72" style="font-size:16px">chapters/</text>
+  <rect class="ln thin mut" x="310" y="84" width="178" height="30" rx="4"/>
+  <text class="code" x="318" y="104" style="font-size:13px">01-introduction.tex</text>
+  <rect class="ln thin mut" x="310" y="122" width="178" height="30" rx="4"/>
+  <text class="code" x="318" y="142" style="font-size:13px">02-research.tex</text>
+  <rect class="ln thin mut" x="310" y="160" width="178" height="30" rx="4"/>
+  <text class="code" x="318" y="180" style="font-size:13px">03-….tex</text>
+  <rect class="w-plum" x="305" y="267" width="198" height="56" rx="12"/>
+  <rect class="card" x="300" y="262" width="198" height="56" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="300" y="262" width="198" height="56" rx="12"/>
+  <text class="m" x="314" y="286" style="font-size:15px">references.bib</text>
+  <text class="s" x="314" y="306" style="font-size:13.5px">one entry per source</text>
+  <path class="w-sage" transform="translate(5 5)" d="M300 330 V 402 H498 V 342 H386 L374 330 Z"/>
+  <path class="card" d="M300 330 V 402 H498 V 342 H386 L374 330 Z"/>
+  <path class="ln" filter="url(#r)" d="M300 330 V 402 H498 V 342 H386 L374 330 Z"/>
+  <text class="m" x="314" y="360" style="font-size:16px">figures/</text>
+  <text class="s" x="314" y="384" style="font-size:13.5px">exported images</text>
+  <path class="ln" filter="url(#r)" d="M214 300 H292" marker-end="url(#a)"/>
+  <text class="hand mid" x="253" y="290" style="font-size:15px">export</text>
+  <path class="ln" filter="url(#r)" d="M214 378 H292" marker-end="url(#a)"/>
+  <text class="hand mid" x="253" y="368" style="font-size:15px">export</text>
+  <path class="ln" filter="url(#r)" d="M506 46 C 514 46, 514 56, 514 70 V 180 C 514 190, 516 196, 522 197 C 516 198, 514 204, 514 214 V 384 C 514 396, 514 400, 506 400"/>
+  <path class="ln" filter="url(#r)" d="M524 197 H534" marker-end="url(#a)"/>
+  <rect class="w-blue" x="547" y="173" width="162" height="58" rx="12"/>
+  <rect class="card" x="542" y="168" width="162" height="58" rx="12"/>
+  <rect class="ln" filter="url(#r)" x="542" y="168" width="162" height="58" rx="12"/>
+  <text class="m" x="556" y="192" style="font-size:16px">main.tex</text>
+  <text class="s" x="556" y="213" style="font-size:13.5px">assembles it all</text>
+  <path class="ln" filter="url(#r)" d="M622 234 C 618 246, 626 254, 622 266" marker-end="url(#a)"/>
+  <text class="hand" x="638" y="256" style="font-size:15px">compile</text>
+  <path class="w-butter" transform="translate(6 6)" d="M572 272 H660 L676 288 V394 H572 Z"/>
+  <path class="card" d="M572 272 H660 L676 288 V394 H572 Z"/>
+  <path class="ln" filter="url(#r)" d="M572 272 H660 L676 288 V394 H572 Z M660 272 V288 H676"/>
+  <text class="m" x="586" y="298" style="font-size:14px">main.pdf</text>
+  <path class="ln thin sage" d="M586 316 H660 M586 332 H660 M586 348 H648 M586 364 H660"/>
+  <text class="hand mid" x="624" y="422" style="font-size:15px">one thesis PDF</text>
+  <g transform="rotate(-2 624 84)">
+  <rect class="w-butter" x="546" y="50" width="156" height="68" rx="3"/>
+  <rect class="ln thin mut" filter="url(#r)" x="546" y="50" width="156" height="68" rx="3"/>
+  <text class="hand hs mid" x="624" y="79" style="font-size:16px">check the assembled</text>
+  <text class="hand hs mid" x="624" y="103" style="font-size:16px">PDF throughout</text>
+  </g>
+  <path class="ln terra" filter="url(#r)" d="M576 430 C 560 464, 530 470, 480 470 H 190 C 132 470, 112 454, 110 414" marker-end="url(#at)"/>
+  <text class="hand mid" x="340" y="498" style="font-size:18px">read, get feedback, revise</text>
+</svg>

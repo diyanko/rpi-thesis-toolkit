@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 368" width="720" height="368" role="img" aria-labelledby="t d">
+  <title id="t">From spreadsheet cells to a typeset table</title>
+  <desc id="d">You supply a few spreadsheet cells: a header row, Group and Example value, then rows A 12, B 18, and C 24. Paste them into Tables Generator and copy the LaTeX: a tabular with columns lr, a \toprule, the header row, a \midrule, one row per line with &amp; between cells and \\ at the end, and a \bottomrule. Paste that into the table example in the starter. The PDF shows the table with its caption above it, in bold: Table 2.1: Illustrative values for three example groups.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="448">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="rr" filterUnits="userSpaceOnUse" x="-40" y="-40" width="800" height="448">
+      <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="9"/>
+      <feDisplacementMap in="SourceGraphic" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="368" rx="18"/>
+  <path class="ln terra" filter="url(#r)" d="M170 86 C184 60, 240 60, 254 84" marker-end="url(#at)"/>
+  <text class="hand mid" x="212" y="40" style="font-size:15px">paste into Tables Generator,</text>
+  <text class="hand mid" x="212" y="58" style="font-size:15px">copy LaTeX</text>
+  <path class="ln terra" filter="url(#r)" d="M430 86 C444 60, 500 60, 514 84" marker-end="url(#at)"/>
+  <text class="hand mid" x="472" y="40" style="font-size:15px">paste into the</text>
+  <text class="hand mid" x="472" y="58" style="font-size:15px">table example</text>
+  <rect class="w-butter" x="17" y="97" width="184" height="212" rx="4"/><rect class="card" x="12" y="92" width="184" height="212" rx="4"/><rect class="ln" filter="url(#r)" x="12" y="92" width="184" height="212" rx="4"/>
+  <rect class="w-blue" x="13" y="134" width="182" height="20"/>
+  <rect class="w-blue" x="13" y="134" width="20" height="128"/>
+  <text class="s mid" x="58" y="149" style="font-size:13px">A</text>
+  <text class="s mid" x="139" y="149" style="font-size:13px">B</text>
+  <text class="s mid" x="23" y="172.5" style="font-size:13px">1</text>
+  <text x="40" y="172.5" style="font-size:13px;font-weight:700">Group</text>
+  <text class="end" x="188" y="172.5" style="font-size:13px;font-weight:700">Example value</text>
+  <text class="s mid" x="23" y="199.5" style="font-size:13px">2</text>
+  <text x="40" y="199.5" style="font-size:13px">A</text>
+  <text class="end" x="188" y="199.5" style="font-size:13px">12</text>
+  <text class="s mid" x="23" y="226.5" style="font-size:13px">3</text>
+  <text x="40" y="226.5" style="font-size:13px">B</text>
+  <text class="end" x="188" y="226.5" style="font-size:13px">18</text>
+  <text class="s mid" x="23" y="253.5" style="font-size:13px">4</text>
+  <text x="40" y="253.5" style="font-size:13px">C</text>
+  <text class="end" x="188" y="253.5" style="font-size:13px">24</text>
+  <path class="ln thin mut" style="stroke-width:1" d="M13 134 H195 M13 154 H195 M13 181 H195 M13 208 H195 M13 235 H195 M13 262 H195 M13 134 V262 M33 134 V262 M83 134 V262 M195 134 V262"/>
+  <rect class="ln blue" filter="url(#r)" x="33" y="154" width="162" height="108"/>
+  <text class="mid" x="104" y="334" style="font-size:15px;font-weight:700">You supply</text>
+  <text class="s mid" x="104" y="354" style="font-size:13.5px">a few cells</text>
+  <rect class="w-blue" x="233" y="97" width="228" height="212" rx="4"/><rect class="card" x="228" y="92" width="228" height="212" rx="4"/><rect class="ln" filter="url(#r)" x="228" y="92" width="228" height="212" rx="4"/>
+  <text class="code" x="240" y="130" style="font-size:13px" xml:space="preserve"><tspan style="fill:var(--plum)" font-weight="700">\begin{tabular}</tspan><tspan style="fill:var(--ink)">{lr}</tspan></text>
+  <text class="code" x="240" y="148" style="font-size:13px" xml:space="preserve"><tspan style="fill:var(--ink)">  </tspan><tspan class="k">\toprule</tspan></text>
+  <text class="code" x="240" y="166" style="font-size:13px" xml:space="preserve"><tspan style="fill:var(--ink)">  Group </tspan><tspan style="fill:var(--blue)" font-weight="700">&amp;</tspan><tspan style="fill:var(--ink)"> Example value </tspan><tspan>\\</tspan></text>
+  <text class="code" x="240" y="184" style="font-size:13px" xml:space="preserve"><tspan style="fill:var(--ink)">  </tspan><tspan class="k">\midrule</tspan></text>
+  <text class="code" x="240" y="202" style="font-size:13px" xml:space="preserve"><tspan style="fill:var(--ink)">  A </tspan><tspan style="fill:var(--blue)" font-weight="700">&amp;</tspan><tspan style="fill:var(--ink)"> 12 </tspan><tspan>\\</tspan></text>
+  <text class="code" x="240" y="220" style="font-size:13px" xml:space="preserve"><tspan style="fill:var(--ink)">  B </tspan><tspan style="fill:var(--blue)" font-weight="700">&amp;</tspan><tspan style="fill:var(--ink)"> 18 </tspan><tspan>\\</tspan></text>
+  <text class="code" x="240" y="238" style="font-size:13px" xml:space="preserve"><tspan style="fill:var(--ink)">  C </tspan><tspan style="fill:var(--blue)" font-weight="700">&amp;</tspan><tspan style="fill:var(--ink)"> 24 </tspan><tspan>\\</tspan></text>
+  <text class="code" x="240" y="256" style="font-size:13px" xml:space="preserve"><tspan style="fill:var(--ink)">  </tspan><tspan class="k">\bottomrule</tspan></text>
+  <text class="code" x="240" y="274" style="font-size:13px" xml:space="preserve"><tspan style="fill:var(--plum)" font-weight="700">\end{tabular}</tspan></text>
+  <text class="mid" x="342" y="334" style="font-size:15px;font-weight:700">LaTeX</text>
+  <text class="s mid" x="342" y="354" style="font-size:13.5px">&amp; between cells, \\ ends a row</text>
+  <path class="w-sage" transform="translate(5 5)" d="M488 92 H690 L708 110 V304 H488 Z"/><path class="card" d="M488 92 H690 L708 110 V304 H488 Z"/><path class="ln" filter="url(#r)" d="M488 92 H690 L708 110 V304 H488 Z M690 92 V110 H708"/>
+  <rect x="502" y="114" width="170" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.45"/>
+  <text x="502" y="138" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-weight="700">Table 2.1: Illustrative values</text>
+  <text x="565.5" y="154" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-weight="700">for three example</text>
+  <text x="565.5" y="170" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif" font-weight="700">groups.</text>
+  <path class="ln" style="stroke-width:1.6" d="M519 184 H677 M519 269 H677"/>
+  <path class="ln" style="stroke-width:.9" d="M519 208 H677"/>
+  <text x="525" y="201" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">Group</text>
+  <text class="end" x="671" y="201" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">Example value</text>
+  <text x="525" y="225" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">A</text>
+  <text class="end" x="671" y="225" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">12</text>
+  <text x="525" y="242" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">B</text>
+  <text class="end" x="671" y="242" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">18</text>
+  <text x="525" y="259" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">C</text>
+  <text class="end" x="671" y="259" style="font-size:13px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">24</text>
+  <rect x="502" y="286" width="160" height="3.5" rx="1.75" style="fill:var(--muted);opacity:.45"/>
+  <text class="mid" x="598" y="334" style="font-size:15px;font-weight:700">Your PDF</text>
+  <text class="s mid" x="598" y="354" style="font-size:13.5px">caption above, in bold</text>
+</svg>

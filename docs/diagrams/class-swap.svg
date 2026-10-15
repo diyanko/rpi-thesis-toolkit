@@ -57,12 +57,10 @@
   <text class="m" x="38" y="344" style="font-size:17px">preamble.tex</text>
   <text class="hand hs mid" x="125" y="412" style="font-size:19px">stay exactly as they are</text>
   <text class="h mid" x="262" y="236" style="font-size:34px">+</text>
-  <g opacity=".6">
-  <rect class="ln thin mut dash" filter="url(#r)" x="292" y="70" width="168" height="76" rx="12"/>
+  <rect opacity=".75" class="ln thin mut dash" filter="url(#r)" x="292" y="70" width="168" height="76" rx="12"/>
   <text class="s m mid" x="376" y="104" style="font-size:16px">rpi-thesis.cls</text>
   <text class="s mid" x="376" y="130" style="font-size:17px">old rules</text>
-  <path class="ln mut" filter="url(#r)" d="M304 98 C 340 94, 410 100, 448 96"/>
-  </g>
+  <path opacity=".75" class="ln mut" filter="url(#r)" d="M304 98 C 340 94, 410 100, 448 96"/>
   <path class="ln terra" filter="url(#r)" d="M376 156 C 392 190, 360 214, 376 250" marker-end="url(#at)"/>
   <text class="hand" x="394" y="210" style="font-size:19px">replace</text>
   <rect class="w-terra" x="299" y="269" width="168" height="80" rx="12"/>

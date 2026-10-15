@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 900" width="360" height="900" role="img" aria-labelledby="t d">
+  <title id="t">The 3-2-1 backup rule for a thesis</title>
+  <desc id="d">The 3-2-1 backup rule: 3 copies, on 2 kinds of storage, 1 of them off-site. Copy 1 is your thesis folder, where you work. Copy 2 is an automatic backup of your computer, such as Time Machine, File History, or an external drive. Copies 1 and 2 are local: your computer and a drive. Copy 3 is a cloud-synced copy, which is off-site. Three notes: sync is not backup, because deletions sync too, so use version history; on Overleaf, download the source ZIP regularly; for Zotero, use Zotero sync, and keep its data folder out of cloud folders.</desc>
+  <style>
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+  </style>
+  <defs>
+    <filter id="r" filterUnits="userSpaceOnUse" x="-40" y="-40" width="440" height="980">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="4"/>
+      <feDisplacementMap in="SourceGraphic" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="360" height="900" rx="18"/>
+  <text class="hand mid" x="180" y="30" style="font-size:17px">the 3-2-1 rule for your thesis</text>
+  <text class="mid" x="180" y="70" style="font-size:18px" font-weight="700"><tspan class="k" style="font-size:32px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">3</tspan> copies</text>
+  <text class="mid" x="180" y="106" style="font-size:18px" font-weight="700"><tspan class="k" style="font-size:32px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">2</tspan> kinds of storage</text>
+  <text class="mid" x="180" y="142" style="font-size:18px" font-weight="700"><tspan class="k" style="font-size:32px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">1</tspan> off-site</text>
+  <rect class="ln thin sage dash" filter="url(#r)" x="14" y="164" width="332" height="236" rx="18"/>
+  <rect class="w-sage" x="38" y="188" width="298" height="92" rx="14"/>
+  <rect class="card" x="32" y="182" width="298" height="92" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="32" y="182" width="298" height="92" rx="14"/>
+  <circle class="w-butter" cx="34" cy="184" r="13"/>
+  <circle class="ln" filter="url(#r)" cx="34" cy="184" r="13"/>
+  <text class="n mid" x="34" y="189.6" style="font-size:16px">1</text>
+  <rect class="w-butter" x="56" y="202" width="68" height="46" rx="4"/>
+  <rect class="ln" filter="url(#r)" x="56" y="202" width="68" height="46" rx="4"/>
+  <path class="ln" filter="url(#r)" d="M44 252 H136 L130 260 H50 Z"/>
+  <path class="ln thin mut" d="M66 216 H110 M66 226 H114 M66 236 H98"/>
+  <text x="144" y="216" style="font-size:17.5px" font-weight="700">your thesis folder</text>
+  <text class="s" x="144" y="239" style="font-size:15px">where you work</text>
+  <rect class="w-blue" x="38" y="296" width="298" height="92" rx="14"/>
+  <rect class="card" x="32" y="290" width="298" height="92" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="32" y="290" width="298" height="92" rx="14"/>
+  <circle class="w-butter" cx="34" cy="292" r="13"/>
+  <circle class="ln" filter="url(#r)" cx="34" cy="292" r="13"/>
+  <text class="n mid" x="34" y="297.6" style="font-size:16px">2</text>
+  <rect class="w-butter" x="60" y="312" width="60" height="54" rx="9"/>
+  <rect class="ln" filter="url(#r)" x="60" y="312" width="60" height="54" rx="9"/>
+  <path class="ln thin mut" d="M72 352 H96"/>
+  <circle class="f-terra" cx="107" cy="352" r="3.5"/>
+  <path class="ln thin terra" d="M100 326 A11 11 0 1 1 89 319" marker-end="url(#at)"/>
+  <text x="144" y="324" style="font-size:17.5px" font-weight="700">automatic backup</text>
+  <text class="s" x="144" y="347" style="font-size:15px">Time Machine, File</text>
+  <text class="s" x="144" y="366" style="font-size:15px">History, or a drive</text>
+  <text class="hand hs mid" x="180" y="424" style="font-size:16.5px">local: your computer and a drive</text>
+  <rect class="ln thin plum dash" filter="url(#r)" x="14" y="444" width="332" height="128" rx="18"/>
+  <rect class="w-plum" x="38" y="468" width="298" height="92" rx="14"/>
+  <rect class="card" x="32" y="462" width="298" height="92" rx="14"/>
+  <rect class="ln" filter="url(#r)" x="32" y="462" width="298" height="92" rx="14"/>
+  <circle class="w-butter" cx="34" cy="464" r="13"/>
+  <circle class="ln" filter="url(#r)" cx="34" cy="464" r="13"/>
+  <text class="n mid" x="34" y="469.6" style="font-size:16px">3</text>
+  <path class="w-butter" d="M52 530 H126 A15 15 0 0 0 124 502 A22 22 0 0 0 84 492 A16 16 0 0 0 60 508 A11 11 0 0 0 52 530 Z"/>
+  <path class="ln" filter="url(#r)" d="M52 530 H126 A15 15 0 0 0 124 502 A22 22 0 0 0 84 492 A16 16 0 0 0 60 508 A11 11 0 0 0 52 530 Z"/>
+  <text x="144" y="496" style="font-size:17.5px" font-weight="700">cloud sync</text>
+  <text class="s" x="144" y="519" style="font-size:15px">a copy kept in step</text>
+  <text class="s" x="144" y="538" style="font-size:15px">online</text>
+  <text class="hand hp mid" x="180" y="596" style="font-size:16.5px">off-site: the cloud</text>
+  <g transform="rotate(-1.5 180 664)">
+  <rect class="w-butter" x="54" y="624" width="252" height="80" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="54" y="624" width="252" height="80" rx="3"/>
+  <rect class="w-terra" x="160" y="617" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="180" y="650" style="font-size:15px" font-weight="700">Sync is not backup:</text>
+  <text class="mid" x="180" y="671" style="font-size:15px">deletions sync too, so</text>
+  <text class="mid" x="180" y="691" style="font-size:15px">use version history</text>
+  </g>
+  <g transform="rotate(1 180 756)">
+  <rect class="w-butter" x="54" y="716" width="252" height="80" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="54" y="716" width="252" height="80" rx="3"/>
+  <rect class="w-terra" x="160" y="709" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="180" y="742" style="font-size:15px" font-weight="700">Overleaf:</text>
+  <text class="mid" x="180" y="763" style="font-size:15px">download the source</text>
+  <text class="mid" x="180" y="783" style="font-size:15px">ZIP regularly</text>
+  </g>
+  <g transform="rotate(-1 180 848)">
+  <rect class="w-butter" x="54" y="808" width="252" height="80" rx="3"/>
+  <rect class="ln thin" filter="url(#r)" x="54" y="808" width="252" height="80" rx="3"/>
+  <rect class="w-terra" x="160" y="801" width="40" height="13" opacity=".9"/>
+  <text class="mid" x="180" y="834" style="font-size:15px" font-weight="700">Zotero: use Zotero sync,</text>
+  <text class="mid" x="180" y="855" style="font-size:15px">and keep its data folder</text>
+  <text class="mid" x="180" y="875" style="font-size:15px">out of cloud folders</text>
+  </g>
+</svg>
