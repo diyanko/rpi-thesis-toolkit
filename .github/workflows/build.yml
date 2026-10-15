@@ -72,6 +72,9 @@ jobs:
         # With TeX present (this container), --previews also compiles
         # cheatsheet/cheatsheet.tex into the website's downloads.
         run: python3 scripts/build_site.py --previews
+      - name: Rebuild the website in publish mode (strict checks)
+        if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
+        run: python3 scripts/build_site.py --previews --publish
       - name: Check that the cheat sheet compiled
         run: |
           test -s dist/site/downloads/rpi-thesis-cheatsheet.pdf || {
@@ -80,6 +83,36 @@ jobs:
           }
       - name: Package the student starter ZIP
         run: python3 scripts/package.py
+      - name: Smoke-test both ZIPs (extract into empty folders, compile, check the offline guide)
+        run: |
+          set -e
+          root="$PWD"
+          work="$(mktemp -d)"
+          mkdir "$work/starter" "$work/overleaf"
+          starter_zip="$(ls dist/rpi-thesis-starter-v*.zip | sort | tail -1)"
+          overleaf_zip="$(ls dist/rpi-thesis-overleaf-v*.zip | sort | tail -1)"
+          python3 -m zipfile -e "$starter_zip" "$work/starter"
+          python3 -m zipfile -e "$overleaf_zip" "$work/overleaf"
+          # Starter: the exact command the VS Code recipe runs (.vscode/settings.json),
+          # on the first run, with the starter's own latexmkrc.
+          cd "$work/starter"
+          test -f START-HERE.html -a -f guide/index.html -a -f latexmkrc
+          latexmk -pdf -no-shell-escape -synctex=1 -interaction=nonstopmode -halt-on-error -file-line-error -outdir="$work/starter/build" main.tex
+          test -s build/main.pdf
+          # The offline guide: every link and anchor resolves.
+          python3 -I -c "
+          import sys
+          sys.path.insert(0, sys.argv[1] + '/scripts')
+          from pathlib import Path
+          from build_site import validate
+          errors, warnings, pages = validate(Path('guide'), beside=('rpi-thesis-cheatsheet.pdf',))
+          print(pages, 'guide pages checked')
+          sys.exit('\n'.join(errors) if errors else 0)
+          " "$root"
+          # Overleaf ZIP: plain latexmk, as Overleaf runs it.
+          cd "$work/overleaf"
+          latexmk -pdf -interaction=nonstopmode -halt-on-error main.tex
+          test -s main.pdf
       - name: Keep the starter ZIP
         uses: actions/upload-artifact@v7
         with:
