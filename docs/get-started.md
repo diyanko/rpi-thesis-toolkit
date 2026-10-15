@@ -67,8 +67,8 @@ You need **LaTeX** (the programs that make the PDF) and **an editor** (where
 you type). Every editor runs the same programs, so with the same files, engine,
 packages, and fonts they make the same PDF.
 
-1. **Install LaTeX**, choosing the **full** installation. Allow an hour or
-   more. Use TeX Live 2022 or newer if you can.
+1. **Install a current, full LaTeX distribution** using the route for your
+   system below. Allow an hour or more.
    - **Windows:** [TeX Live for Windows](https://tug.org/texlive/windows.html).
      Keep the default install folder. Choose TeX Live rather than MiKTeX: it
      includes the Perl that `latexmk` needs.
@@ -88,15 +88,16 @@ packages, and fonts they make the same PDF.
 
      Fedora:
 
-     <!-- TODO(verify): Fedora package names not tested on a Fedora machine; CI tests Ubuntu 22.04 and 24.04. -->
+     <!-- TODO(verify): Fedora package names not tested on a Fedora machine; CI tests Ubuntu 24.04. -->
 
      ```sh
      sudo dnf install texlive-scheme-full latexmk biber
      ```
 
-     Ubuntu 22.04 ships TeX Live 2021: the sample still compiled in a test,
-     with a version warning. If anything looks wrong, use [TeX Live from
-     tug.org](https://tug.org/texlive/quickinstall.html).
+     Older distributions may supply a TeX Live release that this starter
+     does not support. If setup reports that LaTeX is too old, install the
+     current full [TeX Live from tug.org](https://tug.org/texlive/quickinstall.html),
+     or use [Overleaf](#step-3b-overleaf-route).
 
    **Check:** Windows shows a **TeX Live** folder in the Start menu; macOS
    has a `TeX` folder in Applications; on Linux, `latexmk -v` prints a

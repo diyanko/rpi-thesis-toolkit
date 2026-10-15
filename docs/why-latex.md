@@ -9,27 +9,35 @@ file*, `rpi-thesis.cls`) keeps headings, numbering, and spacing consistent.
 You still check the PDF.
 
 <span id="what-you-stop-doing-by-hand"></span>
+<span id="when-your-thesis-changes"></span>
 
-## When your thesis changes
+## Write a chapter. Keep the thesis consistent.
 
-Moving a chapter, inserting a figure, or pasting a section from another file
-can affect numbering, references, and formatting. Word and this LaTeX starter
-can both manage these; the setup and the checks you make differ.
+Keep your attention on the chapter you are writing. Let shared rules handle
+the repetition.
 
-![Word and this LaTeX starter compared through four edits: moving a chapter or section, adding a figure, pasting outside text, and refreshing the contents. Word uses heading styles, captions, cross-references, and field updates; this starter uses structured commands, labels, and compilation. Both need a check after changes.](diagrams/by-hand-vs-automatic.svg)
+<div class="benefit-cards">
+<a class="benefit-card" id="benefit-chapter" href="diagrams/one-chapter-at-a-time.svg" data-viewer="view-benefit-chapter"><strong>One chapter at a time</strong><span>Small files. One connected thesis.</span></a>
+<a class="benefit-card" id="benefit-numbers" href="diagrams/move-a-chapter.svg" data-viewer="view-benefit-numbers"><strong>Let the numbers follow</strong><span>Move chapters. Keep references linked.</span></a>
+<a class="benefit-card" id="benefit-formatting" href="diagrams/class-swap.svg" data-viewer="view-benefit-formatting"><strong>Shared formatting</strong><span>One class sets the shared rules.</span></a>
+<a class="benefit-card" id="benefit-reuse" href="diagrams/one-source-many-outputs.svg" data-viewer="view-benefit-reuse"><strong>Reuse your source</strong><span>Adapt text and figures for another format.</span></a>
+<a class="benefit-card" id="benefit-paste" href="diagrams/plain-text-shared-style.svg" data-viewer="view-benefit-paste"><strong>Leave stray styles behind</strong><span>Keep the words, without imported fonts.</span></a>
+<a class="benefit-card" id="benefit-citations" href="diagrams/citation-flow.svg" data-viewer="view-benefit-citations"><strong>Keep citations connected</strong><span>Cite by key. Let the reference list follow.</span></a>
+</div>
 
-*In words:* in Word, use its structured features and refresh fields after
-edits. In this starter, edit the source and compile (turn it into a PDF),
-then check the result. Typed numbers and copied formatting need attention
-in either workflow.
+<dialog class="viewer benefit-preview" id="view-benefit-chapter" aria-label="One chapter at a time"><a class="viewer-close" href="#benefit-chapter">Close<span class="visually-hidden"> the picture</span></a><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/one-chapter-at-a-time-narrow.svg"><img src="diagrams/one-chapter-at-a-time.svg" alt="One chapter at a time: Small files. One connected thesis." width="640" height="400" loading="lazy"></picture></div></dialog>
+<dialog class="viewer benefit-preview" id="view-benefit-numbers" aria-label="Let the numbers follow"><a class="viewer-close" href="#benefit-numbers">Close<span class="visually-hidden"> the picture</span></a><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/move-a-chapter-narrow.svg"><img src="diagrams/move-a-chapter.svg" alt="Let the numbers follow: Move chapters. Keep references linked." width="720" height="456" loading="lazy"></picture></div></dialog>
+<dialog class="viewer benefit-preview" id="view-benefit-formatting" aria-label="Shared formatting"><a class="viewer-close" href="#benefit-formatting">Close<span class="visually-hidden"> the picture</span></a><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/class-swap-narrow.svg"><img src="diagrams/class-swap.svg" alt="Shared formatting: One class sets the shared rules." width="720" height="430" loading="lazy"></picture></div></dialog>
+<dialog class="viewer benefit-preview benefit-caption" id="view-benefit-reuse" aria-label="Reuse your source"><a class="viewer-close" href="#benefit-reuse">Close<span class="visually-hidden"> the picture</span></a><p class="viewer-hint">Other formats need adaptation, conversion and review.</p><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/one-source-many-outputs-narrow.svg"><img src="diagrams/one-source-many-outputs.svg" alt="Reuse your source: Adapt text and figures for another format." width="720" height="600" loading="lazy"></picture></div></dialog>
+<dialog class="viewer benefit-preview" id="view-benefit-paste" aria-label="Leave stray styles behind"><a class="viewer-close" href="#benefit-paste">Close<span class="visually-hidden"> the picture</span></a><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/plain-text-shared-style-narrow.svg"><img src="diagrams/plain-text-shared-style.svg" alt="Copied text with mixed styles becomes plain chapter text, then takes the shared document formatting." width="720" height="400" loading="lazy"></picture></div></dialog>
+<dialog class="viewer benefit-preview benefit-caption" id="view-benefit-citations" aria-label="Keep citations connected"><a class="viewer-close" href="#benefit-citations">Close<span class="visually-hidden"> the picture</span></a><p class="viewer-hint">Choose your citation style and the matching commands. Zotero is optional.</p><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/citation-flow-narrow.svg"><img src="diagrams/citation-flow.svg" alt="Bibliography records and citation keys feed the formatted citations and reference list when you compile." width="720" height="612" loading="lazy"></picture></div></dialog>
 
-For Word's controls, Microsoft explains
-[updating fields and the entire contents table](https://support.microsoft.com/en-au/word/update-fields)
-and [choosing how pasted text is formatted](https://support.microsoft.com/en-us/word/control-the-formatting-when-you-paste-text).
+Word can automate too. Its
+[styles and fields need to be kept in step](https://support.microsoft.com/en-au/word/update-fields),
+and [pasted text can bring its own formatting](https://support.microsoft.com/en-us/word/control-the-formatting-when-you-paste-text).
 
-- **Citations.** Cite a source by its short name (its key); the citation and
-  the reference list follow your field's style, such as APA, Chicago, MLA,
-  or IEEE ([citation styles](citations.md#change-the-citation-style)).
+For references, [choose the citation style and matching commands](citations.md#change-the-citation-style).
+
 - **Margins, spacing, and the title page.** Set once in the class file. If a
   rule changes, you usually replace the class file and your chapters stay untouched; check
   the steps first ([update the formatting safely](workflows.md#update-the-formatting-safely)).
@@ -45,12 +53,7 @@ cross-references, figures, tables, and equations cover most of a thesis, and
 they fit in one table at the top of
 [writing basics](writing.md#the-10-commands-youll-actually-use).
 
-## See it in action
-
-![Moving a chapter. On the left, main.tex lists the chapters in order; the include line for one chapter is moved earlier in the list. On the right, after the next compile, every chapter number has changed to match the new order, the figure and equation numbers inside each chapter follow, every "see Figure 3.1" in the text points to the new number, and the contents list the chapters in their new order with the right page numbers. No number was typed by hand.](diagrams/move-a-chapter.svg)
-
-*In words:* move one line in `main.tex`, compile, and every number,
-cross-reference, and contents entry updates to match.
+<span id="see-it-in-action"></span>
 
 ## Change one word, watch the layout
 
