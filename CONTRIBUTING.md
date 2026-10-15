@@ -45,7 +45,8 @@ Built your change with an AI assistant? That's welcome too.
 2. Make one focused change.
 3. Optional: if you use a terminal, check it with `python3 scripts/build.py`
    after changing LaTeX, or `python3 scripts/build_site.py` after changing
-   the guide. If you cannot, say so; the automated checks run anyway.
+   the guide (on Windows, type `py` instead of `python3`). If you cannot, say
+   so; the automated checks run anyway.
 4. Open the pull request and fill in the short template.
 
 New to forks and pull requests? GitHub's
