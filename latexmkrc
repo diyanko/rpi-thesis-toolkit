@@ -5,7 +5,9 @@
 # file per \include'd chapter into a matching subfolder (build/chapters/).
 # Those folders do not exist on the first compile, so the first run would
 # stop with "I can't write on file chapters/....aux". This file creates the
-# folders before each LaTeX run. It changes nothing else.
+# folders before each LaTeX run, however deeply the chapters are nested
+# (hidden folders, symbolic links, build, dist and _local are skipped).
+# It changes nothing else.
 use File::Path qw(make_path);
 use File::Glob qw(bsd_glob);
 
@@ -18,8 +20,7 @@ sub rpi_mirror_dirs {
     if ($out ne '' && $out ne '.') {
         my $walk;
         $walk = sub {
-            my ($dir, $depth) = @_;
-            return if $depth > 3;
+            my ($dir) = @_;
             opendir(my $handle, $dir) or return;
             my @names = grep { !/^\./ } readdir($handle);
             closedir($handle);
@@ -28,10 +29,10 @@ sub rpi_mirror_dirs {
                 next unless -d $path && !-l $path;
                 next if $name eq 'build' || $name eq 'dist' || $name eq '_local';
                 make_path("$out/$path") if bsd_glob("$path/*.tex");
-                $walk->($path, $depth + 1);
+                $walk->($path);
             }
         };
-        $walk->('.', 1);
+        $walk->('.');
     }
     return system(@_);
 }
