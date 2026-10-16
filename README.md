@@ -35,18 +35,20 @@ offline reading, and the cheat sheet (no account needed). Prefer Overleaf?
 
 ## Guide
 
-The guide has four stages. Start at the top, or go straight to what you need.
+The guide has two parts. Follow the core path in order, or go straight to
+what you need.
 
-- **Start:** [Get started](docs/get-started.md) (your
-  computer or Overleaf, first compile, your first hour) · [Bring your draft](docs/bring-your-draft.md)
-  (from Markdown, Google Docs, Word, a paper, or RPI's official LaTeX template)
-- **Write:** [How it works](docs/how-it-works.md) (why LaTeX and its honest costs, files,
-  compiling, and a suggested workflow) · [Writing basics](docs/writing.md) (headings, figures, tables,
-  equations) · [Citations](docs/citations.md) (Zotero, styles)
-- **Fix and finish:** [Fixing problems](docs/troubleshooting.md) (errors and
+- **Core path:** [Get started](docs/get-started.md) (your computer or
+  Overleaf, first compile, your first hour) · [Writing basics](docs/writing.md)
+  (headings, figures, tables, equations) · [Citations](docs/citations.md)
+  (Zotero, styles) · [Fixing problems](docs/troubleshooting.md) (errors and
   getting help) · [Submitting](docs/submission.md) (the path to graduation and
   final checks)
-- **Go further:** [Going further](docs/going-further.md) (advisor review, computer and
+- **Go further:** [How it works](docs/how-it-works.md) (why LaTeX and its
+  honest costs, files, compiling, and a suggested workflow) ·
+  [Bring your draft](docs/bring-your-draft.md) (from Markdown, Google Docs,
+  Word, a paper, or RPI's official LaTeX template) ·
+  [Going further](docs/going-further.md) (advisor review, computer and
   Overleaf, backups, updates, AI help, every setting and build command)
 
 Looking for one task? [How do I…?](docs/how-do-i.md) links each common task
