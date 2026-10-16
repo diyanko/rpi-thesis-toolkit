@@ -10,7 +10,9 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
 
-## Unreleased
+## 0.6.0 (beta), 16 Oct 2026
+
+Published as the pre-release `v0.6.0`.
 
 **Changes your PDF?** Only if you use Chicago (`biblatex-chicago`): the
 reference list now has one blank line between entries instead of about half

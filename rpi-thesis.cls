@@ -24,7 +24,7 @@
 % 1. Identity and options
 % ---------------------------------------------------------------------------
 \NeedsTeXFormat{LaTeX2e}[2022-06-01]
-\ProvidesClass{rpi-thesis}[2026/10/16 v0.5.0 RPI community thesis starter]
+\ProvidesClass{rpi-thesis}[2026/10/16 v0.6.0 RPI community thesis starter]
 % Every compile says which version this is and where the newest one lives.
 \typeout{rpi-thesis \csname ver@rpi-thesis.cls\endcsname. Newest version:^^J
   https://diyanko.github.io/rpi-thesis-toolkit/downloads/rpi-thesis.cls}
