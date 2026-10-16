@@ -401,6 +401,29 @@ def case_package_completeness(proj, work):
 
 # ---- registry -----------------------------------------------------------------
 
+def case_class_alone(proj, work):
+    """The 'use just the class' recipe in docs/bring-your-draft.md compiles with
+    only rpi-thesis.cls and a .bib file: no starter preamble, metadata or latexmkrc.
+    Without biblatex, \\thesisreferences stops with a clear message."""
+    doc = (ROOT / "docs/bring-your-draft.md").read_text(encoding="utf-8")
+    section = doc[doc.index("## Already have a LaTeX thesis? Use just the class"):]
+    recipe = section[section.index("```latex") + 8: section.index("```", section.index("```latex") + 8)]
+    alone = work / "alone"
+    alone.mkdir()
+    for name in ("rpi-thesis.cls", "references.bib"):
+        (alone / name).write_bytes((proj / name).read_bytes())
+    (alone / "main.tex").write_text(recipe, encoding="utf-8")
+    code, out = latexmk(alone, work)
+    check(code == 0 and (alone / "main.pdf").is_file(), "recipe does not compile: " + tail(out))
+    bare = "\n".join(l for l in recipe.splitlines() if "biblatex" not in l and "addbibresource" not in l)
+    plain = work / "no-biblatex"   # a clean folder: no aux files from the run above
+    plain.mkdir()
+    (plain / "rpi-thesis.cls").write_bytes((proj / "rpi-thesis.cls").read_bytes())
+    (plain / "main.tex").write_text(bare, encoding="utf-8")
+    code, out = latex(plain, work)
+    check(code != 0 and "needs biblatex" in out, "missing biblatex gave no clear error: " + tail(out))
+
+
 CASES = {}
 
 
@@ -420,6 +443,7 @@ register("verbatim-input", case_verbatim_input)
 register("missing-chapter", case_missing_chapter)
 register("urldate-hint", case_urldate_hint)
 register("package-completeness", case_package_completeness, tools=())
+register("class-alone", case_class_alone)
 
 
 def selected(patterns):
