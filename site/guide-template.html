@@ -31,6 +31,9 @@ $endif$
 <script src="${root}viewer.js" defer></script>
 <script src="${root}search-index.js" defer></script>
 <script src="${root}search.js" defer></script>
+$if(analytics_token)$
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "$analytics_token$"}'></script>
+$endif$
 </head>
 <body class="page-$kind$" id="top">
 <a class="skip-link" href="#main">Skip to content</a>
