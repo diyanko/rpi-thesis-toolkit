@@ -11,8 +11,10 @@ and picture); for a quick local test that tolerates gaps, add --dev.
 import argparse
 from pathlib import Path
 import json
+import posixpath
 import re
 import tempfile
+from urllib.parse import quote, unquote, urlsplit
 import zipfile
 
 from build import active_sources
@@ -86,9 +88,8 @@ STUDENT_README = """\
 4. Put your details in metadata.tex, then write in chapters/.
 
 Formatting lives in rpi-thesis.cls. To update the formatting later, follow
-"Update the formatting safely" in the guide (Going further page). During the beta,
-a new version can change more than that one file; its changelog lists every
-other edit to make.
+"Update the formatting safely" in the guide (Going further page). Before
+version 1.0, anything may change, and the changelog says what to do.
 
 This is an unofficial, community-made starter. It is not affiliated with or
 endorsed by Rensselaer Polytechnic Institute or its Office of Graduate
@@ -126,9 +127,12 @@ def add_text(archive, name, text, mode=0o644):
     archive.writestr(info, text)
 
 
-def add_file(archive, path, name):
+def add_file(archive, path, name, shipped=(), version=""):
     mode = 0o755 if path.stat().st_mode & 0o111 else 0o644
-    add_text(archive, name, path.read_bytes(), mode)
+    data = path.read_bytes()
+    if name.endswith(".md") and shipped:
+        data = shipped_markdown(name, data.decode("utf-8"), shipped, version)
+    add_text(archive, name, data, mode)
 
 
 # For "Open in Overleaf": only what the thesis needs, so the Overleaf file tree
@@ -143,19 +147,77 @@ OVERLEAF_README = """\
 
 The full guide: {guide_url}
 To update the formatting later, follow "Update the formatting safely" in the
-guide (Going further page); the changelog lists any other files a version changes.
+guide (Going further page). Before version 1.0, anything may change, and
+the changelog says what to do.
 This is a community project, not approved by RPI or the Office of Graduate
 Education. Check the current OGE requirements before you submit.
 """
 
 
-def guide_url():
-    """The public guide address, from site/site.json (one place to change it)."""
+def site_setting(key, what):
+    """An address from site/site.json, the one place to change it."""
     config = json.loads((ROOT / "site/site.json").read_text(encoding="utf-8"))
-    url = config.get("site_url")
-    if not isinstance(url, str) or not url.strip():
-        raise SystemExit("site/site.json: set site_url to the published guide address before packaging.")
-    return url.strip().rstrip("/") + "/"
+    url = config.get(key)
+    if not isinstance(url, str) or not url.strip().startswith("https://"):
+        raise SystemExit(f"site/site.json: set {key} to {what} (an https:// address) before packaging.")
+    return url.strip().rstrip("/")
+
+
+def guide_url():
+    """The public guide address."""
+    return site_setting("site_url", "the published guide address") + "/"
+
+
+def repository_url():
+    """The public repository address."""
+    return site_setting("repository_url", "the public repository address")
+
+
+MARKDOWN_LINK = re.compile(r"(\]\()([^)\s]+)(\))")
+
+
+def shipped_markdown(name, text, shipped, version):
+    """A Markdown file as it goes into a ZIP: a relative link to a file the ZIP
+    leaves out (CREDITS.md from LICENSE.md, say) points to that file in the
+    repository at this release instead, so no link inside the ZIP is broken."""
+    def link(match):
+        target = match[2]
+        parts = urlsplit(target)
+        if parts.scheme or parts.netloc or not parts.path:
+            return match[0]
+        path = posixpath.normpath(posixpath.join(posixpath.dirname(name), unquote(parts.path)))
+        if path in shipped:
+            return match[0]
+        if path.startswith("..") or not (ROOT / path).exists():
+            raise SystemExit(f"{name}: link to a missing file: {target}")
+        kind = "tree" if (ROOT / path).is_dir() else "blob"
+        fragment = "#" + parts.fragment if parts.fragment else ""
+        return f"{match[1]}{repository_url()}/{kind}/v{version}/{quote(path)}{fragment}{match[3]}"
+    return MARKDOWN_LINK.sub(link, text)
+
+
+def check_links(label, archive):
+    """Every relative link in the ZIP's Markdown and top-level HTML files must
+    name a file inside the ZIP (the guide checks its own links as it builds)."""
+    names = set(archive.namelist())
+    folders = {posixpath.dirname(n) for n in names}
+    broken = []
+    for name in sorted(names):
+        if name.endswith(".md"):
+            targets = [m[2] for m in MARKDOWN_LINK.finditer(archive.read(name).decode("utf-8"))]
+        elif name.endswith(".html") and "/" not in name:
+            targets = re.findall(r'(?:href="|url=)([^"\s>]+)', archive.read(name).decode("utf-8"))
+        else:
+            continue
+        for target in targets:
+            parts = urlsplit(target)
+            if parts.scheme or parts.netloc or not parts.path:
+                continue
+            path = posixpath.normpath(posixpath.join(posixpath.dirname(name), unquote(parts.path)))
+            if path not in names and path not in folders:
+                broken.append(f"{name}: {target}")
+    if broken:
+        raise SystemExit(f"The {label} has links to files it does not contain:\n- " + "\n- ".join(broken))
 
 
 def cheatsheet_state(path):
@@ -212,12 +274,15 @@ def package_overleaf(version):
     destination = ROOT / f"dist/rpi-thesis-overleaf-v{version}.zip"
     temp = destination.with_suffix(".tmp")
     with zipfile.ZipFile(temp, "w", zipfile.ZIP_DEFLATED) as archive:
+        shipped = {name for name in FILES if not name.startswith(OVERLEAF_SKIP)} | {"README.md"}
         for name in FILES:
             if not name.startswith(OVERLEAF_SKIP):
-                add_file(archive, ROOT / name, name)
+                add_file(archive, ROOT / name, name, shipped, version)
         add_text(archive, "README.md", OVERLEAF_README.format(guide_url=public_guide))
         names = archive.namelist()
     try:
+        with zipfile.ZipFile(temp) as archive:
+            check_links("Overleaf ZIP", archive)
         verify_archive("Overleaf ZIP", names)
     except SystemExit:
         temp.unlink()
@@ -229,9 +294,11 @@ def package_overleaf(version):
 def package(dev=False):
     verify_files()
     guide_url()  # fail before replacing either archive if Overleaf's guide link is unset
+    repository_url()  # shipped Markdown links files the ZIP leaves out to the repository
     verify_archive("starter ZIP", set(FILES))  # before the slow guide build
     version, released = class_version()
-    # main.tex asks for the class date, so LaTeX warns students whose rpi-thesis.cls is older.
+    # main.tex asks for the class date, so LaTeX warns when rpi-thesis.cls is dated earlier
+    # (a date check only; it says nothing about which versions work together).
     wanted = re.search(r"\\documentclass\{rpi-thesis\}\[(\d{4})/(\d\d)/(\d\d)\]", (ROOT / "main.tex").read_text(encoding="utf-8"))
     if not wanted or wanted.groups() != (f"{released:%Y}", f"{released:%m}", f"{released:%d}"):
         raise SystemExit(f"main.tex: write \\documentclass{{rpi-thesis}}[{released:%Y/%m/%d}], the date in rpi-thesis.cls's \\ProvidesClass line.")
@@ -252,8 +319,9 @@ def package(dev=False):
                            complete=not dev)
         # The archive replaces the old one only after everything is in place.
         with zipfile.ZipFile(temp, "w", zipfile.ZIP_DEFLATED) as archive:
+            shipped = set(FILES) | {"README.md", "START-HERE.html", CHEATSHEET_NAME}
             for name in FILES:
-                add_file(archive, ROOT / name, name)
+                add_file(archive, ROOT / name, name, shipped, version)
             add_text(archive, ".gitignore", STUDENT_GITIGNORE)
             readme = STUDENT_README
             if with_cheatsheet:
@@ -273,6 +341,8 @@ def package(dev=False):
         temp.unlink()
         raise RuntimeError("Not for the student ZIP: " + ", ".join(leaked))
     try:
+        with zipfile.ZipFile(temp) as archive:
+            check_links("starter ZIP", archive)
         verify_archive("starter ZIP", names)
     except SystemExit:
         temp.unlink()
