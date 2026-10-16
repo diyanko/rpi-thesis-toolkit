@@ -86,11 +86,12 @@ community-made ([style guide](style-guide.md#talking-about-rpi)).
 
 ## Verification
 
-One command, three sizes (full logs in `build/verify/`; CI runs the same):
+One command; CI runs the same (full logs in `build/verify/`):
 
 ```sh
-python3 scripts/verify.py quick     # guide or website edits, about a minute
-python3 scripts/verify.py           # thesis, PDF checks, regressions, website, ZIPs
+python3 scripts/verify.py           # picks quick or full from the files changed since main
+python3 scripts/verify.py quick     # guide or website text: hygiene and site, seconds
+python3 scripts/verify.py full      # thesis, PDF checks and regressions (in parallel), website, ZIPs
 python3 scripts/verify.py release   # full + strict publish build, layout sweep, reproducible ZIPs
 ```
 
@@ -98,7 +99,7 @@ It needs Python 3, TeX Live, Pandoc 3.11 or newer, and `pypdf`.
 `python3 scripts/build.py --doctor` checks a computer's setup.
 
 `check.py` builds isolated variants (MS, PhD with copyright and a large
-committee, DEng, minimal, LuaLaTeX, XeLaTeX) and checks PDF structure. After a
+committee, minimal DEng, LuaLaTeX, XeLaTeX) in parallel and checks PDF structure. After a
 title-page change, run it with `assets/rpi-seal.jpg` and with the file moved
 aside (as in CI). Parsed PDF text cannot judge layout, so also look at the
 pages. For visible website changes, run `python3 scripts/ui_check.py --shots`.
@@ -190,11 +191,19 @@ and the cheat sheet PDF. Maintainer pages, `AGENTS.md`, `CLAUDE.md`, site
 tooling, and every RPI file stay out; `package.py` refuses any seal file and
 any other PDF, and requires a nonempty `site_url` in `site/site.json`.
 
-`.github/workflows/build.yml` runs on pull requests and pushes to `main` in a
-TeX Live container (no seal, so the placeholder shows) and keeps the ZIP and
-website as workflow artifacts. Publishing to GitHub Pages is manual: run the
-workflow from the Actions tab on `main` with **publish** ticked, only after
-authorization and the [public-release checklist](#public-release-readiness).
+Three workflows in `.github/workflows/`:
+
+- `build.yml` verifies every pull request and push. A push to `main` deploys
+  the website when `rpi-thesis.cls` equals the latest release's
+  (`scripts/release.py deployable`), so guide fixes go live at once and class
+  changes wait for a release. A pushed `vX.Y.Z` tag releases (below).
+- `fresh-machines.yml` installs TeX on new Windows, macOS, and Ubuntu machines
+  the way the guide says and compiles the starter: on each release tag, once a
+  month, and on demand. It never blocks a release.
+- `health.yml` runs monthly: external links and RPI's thesis pages
+  (`scripts/health.py`, compared with `scripts/oge-watch.json`), and a full
+  verify on the newest, unpinned TeX Live. Problems open one issue labelled
+  `health`.
 
 ### Updating pinned tools
 
@@ -256,27 +265,25 @@ Until then, do not call a release compliant, approved, or fully tested.
 
 ## Make a release
 
-Only with the maintainer's authorization. Everyday changes merge to `main` and
-ship with the next release.
+Only with the maintainer's authorization.
 
-1. **Bump:** `python3 scripts/bump.py X.Y.Z` sets the version everywhere
-   (class line and date, `main.tex`, download links, `CITATION.cff`, the
-   change log's "Unreleased" heading). Check the entry reads well.
-2. **Verify:** `python3 scripts/verify.py release`. Before a minor or major
-   release, also run **Fresh-machine test** in the Actions tab on the branch.
-3. **Merge** the pull request to `main`.
-4. **Publish** from an up-to-date `main`: `python3 scripts/package.py`, then
-   `gh release create vX.Y.Z --prerelease --title vX.Y.Z --notes-file <entry>
-   dist/rpi-thesis-starter-vX.Y.Z.zip dist/rpi-thesis-overleaf-vX.Y.Z.zip rpi-thesis.cls`
-   (the class alone lets students update by replacing one file; the ZIPs are
-   reproducible, so they match what CI tested).
-5. **Deploy the website:** Actions, **Build thesis, website, and starter ZIP**,
-   run on `main` with "publish" ticked. Its strict build refuses a site that
-   links a different version than the class.
-6. **Check** the live home page's download and "Open in Overleaf" links once.
+1. **Bump:** with the entry under `## Unreleased` in `CHANGELOG.md`, run
+   `python3 scripts/bump.py X.Y.Z`. It sets the version everywhere (class line
+   and date, `main.tex`, download links, `CITATION.cff`, the change-log
+   heading). Patch for fixes; minor for anything that changes a PDF or a
+   setting.
+2. **Verify:** `python3 scripts/verify.py release`.
+3. **Commit and tag:** commit `build: release vX.Y.Z` on `main`, `git tag
+   vX.Y.Z`, then `git push --atomic origin main vX.Y.Z`.
+4. **CI does the rest** (`build.yml` on the tag): verifies in release mode,
+   creates the GitHub pre-release with both ZIPs and `rpi-thesis.cls` (notes
+   from the change log, `scripts/release.py notes`), deploys the website, and
+   checks the live downloads and the newest-class link
+   (`scripts/release.py live`). The fresh-machine test starts on the same tag.
 
-Feedback that changes formatting goes in the change-log entry and in
-`requirements.md`.
+If the tag run fails before the release exists, fix on `main`, move the tag
+(`git tag -f vX.Y.Z && git push -f origin vX.Y.Z`), and it runs again. The
+`github-pages` environment allows `main` and `v*` tags to deploy.
 
 ## Roadmap and not yet covered
 

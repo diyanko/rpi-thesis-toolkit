@@ -7,8 +7,7 @@ help with the rest.
 
 ## Checks
 
-<!-- Paste the last line of `python3 scripts/verify.py quick` (guide or
-website) or `python3 scripts/verify.py` (LaTeX or scripts). "Did not run"
+<!-- Paste the last line of `python3 scripts/verify.py`. "Did not run"
 is fine: the same checks run automatically on this pull request. -->
 
 **Changes the PDF?** <!-- yes, no, or not sure. Formatting changes: name the

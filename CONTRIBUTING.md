@@ -32,9 +32,8 @@ Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its
 It forks the repository, makes one focused change, runs the checks, and shows
 you the result; you read it before anything is posted. Prefer to do it by
 hand? Fork, branch, make one focused change, and fill in the short template.
-If you use a terminal, `python3 scripts/verify.py quick` (guide or website) or
-`python3 scripts/verify.py` (LaTeX or scripts; `py` instead of `python3` on
-Windows) gives a last line to paste into the pull request. Automated checks
+If you use a terminal, `python3 scripts/verify.py` (`py` instead of `python3`
+on Windows) gives a last line to paste into the pull request. Automated checks
 run on every pull request anyway, and a failure is fine: the maintainer helps
 finish. The guide is Markdown in `docs/`; edit the `.md` file only.
 
