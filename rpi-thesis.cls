@@ -25,6 +25,9 @@
 % ---------------------------------------------------------------------------
 \NeedsTeXFormat{LaTeX2e}[2022-06-01]
 \ProvidesClass{rpi-thesis}[2026/10/15 v0.3.0 RPI community thesis starter]
+% Every compile says which version this is and where the newest one lives.
+\typeout{rpi-thesis \csname ver@rpi-thesis.cls\endcsname. Newest version:^^J
+  https://diyanko.github.io/rpi-thesis-toolkit/downloads/rpi-thesis.cls}
 % Settings live in metadata.tex, so the class takes no options.
 \DeclareOption*{\ClassError{rpi-thesis}{Unsupported class option: \CurrentOption}
   {Use metadata.tex for settings. This starter uses 12pt, letterpaper, oneside.}}
@@ -95,7 +98,15 @@
 \counterwithout{footnote}{chapter}
 % URLs in the text font: one font throughout (OGE checklist).
 \urlstyle{same}
-% Reference lists are left-aligned, so long URLs do not stretch the spacing.
+% Reference lists (biblatex, loaded in preamble.tex): one blank line between
+% entries, single-spaced inside them (manual 2.1, p. 16), left-aligned, and long
+% URLs wrap inside the margins. Set right after biblatex loads, so a student's
+% own setting on a later preamble line still wins.
+\AddToHook{package/biblatex/after}{%
+  \setlength{\bibitemsep}{\baselineskip}%
+  \setcounter{biburlnumpenalty}{9000}%
+  \setcounter{biburllcpenalty}{9000}%
+  \setcounter{biburlucpenalty}{9000}}
 \AtEndPreamble{\@ifpackageloaded{biblatex}{\appto\bibsetup{\raggedright}}{}}
 
 % ---------------------------------------------------------------------------
