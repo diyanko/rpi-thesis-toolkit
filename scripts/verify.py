@@ -1,19 +1,31 @@
 #!/usr/bin/env python3
 """Run every maintainer check in one fixed order and print a short summary.
 
-    python3 scripts/verify.py           picks quick or full from the files
-                                        changed since main (the usual way)
+    python3 scripts/verify.py           auto: quick or full, from the files
+                                        changed since main (see below)
     python3 scripts/verify.py quick     guide or website text (seconds)
-    python3 scripts/verify.py full      thesis, PDF checks, regressions,
-                                        website, ZIPs, archive compiles
+    python3 scripts/verify.py full      thesis, PDF checks, regressions, unit
+                                        tests, website, ZIPs, archive compiles
     python3 scripts/verify.py release   full + strict publish build, browser
                                         layout sweep, reproducible-ZIP check
 
+Auto mode compares this checkout (committed, staged, unstaged, and untracked
+files) with its merge base with origin/main, or main. It picks quick only when
+something changed and every changed file is guide or website text. It picks
+full when anything else changed, when nothing changed (a clean checkout, as on
+a new machine: the run then tests this computer's TeX setup, which quick would
+not), and whenever a git command fails. Name a mode to choose it yourself.
+
+Release mode fails when no Chrome or Chromium is found, because the layout
+sweep cannot run. Where no browser can run (the CI container), set
+VERIFY_ALLOW_NO_BROWSER=1: the sweep is then reported as SKIP, never as passed.
+
 Each step's full output goes to build/verify/<step>.log; the screen shows one
-line per step. CI runs the same command, so a local pass means a CI pass.
-Steps run with a fixed date, time zone, and locale, so results do not depend on
-the machine. Needs Python 3, TeX Live, Pandoc, and pypdf for the PDF checks
-(the script finds .venv/bin/python, or tells you how to make it).
+line per step, and the summary names any skipped step. CI runs the same
+command. Steps run with a fixed date, time zone, and locale, so results do not
+depend on the machine. Needs Python 3, TeX Live, Pandoc, and pypdf for the PDF
+checks (the script finds .venv/bin/python, or tells you how to make it); the
+release sweep also needs Chrome or Chromium.
 """
 
 import argparse
@@ -30,6 +42,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.dont_write_bytecode = True  # importing build_site must not leave __pycache__
 LOGS = ROOT / "build" / "verify"
 PY = sys.executable
 ENV = dict(os.environ, SOURCE_DATE_EPOCH="1767225600", TZ="UTC", LC_ALL="C.UTF-8",
@@ -51,10 +64,14 @@ def run(step, command, cwd=ROOT, env=None):
     return result.returncode == 0, ((useful or lines or [""])[-1]).strip()
 
 
-def git(*args):
+def git(*args, cwd=ROOT):
+    """Run git; a missing git counts as a failed command (exit 127)."""
     # CI containers check out as another user; trust this checkout explicitly.
-    return subprocess.run(["git", "-c", f"safe.directory={ROOT}", *args], cwd=ROOT,
-                          capture_output=True, text=True)
+    try:
+        return subprocess.run(["git", "-c", f"safe.directory={cwd}", *args], cwd=cwd,
+                              capture_output=True, text=True)
+    except OSError as error:
+        return subprocess.CompletedProcess(args, 127, "", str(error))
 
 
 def pypdf_python():
@@ -124,22 +141,53 @@ def site(previews=True, publish=False):
     return run("site_publish" if publish else "site", command)
 
 
+# The ZIPs the package step wrote in this run, by kind. Later steps test exactly
+# these, never "the newest-looking" file in dist/: old versions may remain there,
+# and names do not sort by version (v0.9.0 sorts after v0.10.0).
+PACKAGED = {}
+
+
+def current_zips(root=ROOT):
+    """dist/ paths of this version's starter and Overleaf ZIPs, named from the
+    \\ProvidesClass line of root/rpi-thesis.cls as scripts/package.py names them."""
+    text = (root / "rpi-thesis.cls").read_text(encoding="utf-8")
+    match = re.search(r"\\ProvidesClass\{rpi-thesis\}\[\d{4}/\d\d/\d\d v([\w.-]+)", text)
+    if not match:
+        raise SystemExit("rpi-thesis.cls: no version in the \\ProvidesClass line")
+    return {kind: root / f"dist/rpi-thesis-{kind}-v{match[1]}.zip" for kind in ("starter", "overleaf")}
+
+
 def package():
-    return run("package", [PY, "scripts/package.py"])
+    PACKAGED.clear()
+    began = time.time()
+    ok, note = run("package", [PY, "scripts/package.py"])
+    if not ok:
+        return ok, note
+    zips = current_zips()
+    # 2 s of slack for file systems with coarse timestamps.
+    stale = [p.name for p in zips.values() if not p.is_file() or p.stat().st_mtime < began - 2]
+    if stale:
+        return False, "package.py did not write " + ", ".join(stale) + " in this run"
+    PACKAGED.update(zips)
+    return True, note
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def archives():
-    """Extract both ZIPs into empty folders and compile them the way students will."""
-    zips = {kind: sorted(ROOT.glob(f"dist/rpi-thesis-{kind}-v*.zip")) for kind in ("starter", "overleaf")}
-    if not all(zips.values()):
-        return False, "no ZIPs in dist/ (run the package step)"
-    log = []
+    """Extract this run's two ZIPs into empty folders and compile them the way students will."""
+    if not PACKAGED:
+        return False, "no ZIPs from this run's package step to test"
+    zips = dict(PACKAGED)
+    log = [f"{p.name} sha256 {sha(p)}" for p in zips.values()]
     with tempfile.TemporaryDirectory() as work:
         for kind, command, out in (("starter", EDITOR, "build"),
                                    ("overleaf", ["latexmk", "-pdf", "-interaction=nonstopmode",
                                                  "-halt-on-error", "main.tex"], ".")):
             folder = Path(work) / kind
-            with zipfile.ZipFile(zips[kind][-1]) as archive:
+            with zipfile.ZipFile(zips[kind]) as archive:
                 archive.extractall(folder)
             env = dict(ENV, HOME=str(folder))  # no personal ~/.latexmkrc
             result = subprocess.run(command, cwd=folder, env=env, capture_output=True, text=True)
@@ -161,54 +209,95 @@ def archives():
             (LOGS / "archives.log").write_text("\n".join(log), encoding="utf-8")
             return False, f"offline guide: {(errors + warnings)[0]}"
     (LOGS / "archives.log").write_text("\n".join(log), encoding="utf-8")
-    return True, f"both ZIPs compile fresh; offline guide {pages} pages clean"
+    return True, (f"{zips['starter'].name} and {zips['overleaf'].name} compile fresh;"
+                  f" offline guide {pages} pages clean")
 
 
 def reproducible():
-    """Package twice; the ZIPs must be byte-identical."""
-    def digest():
-        return {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(ROOT.glob("dist/*.zip"))}
-    first = digest()
+    """Package again; this run's two ZIPs must come out byte-identical."""
+    if not PACKAGED:
+        return False, "no ZIPs from this run's package step to compare"
+    first = {kind: sha(path) for kind, path in PACKAGED.items()}
     ok, note = package()
     if not ok:
         return False, note
-    return (first == digest(), "ZIPs byte-identical across builds" if first == digest()
-            else "ZIPs differ between two builds of the same sources")
+    differ = [PACKAGED[kind].name for kind in first if sha(PACKAGED[kind]) != first[kind]]
+    if differ:
+        return False, "differ between two builds of the same sources: " + ", ".join(differ)
+    return True, " and ".join(p.name for p in PACKAGED.values()) + " byte-identical across two builds"
 
 
 def ui():
+    """Browser layout sweep. Only release mode runs it, so a missing browser
+    fails unless VERIFY_ALLOW_NO_BROWSER=1 says no browser can run here."""
     if not (ROOT / "scripts/ui_check.py").exists():
-        return None, "scripts/ui_check.py not present"
+        return False, "scripts/ui_check.py not present"
     ok, note = run("ui", [PY, "scripts/ui_check.py"])
-    return (None if note.startswith("SKIP") else ok), note
+    if not note.startswith("SKIP"):
+        return ok, note
+    if os.environ.get("VERIFY_ALLOW_NO_BROWSER") == "1":
+        return None, "no Chrome; layout NOT checked (VERIFY_ALLOW_NO_BROWSER=1)"
+    return False, ("no Chrome or Chromium: install one or set CHROME=/path/to/chrome"
+                   " (VERIFY_ALLOW_NO_BROWSER=1 skips the sweep where no browser can run)")
+
+
+def unit_tests():
+    """Standard-library unit tests in scripts/test_*.py, when there are any."""
+    if not sorted((ROOT / "scripts").glob("test_*.py")):
+        return None, "no scripts/test_*.py files"
+    ok, note = run("unit_tests", [pypdf_python() or PY, "-B", "-m", "unittest", "discover",
+                                  "-s", "scripts", "-p", "test_*.py"])
+    text = (LOGS / "unit_tests.log").read_text(encoding="utf-8")
+    ran = re.search(r"Ran (\d+) tests? in", text)
+    if ok and ran and int(ran[1]):
+        return True, f"{ran[1]} unit test(s) passed"
+    return False, (f"{ran[1]} test(s) ran: " if ran else "") + note
 
 
 # A list inside a mode runs its steps at the same time (they use separate folders).
 MODES = {
     "quick": [("hygiene", hygiene), ("site", lambda: site(previews=False))],
     "full": [("hygiene", hygiene), ("thesis", thesis),
-             [("pdf checks", pdf_checks), ("regressions", regressions)],
+             [("pdf checks", pdf_checks), ("regressions", regressions), ("unit tests", unit_tests)],
              ("site", site), ("package", package), ("archives", archives)],
 }
 MODES["release"] = MODES["full"] + [("publish build", lambda: site(publish=True)),
                                     ("reproducible", reproducible), ("ui sweep", ui)]
 
 
-# Changes that only touch these can skip the LaTeX steps.
+# Changes that only touch these can skip the LaTeX steps ...
 QUICK_ONLY = re.compile(r"(docs/(?!diagrams/).*\.md|[^/]+\.md|site/.*|\.github/(ISSUE_TEMPLATE/.*|pull_request_template\.md))$")
+# ... except guide pages that full-mode steps compile: the class-alone recipe
+# (regressions.py) and the class-swap example (page previews, skipped in quick).
+NEEDS_FULL = {"docs/bring-your-draft.md", "docs/how-it-works.md"}
 
 
-def auto_mode():
-    """quick when every file changed since main (committed or not) is guide or
-    website text; full otherwise, or when git cannot tell."""
-    base = git("merge-base", "HEAD", "origin/main")
-    if base.returncode:
-        base = git("merge-base", "HEAD", "main")
-    if base.returncode:
-        return "full", "no main branch to compare with"
-    changed = set(git("diff", "--name-only", base.stdout.strip()).stdout.split())
-    changed |= set(git("ls-files", "--others", "--exclude-standard").stdout.split())
-    slow = sorted(f for f in changed if not QUICK_ONLY.match(f))
+def auto_mode(root=ROOT):
+    """Return (mode, reason): quick only when something changed and all of it is
+    guide or website text; full otherwise, on a clean tree, or when git fails."""
+    def names(*args):
+        result = git(*args, cwd=root)
+        if result.returncode:
+            raise RuntimeError(f"git {args[0]} failed: " + (result.stderr.strip() or "no message")[:100])
+        return {name for name in result.stdout.split("\0") if name}
+
+    for ref in ("origin/main", "main"):
+        base = git("merge-base", "HEAD", ref, cwd=root)
+        if base.returncode == 0:
+            break
+    else:
+        return "full", "git cannot compare with main (no checkout, no main branch, or no git)"
+    try:
+        base = base.stdout.strip()
+        # --no-renames lists both sides of a rename, so a moved script still counts.
+        changed = names("diff", "--name-only", "--no-renames", "-z", base)  # committed + unstaged
+        changed |= names("diff", "--cached", "--name-only", "--no-renames", "-z", base)  # staged
+        changed |= names("ls-files", "--others", "--exclude-standard", "-z")  # untracked
+    except RuntimeError as error:
+        return "full", str(error)
+    if not changed:
+        return "full", "nothing changed since main, so check the whole setup"
+    slow = sorted(f for f in changed if f in NEEDS_FULL or not QUICK_ONLY.match(f))
     if slow:
         return "full", f"{len(slow)} changed file(s) need it, e.g. {slow[0]}"
     return "quick", f"{len(changed)} changed file(s), all guide or website text"
@@ -221,7 +310,8 @@ def timed(step):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("mode", nargs="?", default="auto", choices=["auto", *MODES])
     parser.add_argument("--keep-going", action="store_true", help="run every step even after a failure")
     args = parser.parse_args()
@@ -229,7 +319,7 @@ def main():
     if args.mode == "auto":
         args.mode, why = auto_mode()
         print(f"verify {args.mode}: {why}", flush=True)
-    failed, start = [], time.time()
+    failed, skipped, start = [], [], time.time()
     for entry in MODES[args.mode]:
         group = entry if isinstance(entry, list) else [entry]
         with ThreadPoolExecutor(max_workers=len(group)) as pool:
@@ -239,11 +329,15 @@ def main():
             print(f"{mark}  {name:<14} {seconds:6.1f}s  {note}"[:160], flush=True)
             if ok is False:
                 failed.append(name)
+            elif ok is None:
+                skipped.append(name)
         if failed and not args.keep_going:
             break
     total = time.time() - start
-    print(f"verify {args.mode}: {'FAILED ' + ', '.join(failed) if failed else 'all passed'} "
-          f"in {total:.0f}s (logs: build/verify/)")
+    result = ("FAILED " + ", ".join(failed) if failed
+              else f"passed, {len(skipped)} skipped ({', '.join(skipped)})" if skipped
+              else "all passed")
+    print(f"verify {args.mode}: {result} in {total:.0f}s (logs: build/verify/)")
     sys.exit(1 if failed else 0)
 
 

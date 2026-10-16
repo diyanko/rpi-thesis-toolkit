@@ -358,6 +358,193 @@ def case_package_completeness(proj, work):
     check("OK chapters/04-extra.tex" in out, "probe did not confirm the failure: " + tail(out))
 
 
+# Every command amssymb and amsfonts define (TeX Live 2026), less the ones that
+# take an argument (\mathbb and \mathfrak are typeset separately below).
+AMS_NAMES = """
+Bbbk Box Bumpeq Cap Cup Diamond Doteq Finv Game Join Lleftarrow Lsh Rrightarrow Rsh
+Subset Supset Vdash Vvdash angle approxeq backepsilon backprime backsim backsimeq
+barwedge because beth between bigstar blacklozenge blacksquare blacktriangle
+blacktriangledown blacktriangleleft blacktriangleright boxdot boxminus boxplus
+boxtimes bumpeq centerdot checkmark circeq circlearrowleft circlearrowright
+circledR circledS circledast circledcirc circleddash complement curlyeqprec
+curlyeqsucc curlyvee curlywedge curvearrowleft curvearrowright daleth dashleftarrow
+dashrightarrow diagdown diagup digamma divideontimes doteqdot dotplus
+doublebarwedge doublecap doublecup downdownarrows downharpoonleft downharpoonright
+eqcirc eqsim eqslantgtr eqslantless eth fallingdotseq geqq geqslant ggg gggtr gimel
+gnapprox gneq gneqq gnsim gtrapprox gtrdot gtreqless gtreqqless gtrless gtrsim
+gvertneqq hbar hslash intercal leadsto leftarrowtail leftleftarrows leftrightarrows
+leftrightharpoons leftrightsquigarrow leftthreetimes leqq leqslant lessapprox
+lessdot lesseqgtr lesseqqgtr lessgtr lesssim lhd llcorner lll llless lnapprox lneq
+lneqq lnsim looparrowleft looparrowright lozenge lrcorner ltimes lvertneqq maltese
+measuredangle mho multimap nLeftarrow nLeftrightarrow nRightarrow nVDash nVdash
+ncong nexists ngeq ngeqq ngeqslant ngtr nleftarrow nleftrightarrow nleq nleqq
+nleqslant nless nmid nparallel nprec npreceq nrightarrow nshortmid nshortparallel
+nsim nsubseteq nsubseteqq nsucc nsucceq nsupseteq nsupseteqq ntriangleleft
+ntrianglelefteq ntriangleright ntrianglerighteq nvDash nvdash pitchfork precapprox
+preccurlyeq precnapprox precneqq precnsim precsim restriction rhd rightarrowtail
+rightleftarrows rightleftharpoons rightrightarrows rightsquigarrow rightthreetimes
+risingdotseq rtimes shortmid shortparallel smallfrown smallsetminus smallsmile
+sphericalangle sqsubset sqsupset square subseteqq subsetneq subsetneqq succapprox
+succcurlyeq succnapprox succneqq succnsim succsim supseteqq supsetneq supsetneqq
+therefore thickapprox thicksim triangledown trianglelefteq triangleq
+trianglerighteq twoheadleftarrow twoheadrightarrow ulcorner unlhd unrhd
+upharpoonleft upharpoonright upuparrows urcorner vDash varkappa varnothing
+varpropto varsubsetneq varsubsetneqq varsupsetneq varsupsetneqq vartriangle
+vartriangleleft vartriangleright veebar yen
+""".split()
+# A math font each engine must use for these symbols (the class's font choice).
+AMS_FONTS = {"pdflatex": ("NewTXMI", "txsy"), "xelatex": ("TeXGyreTermesMath",),
+             "lualatex": ("TeXGyreTermesMath",)}
+AMS_DOC = r"""\documentclass{rpi-thesis}
+%s
+\thesissetup{title={T}, author={A}, degree=doctoral, department={Department of X},
+  graduation-month=May, graduation-year={2027}}
+\committeemember[Chair]{C}
+\begin{document}
+\tracinglostchars=2
+\thesismainmatter
+\chapter{AMS}
+$x\in\mathbb{R}$, $\mathbb{N}\to\mathbb{Z}$, $\mathfrak{g}$, $a\leqslant b$,
+$a\nleqslant b$, $\square$, $\blacktriangleright$.
+%s
+\end{document}
+"""
+
+
+def make_ams(engine):
+    def case(proj, work):
+        """Audit: AMS commands such as \\square and \\nleqslant were undefined on
+        LuaLaTeX and XeLaTeX (amssymb was marked loaded but never read)."""
+        guard = "\\ifcsname %s\\endcsname $\\csname %s\\endcsname$\\else\\typeout{AMSUNDEF:%s}\\fi"
+        body = "\n".join(guard % (name, name, name) for name in AMS_NAMES)
+        # As students write it (pasting the packages) and without the packages.
+        for variant, packages in (("pasted", "\\usepackage{amssymb}\n\\usepackage{amsfonts}"),
+                                  ("bare", "")):
+            name = "ams-%s.tex" % variant
+            (proj / name).write_text(AMS_DOC % (packages, body), encoding="utf-8")
+            code, out = latex(proj, work, engine, name=name)
+            log = read(proj / name.replace(".tex", ".log"))
+            check(code == 0, "%s (%s) exited %d: %s" % (engine, variant, code, tail(out)))
+            undefined = set(re.findall(r"AMSUNDEF:(\w+)", log))
+            check(not undefined, "%s (%s): undefined AMS commands: %s"
+                  % (engine, variant, " ".join(sorted(undefined))))
+            lost = re.findall(r"Missing character: There is no (.*?)!", log)
+            check(not lost, "%s (%s): glyphs missing from the font: %s" % (engine, variant, lost[:5]))
+            pdf = proj / name.replace(".tex", ".pdf")
+            if PdfReader is None:
+                raise Skip("font check needs pypdf (commands and glyphs were checked)")
+            fonts = set()
+            for page in PdfReader(str(pdf)).pages:
+                for font in (page["/Resources"].get("/Font") or {}).values():
+                    fonts.add(str(font.get_object()["/BaseFont"]))
+            for wanted in AMS_FONTS[engine]:
+                check(any(wanted in font for font in fonts),
+                      "%s (%s): no %s font in the PDF (%s)" % (engine, variant, wanted, sorted(fonts)))
+    return case
+
+
+# ---- verify.py behaviour (no TeX needed) ---------------------------------------
+
+def _verify_module():
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import verify
+    return verify
+
+
+def case_verify_auto_mode(proj, work):
+    """Audit: auto verify chose quick when git failed, on a clean tree, and could
+    miss staged or renamed files."""
+    verify = _verify_module()
+    repo = work / "repo"
+    (repo / "docs").mkdir(parents=True)
+    (repo / "scripts").mkdir()
+    env = dict(os.environ, GIT_CONFIG_GLOBAL=os.devnull, GIT_CONFIG_NOSYSTEM="1",
+               GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@example.invalid",
+               GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@example.invalid")
+
+    def git(*args):
+        done = subprocess.run(["git", *args], cwd=repo, env=env, capture_output=True, text=True)
+        check(done.returncode == 0, "fixture git %s failed: %s" % (args[0], done.stderr[-200:]))
+
+    def expect(mode, why):
+        got, reason = verify.auto_mode(repo)
+        check(got == mode, "%s: auto chose %s (%s), expected %s" % (why, got, reason, mode))
+
+    expect("full", "not a git checkout")
+    git("init", "-q", "-b", "trunk")
+    (repo / "docs/page.md").write_text("text\n")
+    (repo / "scripts/tool.py").write_text("x = 1\n")
+    git("add", "-A")
+    git("commit", "-q", "-m", "base")
+    expect("full", "no main branch")
+    git("branch", "-m", "main")
+    expect("full", "clean main")
+    git("checkout", "-q", "-b", "feature")
+    expect("full", "clean feature branch")
+    (repo / "docs/page.md").write_text("changed\n")
+    expect("quick", "unstaged guide change")
+    git("commit", "-q", "-am", "guide")
+    expect("quick", "committed guide change")
+    (repo / "scripts/tool.py").write_text("x = 2\n")
+    expect("full", "unstaged script change")
+    git("add", "scripts/tool.py")
+    expect("full", "staged script change")
+    git("reset", "-q", "--hard")
+    (repo / "scripts/new.py").write_text("")
+    expect("full", "untracked script")
+    git("add", "scripts/new.py")
+    expect("full", "staged new script")
+    git("reset", "-q", "--hard")
+    (repo / "docs/new.md").write_text("new\n")
+    expect("quick", "untracked guide page")
+    (repo / "docs/new.md").unlink()
+    git("mv", "scripts/tool.py", "docs/tool.md")
+    git("commit", "-q", "-m", "rename")
+    expect("full", "script renamed to a guide page")
+    git("reset", "-q", "--hard", "HEAD~1")
+    (repo / "docs/bring-your-draft.md").write_text("recipe\n")
+    expect("full", "guide page that a regression case compiles")
+    (repo / "docs/bring-your-draft.md").unlink()
+    (repo / "docs/page.md").write_text("again\n")
+    real = verify.git
+    for failing in ("diff", "ls-files"):
+        def broken(*args, cwd=verify.ROOT, failing=failing):
+            if args[0] == failing:
+                return subprocess.CompletedProcess(args, 128, "", "simulated failure")
+            return real(*args, cwd=cwd)
+        verify.git = broken
+        try:
+            expect("full", "git %s failing" % failing)
+        finally:
+            verify.git = real
+
+
+def case_verify_exact_zips(proj, work):
+    """Audit: archive checks sorted dist/ by name, so v0.9.0 beat v0.10.0 and an
+    old ZIP could be compiled instead of the one just built."""
+    verify = _verify_module()
+    for current, older in (("0.10.0", "0.9.0"), ("0.5.10", "0.5.9")):
+        root = work / current
+        (root / "dist").mkdir(parents=True)
+        (root / "rpi-thesis.cls").write_text(
+            "\\ProvidesClass{rpi-thesis}[2026/10/16 v%s RPI community thesis starter]\n" % current)
+        for version in (older, current):
+            for kind in ("starter", "overleaf"):
+                (root / ("dist/rpi-thesis-%s-v%s.zip" % (kind, version))).write_bytes(b"")
+        got = {kind: path.name for kind, path in verify.current_zips(root).items()}
+        check(got == {kind: "rpi-thesis-%s-v%s.zip" % (kind, current) for kind in ("starter", "overleaf")},
+              "current_zips picked %s for version %s" % (got, current))
+    # Without a package step in this run there is nothing to test or compare.
+    saved = dict(verify.PACKAGED)
+    verify.PACKAGED.clear()
+    try:
+        for step in (verify.archives, verify.reproducible):
+            ok, note = step()
+            check(ok is False, "%s passed without ZIPs from this run: %s" % (step.__name__, note))
+    finally:
+        verify.PACKAGED.update(saved)
+
+
 # ---- registry -----------------------------------------------------------------
 
 def case_class_alone(proj, work):
@@ -383,6 +570,235 @@ def case_class_alone(proj, work):
     check(code != 0 and "needs biblatex" in out, "missing biblatex gave no clear error: " + tail(out))
 
 
+# ---- class and citation cases (audit) ----------------------------------------
+# One compile per citation style; each reads the real PDF: the vertical gap
+# between reference-list entries (manual 2.1, p. 16: single spaced, one blank
+# line between), the order of the list, repeated and organization authors,
+# printed access dates, and citations in a caption and a \chapterattribution.
+
+BIBOUT_BIB = r"""
+@article{zkey,
+  author = {Zimmerman, Alicia and Brandt, Carl},
+  title = {Quixotic Zymurgy of Thin Films under Unusually Long Titles That Wrap},
+  journaltitle = {Journal of Odd Results},
+  date = {2019}, volume = {12}, pages = {1--9},
+}
+@book{whit1,
+  author = {Whitfield, Odessa},
+  title = {Wombat Cartography Handbook for Field Surveys in Difficult Terrain},
+  publisher = {Fictional Press}, location = {Troy}, date = {2017},
+}
+@book{whit2,
+  author = {Whitfield, Odessa},
+  title = {Xylophone Badger Atlas of Northern Regions and Their Many Valleys},
+  publisher = {Fictional Press}, location = {Troy}, date = {2021},
+}
+@online{okey,
+  author = {{Vexillology Institute}},
+  title = {Pennant Archive Guidelines for Long-Term Preservation of Flags},
+  url = {https://example.org/pennants/archive/guidelines/long-term-preservation},
+  urldate = {2026-10-14}, date = {2020},
+}
+@article{akey,
+  author = {Abbott, Mira},
+  title = {Aardvark Kinematics in Shallow Burrows with Several Exits},
+  journaltitle = {Journal of Odd Results},
+  date = {2015}, volume = {3}, pages = {10--20},
+}
+"""
+
+# Fixture keys in the order they are first cited in the source.
+BIBOUT_CITED = ["okey", "zkey", "whit1", "whit2", "akey"]
+# A word from each entry, to find it in the reference list.
+BIBOUT_WORD = {"okey": "pennant", "zkey": "zymurgy", "whit1": "wombat",
+               "whit2": "xylophone", "akey": "aardvark"}
+# How each style prints the access date of okey (spaces removed, lower case).
+BIBOUT_URLDATE = {"numeric": "visitedon10/14/2026", "apa": "retrievedoctober14,2026",
+                  "mla": "accessed14oct.2026", "chicago": "accessedoctober14,2026"}
+BIBOUT_PROBE = r"""
+\AtBeginDocument{\typeout{RPI-BIBOUT bibitemsep=\the\bibitemsep;
+  lc=\the\value{biburllcpenalty}; uc=\the\value{biburlucpenalty};
+  num=\the\value{biburlnumpenalty}}}
+"""
+
+
+def pdf_lines(path, first, last):
+    """Text lines (y, x of first glyph, text) on PDF pages first..last (0-based),
+    top to bottom, from pypdf's text positions."""
+    if PdfReader is None:
+        raise Skip("needs pypdf")
+    pages = []
+    for page in PdfReader(str(path)).pages[first:last + 1]:
+        chunks = []
+
+        def visit(text, cm, tm, *_):
+            if text.strip():
+                x = tm[4] * cm[0] + tm[5] * cm[2] + cm[4]
+                y = tm[4] * cm[1] + tm[5] * cm[3] + cm[5]
+                chunks.append((round(y, 1), x, text))
+        page.extract_text(visitor_text=visit)
+        rows = {}
+        for y, x, text in chunks:
+            rows.setdefault(y, []).append((x, text))
+        pages.append([(y, min(x for x, _ in row), "".join(t for _, t in row))
+                      for y, row in sorted(rows.items(), reverse=True)])
+    return pages
+
+
+def reference_entries(pdf):
+    """The reference list as entries: (text, [(page, y), ...] per line)."""
+    pages = [" ".join((p.extract_text() or "").split()).lower() for p in PdfReader(str(pdf)).pages]
+    starts = [i for i, t in enumerate(pages) if t.startswith("references") and "zymurgy" in t]
+    check(starts, "no page that starts with the REFERENCES heading and lists a fixture entry")
+    lines = []
+    for number, page in enumerate(pdf_lines(pdf, starts[0], len(pages) - 1)):
+        body = [l for l in page if 80 < l[0] < 712]  # inside the 1 in margins
+        heading = body and body[0][1] > 100        # a centered heading on top
+        if number == 0:
+            body = body[1:]                         # drop REFERENCES
+        elif heading:
+            break                                   # the next chapter or appendix
+        lines += [(number, y, x, text) for y, x, text in body]
+    check(lines, "the reference list is empty")
+    left = min(x for _, _, x, _ in lines)
+    indents = [round(x) for _, _, x, _ in lines if x - left > 1.5]
+    check(indents, "no hanging indent in the reference list")
+    hang = max(set(indents), key=indents.count)      # continuation lines start here
+    entries = []
+    for number, y, x, text in lines:
+        # A line that is not at the hanging indent starts an entry; Chicago's
+        # repeated-author dash is a rule, so that entry's text starts further in.
+        if abs(x - hang) > 1.5 or not entries:
+            entries.append(["", []])
+        entries[-1][0] += text
+        entries[-1][1].append((number, y))
+    return [(re.sub(r"\s+", "", t).lower(), where) for t, where in entries]
+
+
+def bib_gaps(entries):
+    """(line pitch inside entries, gaps between entries), same page only, in pt."""
+    inside, between = [], []
+    for index, (_, where) in enumerate(entries):
+        for (p1, y1), (p2, y2) in zip(where, where[1:]):
+            if p1 == p2:
+                inside.append(y1 - y2)
+        if index + 1 < len(entries):
+            (p1, y1), (p2, y2) = where[-1], entries[index + 1][1][0]
+            if p1 == p2:
+                between.append(y1 - y2)
+    check(inside and between, "too few multi-line entries to measure spacing")
+    return inside, between
+
+
+def make_bib_output(style, own_setting=False):
+    def case(proj, work):
+        """Audit: reference-list spacing, order, authors, access dates, caption and attribution cites."""
+        pre = proj / "preamble.tex"
+        package_line = BIBLATEX_LINE
+        if style in ("apa", "mla"):
+            package_line = "\\usepackage[backend=biber,style=%s]{biblatex}" % style
+        elif style == "chicago":
+            package_line = CHICAGO_PREAMBLE
+        own = ("\n\\setlength{\\bibitemsep}{0pt}\\setcounter{biburllcpenalty}{100}"
+               if own_setting else "")
+        replace_once(pre, BIBLATEX_LINE, package_line + own)
+        append(pre, BIBOUT_PROBE)
+        append(proj / "references.bib", BIBOUT_BIB)
+        chapter = proj / "chapters/02-research.tex"
+        text = read(chapter)
+        match = re.search(r"\\label\{[^}]*\}\n", text)
+        check(match is not None, "fixture drift: no \\label in 02-research.tex")
+        attribution = ("\\chapterattribution{Portions of this chapter have previously "
+                       "appeared in work by an institute~\\parencite{okey}.}\n")
+        body = ("Reverse order: \\parencite{zkey}, then \\parencite{whit1}.\n\n"
+                "\\begin{figure}[h]\\centering\n"
+                "\\includegraphics[width=0.2\\linewidth]{example-image-a}\n"
+                "\\caption{A figure reproduced from \\textcite{whit2}.}\n"
+                "\\end{figure}\n\n"
+                "Last: \\parencite{akey}.\n\n")
+        chapter.write_text(text[:match.end()] + attribution + body + text[match.end():])
+
+        code, out = latexmk(proj, work)
+        check(code == 0, "latexmk (%s) exited %d: %s" % (style, code, tail(out)))
+        log = read(proj / "main.log")
+        check(not re.search(r"Citation .+ undefined|There were undefined references", log),
+              "unresolved citations in the log")
+        probe = re.search(r"RPI-BIBOUT bibitemsep=([^;]+);\s*lc=(\d+); uc=(\d+); num=(\d+)",
+                          log.replace("\n", ""))
+        check(probe, "no RPI-BIBOUT line in the log")
+        lc = int(probe.group(2))
+        check(lc == (100 if own_setting else 9000),
+              "biburllcpenalty is %d: the %s" % (lc, "student's own setting was overwritten"
+                                                 if own_setting else "class default did not apply"))
+
+        text = re.sub(r"\s+", "", pdf_text(proj / "main.pdf")).lower()
+        head = text.rpartition("references")[0]
+        attribution_at = head.find("workbyaninstitute")
+        check(attribution_at >= 0, "attribution not found")
+        caption_at = head.find("afigurereproducedfrom")
+        check(caption_at >= 0, "caption not found")
+
+        entries = reference_entries(proj / "main.pdf")
+        position = {}
+        for key, word in BIBOUT_WORD.items():
+            found = [i for i, (t, _) in enumerate(entries) if word in t]
+            check(len(found) == 1, "%s: found in %d reference entries, expected 1" % (key, len(found)))
+            position[key] = found[0]
+        if style == "numeric":   # sorting=none: order of first citation
+            expected = BIBOUT_CITED
+            check(head[attribution_at:].startswith("workbyaninstitute[%d]" % (position["okey"] + 1)),
+                  "attribution citation number does not match okey's place in the list")
+            check("[%d]" % (position["whit2"] + 1) in head[caption_at:caption_at + 60],
+                  "caption citation number does not match whit2's place in the list")
+        else:                    # author, then year: Abbott, Vexillology, Whitfield x2, Zimmerman
+            expected = ["akey", "okey", "whit1", "whit2", "zkey"]
+            check("vexillologyinstitute" in head[attribution_at:attribution_at + 80],
+                  "attribution citation does not name the organization")
+            check("whitfield" in head[caption_at:caption_at + 60],
+                  "caption citation does not name the author")
+        order = sorted(BIBOUT_WORD, key=position.get)
+        check(order == expected, "reference order %s, expected %s" % (order, expected))
+        org = entries[position["okey"]][0]
+        check("vexillologyinstitute" in org and "institute,v" not in org,
+              "organization author printed as a person: " + org[:80])
+        check(BIBOUT_URLDATE[style] in org, "access date missing from the web entry: " + org[:200])
+        second = entries[position["whit2"]][0]
+        # MLA's dash is text; Chicago's is a rule, so its text starts at the "."
+        check("whitfield" in second or re.match(r"(\[\d+\])?([\u2014\u2013\u2015-]{2,}|\.)", second),
+              "repeated author neither named nor dashed: " + second[:80])
+
+        inside, between = bib_gaps(entries)
+        pitch = sorted(inside)[len(inside) // 2]
+        want = pitch if own_setting else 2 * pitch
+        bad = [round(g, 2) for g in between if abs(g - want) > 0.5]
+        check(not bad, "%s: gaps between entries %s pt; expected %.2f (line pitch %.2f%s)"
+              % (style, bad, want, pitch, ", student's 0pt" if own_setting else " + one blank line"))
+    return case
+
+
+def case_class_alone_order(proj, work):
+    """Audit: the 'use just the class' recipe sorted numbers alphabetically, unlike the starter."""
+    doc = read(ROOT / "docs/bring-your-draft.md")
+    section = doc[doc.index("## Already have a LaTeX thesis? Use just the class"):]
+    begin = section.index("```latex") + 8
+    recipe = section[begin: section.index("```", begin)]
+    check("\\thesisreferences" in recipe, "fixture drift: no \\thesisreferences in the recipe")
+    recipe = recipe.replace("\\thesisreferences",
+                            "Cited \\parencite{zkey} then \\parencite{akey}.\n\\thesisreferences", 1)
+    alone = work / "alone"
+    alone.mkdir()
+    (alone / "rpi-thesis.cls").write_bytes((proj / "rpi-thesis.cls").read_bytes())
+    (alone / "references.bib").write_text(BIBOUT_BIB, encoding="utf-8")
+    (alone / "main.tex").write_text(recipe, encoding="utf-8")
+    code, out = latexmk(alone, work)
+    check(code == 0, "recipe with citations does not compile: " + tail(out))
+    text = re.sub(r"\s+", "", pdf_text(alone / "main.pdf")).lower()
+    check("cited[1]then[2]" in text, "the in-text numbers are not [1] then [2]")
+    refs = text.rpartition("references")[2]
+    check(0 <= refs.find("zymurgy") < refs.find("aardvark"),
+          "the recipe lists references alphabetically; the starter lists them in citation order")
+
+
 CASES = {}
 
 
@@ -391,14 +807,23 @@ def register(name, function, tools=("latexmk", "pdflatex", "biber"), needs_pdf_t
 
 
 register("deep-include", case_deep_include)
-for _style in ("apa", "mla", "chicago"):
+for _style in ("numeric", "apa", "mla", "chicago"):  # numeric: the starter's own preamble
     register("fullcite-styles:" + _style, make_fullcite(_style), needs_pdf_text=True)
 register("portrait-figure", case_portrait_figure, tools=("pdflatex",))
+for _engine in ("pdflatex", "xelatex", "lualatex"):
+    register("ams-symbols:" + _engine, make_ams(_engine), tools=(_engine,), needs_pdf_text=True)
+register("verify-auto-mode", case_verify_auto_mode, tools=("git",))
+register("verify-exact-zips", case_verify_exact_zips, tools=())
 register("verbatim-input", case_verbatim_input)
 register("missing-chapter", case_missing_chapter)
 register("urldate-hint", case_urldate_hint)
 register("package-completeness", case_package_completeness, tools=())
 register("class-alone", case_class_alone)
+for _style in ("numeric", "apa", "mla", "chicago"):
+    register("bib-output:" + _style, make_bib_output(_style), needs_pdf_text=True)
+register("bib-output:chicago-own-setting", make_bib_output("chicago", own_setting=True),
+         needs_pdf_text=True)
+register("class-alone-order", case_class_alone_order, needs_pdf_text=True)
 
 
 def selected(patterns):

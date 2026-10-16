@@ -451,14 +451,15 @@ def main():
         workers = max(1, min(6, os.cpu_count() or 1))
         with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
             futures = [pool.submit(fn, *rest) for fn, *rest in jobs]
-            failed = None
-            for future in futures:  # fixed order, whatever finishes first
+            failed = []
+            for (fn, _, case), future in zip(jobs, futures):  # fixed order, whatever finishes first
                 try:
                     print(future.result(), flush=True)
-                except Exception as error:
-                    failed = failed or error
+                except Exception as error:  # report every failed case, not just the first
+                    failed.append(f"{case[0]}: {error}")
+                    print(f"FAIL: {case[0]}: {error}", flush=True)
             if failed:
-                raise failed
+                sys.exit(f"{len(failed)} check(s) failed: " + "; ".join(failed))
     print(
         (
             "Selected structural checks passed."
