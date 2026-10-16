@@ -32,7 +32,7 @@ $endif$
 <script src="${root}search-index.js" defer></script>
 <script src="${root}search.js" defer></script>
 $if(analytics_token)$
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "$analytics_token$"}'></script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "$analytics_token$"}'></script>
 $endif$
 </head>
 <body class="page-$kind$" id="top">
