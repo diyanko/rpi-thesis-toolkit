@@ -88,8 +88,8 @@ the smallest useful correction.
 
 Run `python3 scripts/verify.py` and report its summary line (logs land in
 `build/verify/`). It picks the size from the files changed since `main`:
-**quick** (seconds) when only guide or website text changed, **full** (about
-two minutes) otherwise. Force one with `quick`, `full`, or `release`. For a
+**quick** (seconds) when only guide or website text changed, **full** (several
+minutes) otherwise. Force one with `quick`, `full`, or `release`. For a
 visible change, also look at it: `python3 scripts/ui_check.py --shots` saves
 phone and laptop screenshots in light and dark.
 
@@ -108,8 +108,8 @@ own git worktree and branch, and agents sharing a task own separate files.
 With the maintainer's OK for each push:
 
 - **Small guide, website, or doc change:** verify, commit, push to `main`.
-  CI deploys the website by itself when the class is unchanged since the last
-  release.
+  CI deploys the website by itself when the starter files are unchanged since
+  the last release.
 - **Class, starter, script, or CI change:** a branch and pull request; merge
   when CI passes. Class changes reach students only with a release.
 

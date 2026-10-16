@@ -232,9 +232,9 @@ file, recompile, and the same words come out with the updated formatting
 [update the formatting safely](going-further.md#update-the-formatting-safely)).
 
 So when OGE changes a rule or the toolkit fixes something, you usually replace **one
-file** and your chapters are untouched. While the toolkit is in beta, an
-update may also need a small edit elsewhere; the changelog lists it. That is also why you normally leave the class file alone: edits there would be
-lost in the next update. (If you know Word, formatting lives with your text
+file** and your chapters are untouched. Before version 1.0, anything may
+change, and the changelog says what to do. That is also why you normally
+leave the class file alone: edits there would be lost in the next update. (If you know Word, formatting lives with your text
 there; here it lives in one separate file.)
 
 What the class takes care of on every page:

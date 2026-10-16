@@ -217,9 +217,9 @@ step differs by degree, say so explicitly ("Doctoral students: ...").
 ## Page or section
 
 Add a new page only for a new student task with its own goal; add it to one
-of the four stages in `NAV` in `scripts/build_site.py` (Start, Write, Fix and
-finish, Go further), and to the matching card in `site/index.html` and list
-in `README.md`. Otherwise add a section to an existing page. Each topic has
+of the two groups in `NAV` in `scripts/build_site.py` (Core path, Go
+further), and to the matching card in `site/index.html` and list in
+`README.md`. Otherwise add a section to an existing page. Each topic has
 one canonical page; elsewhere, link to it instead of repeating it.
 
 Open every page with one sentence saying who it is for and what they need

@@ -95,6 +95,13 @@ python3 scripts/verify.py full      # thesis, PDF checks and regressions (in par
 python3 scripts/verify.py release   # full + strict publish build, layout sweep, reproducible ZIPs
 ```
 
+Auto mode runs full whenever Git cannot tell what changed, on a clean tree,
+or when any staged, unstaged, or untracked file is outside guide and website
+text. Full also runs `scripts/test_*.py` (unit tests for the release and
+health scripts). Release mode fails when the browser layout sweep cannot run;
+CI's container has no browser and sets `VERIFY_ALLOW_NO_BROWSER=1`, so run
+`verify.py release` locally before tagging.
+
 It needs Python 3, TeX Live, Pandoc 3.11 or newer, and `pypdf`.
 `python3 scripts/build.py --doctor` checks a computer's setup.
 
@@ -113,8 +120,11 @@ One version number everywhere. **The class is the version:** the
 `\ProvidesClass` line in `rpi-thesis.cls` holds a date and `vX.Y.Z`; the
 website footer, ZIP names, `CITATION.cff`, and every PDF's Creator property
 use the same number. `main.tex` asks for that date
-(`\documentclass{rpi-thesis}[YYYY/MM/DD]`), so an older class warns on every
-compile; `scripts/package.py` refuses a release when the dates differ.
+(`\documentclass{rpi-thesis}[YYYY/MM/DD]`), so a class with an earlier date
+warns on every compile. LaTeX compares only dates: two releases on the same
+day look the same to it, and the date says nothing about which versions work
+together (the change log does). `scripts/package.py` refuses a release when
+the dates differ.
 
 - `Z` (patch): fixes that change no PDF, and guide-only changes.
 - `Y` (minor): new settings, or formatting corrected to match OGE
@@ -125,10 +135,10 @@ compile; `scripts/package.py` refuses a release when the dates differ.
 
 ### Compatibility
 
-Before 1.0, there is no backwards compatibility: anything may move, be
-renamed, or be removed between releases, with no aliases and no redirects.
-Students update by replacing the class and checking the change log, whose
-entries name every setting, command, or file that changed.
+Before 1.0, anything may change (settings, files, pages, addresses), with no
+aliases and no redirects, and the change log says what to do. The guide's
+"Update the formatting safely" section and the README that
+`scripts/package.py` writes into both ZIPs say the same.
 
 The one-file-update promise starts at 1.0: students update by replacing
 `rpi-thesis.cls` alone, often in the middle of a thesis, and an update never
@@ -169,7 +179,12 @@ python3 scripts/package.py                 # student ZIP in dist/
 ```
 
 Open `dist/site/index.html`. The build checks every local link and heading
-anchor, and refuses linked source files and folders. Page lists (`NAV`,
+anchor, and refuses linked source files and folders. Every online page carries
+`<meta name="rpi-thesis-build" content="SHA">`, and the site root has
+`build.txt` (`commit=<SHA>` and `release=v<RELEASE_VERSION>`, one per
+line), so a live check can tell exactly which build is served. The SHA is `GITHUB_SHA` in CI, else
+`git rev-parse HEAD`; uncommitted edits do not change it, and `--publish`
+fails without one. The offline guide carries neither. Page lists (`NAV`,
 `PROJECT`) are in `scripts/build_site.py`. Links between Markdown files become
 links between pages; a link to another repository file becomes a GitHub link
 once `repository_url` is set in `site/site.json`. The footer edition line is
@@ -189,21 +204,37 @@ The student ZIP (`rpi-thesis-starter-v<version>.zip`) holds the thesis files,
 `.gitignore`, `README.md`, `LICENSE.md`, the offline guide (`START-HERE.html`),
 and the cheat sheet PDF. Maintainer pages, `AGENTS.md`, `CLAUDE.md`, site
 tooling, and every RPI file stay out; `package.py` refuses any seal file and
-any other PDF, and requires a nonempty `site_url` in `site/site.json`.
+any other PDF, and requires `site_url` and `repository_url` in
+`site/site.json`. A relative link in a shipped Markdown file to a file the ZIP
+leaves out (such as `CREDITS.md` from `LICENSE.md`) becomes a link to that
+file in the repository at the release tag, and both ZIPs fail to build if any
+relative link in their Markdown or top-level HTML is broken.
 
 Three workflows in `.github/workflows/`:
 
 - `build.yml` verifies every pull request and push. A push to `main` deploys
-  the website when `rpi-thesis.cls` equals the latest release's
-  (`scripts/release.py deployable`), so guide fixes go live at once and class
-  changes wait for a release. A pushed `vX.Y.Z` tag releases (below).
+  the website when `scripts/release.py gate` allows it: the commit is still
+  the tip of `main`, its version is the newest published release, and the
+  starter's interface files (`rpi-thesis.cls`, `main.tex`, `metadata.tex`,
+  `preamble.tex`, `latexmkrc`, `scripts/build.py`) equal the released starter
+  ZIP's. So guide fixes go live at once, starter changes wait for a release,
+  and a delayed or older run never replaces a newer site. The gate runs again
+  just before publishing. A pushed `vX.Y.Z` tag releases (below).
 - `fresh-machines.yml` installs TeX on new Windows, macOS, and Ubuntu machines
   the way the guide says and compiles the starter: on each release tag, once a
   month, and on demand. It never blocks a release.
 - `health.yml` runs monthly: external links and RPI's thesis pages
-  (`scripts/health.py`, compared with `scripts/oge-watch.json`), and a full
-  verify on the newest, unpinned TeX Live. Problems open one issue labelled
-  `health`.
+  (`scripts/health.py`, compared with `scripts/oge-watch.json`; tested by
+  `scripts/test_health.py` against a local server), and a full verify on the
+  newest, unpinned TeX Live. Problems open one issue labelled `health`. The
+  watch compares the links (relative ones resolved) and text in each watched
+  page's `<main>`. A missing or unreadable baseline fails the check.
+  `--update` records every page or nothing: if any page times out, answers
+  with an error, or has no `<main>`, `oge-watch.json` stays as it was and the
+  command exits 1. **Not covered:** a manual or checklist replaced at the same
+  Box address. Box answers with a script-driven page rather than the file, so
+  only the links are compared; the yearly requirement review re-reads the
+  documents.
 
 ### Updating pinned tools
 
@@ -276,14 +307,23 @@ Only with the maintainer's authorization.
 3. **Commit and tag:** commit `build: release vX.Y.Z` on `main`, `git tag
    vX.Y.Z`, then `git push --atomic origin main vX.Y.Z`.
 4. **CI does the rest** (`build.yml` on the tag): verifies in release mode,
-   creates the GitHub pre-release with both ZIPs and `rpi-thesis.cls` (notes
-   from the change log, `scripts/release.py notes`), deploys the website, and
-   checks the live downloads and the newest-class link
-   (`scripts/release.py live`). The fresh-machine test starts on the same tag.
+   creates or resumes the GitHub pre-release with both ZIPs and
+   `rpi-thesis.cls` (`scripts/release.py publish`: existing assets must match
+   by sha256, missing ones are uploaded, any conflict fails), deploys the
+   website, and checks that the live site serves this exact build
+   (`build.txt`) and that every download matches (`scripts/release.py live`).
+   The fresh-machine test starts on the same tag.
 
-If the tag run fails before the release exists, fix on `main`, move the tag
-(`git tag -f vX.Y.Z && git push -f origin vX.Y.Z`), and it runs again. The
-`github-pages` environment allows `main` and `v*` tags to deploy.
+**If a tag run fails**, re-run it: each step checks what is already done and
+continues. If the failure needs a code fix and the release does not exist
+yet, fix on `main`, move the tag (`git tag -f vX.Y.Z && git push -f origin
+vX.Y.Z`), and it runs again; once assets are published, make a new patch
+release instead. A tag older than the newest release never deploys.
+**Rollback:** Actions, **Build thesis, website, and starter ZIP**, Run
+workflow on the older tag with **rollback** ticked; the next deploy from
+`main` replaces it. Never re-run workflow runs from before 17 Oct 2026: they
+use the old deploy rule. The `github-pages` environment allows `main` and
+`v*` tags to deploy.
 
 ## Roadmap and not yet covered
 
@@ -317,7 +357,9 @@ record any feedback with the version it applies to.
 ## Handing over the project
 
 - Transfer the repository or add the new maintainer with admin rights; update
-  `site/site.json` if the addresses change.
+  `site/site.json` if the addresses change (`build_site.py`, `package.py`, and
+  `health.py` read them from there; guide pages and `README.md` link them by
+  hand, and `CITATION.cff` has its own copy).
 - Hand over the help and feedback form and its response sheet.
 - Confirm no RPI-owned files are tracked and the new maintainer knows the
   rule in [AGENTS.md](../../AGENTS.md#principles).

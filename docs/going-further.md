@@ -364,17 +364,20 @@ for your system ([AI help](#use-ai-for-technical-help)).
 
 ## Update the formatting safely
 
-Formatting fixes arrive as one file, `rpi-thesis.cls`. Updating means
+Formatting fixes arrive in one file, `rpi-thesis.cls`. Updating usually means
 replacing that file; your chapters, `metadata.tex`, and `references.bib` stay
 as they are ([why](how-it-works.md#your-words-and-your-formatting-are-separate)).
+Before version 1.0, anything may change, and the changelog says what to do.
 
-1. **Download the newest class:**
+1. **Read the changelog** entries newer than your version (below), and note
+   any edit they ask for besides the class.
+2. **Download the newest class:**
    [rpi-thesis.cls](https://diyanko.github.io/rpi-thesis-toolkit/downloads/rpi-thesis.cls)
    (it is also inside every new starter ZIP).
-2. **Replace yours.** On your computer, save it over the `rpi-thesis.cls` next
+3. **Replace yours.** On your computer, save it over the `rpi-thesis.cls` next
    to `main.tex`. On Overleaf, click **Upload**, choose the file, and confirm
-   that it replaces the old one.
-3. **Recompile and look** at your PDF, especially the title page, contents,
+   that it replaces the old one. Make any other edit the changelog named.
+4. **Recompile and look** at your PDF, especially the title page, contents,
    and page numbers.
 
 Which version do you have? Your compile log starts with a line such as
@@ -384,10 +387,9 @@ document properties; the website's footer shows the newest. The
 lists what each version changed, starting with **Changes your PDF?** (the copy
 in your download is frozen at that version).
 
-Usually the class is the only file to replace; during the beta, when a
-version also needs another file or a renamed setting, the changelog says so. Close to a deadline, update
-only if a change fixes something that affects you. To hear about updates, use
-**Watch → Custom → Releases** on the toolkit's GitHub page (needs an account).
+Close to a deadline, update only if a change fixes something that affects
+you. To hear about updates, use **Watch → Custom → Releases** on the toolkit's
+GitHub page (needs an account).
 
 ## Use AI for technical help
 
