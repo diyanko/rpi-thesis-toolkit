@@ -203,6 +203,12 @@ and Overleaf. Do not also load `natbib`; it is a separate system.
 | MLA | `style=mla` | [biblatex-mla](https://ctan.org/pkg/biblatex-mla) |
 | Chicago | not a one-word swap; replace the whole line ([tested setup](#print-a-full-reference-in-the-text)) | [biblatex-chicago](https://ctan.org/pkg/biblatex-chicago) |
 
+Whatever the style, the class keeps the reference list single-spaced with one
+blank line between entries, as OGE asks, and lets long web addresses wrap.
+It replaces the style's own spacing, so leave `\bibitemsep` out of
+`preamble.tex`; a setting there, below the biblatex line, would override the
+class.
+
 These are starting points, not validated department presets; see each
 package's manual. After changing the style, check what the citation
 commands print, and choose the command by what you want to read:

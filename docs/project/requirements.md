@@ -41,7 +41,7 @@ follow the class's structure.
 | US letter, 1 in margins on every page | §2.2 p. 16; FC | cls §4: `geometry` options | check (paper size); visual |
 | Level-1 headings start at the top margin, not lower | §2.2; LT ("known glitch") | cls §5: `\titleformat{\chapter}` | check (heading baseline 84 pt on every opening page) |
 | Body double spaced (≤ 4 lines/in) | §2.1 p. 16; FC | cls §4: `\doublespacing` | visual |
-| Single spaced: captions, footnotes, block quotes, chapter attributions; references single with a blank line between | §2.1 p. 16 | cls §4, §7: `\AtBeginEnvironment` (`\singlespacing`); cls §12: `\chapterattribution`, `\thesisreferences`; `preamble.tex`: `\bibitemsep` | visual (stress test incl. longtable and rotated table) |
+| Single spaced: captions, footnotes, block quotes, chapter attributions; references single with a blank line between | §2.1 p. 16 | cls §4, §7: `\AtBeginEnvironment` (`\singlespacing`); cls §12: `\chapterattribution`, `\thesisreferences`; cls §4: `\bibitemsep` set once biblatex has loaded, or once a package that loads it (such as `biblatex-chicago`) has finished, so a student's later line still wins | visual (stress test incl. longtable and rotated table); regressions `bib-output` (measured gap between entries = one line, numeric, APA, MLA, Chicago author-date; a later `\bibitemsep` line still wins) |
 
 ### Fonts
 
@@ -124,12 +124,14 @@ citation in the chosen style:
 | --- | --- | --- | --- |
 | Citation style suited to the field, checked against the official guide | §3.2 pp. 32-34 | style isolated in `preamble.tex` | student |
 | In-text citations follow the chosen style; sequential numbers for styles such as IEEE, non-sequential numbers for SIAM (alphabetical list), author-year for APA | §3.3 p. 34 | style isolated in `preamble.tex`; `docs/citations.md` ("Numbered styles: check delayed figures and tables") | student |
-| Access date for every URL (not DOIs), in the style's format | §3.4 p. 34; FC | `references.bib` example; `build.py` hint | build hint; tested: numeric, IEEE, APA, Chicago author-date, chem-acs print it |
+| Access date for every URL (not DOIs), in the style's format | §3.4 p. 34; FC | `references.bib` example; `build.py` hint | build hint; tested: numeric, IEEE, APA, MLA, Chicago author-date, chem-acs print it (numeric, APA, MLA, Chicago: regressions `bib-output`) |
 | Sequential numbered styles: reference 1 is the first citation in Chapter 1; a caption's citation numbered where its table or figure appears in the body, not in the front matter | FC (does not apply to non-sequential styles such as SIAM, §3.3 p. 34) | See note below | student (delayed floats) |
 
 Note on the sequential-numbering row: the sample uses `sorting=none`, so
 numbers follow source order, and a float placed on a later page can carry a
-lower number than nearby text (tested). List-of-figures citations do not
+lower number than nearby text (tested). The class-only recipe in
+`docs/bring-your-draft.md` uses the same `sorting=none` (regressions
+`class-alone-order`). List-of-figures citations do not
 affect numbering (tested). `docs/citations.md` explains the fixes (move the
 float's source or cite earlier).
 

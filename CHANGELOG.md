@@ -10,6 +10,26 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
 
+## Unreleased
+
+**Changes your PDF?** Only if you use Chicago (`biblatex-chicago`): the
+reference list now has one blank line between entries instead of about half
+a line, and long web addresses break like in the other styles. Recompile and
+compare your reference pages. Other styles do not change.
+
+- **Chicago reference lists get the right spacing.** The class now applies
+  its reference-list spacing after `biblatex-chicago` has set its own. A
+  spacing line of your own below the biblatex line still wins.
+- **Correction to 0.4.0:** it said "Changes your PDF? No". That held if you
+  kept your older `preamble.tex`, but with Chicago and a `preamble.tex` from
+  0.4.0 or later, the reference list had about half a blank line between
+  entries, not the one blank line OGE asks for. This version fixes it.
+- **Use just the class** recipe numbers references in the order you cite
+  them, like the starter; it listed them alphabetically before.
+- `\yen` works with pdfLaTeX, like every other `amssymb` symbol.
+- `LICENSE.md` in both downloads linked a credits file the download does not
+  include; such links now point to the project's online copy.
+
 ## 0.5.0 (beta), 16 Oct 2026
 
 Published as the pre-release `v0.5.0`.
