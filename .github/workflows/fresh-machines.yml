@@ -1,14 +1,19 @@
 name: Fresh-machine test
 
-# Before a release, check that brand-new computers can follow
-# docs/get-started.md: install TeX the way the guide says, then compile the
-# unchanged starter. Runs only when a maintainer starts it from the Actions
-# tab (about an hour; the Windows TeX Live install is the slow part).
+# Check that brand-new computers can follow docs/get-started.md: install TeX
+# the way the guide says, then compile the unchanged starter. Runs on each
+# release tag, once a month, and on demand (about an hour; the Windows TeX
+# Live install is the slow part). It never blocks a release; a failure means
+# a fix release.
 # GitHub's hosted Windows image is Windows Server, not Windows 11 itself; it
 # stands in for a Windows computer. Runner images are named explicitly so a
 # retiring image is noticed here, not silently changed.
 
 on:
+  push:
+    tags: ['v*']
+  schedule:
+    - cron: '41 7 3 * *'  # 07:41 UTC on the 3rd of each month
   workflow_dispatch:
 
 permissions:

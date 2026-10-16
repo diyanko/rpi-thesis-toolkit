@@ -1,0 +1,93 @@
+name: Monthly health check
+
+# Once a month (and on demand): external links, RPI's thesis pages
+# (scripts/health.py), and a full verify on the newest TeX Live image, so a
+# TeX Live update that breaks the starter shows up before students hit it.
+# Anything that needs a person opens (or updates) one issue labelled "health".
+
+on:
+  schedule:
+    - cron: '17 6 3 * *'  # 06:17 UTC on the 3rd of each month
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  links-and-rpi-pages:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Check links and RPI's pages
+        run: python3 scripts/health.py | tee "$RUNNER_TEMP/report.md"; exit "${PIPESTATUS[0]}"
+        shell: bash
+      - name: Keep the report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: health-report
+          path: ${{ runner.temp }}/report.md
+
+  newest-texlive:
+    runs-on: ubuntu-24.04
+    container: texlive/texlive:latest  # deliberately unpinned: tomorrow's TeX Live
+    timeout-minutes: 30
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install Pandoc (the version build.yml pins), poppler, and pypdf (newest)
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates curl poppler-utils python3 python3-pip
+          python3 -m pip install --break-system-packages --no-cache-dir pypdf
+          v=$(sed -n "s/^  PANDOC_VERSION: '\(.*\)'/\1/p" .github/workflows/build.yml)
+          curl -fsSL -o /tmp/pandoc.deb "https://github.com/jgm/pandoc/releases/download/$v/pandoc-$v-1-amd64.deb"
+          dpkg -i /tmp/pandoc.deb
+      - name: Verify on the newest TeX Live
+        run: python3 scripts/verify.py full --keep-going
+      - name: Keep the verify logs
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: verify-logs
+          path: build/verify
+
+  report:
+    needs: [links-and-rpi-pages, newest-texlive]
+    if: ${{ failure() }}
+    runs-on: ubuntu-24.04
+    permissions:
+      issues: write
+    steps:
+      - uses: actions/download-artifact@v8
+        continue-on-error: true
+        with:
+          name: health-report
+      - name: Open or update the health issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          TEXLIVE: ${{ needs.newest-texlive.result }}
+        run: |
+          {
+            cat report.md 2>/dev/null || echo "The link check did not finish."
+            echo
+            echo "Newest TeX Live verify: $TEXLIVE"
+            echo
+            echo "Run and logs: $RUN"
+          } > body.md
+          gh label create health --repo "$GITHUB_REPOSITORY" --color BFD4F2 \
+            --description "Found by the monthly health check" 2>/dev/null || true
+          open=$(gh issue list --repo "$GITHUB_REPOSITORY" --label health --state open --json number --jq '.[0].number')
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --repo "$GITHUB_REPOSITORY" --body-file body.md
+          else
+            gh issue create --repo "$GITHUB_REPOSITORY" --label health \
+              --title "Monthly health check needs attention" --body-file body.md
+          fi

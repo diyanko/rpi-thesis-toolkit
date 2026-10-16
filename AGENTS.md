@@ -86,14 +86,12 @@ the smallest useful correction.
 
 ## Verification
 
-One command, three sizes. Run the smallest that covers your change and report
-its summary line (full logs land in `build/verify/`).
-
-| Change | Run |
-| --- | --- |
-| Guide text, diagrams, website CSS/JS/templates | `python3 scripts/verify.py quick` (seconds), then look at the changed pages: `python3 scripts/ui_check.py --shots` saves phone and laptop screenshots in light and dark |
-| Class, starter `.tex` files, `preamble.tex`, scripts, CI | `python3 scripts/verify.py` (full, a few minutes) |
-| Cutting a release | `python3 scripts/bump.py X.Y.Z`, then `python3 scripts/verify.py release` |
+Run `python3 scripts/verify.py` and report its summary line (logs land in
+`build/verify/`). It picks the size from the files changed since `main`:
+**quick** (seconds) when only guide or website text changed, **full** (about
+two minutes) otherwise. Force one with `quick`, `full`, or `release`. For a
+visible change, also look at it: `python3 scripts/ui_check.py --shots` saves
+phone and laptop screenshots in light and dark.
 
 Class or formatting changes also need a look at every affected PDF page, a row
 in `docs/project/requirements.md` citing the manual (section and printed page)
@@ -105,13 +103,47 @@ present (CI has no seal). A bug worth fixing twice gets a case in
 Parallel work: one writer per checkout. A second session or agent works in its
 own git worktree and branch, and agents sharing a task own separate files.
 
+## Maintainer flow
+
+With the maintainer's OK for each push:
+
+- **Small guide, website, or doc change:** verify, commit, push to `main`.
+  CI deploys the website by itself when the class is unchanged since the last
+  release.
+- **Class, starter, script, or CI change:** a branch and pull request; merge
+  when CI passes. Class changes reach students only with a release.
+
+## Recipes
+
+Short, repeatable tasks. Follow them as written; each ends with verify.
+
+- **Release:** add the change-log lines under `## Unreleased`, run
+  `python3 scripts/bump.py X.Y.Z` (patch for fixes, minor for anything that
+  changes a PDF or a setting), `python3 scripts/verify.py release`, commit
+  `build: release vX.Y.Z`, then `git push --atomic origin main vX.Y.Z` after
+  `git tag vX.Y.Z`. CI creates the pre-release, deploys, and checks the live
+  links; the fresh-machine test runs after it. Report the run's link.
+- **Answer a student's issue:** reproduce it with the starter; fix the guide
+  or class if it is ours, else answer with the guide section that helps. A bug
+  worth fixing twice gets a case in `scripts/regressions.py`.
+- **Add a recipe to the guide:** a short section in `docs/going-further.md`
+  ("Recipes for common extras") with a snippet that compiles with this class;
+  name the package in `preamble.tex`'s optional extras if it needs one.
+- **Act on a health issue:** fix broken links; for an RPI page change, read
+  the page and the manual again, update `docs/project/requirements.md` if a
+  rule moved, run `python3 scripts/health.py --update`, and commit
+  `scripts/oge-watch.json`; for a TeX Live failure, fix the class or starter
+  before students meet it.
+- **Update pinned tools:** follow "Updating pinned tools" in
+  [maintenance](docs/project/maintenance.md#updating-pinned-tools).
+
 ## Contributing as an agent
 
 Most outside contributions arrive through an agent working for a student. When
 the person you work for is not the maintainer:
 
 1. Fork and clone the repository; make one focused change on a new branch.
-2. Run the `verify.py` mode for the change (table above). If it fails, fix it
+2. Run `python3 scripts/verify.py`. If it fails, fix it
    or explain the failure plainly.
 3. For a visible change, build the site and run `python3 scripts/ui_check.py
    --shots` on `main` and on your branch, then pick one or two before/after
@@ -148,7 +180,7 @@ finish them, and keep feedback kind and specific.
 ## Before you say "done"
 
 - [ ] I changed only files in my scope and listed every file I changed.
-- [ ] The right `verify.py` mode passed, and I reported its summary line.
+- [ ] `verify.py` passed, and I reported its summary line.
 - [ ] Every formatting claim cites the manual (section and printed page).
 - [ ] No emojis, local paths, personal data, secrets, or generated files.
 - [ ] No overclaiming: nothing says approved, compliant, or guaranteed.
