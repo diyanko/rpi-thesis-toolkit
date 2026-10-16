@@ -2,12 +2,21 @@ name: Build thesis, website, and starter ZIP
 
 # Runs the same command a maintainer runs locally: python3 scripts/verify.py.
 # - Pull requests and pushes to main: verify. A push to main also deploys the
-#   website when its class equals the latest release's (scripts/release.py
-#   deployable), so guide fixes go live at once and class changes wait for a
-#   release.
+#   website when scripts/release.py gate allows it: the commit is still the tip
+#   of main, its RELEASE_VERSION is the newest published release (by version
+#   number), and its starter interface (rpi-thesis.cls, main.tex, metadata.tex,
+#   preamble.tex, latexmkrc, scripts/build.py) equals that release's starter
+#   ZIP. Guide fixes go live at once; starter changes wait for a release.
 # - A pushed tag vX.Y.Z (made after scripts/bump.py): verify in release mode,
-#   create the GitHub pre-release with both ZIPs and rpi-thesis.cls, deploy,
-#   and check the live links (docs/project/maintenance.md, "Make a release").
+#   create or resume the GitHub pre-release with both ZIPs and rpi-thesis.cls
+#   (scripts/release.py publish), deploy unless a newer release is published,
+#   and check the live site and downloads (docs/project/maintenance.md, "Make
+#   a release").
+# - Run workflow (workflow_dispatch) on an older vX.Y.Z tag with rollback: true
+#   puts that release's website back on purpose; the next deploy from main
+#   replaces it again.
+# The deploy job checks the gate again inside the Pages lock, just before
+# publishing, so a delayed or re-run old build never replaces a newer website.
 # No thesis PDFs are uploaded; the only PDF in the artifacts is the one-page
 # cheat sheet. The repository holds no RPI seal, so CI checks the title page
 # with its placeholder.
@@ -19,7 +28,12 @@ on:
     branches: [main]
     tags: ['v*']
     paths-ignore: ['.github/ISSUE_TEMPLATE/**', '.github/pull_request_template.md']
-  workflow_dispatch:  # a re-run on main deploys under the same rule as a push
+  workflow_dispatch:  # on main: same rule as a push; on a tag: resume that release
+    inputs:
+      rollback:
+        description: 'Only on an older vX.Y.Z tag: deploy its website although a newer release exists'
+        type: boolean
+        default: false
 
 permissions: {}
 
@@ -68,21 +82,18 @@ jobs:
           dpkg -i /tmp/pandoc.deb
           pandoc --version | head -1
       - name: Verify (release mode for a tag)
+        env:
+          VERIFY_ALLOW_NO_BROWSER: '1'  # no browser in this container; the layout sweep runs locally before tagging
         run: python3 scripts/verify.py ${{ github.ref_type == 'tag' && 'release' || 'full' }} --keep-going
       - name: Decide whether to deploy the website
         id: gate
         if: github.event_name != 'pull_request'
-        run: |
-          if [ "$GITHUB_REF_TYPE" = tag ]; then
-            want="v$(python3 -c 'import sys; sys.path.insert(0, "scripts"); import build_site; print(build_site.RELEASE_VERSION)')"
-            if [ "$GITHUB_REF_NAME" != "$want" ]; then
-              echo "::error::tag $GITHUB_REF_NAME does not match $want in scripts/build_site.py (run scripts/bump.py)"
-              exit 1
-            fi
-            echo deploy=true >> "$GITHUB_OUTPUT"
-          elif [ "$GITHUB_REF" = refs/heads/main ] && python3 scripts/release.py deployable; then
-            echo deploy=true >> "$GITHUB_OUTPUT"
-          fi
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ROLLBACK: ${{ github.event_name == 'workflow_dispatch' && inputs.rollback && 'true' || '' }}
+        # Exits 0 with deploy=false and a notice when this run should not
+        # deploy; fails on a conflict, or on a network failure after retries.
+        run: python3 scripts/release.py gate --stage build ${ROLLBACK:+--rollback}
       - name: Rebuild the website in publish mode (strict checks)
         if: steps.gate.outputs.deploy == 'true'
         run: python3 scripts/build_site.py --previews --publish
@@ -129,14 +140,12 @@ jobs:
         with:
           name: starter-zip
           path: dist
-      - name: Create the GitHub pre-release (the ZIPs tested above, plus the class alone)
+      - name: Create or resume the GitHub pre-release (the ZIPs tested above, plus the class alone)
         env:
           GH_TOKEN: ${{ github.token }}
-        run: |
-          python3 scripts/release.py notes > "$RUNNER_TEMP/notes.md"
-          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --prerelease \
-            --title "$GITHUB_REF_NAME" --notes-file "$RUNNER_TEMP/notes.md" --verify-tag \
-            dist/rpi-thesis-*.zip rpi-thesis.cls
+        # Safe to re-run: an existing release must point at this commit and
+        # hold byte-identical files; only missing files are uploaded.
+        run: python3 scripts/release.py publish
 
   deploy:
     needs: [build, release]
@@ -146,17 +155,34 @@ jobs:
       group: pages
       cancel-in-progress: false
     permissions:
+      contents: read
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Publish the website
-        id: deployment
-        uses: actions/deploy-pages@v5
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - uses: actions/download-artifact@v8
+        if: github.ref_type == 'tag'
+        with:
+          name: starter-zip
+          path: dist
+      - name: Check again, inside the Pages lock, that this build is the newest
+        id: gate
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ROLLBACK: ${{ github.event_name == 'workflow_dispatch' && inputs.rollback && 'true' || '' }}
+        run: python3 scripts/release.py gate --stage deploy ${ROLLBACK:+--rollback}
+      - name: Publish the website
+        id: deployment
+        if: steps.gate.outputs.deploy == 'true'
+        uses: actions/deploy-pages@v5
       - name: Check the live site and downloads
-        run: python3 scripts/release.py live
+        if: steps.gate.outputs.deploy == 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DIST: ${{ github.ref_type == 'tag' && 'dist' || '' }}
+        run: python3 scripts/release.py live ${DIST:+--dist "$DIST"}
