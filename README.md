@@ -28,9 +28,9 @@ layout follow RPI's graduate rules, so check your own program's requirements.
 
 ## Download
 
-**[Download the starter (ZIP)](https://github.com/diyanko/rpi-thesis-toolkit/releases/download/v0.3.0/rpi-thesis-starter-v0.3.0.zip)**: the thesis files, the guide for
+**[Download the starter (ZIP)](https://github.com/diyanko/rpi-thesis-toolkit/releases/download/v0.4.0/rpi-thesis-starter-v0.4.0.zip)**: the thesis files, the guide for
 offline reading, and the cheat sheet (no account needed). Prefer Overleaf?
-**[Open the starter in Overleaf](https://www.overleaf.com/docs?snip_uri=https%3A%2F%2Fgithub.com%2Fdiyanko%2Frpi-thesis-toolkit%2Freleases%2Fdownload%2Fv0.3.0%2Frpi-thesis-overleaf-v0.3.0.zip)**. The
+**[Open the starter in Overleaf](https://www.overleaf.com/docs?snip_uri=https%3A%2F%2Fgithub.com%2Fdiyanko%2Frpi-thesis-toolkit%2Freleases%2Fdownload%2Fv0.4.0%2Frpi-thesis-overleaf-v0.4.0.zip)**. The
 [get-started guide](docs/get-started.md) covers both your computer and Overleaf.
 
 ## Make your first change
