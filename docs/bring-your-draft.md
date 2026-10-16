@@ -226,6 +226,46 @@ over. Copy each old chapter into a new file in `chapters/`, include it from
 Already have a `.bib` file? Copy it in as `references.bib` and
 [choose your style](citations.md#change-the-citation-style).
 
+## Already have a LaTeX thesis? Use just the class
+
+Keep your own project and take only the formatting. Put
+[`rpi-thesis.cls`](https://diyanko.github.io/rpi-thesis-toolkit/downloads/rpi-thesis.cls)
+next to your main file, then make the top of that file follow this shape
+(your packages go after the `\documentclass` line; drop any margin, spacing,
+or title-page code of your own, since the class now handles it):
+
+```latex
+\documentclass{rpi-thesis}
+\usepackage[backend=biber,style=numeric]{biblatex}   % your citation style
+\addbibresource{references.bib}
+\thesissetup{
+  title = {Your thesis title},
+  author = {Your full name},
+  degree = doctoral,   % or masters, engineering-doctorate
+  department = {Department of Your Full Department Name},
+  graduation-month = May,
+  graduation-year = {2027},
+}
+\committeemember[Chair]{Your committee chair}
+\committeemember{Committee member two}
+
+\begin{document}
+\maketitle
+\thesisfrontmatter
+\frontchapter{ABSTRACT}
+Your abstract.
+\thesismainmatter
+\chapter{INTRODUCTION}
+Your chapters, or \include lines for them.
+\thesisreferences
+\end{document}
+```
+
+Compile it with pdfLaTeX, Biber, and pdfLaTeX twice, and compare with the
+[settings list](advanced.md#all-thesis-settings) if something is missing.
+From RPI's official template, [the section above](#from-rpis-official-latex-template)
+maps its settings one by one.
+
 ## Still drafting? Make the move easy
 
 Many people draft elsewhere and bring each chapter into LaTeX once it is
