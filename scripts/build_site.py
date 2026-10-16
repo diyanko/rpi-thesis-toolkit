@@ -474,6 +474,9 @@ class Site:
         config = json.loads(source_path("site/site.json").read_text(encoding="utf-8"))
         self.repo = config.get("repository_url", "").rstrip("/")
         self.url = "" if offline else config.get("site_url", "").rstrip("/")
+        # Cookie-less page counts on the website only; empty turns them off,
+        # and the offline guide never counts anything.
+        self.analytics = "" if offline else config.get("cloudflare_analytics_token", "")
         self.offline = offline
         self.errors, self.warnings = [], []
         self.previews = {}       # name -> {width, height, page}, from previews.make()
@@ -971,6 +974,8 @@ class Site:
             values["suggest_url"] = f"{self.repo}/issues/new?template=suggestion.yml"
         if self.offline:
             values["offline"] = True
+        if self.analytics:
+            values["analytics_token"] = self.analytics
         if self.cheatsheet:
             values.update(cheatsheet_url=self.relative(here, self.cheatsheet), cheatsheet_pdf=True)
         elif self.repo:

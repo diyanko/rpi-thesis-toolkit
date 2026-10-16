@@ -96,6 +96,12 @@ account needed), a GitHub issue, or a pull request, including one built with
 an AI assistant. [CONTRIBUTING.md](CONTRIBUTING.md#pick-the-way-that-suits-you)
 walks through each.
 
+## Privacy
+
+The website counts page views with Cloudflare Web Analytics: no cookies and no
+personal data. Guide search runs in your browser and sends nothing anywhere.
+The offline guide in the ZIP counts nothing.
+
 ## Credit and license
 
 Written for this project by the people on the [credits page](CREDITS.md),
