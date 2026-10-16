@@ -351,31 +351,30 @@ for your system ([AI help](#use-ai-for-technical-help)).
 
 ## Update the formatting safely
 
-Formatting fixes live in `rpi-thesis.cls`, so your chapters never need
-replacing ([why](how-it-works.md#your-words-and-your-formatting-are-separate)).
+Formatting fixes arrive as one file, `rpi-thesis.cls`. Updating means
+replacing that file; your chapters, `metadata.tex`, and `references.bib` stay
+as they are ([why](how-it-works.md#your-words-and-your-formatting-are-separate)).
 
-1. **Find your version:** the `\ProvidesClass` line near the top of
-   `rpi-thesis.cls`, for example `2026/10/14 v0.1.0`. Your PDF shows it too,
-   under **Creator** in its document properties. The online website's footer
-   shows the newest version; an offline copy's footer is frozen.
-2. **Read the changelog.** The [changelog](../CHANGELOG.md) bundled with
-   your download is that version's copy and does not update itself. Read the
-   newest one online: [all releases](https://github.com/diyanko/rpi-thesis-toolkit/releases)
-   and the [online changelog](https://github.com/diyanko/rpi-thesis-toolkit/blob/main/CHANGELOG.md). Each entry newer than your version starts with a
-   **Changes your PDF?** line. If they all say *no*, skip the update.
-3. **Back up** your whole project ([backups](#back-up-your-work)).
-4. **Download the newer starter** ([get started](get-started.md#step-2-get-the-files))
-   into a separate folder. Copy its `rpi-thesis.cls` over the old one, plus
-   only other files the changelog names. Never overwrite your chapters,
-   `metadata.tex`, or `references.bib`.
-5. **Recompile from scratch and compare** with your last PDF, especially the
-   title page, contents, and page numbers.
+1. **Download the newest class:**
+   [rpi-thesis.cls](https://diyanko.github.io/rpi-thesis-toolkit/downloads/rpi-thesis.cls)
+   (it is also inside every new starter ZIP).
+2. **Replace yours.** On your computer, save it over the `rpi-thesis.cls` next
+   to `main.tex`. On Overleaf, click **Upload**, choose the file, and confirm
+   that it replaces the old one.
+3. **Recompile and look** at your PDF, especially the title page, contents,
+   and page numbers.
 
-While the toolkit is in beta (versions 0.x), an update may rename or simplify
-a setting; its changelog entry gives the exact edit to make.
-Close to a deadline, update only if a change fixes something that affects you.
-To hear about updates, use **Watch → Custom → Releases** on the toolkit's
-GitHub page (needs an account), or check the changelog before you submit.
+Which version do you have? Your compile log starts with a line such as
+`rpi-thesis 2026/10/15 v0.3.0`, and your PDF shows it under **Creator** in its
+document properties; the website's footer shows the newest. The
+[online changelog](https://github.com/diyanko/rpi-thesis-toolkit/blob/main/CHANGELOG.md)
+lists what each version changed, starting with **Changes your PDF?** (the copy
+in your download is frozen at that version).
+
+Updates never need other files changed, and older settings keep working; if
+one is ever renamed, the log says what to change. Close to a deadline, update
+only if a change fixes something that affects you. To hear about updates, use
+**Watch → Custom → Releases** on the toolkit's GitHub page (needs an account).
 
 ## Use AI for technical help
 

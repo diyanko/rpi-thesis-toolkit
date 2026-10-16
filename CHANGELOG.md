@@ -10,6 +10,21 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/workflows.md#update-the-formatting-safely).
 
+## Unreleased
+
+**Changes your PDF?** No.
+
+- **Updating is one file:** download the newest `rpi-thesis.cls` from its
+  permanent link, replace yours (on Overleaf: Upload), and recompile. From
+  now on an update never needs other files changed, and older settings keep
+  working.
+- **Know your version:** every compile log starts with the class version and
+  where the newest one lives.
+- **Use just the class** in a LaTeX project you already have: a short recipe
+  on the Bring your draft page.
+- Reference-list spacing moved from `preamble.tex` into the class; an older
+  `preamble.tex` that still sets it keeps working.
+
 ## 0.3.0 (beta), 15 Oct 2026
 
 Published as the pre-release `v0.3.0`.
