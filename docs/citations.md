@@ -86,7 +86,7 @@ style chosen inside Zotero does not affect your PDF.
 
 **Never put the Zotero data folder in OneDrive, Dropbox, iCloud, or Google
 Drive**; it can corrupt the database ([Zotero: syncing](https://www.zotero.org/support/sync)).
-Use Zotero sync plus your [computer backup](workflows.md#back-up-your-work).
+Use Zotero sync plus your [computer backup](going-further.md#back-up-your-work).
 `references.bib` is safe in a synced folder, but it is not a library backup.
 
 <details id="set-it-and-forget-it"><summary>Optional: Zotero storage, sync, Overleaf, and auto-export</summary>
@@ -219,7 +219,7 @@ commands print, and choose the command by what you want to read:
 what your style prints before relying on them. A paper template that uses
 classic BibTeX with `natbib` has the matching commands `\citep` (like
 `\parencite`) and `\citet` (like `\textcite`); see
-[turn a chapter into a paper](workflows.md#turn-a-chapter-into-a-paper).
+[turn a chapter into a paper](going-further.md#turn-a-chapter-into-a-paper).
 
 ### Print a full reference in the text
 
@@ -315,4 +315,4 @@ numbers. Use the style you agreed with your advisor
 A Zotero group library lets Word users (with the
 [Word plugin](https://www.zotero.org/support/word_processor_integration)) cite
 the same sources, but citations do not convert between Word and LaTeX. Agree
-on one main copy ([co-authors](workflows.md#co-authors-and-lab-mates)).
+on one main copy ([co-authors](going-further.md#co-authors-and-lab-mates)).

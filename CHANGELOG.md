@@ -8,7 +8,19 @@ your PDF's document properties). Technical details are in the
 **Changes your PDF?** **Yes** means updating `rpi-thesis.cls` may change how
 your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
-read [update the formatting safely](docs/workflows.md#update-the-formatting-safely).
+read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
+
+## Unreleased
+
+**Changes your PDF?** No.
+
+- **A shorter guide:** eight pages instead of eleven. "Why LaTeX" is now part
+  of [How it works](docs/how-it-works.md); the workflows and advanced pages
+  are one page, [Going further](docs/going-further.md). Old guide addresses
+  no longer work.
+- **Before 1.0, anything may move.** Updating is still usually just the class
+  file, but a version may rename a setting or need another file changed; this
+  log says so when it does. The one-file promise starts at 1.0.
 
 ## 0.4.0 (beta), 16 Oct 2026
 
@@ -17,9 +29,7 @@ Published as the pre-release `v0.4.0`.
 **Changes your PDF?** No.
 
 - **Updating is one file:** download the newest `rpi-thesis.cls` from its
-  permanent link, replace yours (on Overleaf: Upload), and recompile. From
-  now on an update never needs other files changed, and older settings keep
-  working.
+  permanent link, replace yours (on Overleaf: Upload), and recompile.
 - **Know your version:** every compile log starts with the class version and
   where the newest one lives.
 - **Use just the class** in a LaTeX project you already have: a short recipe

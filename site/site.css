@@ -830,7 +830,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   list-style: none;
   margin: 0; padding: 0;
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 22px;
 }
 .help-card { display: flex; flex-direction: column; }
@@ -931,7 +931,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .guide-groups { list-style: none; margin: 0; padding: 0; counter-reset: topic; }
 .guide-sidebar .guide-groups { margin-inline: -10px 0; }   /* text, not the pill, sits on the page's left edge */
 .guide-groups > li { margin: 0 0 12px; }
-.guide-group {   /* stage label above each group of pages: Start, Write, ... */
+.guide-group {   /* label above each group of pages: Core path, Go further */
   display: block;
   padding: 0 10px 2px;
   font-size: 0.8rem;
@@ -942,6 +942,9 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .guide-nav { list-style: none; margin: 0; padding: 0; }
 .guide-nav li { margin: 1px 0; counter-increment: topic; }
+/* Only the core path is numbered; the optional "Go further" pages get a plain dot. */
+.guide-groups > li + li .guide-nav li { counter-increment: none; }
+.guide-groups > li + li .guide-nav a::before { content: "\00b7"; }
 .guide-nav a {
   display: flex; gap: 10px; align-items: baseline;
   padding: 6px 10px;

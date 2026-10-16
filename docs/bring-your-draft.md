@@ -89,7 +89,7 @@ No terminal needed: for Markdown use the
 
 **Tip:** installing Pandoc and running terminal commands is where an AI chat
 helps most. Never paste confidential or unpublished material, and keep your
-original to compare ([more](workflows.md#ask-for-a-file-conversion)). Try:
+original to compare ([more](going-further.md#ask-for-a-file-conversion)). Try:
 
 ```prompt
 I use [Windows/macOS/Linux]. Walk me through installing Pandoc and converting my-chapter.md into LaTeX chapter content for this thesis template. Tell me what to check afterwards.
@@ -262,7 +262,7 @@ Your chapters, or \include lines for them.
 ```
 
 Compile it with pdfLaTeX, Biber, and pdfLaTeX twice, and compare with the
-[settings list](advanced.md#all-thesis-settings) if something is missing.
+[settings list](going-further.md#all-thesis-settings) if something is missing.
 From RPI's official template, [the section above](#from-rpis-official-latex-template)
 maps its settings one by one.
 

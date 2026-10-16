@@ -77,7 +77,7 @@ follow the class's structure.
 | Contents lists all front matter except title, copyright, itself; all chapters, sections, references, appendices; plain weight; numbers right aligned; text clear of number column | §1.3 p. 4; FC | cls §6 "Contents and lists"; `\frontchapter` | check (entries); stress test to 12.10.10.10 |
 | Contents entries identical to body headings | §1.3 p. 4 | cls §6: `\cftchapaftersnum` ("1." and "A.") | check |
 | Lists of tables/figures when present; full caption; entries separated by a space; appendix objects included | §§1.4-1.5 pp. 7-10; FC | cls §6 "Contents and lists"; cls §12: `\thesisfrontmatter` (`\listoftables`, `\listoffigures`); `build.py` short-caption hint | check (full captions); visual |
-| Nomenclature/list of equations optional, after lists, in contents, formatted like the lists | §1.6 p. 13; FC | `main.tex` comment; cls §12: `\frontchapter`; recipe in `docs/advanced.md` (`longtable`, single spaced by the class, 10 pt between entries like the lists) | visual (recipe, three engines); student |
+| Nomenclature/list of equations optional, after lists, in contents, formatted like the lists | §1.6 p. 13; FC | `main.tex` comment; cls §12: `\frontchapter`; recipe in `docs/going-further.md` (`longtable`, single spaced by the class, 10 pt between entries like the lists) | visual (recipe, three engines); student |
 | Abstract required; no length limit; no figures, references, attributions | §1.8 p. 14 | `frontmatter/abstract.tex` | student |
 
 ### Headings
@@ -92,7 +92,7 @@ follow the class's structure.
 | --- | --- | --- | --- |
 | Tables/figures centered; table captions above, figure captions below; bold; one alignment; colon delimiter; chapter numbering with periods; no color | §§2.4-2.5 pp. 18-22; FC | cls §7: `\captionsetup`; sample floats | visual |
 | Landscape table: caption "above" (left); page number placement | §2.4 p. 19, Fig. 2.4 | cls §7: `rotating` `sidewaystable`; top-right number stays in place | visual (stress test); see confirmation list |
-| Lettered figure parts: only the letter in the figure, explanation in the caption, one letter style throughout | §2.5 pp. 22-23 | subfigure recipe in `docs/advanced.md` (`subcaption`, empty sub-captions print "(a)"); only the main caption enters the list of figures | visual (recipe, three engines); student (letter style) |
+| Lettered figure parts: only the letter in the figure, explanation in the caption, one letter style throughout | §2.5 pp. 22-23 | subfigure recipe in `docs/going-further.md` (`subcaption`, empty sub-captions print "(a)"); only the main caption enters the list of figures | visual (recipe, three engines); student (letter style) |
 | Reproduced tables/figures: full citation and permission or license wording in caption | §2.6 pp. 24-25 | `chapters/02-research.tex` example | student |
 
 ### Equations
@@ -100,7 +100,7 @@ follow the class's structure.
 | Rule | Manual | Where | Checked by |
 | --- | --- | --- | --- |
 | Equations centered, numbered right in parentheses, multi-line number centered, every display numbered | §2.7 pp. 26-27; FC | amsmath defaults; sample `split` | visual; student |
-| Displays inside a lemma, algorithm, theorem, or proof may be unnumbered | §2.7 p. 27 | theorem and algorithm recipes in `docs/advanced.md` (`amsthm`, `algorithm`, `algpseudocode`; lines commented out in `preamble.tex`); `package/amsthm/before` hook lets `amsthm` load after `newtxmath` (pdfLaTeX) | visual (recipe, three engines) |
+| Displays inside a lemma, algorithm, theorem, or proof may be unnumbered | §2.7 p. 27 | theorem and algorithm recipes in `docs/going-further.md` (`amsthm`, `algorithm`, `algpseudocode`; lines commented out in `preamble.tex`); `package/amsthm/before` hook lets `amsthm` load after `newtxmath` (pdfLaTeX) | visual (recipe, three engines) |
 
 ### Chapter attributions
 
@@ -195,10 +195,10 @@ from RPI ITS; files dated 2018); it is not part of this project.
 - **APPENDICES** contents line for a single appendix.
 - **Copyright year**: the class prints the graduation year.
 - **Monospaced code** in appendices (FC: same font throughout). The code
-  listing recipe in `docs/advanced.md` uses a typewriter font and documents
+  listing recipe in `docs/going-further.md` uses a typewriter font and documents
   a text-font alternative.
 - **Algorithms and code listings**: the manual does not mention their
-  format. The recipes in `docs/advanced.md` single-space them (§2.1 p. 16
+  format. The recipes in `docs/going-further.md` single-space them (§2.1 p. 16
   lists only captions, footnotes, block quotes, attributions, and
   references), number them by chapter like figures, and give them bold
   captions with a colon, placed above. They appear in neither the list of
@@ -235,6 +235,6 @@ styles, especially captions of floats that moved to a later page.
 Do not replace working requirements from a search result or an automatically
 scraped excerpt. Read the current primary document, compare with this map,
 record its version and source, change the class/examples where needed, then
-compile and inspect representative PDFs. See [the update process](maintenance.md).
+compile and inspect representative PDFs. See [the review process](maintenance.md#review-a-requirement-change).
 Keep changing administrative information, contacts, deadlines, plan limits,
 and download URLs linked to official pages instead of freezing them in code.

@@ -55,7 +55,7 @@ Here is the first LaTeX error and a short example. I use Overleaf (or: my comput
 ```
 
 More, including assistants that can edit your files:
-[AI for technical help](workflows.md#use-ai-for-technical-help). A web search
+[AI for technical help](going-further.md#use-ai-for-technical-help). A web search
 or [Overleaf Learn](https://www.overleaf.com/learn) works too.
 
 ## Clean recompile
@@ -88,7 +88,7 @@ terminal.
   (on Windows, `py scripts/build.py --fresh`).
 
 Switch engine only to fix characters pdfLaTeX cannot handle, then check
-the whole PDF ([compile engines](advanced.md#choose-a-compile-engine)).
+the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 
 ## Common messages
 
@@ -99,7 +99,7 @@ the whole PDF ([compile engines](advanced.md#choose-a-compile-engine)).
 | `File rpi-thesis.cls not found` | Extract the whole ZIP and open the folder that contains `main.tex`. On Overleaf, `main.tex` must be at the top of the file list ([Overleaf route](get-started.md#step-3b-overleaf-route)). |
 | `Missing title in metadata.tex` (or author, department, ...) | Fill in that setting inside `\thesissetup{...}`. |
 | `Committee chair is missing` | Put `[Chair]` (or `[Co-Chair]`) on one `\committeemember` line. |
-| `You have requested ... version ... of document class rpi-thesis` | Your `rpi-thesis.cls` is older than the rest of your starter files. Copy `rpi-thesis.cls` from the newest starter ([update safely](workflows.md#update-the-formatting-safely)). |
+| `You have requested ... version ... of document class rpi-thesis` | Your `rpi-thesis.cls` is older than the rest of your starter files. Copy `rpi-thesis.cls` from the newest starter ([update safely](going-further.md#update-the-formatting-safely)). |
 | `Unknown degree choice` | Use `masters`, `doctoral`, or `engineering-doctorate`. |
 | `Unknown graduation month` | Use `May`, `August`, or `December`. |
 | `Graduation year must have four digits` | Write the year like `2027`. |
@@ -124,7 +124,7 @@ the whole PDF ([compile engines](advanced.md#choose-a-compile-engine)).
 | --- | --- |
 | `Missing $ inserted` | Look for an unescaped `_` or a math command outside `$...$`. Write `\_` for an underscore. |
 | `Runaway argument` or a brace error | Check your last edit for a missing `}`. |
-| A special character (such as an accented letter, or one from another alphabet) is missing or garbled | Use a LaTeX accent command, or try another engine ([compile engines](advanced.md#choose-a-compile-engine)). |
+| A special character (such as an accented letter, or one from another alphabet) is missing or garbled | Use a LaTeX accent command, or try another engine ([compile engines](going-further.md#choose-a-compile-engine)). |
 | `Overfull \hbox` | Something is wider than the text area: a long URL, table, equation, or image. Find it in the PDF and resize or break it. |
 | `Overfull \vbox` on the title page | Remove manual line breaks from the title; check long names and committee lines. |
 | A figure floats to a different page | Normal. Use `[htbp]` after `\begin{figure}` and write "Figure~\ref{...}", not "below". |
@@ -171,7 +171,7 @@ about LaTeX, Zotero, files, or "where does this go?" are all welcome.
      [help and feedback form](https://forms.gle/fjfiLfkmVhkcyRNCA).
    - **With a GitHub account:** open an issue with the **LaTeX help or bug**
      form. Answers stay public and searchable. Never opened one? See
-     [how to open an issue](../CONTRIBUTING.md#open-an-issue).
+     [how to open an issue](../CONTRIBUTING.md#three-ways-to-help).
 
 Copy and fill in:
 
