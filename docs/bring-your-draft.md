@@ -236,7 +236,7 @@ or title-page code of your own, since the class now handles it):
 
 ```latex
 \documentclass{rpi-thesis}
-\usepackage[backend=biber,style=numeric]{biblatex}   % your citation style
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}  % your style
 \addbibresource{references.bib}
 \thesissetup{
   title = {Your thesis title},
@@ -260,6 +260,12 @@ Your chapters, or \include lines for them.
 \thesisreferences
 \end{document}
 ```
+
+The biblatex line is the starter's: references numbered in the order you
+first cite them. Already use a citation style? Keep your own biblatex line
+instead. The class still puts one blank line between references (tested with
+numeric, APA, MLA, and Chicago author-date); check your PDF with any other
+style ([citations](citations.md#change-the-citation-style)).
 
 Compile it with pdfLaTeX, Biber, and pdfLaTeX twice, and compare with the
 [settings list](going-further.md#all-thesis-settings) if something is missing.

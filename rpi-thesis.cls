@@ -49,6 +49,8 @@
   % pastes \usepackage{amssymb} or \usepackage{amsfonts} into preamble.tex.
   \@namedef{ver@amssymb.sty}{2013/01/14 v3.01 (symbols provided by rpi-thesis)}
   \@namedef{ver@amsfonts.sty}{2013/01/14 v3.01 (symbols provided by rpi-thesis)}
+  % The one amssymb command newtxmath lacks.
+  \providecommand{\yen}{\mbox{\textyen}}
 \else
   % Establish conventional AMS command names before unicode-math replaces
   % their Unicode equivalents; it does not define every traditional alias.
@@ -100,13 +102,26 @@
 \urlstyle{same}
 % Reference lists (biblatex, loaded in preamble.tex): one blank line between
 % entries, single-spaced inside them (manual 2.1, p. 16), left-aligned, and long
-% URLs wrap inside the margins. Set right after biblatex loads, so a student's
-% own setting on a later preamble line still wins.
-\AddToHook{package/biblatex/after}{%
+% URLs wrap inside the margins. Set right after the preamble line that loads
+% biblatex, so a student's own setting on a later line still wins. When another
+% package loads biblatex (biblatex-chicago does, then sets its own spacing),
+% wait until that package has finished.
+\def\rpi@bibdefaults{%
   \setlength{\bibitemsep}{\baselineskip}%
   \setcounter{biburlnumpenalty}{9000}%
   \setcounter{biburllcpenalty}{9000}%
   \setcounter{biburlucpenalty}{9000}}
+% Called after a package finishes; \@currnamestack starts with the file that
+% loaded it ({name}{ext}{catcode}): another package, or the document itself.
+\def\rpi@bibdefaults@after{\expandafter\rpi@bibdefaults@from\@currnamestack\@nil}
+\def\rpi@bibdefaults@from#1#2#3#4\@nil{%
+  \def\@tempa{#2}\def\@tempb{sty}%
+  \ifx\@tempa\@tempb
+    \AddToHook{package/#1/after}{\rpi@bibdefaults@after}%
+  \else
+    \rpi@bibdefaults
+  \fi}
+\AddToHook{package/biblatex/after}{\rpi@bibdefaults@after}
 \AtEndPreamble{\@ifpackageloaded{biblatex}{\appto\bibsetup{\raggedright}}{}}
 
 % ---------------------------------------------------------------------------
