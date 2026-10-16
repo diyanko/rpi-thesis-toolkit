@@ -144,6 +144,10 @@ REQUIRED_PREVIEWS = (
 # guide never holds it; package.py puts it at the ZIP root, beside guide/, as
 # OFFLINE_CHEATSHEET, and the offline guide links there.
 CHEATSHEET_PDF = "downloads/rpi-thesis-cheatsheet.pdf"
+# The newest class file, at a permanent address: students update by replacing
+# their copy with this one (docs/workflows.md). Only the website carries it;
+# --publish keeps it equal to the released class.
+CLASS_DOWNLOAD = "downloads/rpi-thesis.cls"
 OFFLINE_CHEATSHEET = "rpi-thesis-cheatsheet.pdf"
 CHEATSHEET_SOURCES = {"cheatsheet", "cheatsheet/cheatsheet.tex", "cheatsheet/README.md"}
 OG_ALT = ("RPI Thesis Toolkit, an unofficial community starter: write your RPI thesis or "
@@ -1187,7 +1191,7 @@ def validate(destination, beside=(), search=()):
             errors.append(f"Private or source folder in the website: {relative}")
         elif path.is_dir() or suffix in ALLOWED:
             pass
-        elif relative.as_posix() in {"og-image.png", CHEATSHEET_PDF, "sitemap.xml", "robots.txt"} | SITE_SCRIPTS:
+        elif relative.as_posix() in {"og-image.png", CHEATSHEET_PDF, CLASS_DOWNLOAD, "sitemap.xml", "robots.txt"} | SITE_SCRIPTS:
             pass
         elif not (top == "previews" and suffix in {".png", ".webp"}) and not (
             top == "fonts" and suffix == ".txt"
@@ -1330,6 +1334,9 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
         site.cheatsheet = CHEATSHEET_PDF
     elif not offline and reuse_cheatsheet(destination):  # quick builds keep a current PDF
         site.cheatsheet = CHEATSHEET_PDF
+    if not offline:  # the starter ZIP already contains the class
+        (destination / CLASS_DOWNLOAD).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / "rpi-thesis.cls", destination / CLASS_DOWNLOAD)
     strict = publish or complete  # missing content stops the build instead of warning
     if strict:
         missing = [name for name in REQUIRED_PREVIEWS if name not in site.previews]
