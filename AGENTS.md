@@ -43,7 +43,7 @@ Read before changing anything: [docs/project/README.md](docs/project/README.md)
 | Area | Paths | Rule |
 | --- | --- | --- |
 | Student content | `main.tex`, `frontmatter/`, `chapters/`, `appendices/`, `figures/`, `references.bib` | Teaching text only; never real research |
-| Student metadata | `metadata.tex` | Settings only; keep keys backward compatible |
+| Student metadata | `metadata.tex` | Settings only; keys and class commands stay backward compatible ([compatibility promise](docs/project/maintenance.md#compatibility-promise)) |
 | Package configuration | `preamble.tex` | Citation style and extra packages |
 | Formatting | `rpi-thesis.cls`, `assets/README.md` | Change only with manual evidence; the seal itself is never committed |
 | Student guide | `docs/*.md`, `docs/diagrams/`, `cheatsheet/` | Follow the style guide |

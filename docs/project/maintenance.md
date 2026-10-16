@@ -307,25 +307,22 @@ source files while another editor works.
 
 ## Compatibility promise
 
-**During the beta (versions 0.x), there is no compatibility promise.**
-Settings, commands, and files may be renamed, simplified, or removed between
-versions whenever that makes the starter cleaner. Each such change goes in
-`CHANGELOG.md` with **Changes your PDF?** and the exact edit a student needs
-to make, and the class reports old or unknown settings with an error that
-names the fix.
+Students update by replacing one file, `rpi-thesis.cls`, often in the middle
+of a thesis. So, from 0.4.0 on (beta included), an update never needs any
+other file changed and never breaks a thesis that compiled before:
 
-From version 1.0.0, students copy a newer `rpi-thesis.cls` into an existing
-thesis, so within one major version these stay backward compatible:
-
-- every setting in `metadata.tex`, that is, the `\thesissetup` keys and their
-  accepted values;
-- the commands the starter files use (for example `\committeemember`,
-  `\frontchapter`, `\chapterattribution`).
+- Formatting lives only in the class. Student files hold content, settings,
+  and package choices, never layout values.
+- Every `\thesissetup` key and value and every command the starter uses
+  (`\committeemember`, `\thesisfrontmatter`, `\thesismainmatter`,
+  `\frontchapter`, `\chapterattribution`, `\thesisreferences`) keeps working.
+  A rename keeps the old name as an alias that prints a warning naming the
+  new one; nothing students use is removed.
+- If an update ever truly needs a change elsewhere, the class says so in the
+  log, and the change-log entry gives the exact edit.
 
 New keys and commands may be added, and formatting may be corrected to match
-OGE requirements. Removing or renaming any of the above, or changing what an
-existing value means, is a breaking change: bump the major version and
-explain the change and the fix in `CHANGELOG.md`.
+OGE requirements (the change log says **Changes your PDF?**).
 
 ## Repository settings checklist (when first pushing)
 
@@ -412,7 +409,8 @@ merge them to `main` and they ship with the next release.
 3. **Merge** the pull request to `main`.
 4. **Publish** from an up-to-date `main`: `python3 scripts/package.py`, then
    `gh release create vX.Y.Z --prerelease --title vX.Y.Z --notes-file <entry>
-   dist/rpi-thesis-starter-vX.Y.Z.zip dist/rpi-thesis-overleaf-vX.Y.Z.zip`
+   dist/rpi-thesis-starter-vX.Y.Z.zip dist/rpi-thesis-overleaf-vX.Y.Z.zip rpi-thesis.cls`
+   (the class alone lets students update by replacing one file)
    (the ZIPs are reproducible, so they match what CI tested).
 5. **Deploy the website:** Actions, **Build thesis, website, and starter ZIP**,
    run on `main` with "publish" ticked. Its strict build refuses to publish a
