@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Run every maintainer check in one fixed order and print a short summary.
 
-    python3 scripts/verify.py quick     guide or website edits (about a minute)
-    python3 scripts/verify.py           full: thesis, PDF checks, regressions,
+    python3 scripts/verify.py           picks quick or full from the files
+                                        changed since main (the usual way)
+    python3 scripts/verify.py quick     guide or website text (seconds)
+    python3 scripts/verify.py full      thesis, PDF checks, regressions,
                                         website, ZIPs, archive compiles
     python3 scripts/verify.py release   full + strict publish build, browser
                                         layout sweep, reproducible-ZIP check
@@ -24,6 +26,7 @@ import sys
 import tempfile
 import time
 import zipfile
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -180,32 +183,64 @@ def ui():
     return (None if note.startswith("SKIP") else ok), note
 
 
+# A list inside a mode runs its steps at the same time (they use separate folders).
 MODES = {
     "quick": [("hygiene", hygiene), ("site", lambda: site(previews=False))],
-    "full": [("hygiene", hygiene), ("thesis", thesis), ("pdf checks", pdf_checks),
-             ("regressions", regressions), ("site", site), ("package", package),
-             ("archives", archives)],
+    "full": [("hygiene", hygiene), ("thesis", thesis),
+             [("pdf checks", pdf_checks), ("regressions", regressions)],
+             ("site", site), ("package", package), ("archives", archives)],
 }
 MODES["release"] = MODES["full"] + [("publish build", lambda: site(publish=True)),
                                     ("reproducible", reproducible), ("ui sweep", ui)]
 
 
+# Changes that only touch these can skip the LaTeX steps.
+QUICK_ONLY = re.compile(r"(docs/(?!diagrams/).*\.md|[^/]+\.md|site/.*|\.github/(ISSUE_TEMPLATE/.*|pull_request_template\.md))$")
+
+
+def auto_mode():
+    """quick when every file changed since main (committed or not) is guide or
+    website text; full otherwise, or when git cannot tell."""
+    base = git("merge-base", "HEAD", "origin/main")
+    if base.returncode:
+        base = git("merge-base", "HEAD", "main")
+    if base.returncode:
+        return "full", "no main branch to compare with"
+    changed = set(git("diff", "--name-only", base.stdout.strip()).stdout.split())
+    changed |= set(git("ls-files", "--others", "--exclude-standard").stdout.split())
+    slow = sorted(f for f in changed if not QUICK_ONLY.match(f))
+    if slow:
+        return "full", f"{len(slow)} changed file(s) need it, e.g. {slow[0]}"
+    return "quick", f"{len(changed)} changed file(s), all guide or website text"
+
+
+def timed(step):
+    began = time.time()
+    ok, note = step()
+    return ok, note, time.time() - began
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    parser.add_argument("mode", nargs="?", default="full", choices=MODES)
+    parser.add_argument("mode", nargs="?", default="auto", choices=["auto", *MODES])
     parser.add_argument("--keep-going", action="store_true", help="run every step even after a failure")
     args = parser.parse_args()
     LOGS.mkdir(parents=True, exist_ok=True)
+    if args.mode == "auto":
+        args.mode, why = auto_mode()
+        print(f"verify {args.mode}: {why}", flush=True)
     failed, start = [], time.time()
-    for name, step in MODES[args.mode]:
-        began = time.time()
-        ok, note = step()
-        mark = "SKIP" if ok is None else "PASS" if ok else "FAIL"
-        print(f"{mark}  {name:<14} {time.time() - began:6.1f}s  {note}"[:160], flush=True)
-        if ok is False:
-            failed.append(name)
-            if not args.keep_going:
-                break
+    for entry in MODES[args.mode]:
+        group = entry if isinstance(entry, list) else [entry]
+        with ThreadPoolExecutor(max_workers=len(group)) as pool:
+            results = list(pool.map(lambda item: timed(item[1]), group))
+        for (name, _), (ok, note, seconds) in zip(group, results):
+            mark = "SKIP" if ok is None else "PASS" if ok else "FAIL"
+            print(f"{mark}  {name:<14} {seconds:6.1f}s  {note}"[:160], flush=True)
+            if ok is False:
+                failed.append(name)
+        if failed and not args.keep_going:
+            break
     total = time.time() - start
     print(f"verify {args.mode}: {'FAILED ' + ', '.join(failed) if failed else 'all passed'} "
           f"in {total:.0f}s (logs: build/verify/)")
