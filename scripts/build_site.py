@@ -120,7 +120,10 @@ ANATOMY = [
      "the letters A, B, C and the contents entry"),
 ]
 ALLOWED = {".html", ".css", ".svg", ".woff2"}  # plus fonts/*.txt, previews/*.png|webp, og-image.png,
-                                              # sitemap.xml, robots.txt and the named scripts below
+                                              # sitemap.xml, robots.txt, build.txt and the named scripts below
+# Online only: "commit=<SHA>" and "release=<RELEASE_TAG>", one per line. Every online
+# page also carries <meta name="rpi-thesis-build" content="SHA">; release.py reads both.
+BUILD_FILE = "build.txt"
 SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js"}
 # The release the website links: its version, tag (always "v" + version; beta status is
 # GitHub's pre-release flag, never part of the name), and ZIP names
@@ -257,6 +260,20 @@ def last_commit(source):
         return date.fromisoformat(day) if day else None
     except (OSError, ValueError, subprocess.SubprocessError):
         return None
+
+
+def build_id():
+    """The full commit SHA being built: GITHUB_SHA in CI, else `git rev-parse HEAD`;
+    '' without either. The same commit always gives the same identifier (local
+    uncommitted edits do not change it)."""
+    sha = os.environ.get("GITHUB_SHA", "").strip().lower()
+    if not sha:
+        try:
+            sha = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True,
+                                 text=True, timeout=20).stdout.strip().lower()
+        except (OSError, subprocess.SubprocessError):
+            sha = ""
+    return sha if re.fullmatch(r"[0-9a-f]{40}", sha) else ""
 
 
 def last_updated(source):
@@ -474,6 +491,10 @@ class Site:
         # and the offline guide never counts anything.
         self.analytics = "" if offline else config.get("cloudflare_analytics_token", "")
         self.offline = offline
+        # The exact commit this website was built from, on every online page and
+        # in build.txt, so a live check can tell which build is being served.
+        # The offline guide carries none: it is frozen with its release.
+        self.build_id = "" if offline else build_id()
         self.errors, self.warnings = [], []
         self.previews = {}       # name -> {width, height, page}, from previews.make()
         self.cheatsheet = ""     # where the cheat sheet PDF is, relative to the site root
@@ -903,7 +924,7 @@ class Site:
         for stage, pages in NAV:
             entries = [entry for entry in (guide_item(name, label) for name, label, _ in pages) if entry]
             groups.append({"label": escape(stage), "pages": entries})
-            stages[re.sub(r"\W+", "_", stage.lower())] = entries  # Fix and finish -> fix_and_finish
+            stages[re.sub(r"\W+", "_", stage.lower())] = entries  # Go further -> go_further
         header = [entry for entry, (_, _, top) in zip(nav, chain) if top]
         if quick and QUICK[2]:
             header.append(quick)
@@ -970,6 +991,8 @@ class Site:
             values["suggest_url"] = f"{self.repo}/issues/new?template=suggestion.yml"
         if self.offline:
             values["offline"] = True
+        if self.build_id:
+            values["build_id"] = self.build_id
         if self.analytics:
             values["analytics_token"] = self.analytics
         if self.cheatsheet:
@@ -1192,7 +1215,8 @@ def validate(destination, beside=(), search=()):
             errors.append(f"Private or source folder in the website: {relative}")
         elif path.is_dir() or suffix in ALLOWED:
             pass
-        elif relative.as_posix() in {"og-image.png", CHEATSHEET_PDF, CLASS_DOWNLOAD, "sitemap.xml", "robots.txt"} | SITE_SCRIPTS:
+        elif relative.as_posix() in {"og-image.png", CHEATSHEET_PDF, CLASS_DOWNLOAD, "sitemap.xml", "robots.txt",
+                                     BUILD_FILE} | SITE_SCRIPTS:
             pass
         elif not (top == "previews" and suffix in {".png", ".webp"}) and not (
             top == "fonts" and suffix == ".txt"
@@ -1373,6 +1397,11 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
             seen.setdefault(meta[position], page)
     if site.url:  # search engines only; the offline guide has no address
         write_sitemap(site, destination)
+    if site.build_id:  # read by scripts/release.py live
+        (destination / BUILD_FILE).write_text(f"commit={site.build_id}\nrelease={RELEASE_TAG}\n", encoding="utf-8")
+    elif publish:
+        site.errors.append("--publish needs the commit SHA for build.txt: build inside a Git "
+                           "checkout or set GITHUB_SHA.")
     beside = {OFFLINE_CHEATSHEET} if site.cheatsheet.startswith("../") else set()
     errors, warnings, count = validate(destination, beside, site.search)
     problems = site.warnings + warnings

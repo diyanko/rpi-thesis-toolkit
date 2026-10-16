@@ -7,6 +7,9 @@
 <script src="${root}theme.js"></script>
 <title>$pagetitle$</title>
 <meta name="description" content="$description$">
+$if(build_id)$
+<meta name="rpi-thesis-build" content="$build_id$">
+$endif$
 $if(notfound)$
 <meta name="robots" content="noindex">
 $endif$
