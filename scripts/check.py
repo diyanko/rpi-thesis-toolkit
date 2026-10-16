@@ -2,8 +2,10 @@
 """Isolated graduate examples and structural checks; not an OGE approval test."""
 from pathlib import Path
 import argparse
+import concurrent.futures
 import hashlib
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -281,7 +283,7 @@ def check_pdf(folder, degree, copyright=False, minimal=False):
         ),
         "Overflow or unresolved references in final log",
     )
-    return len(reader.pages)
+    return len(reader.pages), texts
 
 
 # Maintainers keep RPI's original template in _local/legacy/ (ignored by Git;
@@ -310,6 +312,94 @@ def check_legacy_copy():
     print("PASS: _local/legacy/ matches its recorded hashes", flush=True)
 
 
+def run_pdf_case(tmp, case):
+    name, engine, choice, degree, copyright, minimal = case
+    folder = tmp / name
+    fixture(folder)
+    text = (
+        (folder / "metadata.tex")
+        .read_text(encoding="utf-8")
+        .replace("degree = doctoral", "degree = " + choice)
+    )
+    if copyright:
+        text = text.replace("copyright-page = false", "copyright-page = true")
+        text += "\n\\committeemember[Co-Chair]{An additional co-chair}\n"
+        for n in range(4, 8):
+            text += f"\\committeemember{{Committee member {n}}}\n"
+    if name.startswith("unicode"):
+        text = text.replace("Your full name", "Zoë García")
+    if copyright:
+        chapter = folder / "chapters/02-research.tex"
+        chapter.write_text(
+            chapter.read_text(encoding="utf-8").replace(
+                "\\label{chap:research}\n",
+                "\\label{chap:research}\n"
+                "\\chapterattribution{Attribution check text.}\n",
+                1,
+            ),
+            encoding="utf-8",
+        )
+    if minimal:
+        text = text.replace(
+            "list-of-tables = true", "list-of-tables = false"
+        ).replace("list-of-figures = true", "list-of-figures = false")
+        (folder / "chapters/02-research.tex").write_text(
+            "\\chapter{RESEARCH AND FINDINGS}\n\\label{chap:research}\nText only.\n",
+            encoding="utf-8",
+        )
+        main = (
+            (folder / "main.tex")
+            .read_text(encoding="utf-8")
+            .replace("\\appendix", "% no appendix")
+            .replace(
+                "\\include{appendices/additional-material}",
+                "% no appendix input",
+            )
+            .replace("\\input{frontmatter/acknowledgments}", "% no acknowledgments")
+        )
+        (folder / "main.tex").write_text(main, encoding="utf-8")
+    (folder / "metadata.tex").write_text(text, encoding="utf-8")
+    require(build(folder, engine=engine) == 0, "Build failed: " + name)
+    pages, texts = check_pdf(folder, degree, copyright, minimal)
+    if copyright:
+        first = next(t for t in texts if t.startswith("2. RESEARCH AND FINDINGS"))
+        require(
+            "Attribution check text." in first and "1Attribution" not in first,
+            "Chapter attribution must sit unmarked on the chapter's first page",
+        )
+    return f"PASS: {name}, {engine}, {pages} pages"
+
+
+def run_rejection(tmp, case):
+    name, before, after, error = case
+    folder = tmp / name
+    fixture(folder)
+    (folder / "metadata.tex").write_text(
+        (folder / "metadata.tex").read_text(encoding="utf-8").replace(before, after),
+        encoding="utf-8",
+    )
+    (folder / "build").mkdir()
+    result = subprocess.run(
+        [
+            "pdflatex",
+            "-no-shell-escape",
+            "-interaction=nonstopmode",
+            "-halt-on-error",
+            "-output-directory=build",
+            "main.tex",
+        ],
+        cwd=folder,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+    )
+    require(
+        result.returncode != 0 and error in norm(result.stdout),
+        "Expected rejection: " + name,
+    )
+    return "PASS: correctly rejects " + name
+
+
 def main():
     check_legacy_copy()
     seal = any((ROOT / name).is_file() for name in SEAL_FILES)
@@ -328,15 +418,7 @@ def main():
             True,
             False,
         ),
-        (
-            "engineering-doctorate",
-            "pdflatex",
-            "engineering-doctorate",
-            "DOCTOR OF ENGINEERING",
-            False,
-            False,
-        ),
-        ("minimal", "pdflatex", "masters", "MASTER OF SCIENCE", False, True),
+        ("minimal", "pdflatex", "engineering-doctorate", "DOCTOR OF ENGINEERING", False, True),
         ("unicode-lua", "lualatex", "doctoral", "DOCTOR OF PHILOSOPHY", False, False),
         ("unicode-xe", "xelatex", "masters", "MASTER OF SCIENCE", False, False),
     ]
@@ -350,116 +432,33 @@ def main():
     args = parser.parse_args()
     if args.case:
         cases = [case for case in cases if case[0] in args.case]
+    rejections = [
+        ("invalid-year", "{2027}", "{27}", "Graduation year must have four digits"),
+        ("missing-chair", "[Chair]", "", "Committee chair is missing"),
+        ("blank-member", "[Chair]{Your committee chair}", "[Chair]{}", "Blank committee member name"),
+        ("invalid-degree", "degree = doctoral", "degree = unknown", "Unknown degree choice"),
+        (
+            "invalid-month",
+            "graduation-month = May",
+            "graduation-month = January",
+            "Unknown graduation month",
+        ),
+    ]
     with tempfile.TemporaryDirectory(prefix="rpi-thesis-check-") as tmp:
-        for name, engine, choice, degree, copyright, minimal in cases:
-            folder = Path(tmp) / name
-            fixture(folder)
-            text = (
-                (folder / "metadata.tex")
-                .read_text(encoding="utf-8")
-                .replace("degree = doctoral", "degree = " + choice)
-            )
-            if copyright:
-                text = text.replace("copyright-page = false", "copyright-page = true")
-                text += "\n\\committeemember[Co-Chair]{An additional co-chair}\n"
-                for n in range(4, 8):
-                    text += f"\\committeemember{{Committee member {n}}}\n"
-            if name.startswith("unicode"):
-                text = text.replace("Your full name", "Zoë García")
-            if copyright:
-                chapter = folder / "chapters/02-research.tex"
-                chapter.write_text(
-                    chapter.read_text(encoding="utf-8").replace(
-                        "\\label{chap:research}\n",
-                        "\\label{chap:research}\n"
-                        "\\chapterattribution{Attribution check text.}\n",
-                        1,
-                    ),
-                    encoding="utf-8",
-                )
-            if minimal:
-                text = text.replace(
-                    "list-of-tables = true", "list-of-tables = false"
-                ).replace("list-of-figures = true", "list-of-figures = false")
-                (folder / "chapters/02-research.tex").write_text(
-                    "\\chapter{RESEARCH AND FINDINGS}\n\\label{chap:research}\nText only.\n",
-                    encoding="utf-8",
-                )
-                main = (
-                    (folder / "main.tex")
-                    .read_text(encoding="utf-8")
-                    .replace("\\appendix", "% no appendix")
-                    .replace(
-                        "\\include{appendices/additional-material}",
-                        "% no appendix input",
-                    )
-                    .replace(
-                        "\\input{frontmatter/acknowledgments}", "% no acknowledgments"
-                    )
-                )
-                (folder / "main.tex").write_text(main, encoding="utf-8")
-            (folder / "metadata.tex").write_text(text, encoding="utf-8")
-            require(build(folder, engine=engine) == 0, "Build failed: " + name)
-            pages = check_pdf(folder, degree, copyright, minimal)
-            if copyright:
-                texts = [
-                    norm(p.extract_text())
-                    for p in PdfReader(folder / "build/main.pdf").pages
-                ]
-                first = next(
-                    t for t in texts if t.startswith("2. RESEARCH AND FINDINGS")
-                )
-                require(
-                    "Attribution check text." in first
-                    and "1Attribution" not in first,
-                    "Chapter attribution must sit unmarked on the chapter's first page",
-                )
-            print(f"PASS: {name}, {engine}, {pages} pages", flush=True)
-        for name, before, after, error in [
-            ("invalid-year", "{2027}", "{27}", "Graduation year must have four digits"),
-            ("missing-chair", "[Chair]", "", "Committee chair is missing"),
-            ("blank-member", "[Chair]{Your committee chair}", "[Chair]{}", "Blank committee member name"),
-            (
-                "invalid-degree",
-                "degree = doctoral",
-                "degree = unknown",
-                "Unknown degree choice",
-            ),
-            (
-                "invalid-month",
-                "graduation-month = May",
-                "graduation-month = January",
-                "Unknown graduation month",
-            ),
-        ]:
-            folder = Path(tmp) / name
-            fixture(folder)
-            (folder / "metadata.tex").write_text(
-                (folder / "metadata.tex")
-                .read_text(encoding="utf-8")
-                .replace(before, after),
-                encoding="utf-8",
-            )
-            (folder / "build").mkdir()
-            result = subprocess.run(
-                [
-                    "pdflatex",
-                    "-no-shell-escape",
-                    "-interaction=nonstopmode",
-                    "-halt-on-error",
-                    "-output-directory=build",
-                    "main.tex",
-                ],
-                cwd=folder,
-                capture_output=True,
-                text=True,
-                encoding="utf-8",
-            )
-            require(
-                result.returncode != 0 and error in norm(result.stdout),
-                "Expected rejection: " + name,
-            )
-            print("PASS: correctly rejects " + name, flush=True)
+        tmp = Path(tmp)
+        jobs = [(run_pdf_case, tmp, case) for case in cases]
+        jobs += [(run_rejection, tmp, case) for case in rejections]
+        workers = max(1, min(6, os.cpu_count() or 1))
+        with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as pool:
+            futures = [pool.submit(fn, *rest) for fn, *rest in jobs]
+            failed = None
+            for future in futures:  # fixed order, whatever finishes first
+                try:
+                    print(future.result(), flush=True)
+                except Exception as error:
+                    failed = failed or error
+            if failed:
+                raise failed
     print(
         (
             "Selected structural checks passed."

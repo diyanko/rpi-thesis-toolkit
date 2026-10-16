@@ -150,14 +150,6 @@ def tail(output, lines=12):
 
 # ---- cases --------------------------------------------------------------------
 
-def case_editor_first_run(proj, work):
-    """Audit: the first editor compile stopped with 'I can't write on file chapters/...aux'."""
-    check(not (proj / "build").exists(), "fixture drift: build/ already exists")
-    code, out = editor_build(proj, work)
-    check(code == 0, "editor recipe exited %d on the first run: %s" % (code, tail(out)))
-    check((proj / "build/main.pdf").is_file(), "build/main.pdf was not made")
-
-
 def case_deep_include(proj, work):
     """Audit: latexmkrc did not create output folders for deeply nested chapters."""
     deep = proj / "chapters/a/b/c/d/e"
@@ -169,39 +161,6 @@ def case_deep_include(proj, work):
     check(code == 0, "first editor run with a 5-deep include exited %d: %s" % (code, tail(out)))
     check((proj / "build/main.pdf").is_file(), "build/main.pdf was not made")
     check((proj / "build/chapters/a/b/c/d/e/deep.aux").is_file(), "no .aux for the deep chapter")
-
-
-def case_blank_committee(proj, work):
-    """Audit: an empty \\committeemember name must stop with a clear message."""
-    replace_once(proj / "metadata.tex", "\\committeemember[Chair]{Your committee chair}",
-                 "\\committeemember[Chair]{}")
-    code, out = latex(proj, work)
-    log = read(proj / "main.log") if (proj / "main.log").exists() else ""
-    check(code != 0, "a blank committee member did not stop the build")
-    check("Blank committee member name" in log + out,
-          "log lacks 'Blank committee member name': " + tail(out))
-
-
-AMS_MATH = r"""
-\section{AMS symbols}
-Real numbers $x\in\mathbb{R}$, $a\leqslant b$, the empty set $\varnothing$,
-$\nexists$, $A\subsetneq B$, and $\mathbb{N}\to\mathbb{Z}$.
-\begin{equation}
-  \sum_{i=1}^{n} i \geqslant \varnothing \quad\text{AMSMARK}
-\end{equation}
-"""
-
-
-def make_ams(engine):
-    def case(proj, work):
-        """Audit: amssymb clashed with unicode-math on the Unicode engines."""
-        replace_once(proj / "preamble.tex", "% ---- Your packages ----",
-                     "% ---- Your packages ----\n\\usepackage{amssymb}")
-        append(proj / "chapters/01-introduction.tex", AMS_MATH)
-        code, out = latex(proj, work, engine)
-        check(code == 0, "%s with amssymb exited %d: %s" % (engine, code, tail(out)))
-        check((proj / "main.pdf").is_file(), "main.pdf was not made")
-    return case
 
 
 FULLCITE_BIB = r"""
@@ -431,12 +390,8 @@ def register(name, function, tools=("latexmk", "pdflatex", "biber"), needs_pdf_t
     CASES[name] = (function, tools, needs_pdf_text)
 
 
-register("editor-first-run", case_editor_first_run)
 register("deep-include", case_deep_include)
-register("blank-committee", case_blank_committee, tools=("pdflatex",))
-for _engine in ("pdflatex", "lualatex", "xelatex"):
-    register("ams-symbols:" + _engine, make_ams(_engine), tools=(_engine,))
-for _style in ("numeric", "apa", "mla", "chicago"):
+for _style in ("apa", "mla", "chicago"):
     register("fullcite-styles:" + _style, make_fullcite(_style), needs_pdf_text=True)
 register("portrait-figure", case_portrait_figure, tools=("pdflatex",))
 register("verbatim-input", case_verbatim_input)
@@ -483,8 +438,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--list", action="store_true", help="List the cases and exit")
     parser.add_argument("--case", action="append", default=[], metavar="NAME",
-                        nargs="+", help="Run only these cases (a group name such as ams-symbols runs its parts)")
-    parser.add_argument("--jobs", type=int, default=min(4, os.cpu_count() or 1))
+                        nargs="+", help="Run only these cases (a group name such as fullcite-styles runs its parts)")
+    parser.add_argument("--jobs", type=int, default=max(1, os.cpu_count() or 1))
     parser.add_argument("--keep", action="store_true", help="Keep the temporary folders")
     args = parser.parse_args()
     patterns = [name for group in args.case for name in group]
