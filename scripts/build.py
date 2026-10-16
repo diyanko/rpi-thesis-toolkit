@@ -435,7 +435,7 @@ def presubmission_hints(root, output, sources=None, warnings=()):
         hints.append(
             "Your rpi-thesis.cls is older than your other starter files expect. Copy "
             "rpi-thesis.cls from the newest starter into this folder; see "
-            + guide(root, "workflows") + " (Update the formatting safely)."
+            + guide(root, "going-further") + " (Update the formatting safely)."
         )
     if hints:
         print(

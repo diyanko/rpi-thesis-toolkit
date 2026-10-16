@@ -18,7 +18,7 @@ It saves:
 
 - class-demo-ams.png and class-demo-ieee.png: the first page of the same
   teaching example, compiled with only its class name changed. Its source
-  lives in the optional example in docs/why-latex.md. The corresponding
+  lives in the optional example in docs/how-it-works.md. The corresponding
   -crop pictures show the upper content for the inline comparison.
 
 Every picture is a greyscale PNG (16 shades for the anatomy pictures, which
@@ -191,7 +191,7 @@ def fingerprint():
 
     digest = hashlib.sha256()
     names = [ROOT / name for name in THESIS_INPUTS] + [
-        ROOT / "docs/why-latex.md", ROOT / "scripts/previews.py"]
+        ROOT / "docs/how-it-works.md", ROOT / "scripts/previews.py"]
     for top in names:
         if top.is_symlink() or not top.exists():
             continue
@@ -444,10 +444,10 @@ def class_demo(folder, work):
     Keep the source in Markdown, alongside the explanation students read.
     Do not adapt commands, packages, content or options between the versions.
     """
-    markdown = (ROOT / "docs/why-latex.md").read_text(encoding="utf-8")
+    markdown = (ROOT / "docs/how-it-works.md").read_text(encoding="utf-8")
     match = re.search(r"<!-- class-demo-source -->\s*```latex\n(.*?)\n```", markdown, re.S)
     if not match or not match[1].startswith(r"\documentclass{amsart}" + "\n"):
-        raise SystemExit("Previews: docs/why-latex.md needs the marked class example, starting with \\documentclass{amsart}.")
+        raise SystemExit("Previews: docs/how-it-works.md needs the marked class example, starting with \\documentclass{amsart}.")
     if shutil.which("kpsewhich"):
         missing = [cls for cls in ("amsart", "IEEEtran")
                    if subprocess.run(["kpsewhich", cls + ".cls"], capture_output=True).returncode]

@@ -29,7 +29,7 @@ $if(offline)$
 $elseif(starter_zip)$
     <p class="hero-next">The thesis files plus this guide. The RPI seal is a separate download; <a href="docs/get-started.md">Get started</a> shows how.</p>
 $endif$
-    <p class="hero-aside"><span>New to LaTeX? <a href="docs/why-latex.md">Why it's worth it</a></span> <span>Have a draft? <a href="docs/bring-your-draft.md">Bring your draft</a></span> <span>Stuck? <a href="docs/troubleshooting.md">Fix an error</a></span></p>
+    <p class="hero-aside"><span>New to LaTeX? <a href="docs/how-it-works.md#why-latex-for-a-thesis">Why it's worth it</a></span> <span>Have a draft? <a href="docs/bring-your-draft.md">Bring your draft</a></span> <span>Stuck? <a href="docs/troubleshooting.md">Fix an error</a></span></p>
   </div>
   <figure class="hero-art">
     <img src="${root}art/hero-page.svg" width="600" height="480" alt="Sketch of a thesis page. A note says you write the words and points to the paragraphs. Other notes say the template sets the margins and headings, and handles page numbers, the contents and the reference list.">
@@ -94,7 +94,7 @@ $-- ============ Pick your path ============
         <p class="route-go"><a class="text-link" href="docs/get-started.md#step-3b-overleaf-route">Start on Overleaf<span class="arrow" aria-hidden="true">→</span></a></p>
       </article>
     </div>
-    <p class="routes-foot margin-note">Still drafting somewhere else? Set up now and <a href="docs/how-it-works.md#the-suggested-workflow-and-why">bring chapters in as they settle</a>. You can <a href="docs/workflows.md#use-your-computer-and-overleaf">move between them</a> at any time.</p>
+    <p class="routes-foot margin-note">Still drafting somewhere else? Set up now and <a href="docs/how-it-works.md#the-suggested-workflow-and-why">bring chapters in as they settle</a>. You can <a href="docs/going-further.md#use-your-computer-and-overleaf">move between them</a> at any time.</p>
   </div>
 </section>
 
@@ -104,7 +104,7 @@ $-- ============ Your first hour ============
     <div class="section-head">
       <p class="eyebrow">Then</p>
       <h2 id="hour-title">Your first steps</h2>
-      <p>Three small steps once you have the files and LaTeX is installed. <a href="docs/get-started.md">Get started</a> walks through each. Already writing? <a href="#guide-title">Jump to your stage</a>.</p>
+      <p>Three small steps once you have the files and LaTeX is installed. <a href="docs/get-started.md">Get started</a> walks through each. Already writing? <a href="#guide-title">Jump to what you need</a>.</p>
     </div>
     <ol class="steps" role="list">
       <li>
@@ -201,14 +201,14 @@ $-- -narrow version when it exists (timeline in scripts/build_site.py).
 $if(timeline.narrow)$
         <source media="(max-width: 600px)" srcset="$timeline.narrow$"$if(timeline.narrow_width)$ width="$timeline.narrow_width$" height="$timeline.narrow_height$"$endif$>
 $endif$
-        <img src="$timeline.src$"$if(timeline.width)$ width="$timeline.width$" height="$timeline.height$"$endif$ loading="lazy" alt="Timeline of a thesis or dissertation, with the guide page for each step: 1, decide (Why LaTeX for your thesis?); 2, set up (Get started, and Bring your draft if you have one); 3, write (Writing basics and Citations); 4, share drafts with your advisor (Workflows); 5, preliminary formatting review before you defend (Submitting); 6, defend; 7, submit (Submitting). Any time you are stuck, Fixing problems and How do I…? help at every step.">
+        <img src="$timeline.src$"$if(timeline.width)$ width="$timeline.width$" height="$timeline.height$"$endif$ loading="lazy" alt="Timeline of a thesis or dissertation, with the guide page for each step: 1, decide (How it works); 2, set up (Get started, and Bring your draft if you have one); 3, write (Writing basics and Citations); 4, share drafts with your advisor (Going further); 5, preliminary formatting review before you defend (Submitting); 6, defend; 7, submit (Submitting). Any time you are stuck, Fixing problems and How do I…? help at every step.">
       </picture>
     </figure>
 $-- Help at your level: one card per stage of NAV in scripts/build_site.py
-$-- (Start, Write, Fix and finish, Go further), in the same order. Each card's
+$-- (Core path, Go further), in the same order. Each card's
 $-- page list comes from stages.<stage name>; quick is "How do I…?". The
 $-- card's stage says when you need its pages, so no TAGS pills here.
-    <h3 class="guide-list-title" id="guide-title">Jump to your stage</h3>
+    <h3 class="guide-list-title" id="guide-title">Jump to what you need</h3>
     <ul class="guide-list" role="list">
       <li class="card help-card">
         <svg class="doodle" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
@@ -220,37 +220,15 @@ $-- card's stage says when you need its pages, so no TAGS pills here.
             <path class="ln" d="M11.76 19.61C13.36 19.33 15.02 19.11 16.64 19.22S19.86 19.78 21.42 20.26M11.84 25.2C13.43 25.04 15.05 24.9 16.65 24.99S19.84 25.37 21.39 25.78M12.18 30.81C14.24 30.45 16.43 30.65 18.46 31.19M30.13 20.2C31.69 19.82 33.3 19.55 34.89 19.48S38.12 19.57 39.71 19.79M30.51 25.77C33.55 25.17 36.72 25.14 39.79 25.47"/>
           </g>
         </svg>
-        <p class="kicker">Start</p>
+        <p class="kicker">Core path</p>
         <div class="help-text">
-          <h3>New here</h3>
-          <p>Compile the sample, add your details, or bring an existing draft.</p>
+          <h3>Follow the path</h3>
+          <p>Get the files, write, cite, fix errors, and submit.</p>
         </div>
         <ul role="list">
-$for(stages.start)$
+$for(stages.core_path)$
           <li><a href="$it.href$">$it.label$</a></li>
 $endfor$
-        </ul>
-      </li>
-      <li class="card help-card">
-        <svg class="doodle" viewBox="0 0 52 52" aria-hidden="true" focusable="false">
-          <g class="dd">
-            <path class="w-blue" d="M11.11 11.35C13.27 11.3 15.43 11.32 17.6 11.26S21.92 11.04 24.08 10.95S28.41 10.82 30.57 10.71S34.89 10.41 37.05 10.34C37.01 12.79 37.18 15.23 37.29 17.68S37.59 22.56 37.72 25.01S37.94 29.9 38.08 32.34S38.48 37.22 38.54 39.67S38.57 44.57 38.46 47.01C36.25 46.99 34.04 47.1 31.83 47.09S27.41 47.02 25.2 46.97S20.78 46.8 18.57 46.79S14.15 46.89 11.94 46.94C11.83 42.98 11.94 39.02 11.86 35.07S11.57 27.16 11.45 23.21S11.15 15.3 11.11 11.35Z"/>
-            <path d="M7.17 8.94C9.54 8.83 11.92 8.8 14.29 8.71S19.04 8.47 21.41 8.38S26.17 8.3 28.54 8.18S33.28 7.86 35.65 7.64M34.78 6.84C34.74 9.4 34.7 11.97 34.77 14.53S35.04 19.65 35.16 22.21S35.35 27.34 35.49 29.9S35.88 35.01 35.98 37.57S36.12 42.7 36.08 45.26M36.65 44.55C35.05 44.56 33.44 44.59 31.83 44.54S28.63 44.28 27.03 44.25S23.81 44.31 22.21 44.3S19 44.18 17.39 44.2S14.18 44.35 12.58 44.39S9.37 44.43 7.76 44.45M9.39 45.84C9.44 41.64 9.5 37.43 9.43 33.23S9.13 24.82 9 20.62S8.65 12.22 8.67 8.01"/>
-            <path class="ln" d="M13.55 16.66C16.24 16.51 18.94 16.56 21.64 16.48S27.04 16.41 29.73 16.22M13.84 22.5C15.61 22.38 17.39 22.43 19.16 22.44S22.71 22.54 24.49 22.53S28.03 22.36 29.81 22.35M14.03 28.27C17.36 28.21 20.71 28.45 24.04 28.3"/>
-            <path class="f-butter-strong" d="M30.29 45.22C30.52 42.89 30.6 40.54 30.84 38.21C32.95 35.27 34.84 32.17 36.79 29.11S40.64 22.97 42.53 19.88C44.55 21.21 46.53 22.62 48.6 23.87C47.64 25.42 46.6 26.92 45.64 28.47S43.83 31.64 42.87 33.18S40.83 36.21 39.83 37.73S37.87 40.81 36.86 42.33C34.71 43.37 32.52 44.34 30.29 45.22Z"/>
-            <path d="M30.84 38.21C32.82 39.62 34.85 40.96 36.86 42.33M39.98 24.16C41.94 25.5 43.91 26.82 45.88 28.15"/>
-          </g>
-        </svg>
-        <p class="kicker">Write</p>
-        <div class="help-text">
-          <h3>Writing chapters</h3>
-          <p>Add chapters, citations, tables, equations, figures, and code.</p>
-        </div>
-        <ul role="list">
-$for(stages.write)$
-          <li><a href="$it.href$">$it.label$</a></li>
-$endfor$
-          <li><a href="docs/writing.md#helpers-for-common-tasks">Tools for common tasks</a></li>
         </ul>
       </li>
       <li class="card help-card">
@@ -266,18 +244,16 @@ $endfor$
             <path d="M32.63 35.7C33.88 36.99 35.17 38.24 36.45 39.51M36.27 39.53C37.24 38.31 38.11 37.02 39.06 35.78S40.99 33.34 41.94 32.11"/>
           </g>
         </svg>
-        <p class="kicker">Fix and finish</p>
+        <p class="kicker">Stuck?</p>
         <div class="help-text">
-          <h3>Fix a problem</h3>
-          <p>Fix an error, find an answer, or check your final PDF.</p>
+          <h3>Find an answer</h3>
+          <p>Look up a task, or ask for help.</p>
         </div>
         <ul role="list">
-$for(stages.fix_and_finish)$
-          <li><a href="$it.href$">$it.label$</a></li>
-$endfor$
 $if(quick)$
           <li><a href="$quick.href$">$quick.label$</a></li>
 $endif$
+          <li><a href="docs/troubleshooting.md#ask-for-help">Ask for help</a></li>
         </ul>
       </li>
       <li class="card help-card">
@@ -290,8 +266,8 @@ $endif$
         </svg>
         <p class="kicker">Go further</p>
         <div class="help-text">
-          <h3>Share and review</h3>
-          <p>Review drafts, back up, get technical help, or change a setting.</p>
+          <h3>Optional extras</h3>
+          <p>Why LaTeX, an existing draft, sharing, backups, and settings.</p>
         </div>
         <ul role="list">
 $for(stages.go_further)$

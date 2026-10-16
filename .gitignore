@@ -1,4 +1,4 @@
-# Where things live: docs/project/README.md ("Where things live").
+# Where things live: docs/project/maintenance.md.
 # Rule of thumb: sources are tracked; anything a script or CI can rebuild is not.
 
 # Build outputs. CI rebuilds the PDF, website, previews, and starter ZIP.

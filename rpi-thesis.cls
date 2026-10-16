@@ -211,7 +211,7 @@
 
 % ---------------------------------------------------------------------------
 % 10. Your thesis settings: \thesissetup{...} and \committeemember in
-%     metadata.tex. Every key is listed in docs/advanced.md.
+%     metadata.tex. Every key is in docs/going-further.md.
 % ---------------------------------------------------------------------------
 \ExplSyntaxOn
 \tl_new:N \g_rpi_title_tl

@@ -49,25 +49,21 @@ HOME_DESCRIPTION = (
 # and every page list come from here; the landing page's "Help at your level"
 # cards (site/index.html) list each stage's pages from here too.
 NAV = [
-    ("Start", [
-        ("why-latex", "Why LaTeX for your thesis?", False),
+    ("Core path", [
         ("get-started", "Get started", True),
-        ("bring-your-draft", "Bring your draft", False),
-    ]),
-    ("Write", [
-        ("how-it-works", "How it works", False),
         ("writing", "Writing basics", True),
         ("citations", "Citations", True),
-    ]),
-    ("Fix and finish", [
         ("troubleshooting", "Fixing problems", True),
         ("submission", "Submitting", True),
     ]),
     ("Go further", [
-        ("workflows", "Workflows", False),
-        ("advanced", "Advanced use", False),
+        ("how-it-works", "How it works", False),
+        ("bring-your-draft", "Bring your draft", False),
+        ("going-further", "Going further", False),
     ]),
 ]
+# The first stage is the numbered road most visitors follow; the sidebar numbers
+# only its pages (site.css), and the previous/next links follow NAV in order.
 GUIDE = [page for _, pages in NAV for page in pages]  # the same pages, in one list
 # Quick answers: a guide page outside the stages and the previous/next chain.
 # It sits above the stages in the sidebar, last in the header, and in the
@@ -79,12 +75,12 @@ QUICK = ("how-do-i", "How do I…?", True)
 # list re-wrap. The landing-page cards leave tags out for the same reason.
 # Tag -> (CSS class in site.css, pages). Every guide page has exactly one tag.
 TAGS = {
-    "Start here": ("start", ["why-latex"]),
-    "Need now": ("now", ["get-started", "writing", "citations"]),
+    "Start here": ("start", ["get-started"]),
+    "Need now": ("now", ["writing", "citations"]),
     "If you have a draft": ("draft", ["bring-your-draft"]),
     "When stuck": ("stuck", ["troubleshooting", "how-do-i"]),
     "Need later": ("later", ["submission"]),
-    "Optional": ("optional", ["how-it-works", "workflows", "advanced"]),
+    "Optional": ("optional", ["how-it-works", "going-further"]),
 }
 PAGE_TAGS = {page: (tag, css) for tag, (css, pages) in TAGS.items() for page in pages}
 SIDEBAR_TAGS = set()
@@ -145,7 +141,7 @@ REQUIRED_PREVIEWS = (
 # OFFLINE_CHEATSHEET, and the offline guide links there.
 CHEATSHEET_PDF = "downloads/rpi-thesis-cheatsheet.pdf"
 # The newest class file, at a permanent address: students update by replacing
-# their copy with this one (docs/workflows.md). Only the website carries it;
+# their copy with this one (docs/going-further.md). Only the website carries it;
 # --publish keeps it equal to the released class.
 CLASS_DOWNLOAD = "downloads/rpi-thesis.cls"
 OFFLINE_CHEATSHEET = "rpi-thesis-cheatsheet.pdf"

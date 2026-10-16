@@ -78,11 +78,11 @@ Check [what OGE commonly flags](#what-oge-commonly-flags), then complete this li
   needs: compare the version at the top of `rpi-thesis.cls` (also printed in
   the compile log) with the toolkit's [changelog](../CHANGELOG.md), and read
   its **Changes your PDF?** notes
-  ([update safely](workflows.md#update-the-formatting-safely)).
+  ([update safely](going-further.md#update-the-formatting-safely)).
 
 A successful compile proves only that LaTeX made a PDF. Archive the final
 source, the exact PDF you submitted, and your permission documents in two
-places ([back up your work](workflows.md#back-up-your-work)).
+places ([back up your work](going-further.md#back-up-your-work)).
 
 ## Official resources
 

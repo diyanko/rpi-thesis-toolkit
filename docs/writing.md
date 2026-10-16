@@ -58,7 +58,7 @@ Use at most four levels (`\chapter` to `\subsubsection`).
 for each kind of heading. The starter's own convention is CAPITALS for
 chapter and appendix titles, matching its built-in titles (CONTENTS,
 REFERENCES), so type them that way unless you choose another consistent case
-([advanced recipes](advanced.md)). For sections and captions, pick sentence
+([redefine the names](going-further.md#not-yet-covered)). For sections and captions, pick sentence
 case ("Results of the field study") or title case ("Results of the Field
 Study") and never mix them. To change the reference-list title, add
 `\renewcommand{\referencesname}{References}` to `preamble.tex`.
@@ -366,8 +366,8 @@ third-party services whose terms can change.
 | Find a symbol I can draw | [Detexify](#find-a-symbols-command) |
 | Make a flowchart or schematic | [Diagram tools](#draw-a-diagram) |
 | Add a chart from research data | [Export a plot](#export-a-chart-or-convert-an-image) |
-| Include source code | [Code listing example](advanced.md#add-code-to-an-appendix) |
-| Convert a document or image file | [Conversion help](workflows.md#ask-for-a-file-conversion) |
+| Include source code | [Code listing example](going-further.md#add-code-to-an-appendix) |
+| Convert a document or image file | [Conversion help](going-further.md#ask-for-a-file-conversion) |
 | Get unstuck on a tricky technical step | [An AI assistant](#ask-an-ai-assistant) |
 
 ### Make a table from a spreadsheet
@@ -455,7 +455,7 @@ than reconstructing values from a screenshot.
 Have an SVG or another image format? Export PDF or PNG from the app that made
 it; renaming the file does not convert it. Keep photos and scans sharp enough
 for print, and inspect labels and cropping afterwards. Need the steps?
-[Describe the conversion you want](workflows.md#ask-for-a-file-conversion).
+[Describe the conversion you want](going-further.md#ask-for-a-file-conversion).
 
 ### Ask an AI assistant
 
@@ -487,5 +487,5 @@ paste only the table, equation, or figure into the template's examples (never
 another document's preamble, and don't change `rpi-thesis.cls`), and share only
 material you're comfortable sending to that service.
 
-More: [AI for technical help](workflows.md#use-ai-for-technical-help). Stuck?
+More: [AI for technical help](going-further.md#use-ai-for-technical-help). Stuck?
 See [fixing problems](troubleshooting.md).

@@ -33,57 +33,21 @@ offline reading, and the cheat sheet (no account needed). Prefer Overleaf?
 **[Open the starter in Overleaf](https://www.overleaf.com/docs?snip_uri=https%3A%2F%2Fgithub.com%2Fdiyanko%2Frpi-thesis-toolkit%2Freleases%2Fdownload%2Fv0.4.0%2Frpi-thesis-overleaf-v0.4.0.zip)**. The
 [get-started guide](docs/get-started.md) covers both your computer and Overleaf.
 
-## Make your first change
-
-1. Compile **`main.tex`** once, unchanged. (To *compile* is to turn your
-   files into a PDF.) You should see the sample PDF, with a placeholder box
-   where the RPI seal goes.
-2. Add the seal: download it from RPI and save it as `assets/rpi-seal.jpg`
-   ([how to add the seal](assets/README.md)).
-3. Open **`metadata.tex`** and fill in your title, name, degree, department,
-   graduation date, and committee.
-4. Compile again and check the title page.
-5. Replace the text in `frontmatter/abstract.tex` and `chapters/01-introduction.tex`.
-6. Keep going with [writing basics](docs/writing.md).
-
-## What's where
-
-| File or folder | What it holds |
-| --- | --- |
-| `main.tex` | The file you compile; sets the order of sections |
-| `metadata.tex` | Your name, degree, committee, and graduation date |
-| `frontmatter/`, `chapters/`, `appendices/` | Your writing |
-| `figures/` | Your images |
-| `references.bib` | Your sources |
-| `preamble.tex` | Citation style and extra packages (add-ons for LaTeX) |
-| `rpi-thesis.cls` | Formatting rules (you normally never edit this) |
-| `assets/` | The RPI seal, which you download yourself ([how to add it](assets/README.md)) |
-| `cheatsheet/` | A one-page printable reference |
-
-Write on your computer in any LaTeX editor, or in your browser with
-Overleaf (nothing to install); every route runs the same programs on the
-same files. The guide's steps use VS Code with the LaTeX Workshop extension,
-which this starter sets up, and also cover TeXShop, TeXworks, TeXstudio, other
-editors, and the command line if you prefer it ([choose an editor](docs/get-started.md#other-editors-and-the-command-line)).
-More detail in [how it works](docs/how-it-works.md).
-
 ## Guide
 
 The guide has four stages. Start at the top, or go straight to what you need.
 
-- **Start:** [Why LaTeX for your thesis?](docs/why-latex.md) (what it does
-  for you, and the honest costs) · [Get started](docs/get-started.md) (your
+- **Start:** [Get started](docs/get-started.md) (your
   computer or Overleaf, first compile, your first hour) · [Bring your draft](docs/bring-your-draft.md)
   (from Markdown, Google Docs, Word, a paper, or RPI's official LaTeX template)
-- **Write:** [How it works](docs/how-it-works.md) (files, compiling, and a
-  suggested workflow) · [Writing basics](docs/writing.md) (headings, figures, tables,
+- **Write:** [How it works](docs/how-it-works.md) (why LaTeX and its honest costs, files,
+  compiling, and a suggested workflow) · [Writing basics](docs/writing.md) (headings, figures, tables,
   equations) · [Citations](docs/citations.md) (Zotero, styles)
 - **Fix and finish:** [Fixing problems](docs/troubleshooting.md) (errors and
   getting help) · [Submitting](docs/submission.md) (the path to graduation and
   final checks)
-- **Go further:** [Workflows](docs/workflows.md) (advisor review, both
-  your computer and Overleaf, backups, updates, AI help) ·
-  [Advanced use](docs/advanced.md) (every setting and build command)
+- **Go further:** [Going further](docs/going-further.md) (advisor review, computer and
+  Overleaf, backups, updates, AI help, every setting and build command)
 
 Looking for one task? [How do I…?](docs/how-do-i.md) links each common task
 to the section that answers it.
@@ -93,7 +57,7 @@ to the section that answers it.
 Questions, bugs, tips, and ideas are all welcome, whichever way suits you:
 the [help and feedback form](docs/troubleshooting.md#ask-for-help) (no
 account needed), a GitHub issue, or a pull request, including one built with
-an AI assistant. [CONTRIBUTING.md](CONTRIBUTING.md#pick-the-way-that-suits-you)
+an AI assistant. [CONTRIBUTING.md](CONTRIBUTING.md#three-ways-to-help)
 walks through each.
 
 ## Privacy

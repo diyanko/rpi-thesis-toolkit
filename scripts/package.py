@@ -86,7 +86,7 @@ STUDENT_README = """\
 4. Put your details in metadata.tex, then write in chapters/.
 
 Formatting lives in rpi-thesis.cls. To update the formatting later, follow
-"Update the formatting safely" in the guide (workflows page). During the beta,
+"Update the formatting safely" in the guide (Going further page). During the beta,
 a new version can change more than that one file; its changelog lists every
 other edit to make.
 
@@ -143,7 +143,7 @@ OVERLEAF_README = """\
 
 The full guide: {guide_url}
 To update the formatting later, follow "Update the formatting safely" in the
-guide (workflows page); the changelog lists any other files a version changes.
+guide (Going further page); the changelog lists any other files a version changes.
 This is a community project, not approved by RPI or the Office of Graduate
 Education. Check the current OGE requirements before you submit.
 """

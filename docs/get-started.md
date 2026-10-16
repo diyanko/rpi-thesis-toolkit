@@ -3,7 +3,7 @@
 No LaTeX experience needed. You will *compile* the sample thesis (turn its
 files into a PDF) with your name on it. Overleaf gets you there in minutes;
 installing LaTeX on your computer takes longer, often an hour or more, mostly
-waiting for a download. New to LaTeX? Skim [Why LaTeX for your thesis?](why-latex.md), or jump in.
+waiting for a download. Curious whether LaTeX suits you? See [why LaTeX](how-it-works.md#why-latex-for-a-thesis), or jump in.
 
 Have a draft? Do these steps first, then [bring your draft](bring-your-draft.md).
 Still drafting elsewhere? That is fine
@@ -28,7 +28,7 @@ and [Step 5](#step-5-make-it-yours)).
 Overleaf is the quickest start. Your own computer suits a full thesis (no
 compile limit, files stay with you). Either is your choice, not an OGE
 requirement, and you can
-[switch later](workflows.md#use-your-computer-and-overleaf).
+[switch later](going-further.md#use-your-computer-and-overleaf).
 
 ## Step 2: Get the files
 
@@ -48,7 +48,7 @@ release"). The landing page's computer card opens this step. -->
      a folder inside a folder.
    - **macOS:** double-click the ZIP (Safari may have done it already).
    - **OneDrive, iCloud Drive, or Dropbox:** set the folder to "Always keep on
-     this device" ([why](workflows.md#back-up-your-work)).
+     this device" ([why](going-further.md#back-up-your-work)).
 3. **Overleaf:** keep the ZIP as it is. (Safari unzipped it? Right-click the
    folder and choose **Compress**.)
 
@@ -172,7 +172,7 @@ fonts the PDF should match. Other editors don't read this starter's
   Or use the starter's helper, `python3 scripts/build.py` (on Windows,
   `py scripts/build.py`), which writes `build/main.pdf` and checks your setup
   with `--doctor`
-  ([build commands](advanced.md#build-commands)).
+  ([build commands](going-further.md#build-commands)).
 - **Online:** [Overleaf](#step-3b-overleaf-route).
 
 <details><summary>If you use TeXShop, TeXworks, or TeXstudio: step by step</summary>
@@ -294,7 +294,7 @@ Then list **every** approved committee member, one per line, with `[Chair]`
 ```
 
 Compile and check the title page. For an `&` in your title, type `\&`.
-Different degree name? See the [`degree-name` setting](advanced.md#all-thesis-settings).
+Different degree name? See the [`degree-name` setting](going-further.md#all-thesis-settings).
 
 ### Write, cite, and back up
 
@@ -305,7 +305,7 @@ Different degree name? See the [`degree-name` setting](advanced.md#all-thesis-se
 3. **Back up** off your computer: keep the folder in a cloud-synced folder
    (OneDrive, Google Drive, Dropbox, or iCloud) or a **private** GitHub
    repository. On Overleaf, download the source ZIP now and then
-   ([backups](workflows.md#back-up-your-work)).
+   ([backups](going-further.md#back-up-your-work)).
 
 ### Stuck on something technical?
 
@@ -313,7 +313,7 @@ An AI chat can explain an error or walk you through an install. It is
 optional, and for technical help only, never for writing your thesis. Give it
 your operating system and the first error, try one change at a time, keep
 your original, and don't paste confidential or unpublished material
-([more](workflows.md#use-ai-for-technical-help)).
+([more](going-further.md#use-ai-for-technical-help)).
 
 **Next step: [writing basics](writing.md)**, for chapters, figures, tables,
 and equations. Have a draft? [Bring one small section in](bring-your-draft.md)
