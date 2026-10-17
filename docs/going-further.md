@@ -509,7 +509,7 @@ does a setting name the class does not know.
 
 | Key | Values | Notes |
 | --- | --- | --- |
-| `title` | text, required | Printed in capitals. For math, write `\texorpdfstring{$\alpha$}{alpha}` so the PDF's title property (shown by PDF readers and library catalogs) reads as plain text |
+| `title` | text, required | Printed in capitals. Math needs one extra step, below the table |
 | `author` | text, required | |
 | `degree` | `doctoral` (default), `masters`, `engineering-doctorate` | Doctor of Philosophy, Master of Science, Doctor of Engineering |
 | `degree-name` | text (default: from `degree`) | Overrides the degree name shown; put it **after** `degree` |
@@ -520,6 +520,10 @@ does a setting name the class does not know.
 | `copyright-page` | `true`, `false` (default) | Adds the copyright page (ii) |
 | `list-of-tables` | `true` (default), `false` | `false` only if you have no tables |
 | `list-of-figures` | `true` (default), `false` | `false` only if you have no figures |
+
+**Math in the title:** write it as `\texorpdfstring{$\alpha$}{alpha}`. The
+first part is printed; the second is the plain text the PDF's title property
+shows (PDF readers and library catalogs read that).
 
 List committee members outside `\thesissetup`, one per line, in order:
 
