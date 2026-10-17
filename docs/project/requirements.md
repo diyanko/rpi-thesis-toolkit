@@ -164,8 +164,13 @@ citation.
 | `page-number-edge` Page-number baseline from the page edge (0.75 in) | 54 | `page-number-position` |
 | `heading-baseline` Level-1 heading first baseline below the top edge (the class's setting) | 84 | `heading-top` |
 | `heading-limit` Lowest level-1 heading baseline the browser checker accepts (1.33 in; this project's choice) | 96 | `heading-top` |
+| `paper-tolerance` Paper width and height accepted either way of the size above (this project's choice) | 0.5 | `page-size` |
+| `margin-tolerance` How far text may reach into a side margin before the browser checker flags it (this project's choice) | 1.5 | `page-size` |
+| `margin-band` Text this close to the top or bottom edge counts as a page number or running header (this project's choice) | 70 | `page-number-position` |
+| `page-number-tolerance` Page-number distance accepted either way of 0.75 in (0.05 in; this project's choice) | 3.6 | `page-number-position` |
+| `page-number-center` Page-number center accepted either way of the page center (half a digit; this project's choice) | 6 | `page-number-position` |
 
-<!-- TODO(verify): the 96 pt limit is this project's tolerance for the browser PDF checker, not a number from the manual. -->
+<!-- TODO(verify): the 96 pt limit and the tolerances (paper-tolerance, margin-tolerance, margin-band, page-number-tolerance, page-number-center) are this project's choices for the browser PDF checker (site/pdf-check/core.js), not numbers from the manual. -->
 
 ## Differences from RPI's official LaTeX template
 

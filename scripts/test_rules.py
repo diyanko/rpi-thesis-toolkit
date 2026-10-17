@@ -102,12 +102,10 @@ class RealMap(unittest.TestCase):
         rows = len(re.findall(r"(?m)^\| `[a-z0-9-]+` ", mapped))
         self.assertEqual(rows, len(rules.load()[0]) + len(rules.load()[1]))
 
-    def test_checker_citations_match_rules(self):
-        # site/pdf-check.js cites must stay identical to a row's Manual cell.
-        cites = {row["cite"] for row in rules.load()[0].values()}
-        script = (ROOT / "site/pdf-check.js").read_text(encoding="utf-8")
-        for cite in re.findall(r'\bcite2?: "([^"]+)"', script):
-            self.assertTrue(any(cite in full for full in cites), cite)
+    def test_checker_names_only_known_ids(self):
+        # site/pdf-check/: every rules: [...] and measure("...") id is a row of the map.
+        import build_site
+        self.assertEqual(build_site.checker_ids(), [])
 
     def test_embedded_json_is_inert_and_parses(self):
         block = rules.embed()

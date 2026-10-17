@@ -129,11 +129,20 @@ ALLOWED = {".html", ".css", ".svg", ".woff2"}  # plus fonts/*.txt, previews/*.pn
 # Online only: "commit=<SHA>" and "release=<RELEASE_TAG>", one per line. Every online
 # page also carries <meta name="rpi-thesis-build" content="SHA">; release.py reads both.
 BUILD_FILE = "build.txt"
-SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js", "pdf-check.js"}
-# Scripts that only one guide page loads: page -> script. pdf-check.js reads a
-# student's PDF in the browser (docs/check-pdf.md); every `cite: "..."` in it
-# must appear word for word in docs/project/requirements.md.
-PAGE_SCRIPTS = {"check-pdf": "pdf-check.js"}
+# The "Check your PDF" page (docs/check-pdf.md) reads a student's PDF in the
+# browser: ui.js (the page), core.js (the checks), and Mozilla's pdf.js, kept
+# unchanged with its license. The checks name rules as `rules: ["page-size"]`
+# and numbers as `measure("margin")`; every such id must be a row of
+# docs/project/requirements.md, whose rules and measurements the page carries
+# as JSON (rules.embed()). core.js says how to update pdf.js; its PDFJS_VERSION
+# must match the vendored files. The offline guide leaves all of these out
+# (browsers such as Chrome refuse to start the reader from a file: page) and
+# its check-pdf page links the website's checker instead.
+PDF_CHECK = ["pdf-check/ui.js", "pdf-check/core.js", "pdf-check/pdfjs/LICENSE",
+             "pdf-check/pdfjs/pdf.min.mjs", "pdf-check/pdfjs/pdf.worker.min.mjs"]
+SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js", *PDF_CHECK}
+# Scripts that only one guide page loads: page -> script.
+PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js"}
 # The release the website links: its version, tag (always "v" + version; beta status is
 # GitHub's pre-release flag, never part of the name), and ZIP names
 # (rpi-thesis-starter-v<version>.zip). The home page's "Get the starter" button downloads
@@ -517,6 +526,7 @@ class Site:
         config = json.loads(source_path("site/site.json").read_text(encoding="utf-8"))
         self.repo = config.get("repository_url", "").rstrip("/")
         self.url = "" if offline else config.get("site_url", "").rstrip("/")
+        self.site_url = config.get("site_url", "").rstrip("/")  # the offline check-pdf page links it
         # Cookie-less page counts on the website only; empty turns them off,
         # and the offline guide never counts anything.
         self.analytics = "" if offline else config.get("cloudflare_analytics_token", "")
@@ -552,8 +562,9 @@ class Site:
                        "site/copy.js": "copy.js",       # optional "Copy" buttons on code blocks
                        "site/viewer.js": "viewer.js",   # optional: full-size pictures open as a dialog
                        "site/theme.js": "theme.js",     # optional: saved System/Light/Dark appearance
-                       "site/search.js": "search.js",   # optional: offline section search
-                       "site/pdf-check.js": "pdf-check.js"}  # optional: "Check your PDF" page
+                       "site/search.js": "search.js"}   # optional: offline section search
+        if not offline:  # optional: "Check your PDF" page; online only (see PDF_CHECK)
+            self.assets.update({f"site/{name}": name for name in PDF_CHECK})
         self.starter_zip = ""
         if not offline and self.repo:
             version = RELEASE_VERSION
@@ -901,6 +912,22 @@ class Site:
 
         return re.sub(r"<h[1-6]\b[^>]*>.*?</h[1-6]>|<tr\b[^>]*>.*?</tr>", row, body, flags=re.S)
 
+    def offline_checker(self, body, source):
+        """The offline guide has no PDF checker (see PDF_CHECK): drop its form and
+        say where it runs, keeping the paragraph that points to the checklist."""
+        widget = re.compile(r'<div class="pdf-check" data-pdf-check\b.*?<div class="pdf-check-results"></div></div>\s*', re.S)
+        intro = re.compile(r'<p class="pdf-check-nojs" data-pdf-check-nojs>The checker needs JavaScript[^.]*\.')
+        if not self.site_url or not widget.search(body) or not intro.search(body):
+            self.errors.append(f"{source}: the offline guide replaces the checker form and the paragraph starting "
+                               "\"The checker needs JavaScript\" with a link to the website (site_url in "
+                               "site/site.json); keep both, or update offline_checker in scripts/build_site.py.")
+            return body
+        link = escape(self.site_url + "/guide/check-pdf.html", quote=True)
+        note = ('<p class="pdf-check-nojs">The checker runs on the toolkit\'s website, not in this offline copy '
+                f'of the guide: open <a href="{link}">Check your PDF</a> there. Your PDF still stays on your '
+                'computer.')
+        return intro.sub(lambda _: note, widget.sub("", body, count=1), count=1)
+
     def render(self, source):
         here = self.pages[source]
         if source == "site/index.html":
@@ -930,8 +957,10 @@ class Site:
             body = self.pictures(body, source, here)
             body = responsive_tables(body)
             body = keep_short_code(body)
-            if Path(source).stem in PAGE_SCRIPTS:  # the page script reads rules and measurements
+            if Path(source).stem in PAGE_SCRIPTS and not self.offline:  # the page script reads rules and measurements
                 body += rules.embed()
+            if Path(source).stem == "check-pdf" and self.offline:
+                body = self.offline_checker(body, source)
             # The PDF checker compares a PDF's class version with the release the website links.
             body = body.replace('data-pdf-check data-version=""', f'data-pdf-check data-version="{RELEASE_VERSION}"')
             # Keyboard users must also be able to pan long code lines without
@@ -1015,7 +1044,7 @@ class Site:
             values["updated"] = last_updated(source)
             if toc:
                 values["toc"] = toc
-            if Path(source).stem in PAGE_SCRIPTS:
+            if Path(source).stem in PAGE_SCRIPTS and not self.offline:
                 values["page_script"] = PAGE_SCRIPTS[Path(source).stem]
         if kind == "notfound":
             values["notfound"] = True
@@ -1368,16 +1397,38 @@ def build_site(destination=None, offline=False, previews=False, cheatsheet=False
     return destination
 
 
+def checker_ids(scripts=("pdf-check/core.js", "pdf-check/ui.js")):
+    """Problems with the rule and measurement ids the PDF checker names (PDF_CHECK):
+    each `rules: [...]` and `measure("...")` must be a row of the requirements map."""
+    known_rules, known_measures = rules.load()
+    problems, seen = [], 0
+    for script in scripts:
+        text = (SITE / script).read_text(encoding="utf-8")
+        named = [("rule", key, known_rules) for group in re.findall(r'\brules: \[([^\]]*)\]', text)
+                 for key in re.findall(r'"([^"]+)"', group)]
+        named += [("measurement", key, known_measures) for key in re.findall(r'\bmeasure\("([^"]+)"\)', text)]
+        seen += len(named)
+        for kind, key, known in named:
+            if key not in known:
+                problems.append(f"site/{script}: the {kind} id {key!r} is not in {rules.SOURCE}; use an id from "
+                                f"its {'Measurements table' if kind == 'measurement' else 'rule rows'}, or add the row there.")
+    if not seen:
+        problems.append("site/pdf-check/core.js names no rule or measurement ids; checker_ids in "
+                        "scripts/build_site.py no longer matches how the checks name them.")
+    return problems
+
+
 def build_into(destination, final, offline, previews, cheatsheet, publish, complete=False):
     """Write and check the site in `destination` (the staging folder); `final` is
     where it will end up."""
     site = Site(offline)
-    requirements = (ROOT / "docs/project/requirements.md").read_text(encoding="utf-8")
-    for script in set(PAGE_SCRIPTS.values()):
-        for cite in re.findall(r'\bcite2?: "([^"]+)"', (SITE / script).read_text(encoding="utf-8")):
-            if cite not in requirements:
-                site.errors.append(f"site/{script}: the citation {cite!r} is not in docs/project/requirements.md; "
-                                   "cite a manual section and page exactly as a row there gives it.")
+    site.errors.extend(checker_ids())
+    checks = (SITE / "pdf-check/core.js").read_text(encoding="utf-8")
+    pinned = re.search(r'PDFJS_VERSION = "([^"]+)"', checks)
+    for name in PDF_CHECK[3:]:
+        if not pinned or f'"{pinned.group(1)}"' not in (SITE / name).read_text(encoding="utf-8"):
+            site.errors.append(f"site/{name} is not the pdf.js version in PDFJS_VERSION (site/pdf-check/core.js); "
+                               "set it to the version you vendored, as the comment there says.")
     if publish:
         version = class_version()[0]
         if version != RELEASE_VERSION:
