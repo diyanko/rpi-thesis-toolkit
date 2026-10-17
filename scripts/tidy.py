@@ -8,8 +8,10 @@ Usage:
 Fetches origin, then lists every local branch and worktree. A branch whose
 commits are all in origin/main is "merged". Rebase merges also count when
 every unique commit has the same patch in main and the final contents and
-modes of all changed paths still match main. With --apply its worktree (if
-clean) and the branch are deleted and `git worktree prune` runs. Never touched:
+modes of all changed paths still match main. A branch also counts when gh
+reports a merged pull request whose head commit is exactly the branch tip
+(without gh, or offline, only the git checks apply). With --apply its worktree
+(if clean) and the branch are deleted and `git worktree prune` runs. Never touched:
 main, the current worktree, anything with uncommitted, untracked, or ignored
 files other than build outputs (build/, dist/, .venv, __pycache__), locked
 worktrees, and unmerged branches (these are only listed).
@@ -22,6 +24,7 @@ Python standard library only.
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import shutil
 import subprocess
@@ -123,6 +126,33 @@ def rebased_into_main(branch: str) -> str | None:
     return tip if not a and not b and original == integrated else None
 
 
+def merged_pr(branch: str, tip: str) -> int | None:
+    """The number of a merged pull request whose head commit is exactly tip.
+    None when gh is missing, offline, or reports no such pull request."""
+    if not shutil.which("gh"):
+        return None
+    try:
+        res = subprocess.run(["gh", "pr", "list", "--head", branch, "--state", "merged",
+                              "--json", "number,headRefOid"],
+                             capture_output=True, text=True, timeout=30)
+        prs = json.loads(res.stdout) if res.returncode == 0 else []
+    except (OSError, subprocess.TimeoutExpired, ValueError):
+        return None
+    for pr in prs if isinstance(prs, list) else []:
+        if isinstance(pr, dict) and pr.get("headRefOid") == tip and isinstance(pr.get("number"), int):
+            return pr["number"]
+    return None
+
+
+def pr_merged(branch: str) -> tuple[str, int] | None:
+    """(tip, PR number) when GitHub merged a pull request at the branch tip."""
+    code, tip = git("rev-parse", "--verify", "refs/heads/" + branch)
+    if code:
+        return None
+    number = merged_pr(branch, tip)
+    return (tip, number) if number else None
+
+
 def delete_branch(branch: str, rebased_tip: str | None = None) -> tuple[int, str]:
     if rebased_tip is None:
         return git("branch", "-d", branch)
@@ -170,12 +200,18 @@ def main() -> int:
     if code:
         print(f"tidy: cannot list local branches: {branches}", file=sys.stderr)
         return 1
-    rebased = {}
+    why = {b: f"merged into {BASE}" for b in merged}
+    rebased = {}  # branch -> tip it may be deleted at (compare-and-delete)
     for branch in branches.split():
         if branch not in merged and branch not in PROTECTED:
             if tip := rebased_into_main(branch):
                 rebased[branch] = tip
                 merged.add(branch)
+                why[branch] = f"merged into {BASE}"
+            elif found := pr_merged(branch):
+                rebased[branch], number = found
+                merged.add(branch)
+                why[branch] = f"PR #{number} merged"
     _, top = git("rev-parse", "--show-toplevel")
     here = Path(top).resolve()
     _, current = git("branch", "--show-current")
@@ -198,7 +234,7 @@ def main() -> int:
         elif reason := keep_reason(str(path)):
             rows.append(["worktree", label, "keep", reason])
         else:
-            rows.append(["worktree", label, "remove", f"merged into {BASE}"])
+            rows.append(["worktree", label, "remove", why[branch]])
             if args.apply:
                 code, err = git("worktree", "remove", str(path))
                 if code:
@@ -211,7 +247,7 @@ def main() -> int:
         if b in wt_branches and b not in removed:
             continue  # already shown as a worktree row
         if b in merged:
-            rows.append(["branch", b, "delete", f"merged into {BASE}"])
+            rows.append(["branch", b, "delete", why[b]])
             if args.apply:
                 code, err = delete_branch(b, rebased.get(b))
                 if code:

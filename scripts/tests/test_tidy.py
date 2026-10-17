@@ -6,6 +6,7 @@
 import os
 import contextlib
 import io
+import json
 from pathlib import Path
 import subprocess
 import sys
@@ -22,7 +23,9 @@ def run(*args, cwd):
     subprocess.run(args, cwd=cwd, check=True, capture_output=True, text=True)
 
 
-class Keep(unittest.TestCase):
+class Repo(unittest.TestCase):
+    """A throwaway repository on main with one commit."""
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.repo = Path(self.tmp.name)
@@ -36,6 +39,22 @@ class Keep(unittest.TestCase):
 
     def tearDown(self):
         self.tmp.cleanup()
+
+    @contextlib.contextmanager
+    def in_repo(self):
+        original = tidy.git
+        with patch.object(tidy, "git", side_effect=lambda *a, cwd=None: original(*a, cwd=cwd or str(self.repo))):
+            yield
+
+    def set_up_origin(self):
+        remote = self.repo / "_local/origin.git"
+        remote.parent.mkdir(exist_ok=True)
+        run("git", "init", "--bare", "-q", str(remote), cwd=self.repo)
+        run("git", "remote", "add", "origin", str(remote), cwd=self.repo)
+        run("git", "push", "-qu", "origin", "main", cwd=self.repo)
+
+
+class Keep(Repo):
 
     def reason(self):
         return tidy.keep_reason(str(self.repo))
@@ -75,12 +94,6 @@ class Keep(unittest.TestCase):
         run("git", "update-ref", "refs/remotes/origin/main", "HEAD", cwd=self.repo)
         return tip
 
-    @contextlib.contextmanager
-    def in_repo(self):
-        original = tidy.git
-        with patch.object(tidy, "git", side_effect=lambda *a, cwd=None: original(*a, cwd=cwd or str(self.repo))):
-            yield
-
     def test_rebased_commits_and_final_files_are_recognized(self):
         tip = self.prepare_rebase_merge()
         with self.in_repo():
@@ -116,13 +129,6 @@ class Keep(unittest.TestCase):
             self.assertNotEqual(tidy.delete_branch("feature", tip)[0], 0)
         run("git", "show-ref", "--verify", "refs/heads/feature", cwd=self.repo)
 
-    def set_up_origin(self):
-        remote = self.repo / "_local/origin.git"
-        remote.parent.mkdir(exist_ok=True)
-        run("git", "init", "--bare", "-q", str(remote), cwd=self.repo)
-        run("git", "remote", "add", "origin", str(remote), cwd=self.repo)
-        run("git", "push", "-qu", "origin", "main", cwd=self.repo)
-
     def test_current_worktree_with_trailing_space_in_name_stays(self):
         self.prepare_rebase_merge()
         self.set_up_origin()
@@ -154,6 +160,104 @@ class Keep(unittest.TestCase):
         found = subprocess.run(["git", "show-ref", "--verify", "refs/heads/feature"],
                                cwd=self.repo, capture_output=True)
         self.assertNotEqual(found.returncode, 0)
+
+
+class MergedPullRequest(Repo):
+    """Branches GitHub merged with rewritten commits, with gh output mocked."""
+
+    @contextlib.contextmanager
+    def fake_gh(self, prs=None, code=0, error=None):
+        """Answer gh calls with prs (or fail); git calls run for real."""
+        real = subprocess.run
+        self.gh_calls = []
+
+        def fake(args, *rest, **kw):
+            if args[0] != "gh":
+                return real(args, *rest, **kw)
+            self.gh_calls.append(args)
+            if error:
+                raise error
+            return subprocess.CompletedProcess(args, code, json.dumps(prs or []), "")
+        with patch.object(tidy.shutil, "which", return_value="/usr/bin/gh"), \
+                patch.object(tidy.subprocess, "run", side_effect=fake):
+            yield
+
+    def prepare_rewritten_merge(self):
+        """feature changes a.txt; main gets the change with different content,
+        so neither git ancestry nor patch identity proves the merge."""
+        run("git", "checkout", "-qb", "feature", cwd=self.repo)
+        (self.repo / "a.txt").write_text("feature\n", encoding="utf-8")
+        run("git", "commit", "-qam", "feature", cwd=self.repo)
+        tip = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=self.repo, text=True).strip()
+        run("git", "checkout", "-q", "main", cwd=self.repo)
+        (self.repo / "a.txt").write_text("feature, edited on merge\n", encoding="utf-8")
+        run("git", "commit", "-qam", "feature (#7)", cwd=self.repo)
+        return tip
+
+    def tidy_apply(self):
+        out = io.StringIO()
+        with self.in_repo(), patch.object(sys, "argv", ["tidy.py", "--apply"]), \
+                contextlib.redirect_stdout(out):
+            self.assertEqual(tidy.main(), 0)
+        return out.getvalue()
+
+    def branch_exists(self):
+        return subprocess.run(["git", "show-ref", "--verify", "refs/heads/feature"],
+                              cwd=self.repo, capture_output=True).returncode == 0
+
+    def test_pr_head_must_equal_branch_tip(self):
+        tip = self.prepare_rewritten_merge()
+        with self.fake_gh([{"number": 7, "headRefOid": tip}]):
+            self.assertEqual(tidy.merged_pr("feature", tip), 7)
+        self.assertEqual(self.gh_calls[0][:4], ["gh", "pr", "list", "--head"])
+        with self.fake_gh([{"number": 7, "headRefOid": "0" * 40}]):
+            self.assertIsNone(tidy.merged_pr("feature", tip))
+
+    def test_missing_or_offline_gh_falls_back(self):
+        tip = self.prepare_rewritten_merge()
+        with patch.object(tidy.shutil, "which", return_value=None):
+            self.assertIsNone(tidy.merged_pr("feature", tip))
+        for kw in ({"code": 1}, {"error": OSError("no gh")},
+                   {"error": subprocess.TimeoutExpired("gh", 30)}):
+            with self.subTest(**{k: str(v) for k, v in kw.items()}), self.fake_gh(**kw):
+                self.assertIsNone(tidy.merged_pr("feature", tip))
+
+    def test_apply_removes_worktree_of_merged_pr_and_names_it(self):
+        tip = self.prepare_rewritten_merge()
+        self.set_up_origin()
+        worktree = self.repo / "_local/wt/feature"
+        run("git", "worktree", "add", "-q", str(worktree), "feature", cwd=self.repo)
+        with self.fake_gh(code=1):
+            self.assertIn("unmerged", self.tidy_apply())
+        self.assertTrue(worktree.exists())
+        (worktree / "a.txt").write_text("uncommitted\n", encoding="utf-8")
+        with self.fake_gh([{"number": 7, "headRefOid": tip}]):
+            self.assertIn("uncommitted changes", self.tidy_apply())
+        self.assertTrue(worktree.exists())
+        run("git", "checkout", "--", "a.txt", cwd=worktree)
+        with self.fake_gh([{"number": 7, "headRefOid": tip}]):
+            self.assertIn("PR #7 merged", self.tidy_apply())
+        self.assertFalse(worktree.exists())
+        self.assertFalse(self.branch_exists())
+
+    def test_commits_beyond_pr_head_keep_the_branch(self):
+        tip = self.prepare_rewritten_merge()
+        self.set_up_origin()
+        run("git", "checkout", "-q", "feature", cwd=self.repo)
+        (self.repo / "more.txt").write_text("more work\n", encoding="utf-8")
+        run("git", "add", "more.txt", cwd=self.repo)
+        run("git", "commit", "-qm", "more work", cwd=self.repo)
+        run("git", "checkout", "-q", "main", cwd=self.repo)
+        with self.fake_gh([{"number": 7, "headRefOid": tip}]):
+            self.assertIn("unmerged", self.tidy_apply())
+        self.assertTrue(self.branch_exists())
+
+    def test_compare_and_delete_at_pr_head(self):
+        tip = self.prepare_rewritten_merge()
+        run("git", "update-ref", "refs/heads/feature", "main", cwd=self.repo)
+        with self.in_repo():
+            self.assertNotEqual(tidy.delete_branch("feature", tip)[0], 0)
+        self.assertTrue(self.branch_exists())
 
 
 class Scratch(unittest.TestCase):
