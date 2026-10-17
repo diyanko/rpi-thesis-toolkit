@@ -737,8 +737,13 @@ class Site:
                     self.warnings.append(f"{source}: no preview picture named {name}")
                 return ""
             src = self.relative(here, f"previews/{name}.png")
-            return (f'<figure class="shot" tabindex="0" role="group" aria-label="PDF example, scroll horizontally if needed"><img src="{src}" alt="{escape(alt)}" '
-                    f'width="{size["width"]}" height="{size["height"]}" loading="lazy"></figure>')
+            # The alt text's first clause ("Chapter 1 after step 1") is also the
+            # visible caption, so similar pictures side by side can be told apart.
+            caption = re.match(r"(.+?)[.:](?:\s|$)", alt)
+            caption = f"<figcaption>{escape(caption[1])}</figcaption>" if caption else ""
+            return (f'<figure class="shot"><div class="shot-scroll" tabindex="0" role="region" '
+                    f'aria-label="PDF example, scroll sideways if needed"><img src="{src}" alt="{escape(alt)}" '
+                    f'width="{size["width"]}" height="{size["height"]}" loading="lazy"></div>{caption}</figure>')
 
         html = html.replace("<!-- class-demo -->", self.class_demo(here))
         return re.sub(r"<!--\s*preview ([\w-]+):(.*?)-->", figure, html, flags=re.S)

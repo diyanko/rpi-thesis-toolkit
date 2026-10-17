@@ -295,7 +295,7 @@ def run_dump(chrome: str, port: int, mode: str, dark: bool, budget_ms: int) -> d
 # so one light/dark pair per width reviews every component; other pages show
 # their first screen only.
 GALLERY = "project/components.html"
-GALLERY_HEIGHT = 7000   # the page is about 6850 px long at 390 px wide
+GALLERY_HEIGHT = 7600   # the page is about 7000 px long at 390 px wide
 
 
 def take_shot(chrome: str, port: int, page: str, width: int, dark: bool, dest: Path) -> str | None:

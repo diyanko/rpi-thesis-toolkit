@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 734" width="360" height="734" role="img" aria-labelledby="t d">
   <title id="t">How to read a .tex file</title>
-  <desc id="d">A few lines of a chapter file with six numbered pins. The lines are: \section{A figure}; Figure~\ref{fig:example} shows a layout described by Lamport~\cite{lamport1994}.; a comment line, % Ask my advisor about colors.; a blank line; The caption goes below the image.; then \begin{figure}[htbp], \includegraphics{example-image}, \caption{A sample image.}, \label{fig:example}, and \end{figure}. Pin 1: a command starts with a backslash, such as \section, \cite, or \caption. Pin 2: braces hold what the command acts on, such as the section title. Pin 3: \begin and \end wrap an environment, here a figure. Pin 4: % starts a note that LaTeX ignores; it never prints. Pin 5: a blank line starts a new paragraph. Pin 6: \cite{key} and \ref{label} are filled in for you when you compile, with the citation and the figure number. A handwritten note says everything else is your own writing.</desc>
+  <desc id="d">A few lines of a chapter file with six numbered pins. The lines are: \section{A figure}; Figure~\ref{fig:example} shows a layout described in~\parencite{lamport1994}.; a comment line, % Ask my advisor about colors.; a blank line; The caption goes below the image.; then \begin{figure}[htbp], \includegraphics{example-image}, \caption{A sample image.}, \label{fig:example}, and \end{figure}. Pin 1: a command starts with a backslash, such as \section, \parencite, or \caption. Pin 2: braces hold what the command acts on, such as the section title. Pin 3: \begin and \end wrap an environment, here a figure. Pin 4: % starts a note that LaTeX ignores; it never prints. Pin 5: a blank line starts a new paragraph. Pin 6: \parencite{key} and \ref{label} are filled in for you when you compile, with the citation and the figure number. A handwritten note says everything else is your own writing.</desc>
   <style>
     svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
       --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
@@ -51,7 +51,7 @@
   <path class="ln thin mut" d="M10 80 H350"/>
   <text class="code" x="44" y="104.3" style="font-size:12px" xml:space="preserve"><tspan class="k">\section</tspan><tspan class="k">{</tspan><tspan style="fill:var(--ink)" font-weight="700">A figure</tspan><tspan class="k">}</tspan></text>
   <text class="code" x="44" y="128.3" style="font-size:12px" xml:space="preserve"><tspan style="fill:var(--ink)">Figure~</tspan><tspan style="fill:var(--blue)" font-weight="700">\ref{fig:example}</tspan><tspan style="fill:var(--ink)"> shows a layout</tspan></text>
-  <text class="code" x="44" y="152.3" style="font-size:12px" xml:space="preserve"><tspan style="fill:var(--ink)">described by Lamport~</tspan><tspan style="fill:var(--blue)" font-weight="700">\cite{lamport1994}</tspan><tspan style="fill:var(--ink)">.</tspan></text>
+  <text class="code" x="44" y="152.3" style="font-size:12px" xml:space="preserve"><tspan style="fill:var(--ink)">described in~</tspan><tspan style="fill:var(--blue)" font-weight="700">\parencite{lamport1994}</tspan><tspan style="fill:var(--ink)">.</tspan></text>
   <text class="code" x="44" y="176.3" style="font-size:12px" xml:space="preserve"><tspan style="fill:var(--sage)" font-style="italic">% Ask my advisor about colors.</tspan></text>
   <text class="code" x="44" y="224.3" style="font-size:12px" xml:space="preserve"><tspan style="fill:var(--ink)">The caption goes below the image.</tspan></text>
   <text class="code" x="44" y="248.3" style="font-size:12px" xml:space="preserve"><tspan style="fill:var(--plum)" font-weight="700">\begin{figure}</tspan><tspan style="fill:var(--ink)">[htbp]</tspan></text>
@@ -84,7 +84,7 @@
   <path class="ln" d="M26.3 403.1C24.9 403.7 23.3 404 21.8 403.8S18.8 402.9 17.5 402S15.1 399.9 14.4 398.6S13.4 395.6 13.3 394.1S13.6 390.9 14.1 389.5S15.6 386.7 16.7 385.7S19.4 383.9 20.8 383.5S23.9 383 25.4 383.2S28.5 383.9 29.8 384.7S32.2 386.8 33.1 388S34.5 390.9 34.7 392.4S34.6 395.5 34.1 397S32.7 399.8 31.6 400.9S29.2 402.8 27.8 403.4S24.8 404.5 23.3 404.8"/>
   <text class="n mid" x="24" y="397.9" style="font-size:14px">1</text>
   <text x="44" y="398" style="font-size:14.5px" font-weight="700">A command starts with a backslash</text>
-  <text class="code" x="44" y="418" style="font-size:13px;fill:var(--terra);font-weight:700">\section  \cite  \caption</text>
+  <text class="code" x="44" y="418" style="font-size:13px;fill:var(--terra);font-weight:700">\section  \parencite  \caption</text>
   <circle class="w-butter" cx="24" cy="447" r="11"/>
   <path class="ln" d="M22.9 435.6C24.5 435.6 26.2 435.9 27.7 436.4S30.9 437.6 32.1 438.6S34.3 441.1 34.9 442.6S35.7 445.8 35.6 447.4S35.1 450.7 34.4 452.1S32.6 454.9 31.3 455.9S28.6 457.8 27 458.2S23.7 458.6 22.2 458.2S19 457.2 17.7 456.2S15.3 453.9 14.6 452.5S13.6 449.3 13.6 447.8S14 444.4 14.7 443S16.4 440.2 17.6 439.1S20.3 437 21.8 436.6S25 436.3 26.6 436.8"/>
   <text class="n mid" x="24" y="451.9" style="font-size:14px">2</text>
@@ -107,7 +107,7 @@
   <circle class="w-butter" cx="24" cy="645" r="11"/>
   <path class="ln" d="M33.7 647C33.5 649 32.7 651.1 31.4 652.6S28.1 655.4 26.2 655.9S22 656.3 20.1 655.7S16.4 653.7 15.1 652.2S12.8 648.6 12.4 646.6S12.5 642.4 13.2 640.5S15.5 636.9 17 635.7S20.8 633.7 22.8 633.6S27.1 634 28.8 634.9S32.2 637.5 33.2 639.2S34.6 643.1 34.7 645.1S34.1 649.3 33.4 651.2"/>
   <text class="n mid" x="24" y="649.9" style="font-size:14px">6</text>
-  <text x="44" y="650" style="font-size:14.5px" font-weight="700">\cite and \ref are filled in for you</text>
+  <text x="44" y="650" style="font-size:14.5px" font-weight="700">\parencite and \ref are filled in</text>
   <text class="s" x="44" y="670" style="font-size:13.5px">the citation and the number</text>
   <text class="hand" x="20" y="710" style="font-size:16.5px">Everything else is your own writing.</text>
 </svg>

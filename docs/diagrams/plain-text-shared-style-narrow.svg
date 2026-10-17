@@ -2,24 +2,49 @@
   <title id="t">Paste words without importing stray formatting</title>
   <desc id="d">Three stacked views show the same teaching text: Research question, Compare the samples., and Describe the result. Copied formatting mixes fonts, sizes and colors. Pasting as plain text keeps the words without those styles. Shared formatting uses one thesis style, with Research question marked as a heading. Keep the words. Leave stray styles behind. Add headings and emphasis in LaTeX.</desc>
   <style>
-    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45; --blue: #2b4d7a; --terra: #9e4526; }
+    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
+      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
+      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
     @media (prefers-color-scheme: dark) {
-      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8; --blue: #a3c0ea; --terra: #eda482; }
+      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
+        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
+        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
     }
-    .bg { fill: var(--bg); } .paper { fill: var(--card); }
-    .line { fill: none; stroke: var(--ink); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-    .arrow { fill: none; stroke: var(--blue); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 17px; }
-    .title { font-size: 24px; font-weight: 700; }
-    .label { font-size: 18px; font-weight: 700; }
-    .plain { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 15.5px; }
-    .thesis { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif; font-size: 18px; }
-    .note { fill: var(--muted); font-size: 16.5px; }
-  
-    .note { font-size:16px; } .plain { font-size:16px; } .code { font-size:14px; }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .k { fill: var(--terra); font-weight: 700; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .paper { fill: var(--card); } .highlight { fill: var(--blue-w); }
+    .line { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .soft { stroke: var(--muted); stroke-width: 1.6; }
+    .arrow { fill: none; stroke: var(--blue); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .title { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; fill: var(--terra); }
+    .label { font-weight: 700; }
+    .plain { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; }
+    .thesis { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; }
+    .note { fill: var(--muted); font-size: 16px; }
+    .chapter { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .selected { fill: var(--blue); font-weight: 700; }
   </style>
   <rect class="bg" width="360" height="610" rx="18"/>
-  <text x="20" y="28" class="title" style="font-size:21px">Pasting without stray styles</text>
+  <text x="20" y="28" class="title" style="font-size:20px">pasting without stray styles</text>
   <rect class="paper" x="12" y="48" width="336" height="138" rx="9"/>
   <path class="line" d="M23 48.4 Q173.28 46.9 337 48.5 Q348.6 48 348 60 Q347.2 117.0 348.4 174 Q348.2 186.8 336 186 Q180.0 187.1 23 185.6 Q11.1 186.5 12 174 Q12.8 117.0 11.6 60 Q11.3 47.8 23 48.4 Z"/>
   <text x="28" y="74" class="label" style="font-size:18px">Copied formatting</text>
