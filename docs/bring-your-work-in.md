@@ -1,19 +1,17 @@
 # Bring your work in
 
-Optional. Paste a section of your draft from Word, Google Docs, a
+Paste a section of your draft from Word, Google Docs, a
 spreadsheet, or a Markdown or plain-text file, and this page writes it as
 LaTeX for the starter: headings, paragraphs, bold and italics, simple lists,
 links, and tables. Special characters such as `%` and `&` get their
 backslash. The result is a first pass, not a finished chapter: read it next
 to your original. Move one section at a time and compile after each.
 
-Your text stays on your computer: the page converts it in your browser and
-never uploads it. Nothing in what you paste is loaded or run, not even
-pictures, and nothing is saved when you leave the page.
+<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page converts your text in your browser. Nothing in what you paste is loaded or run, not even pictures, and nothing is saved when you leave the page.</p>
 
 <div class="convert" data-convert hidden><fieldset class="convert-options"><legend>Start the LaTeX with</legend><label><input type="radio" name="convert-start" value="body" checked> <span>Part of a chapter: headings become <code>\section</code></span></label><label><input type="radio" name="convert-start" value="chapter"> <span>A new chapter: the first heading becomes <code>\chapter</code></span></label></fieldset><div class="convert-panes"><div class="convert-pane"><label class="convert-label" for="convert-input">Your text</label><textarea class="convert-input" id="convert-input" spellcheck="false" autocomplete="off" aria-describedby="convert-hint" placeholder="Paste or drop text here"></textarea><p class="convert-hint" id="convert-hint">From Word, Google Docs, Excel, Google Sheets, or a Markdown or text file.</p><p class="convert-actions"><button type="button" class="button button-secondary convert-example">Show an example</button> <button type="button" class="button button-secondary convert-clear">Clear</button></p></div><div class="convert-pane"><p class="convert-label" id="convert-output-label">LaTeX <span class="convert-source"></span></p><pre class="convert-output" aria-labelledby="convert-output-label"></pre><p class="convert-actions"><button type="button" class="button convert-copy" disabled>Copy</button> <button type="button" class="button button-secondary convert-download" disabled>Download .tex</button></p></div></div><p class="convert-status" role="status" aria-live="polite"></p><div class="convert-results"></div></div>
 
-<p class="convert-nojs" data-convert-nojs>The converter needs JavaScript, which is off or not available in this browser. The same steps by hand are under <a href="#without-the-converter">without the converter</a>.</p>
+<p class="convert-nojs tool-nojs" data-convert-nojs>The converter needs JavaScript, which is off or not available in this browser. The same steps by hand are under <a href="#without-the-converter">without the converter</a>.</p>
 
 <!-- TODO(verify): the readers follow the clipboard shapes Word, Google Docs, Excel, and Google Sheets are known to write, tested on synthetic samples; check them with text copied from current Word (Windows and macOS) and Google Docs. -->
 
