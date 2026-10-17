@@ -19,19 +19,24 @@ from release import Config, Net, NetworkError, ReleaseError
 
 CFG = Config("https://github.com/owner/toolkit", "https://owner.example.io/toolkit")
 OLD, NEW, NEWER = "1" * 40, "2" * 40, "3" * 40
-INTERFACE_TEXT = {name: f"% {name} as released\n" for name in release.INTERFACE}
+# Starter ZIP members outside the offline guide (a sample, not package.py's list).
+STARTER_TEXT = {name: f"% {name} as released\n" for name in (
+    "rpi-thesis.cls", "main.tex", "metadata.tex", "preamble.tex", "latexmkrc", "scripts/build.py",
+    ".vscode/settings.json", "README.md", "LICENSE.md")}
 
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def starter_zip(files):
+def starter_zip(files, guide="<p>guide</p>"):
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w") as archive:
         for name, text in files.items():
             archive.writestr(name, text)
-        archive.writestr("guide/index.html", "<p>guide</p>")
+        archive.writestr("guide/index.html", guide)
+        archive.writestr("START-HERE.html", guide)
+        archive.writestr("rpi-thesis-cheatsheet.pdf", guide)
     return buffer.getvalue()
 
 
@@ -55,6 +60,8 @@ class FakeWorld:
         self.site_timeline = []     # list of site dicts served on successive home-page looks
         self.next_id = 1
         self.requests = []
+        self.history = [OLD, NEW, NEWER]  # main's commits, oldest first
+        self.compare = {}           # (base, head) -> status, overriding history
 
     # -- state helpers
     def add_release(self, tag, commit, files=None, draft=False, digests=True):
@@ -74,7 +81,7 @@ class FakeWorld:
             entry["digest"] = "sha256:" + digest(data)
         return entry
 
-    def standard_release(self, tag, commit, root_files=INTERFACE_TEXT, **kw):
+    def standard_release(self, tag, commit, root_files=STARTER_TEXT, **kw):
         files = {f"rpi-thesis-starter-{tag}.zip": starter_zip(root_files),
                  f"rpi-thesis-overleaf-{tag}.zip": b"overleaf " + tag.encode(),
                  "rpi-thesis.cls": root_files["rpi-thesis.cls"].encode()}
@@ -87,7 +94,7 @@ class FakeWorld:
     def opener(self, request, timeout=None):
         url = request.full_url
         self.requests.append(url)
-        pending = self.failures.get(url)
+        pending = self.failures.get(url) or self.failures.get(url.split("?")[0])
         if pending:
             raise pending.pop(0)
         body = self.route(url)
@@ -99,6 +106,13 @@ class FakeWorld:
         api = CFG.api + "/"
         if url.startswith(api):
             path = url[len(api):]
+            if path.startswith("compare/"):
+                base, head = path[len("compare/"):].split("?")[0].split("...")
+                status = self.compare.get((base, head))
+                if status is None and base in self.history and head in self.history:
+                    order = self.history.index(head) - self.history.index(base)
+                    status = "ahead" if order > 0 else "behind" if order < 0 else "identical"
+                return json.dumps({"status": status}).encode() if status else None
             if path.startswith("releases?"):
                 page = int(path.rsplit("page=", 1)[1])
                 return json.dumps(self.releases[(page - 1) * 100:page * 100]).encode() if page else b"[]"
@@ -115,7 +129,7 @@ class FakeWorld:
             rel = self.find(tag)
             return self.downloads.get((tag, name)) if rel and not rel["draft"] else None
         if url.startswith(CFG.site):
-            path = url[len(CFG.site):]
+            path = url[len(CFG.site):].split("?")[0]
             if path == "" and self.site_timeline:
                 self.site = self.site_timeline.pop(0)
             return self.site.get(path)
@@ -165,24 +179,19 @@ class FakeWorld:
 
 class Base(unittest.TestCase):
     def setUp(self):
-        self.tmp = tempfile.TemporaryDirectory()
-        self.root = Path(self.tmp.name)
-        self.write_root(INTERFACE_TEXT)
+        self.built = dict(STARTER_TEXT)   # starter ZIP members built in this run
         self.world = FakeWorld()
+        self.logs = []
 
-    def tearDown(self):
-        self.tmp.cleanup()
-
-    def write_root(self, files):
-        for name, text in files.items():
-            path = self.root / name
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(text)
+    def live_site(self, commit):
+        self.world.site["build.txt"] = f"commit={commit}\nrelease=v0.6.0\n".encode()
 
     def decide(self, ref_type="branch", ref_name="main", sha=NEW, stage="build", rollback=False,
-               version="0.6.0"):
+               version="0.6.0", built=True, guide="<p>guide</p>"):
+        built = starter_zip(self.built, guide) if built else None
         return release.decide(self.world.net(), CFG, ref_type=ref_type, ref_name=ref_name, sha=sha,
-                              stage=stage, rollback=rollback, version=version, root=self.root)
+                              stage=stage, built=built, rollback=rollback, version=version,
+                              log=self.logs.append)
 
 
 class Versions(unittest.TestCase):
@@ -254,14 +263,71 @@ class MainGate(Base):
         self.assertTrue(self.decide(version="0.10.0").deploy)
 
     def test_interface_change_waits_for_release(self):
-        self.write_root({"metadata.tex": "% a new key\n"})
+        self.built["metadata.tex"] = "% a new key\n"
         decision = self.decide()
         self.assertFalse(decision.deploy)
         self.assertIn("metadata.tex", decision.reason)
 
     def test_class_change_waits_for_release(self):
-        self.write_root({"rpi-thesis.cls": "% changed\n"})
+        self.built["rpi-thesis.cls"] = "% changed\n"
         self.assertIn("rpi-thesis.cls", self.decide().reason)
+
+    def test_editor_settings_change_waits_for_release(self):
+        self.built[".vscode/settings.json"] = '{"latex-workshop.latex.recipes": []}\n'
+        decision = self.decide()
+        self.assertFalse(decision.deploy, decision)
+        self.assertIn(".vscode/settings.json", decision.reason)
+
+    def test_added_starter_file_waits_for_release(self):
+        self.built["chapters/04-new.tex"] = "% new\n"
+        self.assertIn("chapters/04-new.tex (not in the release)", self.decide().reason)
+
+    def test_removed_starter_file_waits_for_release(self):
+        del self.built["latexmkrc"]
+        self.assertIn("latexmkrc (removed since the release)", self.decide().reason)
+
+    def test_guide_and_cheat_sheet_changes_deploy(self):
+        self.assertTrue(self.decide(guide="<p>a fixed guide page</p>").deploy)
+
+    def test_missing_built_starter_fails(self):
+        with self.assertRaisesRegex(ReleaseError, "package.py"):
+            self.decide(built=False)
+
+    def test_missing_build_txt_is_first_deploy(self):
+        self.assertTrue(self.decide().deploy)
+        self.assertIn("first deploy", self.logs[-1])
+
+    def test_unreadable_build_txt_deploys_with_warning(self):
+        self.world.site["build.txt"] = b"garbage\n"
+        self.assertTrue(self.decide().deploy)
+        self.assertIn("::warning::", self.logs[-1])
+
+    def test_live_site_older_deploys(self):
+        self.live_site(OLD)
+        self.assertTrue(self.decide(stage="deploy").deploy)
+
+    def test_live_site_newer_is_not_replaced(self):
+        self.live_site(NEWER)  # main was reset under a deployed commit
+        decision = self.decide(stage="deploy")
+        self.assertFalse(decision.deploy)
+        self.assertIn("newer than", decision.reason)
+
+    def test_live_site_diverged_fails(self):
+        side = "4" * 40
+        self.live_site(side)
+        self.world.compare[(NEW, side)] = "diverged"
+        with self.assertRaisesRegex(ReleaseError, "not an ancestor"):
+            self.decide(stage="deploy")
+
+    def test_live_site_unknown_commit_fails(self):
+        self.live_site("5" * 40)
+        with self.assertRaisesRegex(ReleaseError, "does not know"):
+            self.decide(stage="deploy")
+
+    def test_build_txt_outage_fails(self):
+        self.world.failures[CFG.site + "build.txt"] = [urllib.error.URLError("dns")] * 4
+        with self.assertRaises(NetworkError):
+            self.decide(stage="deploy")
 
     def test_no_release_yet(self):
         self.world.releases.clear()
@@ -347,9 +413,32 @@ class TagGate(Base):
             self.decide("tag", "v0.6.0", stage="deploy")
 
     def test_release_starter_differs_fails(self):
-        self.world.standard_release("v0.6.0", NEW, root_files=dict(INTERFACE_TEXT, **{"main.tex": "x"}))
+        self.world.standard_release("v0.6.0", NEW, root_files=dict(STARTER_TEXT, **{"main.tex": "x"}))
         with self.assertRaisesRegex(ReleaseError, "main.tex"):
             self.decide("tag", "v0.6.0", stage="deploy")
+
+    def test_release_starter_differs_from_built_in_readme_fails(self):
+        self.world.standard_release("v0.6.0", NEW)
+        self.built["README.md"] = "generated differently\n"
+        with self.assertRaisesRegex(ReleaseError, "README.md"):
+            self.decide("tag", "v0.6.0", stage="deploy")
+
+    def test_build_stage_needs_no_built_starter(self):
+        self.assertTrue(self.decide("tag", "v0.6.0", stage="build", built=False).deploy)
+
+    def test_rerun_of_tag_does_not_replace_newer_guide(self):
+        # v0.6.0 released at OLD; main moved to NEW (guide fix, same version) and deployed it.
+        self.world.standard_release("v0.6.0", OLD)
+        self.live_site(NEW)
+        for stage in ("build", "deploy"):
+            decision = self.decide("tag", "v0.6.0", sha=OLD, stage=stage)
+            self.assertFalse(decision.deploy, decision)
+            self.assertIn("rollback: true", decision.reason)
+
+    def test_rollback_replaces_newer_guide(self):
+        self.world.standard_release("v0.6.0", OLD)
+        self.live_site(NEW)
+        self.assertTrue(self.decide("tag", "v0.6.0", sha=OLD, stage="deploy", rollback=True).deploy)
 
     def test_rerun_after_deploy_is_idempotent(self):
         self.world.standard_release("v0.6.0", NEW)
@@ -363,9 +452,9 @@ class Publish(Base):
     def setUp(self):
         super().setUp()
         self.world.refs[f"tags/{self.TAG}"] = NEW
-        self.files = {f"rpi-thesis-starter-{self.TAG}.zip": starter_zip(INTERFACE_TEXT),
+        self.files = {f"rpi-thesis-starter-{self.TAG}.zip": starter_zip(STARTER_TEXT),
                       f"rpi-thesis-overleaf-{self.TAG}.zip": b"overleaf",
-                      "rpi-thesis.cls": INTERFACE_TEXT["rpi-thesis.cls"].encode()}
+                      "rpi-thesis.cls": STARTER_TEXT["rpi-thesis.cls"].encode()}
 
     def publish(self, gh, sha=NEW):
         release.publish(self.world.net(), CFG, gh, tag=self.TAG, sha=sha, files=self.files,

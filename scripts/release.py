@@ -11,14 +11,21 @@
         Reads GITHUB_REF_TYPE, GITHUB_REF_NAME and GITHUB_SHA.
           main:  deploys only if this commit is still the tip of main, its
                  RELEASE_VERSION is the newest published release (by version
-                 number), and the starter interface (INTERFACE below) equals
-                 that release's starter ZIP. Guide-only changes deploy; class
-                 or starter changes wait for a release.
+                 number), and the starter ZIP built in this run equals that
+                 release's starter ZIP in every file except the offline guide
+                 and cheat sheet (GUIDE_ONLY below). Guide-only changes
+                 deploy; class or starter changes wait for a release.
           tag:   deploys only if the tag is RELEASE_TAG and no newer release
                  is published; --rollback (workflow_dispatch input) allows an
                  older tag on purpose. At --stage deploy the release must
                  exist, its tag must point at this commit, and its starter ZIP
-                 must match this checkout.
+                 must match the one built in this run.
+          both:  the website must not already serve a newer commit: if the
+                 live build.txt names another commit, GitHub's compare API
+                 must show that commit is an ancestor of this one (unless
+                 --rollback). A missing build.txt (first deploy) is allowed.
+        The starter ZIP built in this run is read from --starter (default
+        dist/rpi-thesis-starter-vX.Y.Z.zip).
 
     python3 scripts/release.py publish
         Create the GitHub pre-release for the tag, or resume one: checks the
@@ -54,12 +61,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from build_site import RELEASE_VERSION  # noqa: E402
+from build_site import OFFLINE_CHEATSHEET, RELEASE_VERSION  # noqa: E402
 
-# The files that define what a student's thesis compiles against. The website
-# may deploy from main only while these equal the released starter ZIP's copies.
-INTERFACE = ("rpi-thesis.cls", "main.tex", "metadata.tex", "preamble.tex", "latexmkrc",
-             "scripts/build.py")
+# Starter ZIP members the website may change without a release: the offline
+# guide and the cheat sheet. Every other member (thesis files, class, build
+# recipe, editor settings, README, LICENSE, ...) must be byte-identical to the
+# released starter ZIP's before main deploys.
+GUIDE_ONLY = ("guide/", "START-HERE.html", OFFLINE_CHEATSHEET)
 # Build identity the published website carries (scripts/build_site.py --publish).
 BUILD_FILE = "build.txt"          # lines "commit=<sha>" and "release=vX.Y.Z"
 BUILD_META = "rpi-thesis-build"   # <meta name="rpi-thesis-build" content="<sha>"> in index.html
@@ -211,21 +219,64 @@ def tag_commit(net, cfg, tag):
     raise ReleaseError(f"tag {tag}: too many nested tag objects")
 
 
-def interface_differences(zip_bytes, tag, root=ROOT):
-    """Names in INTERFACE whose copy in the release's starter ZIP differs from root's."""
+def starter_members(zip_bytes, what):
+    """{name: bytes} of a starter ZIP, without the offline guide and cheat sheet."""
     try:
         archive = zipfile.ZipFile(io.BytesIO(zip_bytes))
-        names = set(archive.namelist())
-        differ = []
-        for name in INTERFACE:
-            if name not in names:
-                differ.append(f"{name} (not in the release)")
-            elif archive.read(name) != (root / name).read_bytes():
-                differ.append(name)
-        return differ
+        return {name: archive.read(name) for name in archive.namelist()
+                if not name.endswith("/") and not name.startswith(GUIDE_ONLY)}
     except (zipfile.BadZipFile, zlib.error, EOFError) as error:
-        raise ReleaseError(f"the starter ZIP of {tag} is not a readable ZIP ({error}); "
-                           "the download or the release asset is corrupted") from None
+        raise ReleaseError(f"{what} is not a readable ZIP ({error}); "
+                           "the download or the file is corrupted") from None
+
+
+def starter_differences(released, built, tag):
+    """Members (guide and cheat sheet aside) that differ between the release's
+    starter ZIP and the one built in this run, including added and removed ones."""
+    old = starter_members(released, f"the starter ZIP of release {tag}")
+    new = starter_members(built, "the starter ZIP built in this run")
+    differ = [f"{name} (not in the release)" for name in sorted(new.keys() - old.keys())]
+    differ += [f"{name} (removed since the release)" for name in sorted(old.keys() - new.keys())]
+    differ += [name for name in sorted(old.keys() & new.keys()) if old[name] != new[name]]
+    return differ
+
+
+def live_commit(net, cfg):
+    """The commit the website serves now (build.txt): a sha, "unreadable", or None
+    if there is no build.txt. The query string asks the CDN for a fresh copy."""
+    build = net.get(f"{cfg.site}{BUILD_FILE}?gate={int(time.time())}")
+    if build is None:
+        return None
+    match = re.search(rb"^commit=([0-9a-f]{40})\s*$", build, re.M)
+    return match[1].decode() if match else "unreadable"
+
+
+def newer_live_site(net, cfg, sha, rollback, log=print):
+    """None when this build may replace the live website, else a Decision not to
+    deploy. Raises when the history needs a person to look."""
+    live = live_commit(net, cfg)
+    if live is None:
+        log(f"::notice::{cfg.site}{BUILD_FILE} is missing; treating this as the first deploy")
+        return None
+    if live == "unreadable":
+        log(f"::warning::{cfg.site}{BUILD_FILE} has no commit=<sha> line; deploying anyway")
+        return None
+    if live == sha or rollback:
+        return None
+    found = net.json(f"{cfg.api}/compare/{sha}...{live}?per_page=1")
+    if found is None:
+        raise ReleaseError(f"the website serves build {live[:12]}, which GitHub does not know; "
+                           "check the Pages deployments by hand before deploying")
+    status = found.get("status")
+    if status in ("behind", "identical"):
+        return None
+    if status == "ahead":
+        return Decision(False, f"the website already serves {live[:12]}, which is newer than "
+                        f"{sha[:12]}; an older build never replaces it. To roll back on purpose, "
+                        "run the workflow on the release tag with rollback: true.")
+    raise ReleaseError(f"the website serves {live[:12]}, which is not an ancestor of {sha[:12]} "
+                       f"(compare status: {status}): history was rewritten, or a commit outside "
+                       "main deployed. Deploy from the tip of main, or roll back on purpose.")
 
 
 # Deployment gate ---------------------------------------------------------------
@@ -238,8 +289,26 @@ class Decision:
         return f"Decision({self.deploy}, {self.reason!r})"
 
 
-def decide(net, cfg, *, ref_type, ref_name, sha, stage, rollback=False, version=RELEASE_VERSION,
-           root=ROOT):
+def decide(net, cfg, *, ref_type, ref_name, sha, stage, built=None, rollback=False,
+           version=RELEASE_VERSION, log=print):
+    """built: the starter ZIP built in this run (bytes); needed except at a tag's build stage."""
+    decision = release_rules(net, cfg, ref_type=ref_type, ref_name=ref_name, sha=sha, stage=stage,
+                             built=built, rollback=rollback, version=version)
+    if decision.deploy:
+        return newer_live_site(net, cfg, sha, rollback, log) or decision
+    return decision
+
+
+def compare_starter(net, cfg, tag, built):
+    """Differences between the release's starter ZIP and built, or None if the release has none."""
+    if built is None:
+        raise ReleaseError(f"dist/{asset_names(tag)[0]} from this run is missing; run "
+                           "scripts/package.py (the deploy job downloads the starter-zip artifact)")
+    released = net.get(cfg.asset_url(tag, asset_names(tag)[0]))
+    return None if released is None else starter_differences(released, built, tag)
+
+
+def release_rules(net, cfg, *, ref_type, ref_name, sha, stage, built, rollback, version):
     mine, tag = parse_version(version), "v" + version
     if ref_type == "tag":
         if ref_name != tag:
@@ -259,12 +328,12 @@ def decide(net, cfg, *, ref_type, ref_name, sha, stage, rollback=False, version=
         if commit != sha:
             raise ReleaseError(f"tag {tag} now points at {commit}, but this run built {sha}; "
                                "run the workflow again for the tag as it is now")
-        starter = net.get(cfg.asset_url(tag, asset_names(tag)[0]))
-        if starter is None:
+        differ = compare_starter(net, cfg, tag, built)
+        if differ is None:
             raise ReleaseError(f"release {tag} has no {asset_names(tag)[0]}")
-        differ = interface_differences(starter, tag, root)
         if differ:
-            raise ReleaseError(f"release {tag}'s starter ZIP differs from this commit: {', '.join(differ)}")
+            raise ReleaseError(f"release {tag}'s starter ZIP differs from the one built in this run: "
+                               f"{', '.join(differ)}")
         return Decision(True, f"{tag} is published from this commit" + (" (rollback)" if rollback else ""))
 
     if rollback:
@@ -283,14 +352,13 @@ def decide(net, cfg, *, ref_type, ref_name, sha, stage, rollback=False, version=
     tip = main_tip(net, cfg)
     if tip != sha:
         return Decision(False, f"main has moved on to {tip[:12]}; the run for that commit deploys")
-    starter = net.get(cfg.asset_url(tag, asset_names(tag)[0]))
-    if starter is None:
+    differ = compare_starter(net, cfg, tag, built)
+    if differ is None:
         return Decision(False, f"release {tag} has no {asset_names(tag)[0]} yet; its tag run deploys")
-    differ = interface_differences(starter, tag, root)
     if differ:
-        return Decision(False, f"{', '.join(differ)} differ from release {tag}; "
+        return Decision(False, f"the starter ZIP differs from release {tag}'s in {', '.join(differ)}; "
                         "release a new version to publish these changes")
-    return Decision(True, f"main matches the starter interface of release {tag}")
+    return Decision(True, f"main's starter ZIP matches release {tag}'s (guide and cheat sheet aside)")
 
 
 # Publishing the release -----------------------------------------------------------
@@ -490,6 +558,7 @@ def main(argv=None):
     parser.add_argument("--stage", choices=["build", "deploy"], default="build")
     parser.add_argument("--rollback", action="store_true")
     parser.add_argument("--dist", type=Path)
+    parser.add_argument("--starter", type=Path, help="gate: the starter ZIP built in this run")
     args = parser.parse_args(argv)
     tag = "v" + RELEASE_VERSION
     try:
@@ -502,8 +571,10 @@ def main(argv=None):
             ref_name = os.environ.get("GITHUB_REF_NAME") or "main"
             sha = os.environ.get("GITHUB_SHA") or subprocess.run(
                 ["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+            starter = args.starter or ROOT / "dist" / asset_names(tag)[0]
+            built = starter.read_bytes() if starter.is_file() else None
             decision = decide(net, cfg, ref_type=ref_type, ref_name=ref_name, sha=sha,
-                              stage=args.stage, rollback=args.rollback)
+                              stage=args.stage, built=built, rollback=args.rollback)
             output("deploy", "true" if decision.deploy else "false")
             print(("Deploying: " if decision.deploy else "::notice::Not deploying: ") + decision.reason)
         elif args.command == "publish":
