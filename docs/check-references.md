@@ -83,7 +83,8 @@ record in Zotero and export again; see [auto-export cautions](citations.md#set-i
   `{NASA}` and `{Python}`. Protect proper names, rather than every word.
 - [ ] Literal `&`, `%`, `_`, and `#` in text fields are escaped as `\&`,
   `\%`, `\_`, and `\#`. URL and DOI fields handle these characters
-  separately. Braces balance, and accented names remain readable in UTF-8.
+  separately. Mathematical expressions such as `$L_p$` keep their mathematical
+  syntax. Braces balance, and accented names remain readable in UTF-8.
 - [ ] The chosen style prints the information you need. A library's abstract,
   keywords, or attachment path normally does not appear in the reference
   list. `doi=false` or `url=false` in the style options can hide fields.
