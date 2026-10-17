@@ -33,7 +33,11 @@ BUILD_FILE = "build.txt"
 # its check-pdf page links the website's checker instead.
 PDF_CHECK = ["pdf-check/ui.js", "pdf-check/core.js", "pdf-check/pdfjs/LICENSE",
              "pdf-check/pdfjs/pdf.min.mjs", "pdf-check/pdfjs/pdf.worker.min.mjs"]
-SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js", "share.js", *PDF_CHECK}
+# The "Bring your work in" page (docs/bring-your-work-in.md) converts pasted
+# text to LaTeX in the browser: ui.js (the page) and core.js (the readers and
+# the LaTeX writer). Both run in the offline guide too.
+CONVERT = ["convert/ui.js", "convert/core.js"]
+SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js", "share.js", *PDF_CHECK, *CONVERT}
 # The one PDF the website may hold: the cheat sheet (no RPI artwork), built
 # from cheatsheet/cheatsheet.tex with --previews or --cheatsheet. The offline
 # guide never holds it; package.py puts it at the ZIP root, beside guide/, as

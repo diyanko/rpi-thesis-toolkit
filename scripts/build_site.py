@@ -38,7 +38,7 @@ from urllib.parse import quote, unquote, urlsplit
 import rules  # scripts/rules.py: the OGE rules in docs/project/requirements.md
 
 from common import ROOT, class_version, site_config
-from site_checks import (BUILD_FILE, CHEATSHEET_PDF, CLASS_DOWNLOAD, PDF_CHECK, SearchSections,
+from site_checks import (BUILD_FILE, CHEATSHEET_PDF, CLASS_DOWNLOAD, CONVERT, PDF_CHECK, SearchSections,
                          checker_ids, search_route_problems, validate)
 
 SITE = ROOT / "site"
@@ -64,8 +64,12 @@ NAV = [
         ("how-it-works", "How it works", False),
         ("bring-your-draft", "Bring your draft", False),
         ("going-further", "Going further", False),
-        ("check-pdf", "Check your PDF", False),
         ("reviewer-checklist", "Reviewer checklist", False),
+    ]),
+    # Only tools that exist; each is also linked from the page where it helps most.
+    ("Tools", [
+        ("bring-your-work-in", "Bring your work in", False),
+        ("check-pdf", "Check your PDF", False),
     ]),
 ]
 # The first stage is the numbered road most visitors follow; the sidebar numbers
@@ -83,7 +87,7 @@ QUICK = ("how-do-i", "How do I…?", True)
 TAGS = {
     "Start here": ("start", ["get-started"]),
     "Need now": ("now", ["writing", "citations"]),
-    "If you have a draft": ("draft", ["bring-your-draft"]),
+    "If you have a draft": ("draft", ["bring-your-draft", "bring-your-work-in"]),
     "When stuck": ("stuck", ["troubleshooting", "how-do-i"]),
     "Need later": ("later", ["submission"]),
     "Optional": ("optional", ["how-it-works", "going-further", "check-pdf", "reviewer-checklist"]),
@@ -109,7 +113,9 @@ PROJECT = {
 # Footer "Ask for help" and "Suggest a change" links: the one place the help/feedback form URL lives.
 FEEDBACK = ("docs/troubleshooting.md", "Ask for help")
 # Scripts that only one guide page loads: page -> script.
-PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js"}
+PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js", "bring-your-work-in": "convert/ui.js"}
+# Page scripts that also run in the offline guide (file: pages).
+OFFLINE_SCRIPTS = {"bring-your-work-in"}
 # The release the website links: its version, tag (always "v" + version; beta status is
 # GitHub's pre-release flag, never part of the name), and ZIP names
 # (rpi-thesis-starter-v<version>.zip). The home page's "Get the starter" button downloads
@@ -433,6 +439,7 @@ class Site:
                        "site/share.js": "share.js"}     # optional: the home page's "Share this guide" button
         if not offline:  # optional: "Check your PDF" page; online only (see PDF_CHECK)
             self.assets.update({f"site/{name}": name for name in PDF_CHECK})
+        self.assets.update({f"site/{name}": name for name in CONVERT})  # "Bring your work in", online and offline
         self.starter_zip = self.overleaf = ""
         if not offline and self.repo:
             version = RELEASE_VERSION
@@ -780,7 +787,7 @@ class Site:
             body = self.pictures(body, source, here)
             body = responsive_tables(body)
             body = keep_short_code(body)
-            if Path(source).stem in PAGE_SCRIPTS and not self.offline:  # the page script reads rules and measurements
+            if Path(source).stem == "check-pdf" and not self.offline:  # the page script reads rules and measurements
                 body += rules.embed()
             if Path(source).stem == "check-pdf" and self.offline:
                 body = self.offline_checker(body, source)
@@ -835,7 +842,8 @@ class Site:
             ],
             # Footer "Tools" column: the optional tools, after the guide's main pages.
             "tools": [entry for entry in (guide_item(name, label) for name, label in
-                      (("bring-your-draft", "Bring your draft"), ("check-pdf", "Check your PDF"),
+                      (("bring-your-draft", "Bring your draft"), ("bring-your-work-in", "Bring your work in"),
+                       ("check-pdf", "Check your PDF"),
                        ("reviewer-checklist", "Reviewer checklist"))) if entry],
             "edition": escape(self.edition),
             "feedback_url": self.relative(here, self.feedback),
@@ -875,7 +883,7 @@ class Site:
             values["updated"] = last_updated(source)
             if toc:
                 values["toc"] = toc
-            if Path(source).stem in PAGE_SCRIPTS and not self.offline:
+            if Path(source).stem in PAGE_SCRIPTS and (not self.offline or Path(source).stem in OFFLINE_SCRIPTS):
                 values["page_script"] = PAGE_SCRIPTS[Path(source).stem]
         if kind == "notfound":
             values["notfound"] = True
