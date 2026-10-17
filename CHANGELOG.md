@@ -10,6 +10,16 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
 
+## Unreleased
+
+**Changes your PDF?** No.
+
+- **Bring your work in:** a new tool in the guide's Tools group. Paste text
+  from Word, Google Docs, or Markdown, or a table from Excel or Sheets, and
+  get LaTeX ready for a chapter: headings, emphasis, lists, links, special
+  characters, and tables with a caption. It runs in your browser; nothing is
+  uploaded.
+
 ## 0.8.1 (beta), 17 Oct 2026
 
 Published as the pre-release `v0.8.1`.
