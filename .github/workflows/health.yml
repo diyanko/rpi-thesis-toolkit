@@ -3,7 +3,9 @@ name: Monthly health check
 # Once a month (and on demand): external links, RPI's thesis pages
 # (scripts/health.py), and a full verify on the newest TeX Live image, so a
 # TeX Live update that breaks the starter shows up before students hit it.
-# Anything that needs a person opens (or updates) one issue labelled "health".
+# Anything that needs a person opens (or updates) one issue labelled "health";
+# a later run that finds nothing closes that issue. The RPI page watch's own
+# tests (scripts/tests/test_health.py) run inside verify's unit tests.
 
 on:
   schedule:
@@ -11,6 +13,10 @@ on:
   workflow_dispatch:
 
 permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
 
 jobs:
   links-and-rpi-pages:
@@ -21,8 +27,6 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Test the RPI page watch (local server only)
-        run: python3 scripts/test_health.py
       - name: Check links and RPI's pages
         run: python3 scripts/health.py | tee "$RUNNER_TEMP/report.md"; exit "${PIPESTATUS[0]}"
         shell: bash
@@ -51,6 +55,7 @@ jobs:
           v=$(sed -n "s/^  PANDOC_VERSION: '\(.*\)'/\1/p" .github/workflows/build.yml)
           curl -fsSL -o /tmp/pandoc.deb "https://github.com/jgm/pandoc/releases/download/$v/pandoc-$v-1-amd64.deb"
           dpkg -i /tmp/pandoc.deb
+          pandoc --version | head -1
       - name: Verify on the newest TeX Live
         run: python3 scripts/verify.py full --keep-going
       - name: Keep the verify logs
@@ -86,10 +91,33 @@ jobs:
           } > body.md
           gh label create health --repo "$GITHUB_REPOSITORY" --color BFD4F2 \
             --description "Found by the monthly health check" 2>/dev/null || true
-          open=$(gh issue list --repo "$GITHUB_REPOSITORY" --label health --state open --json number --jq '.[0].number')
+          open=$(gh issue list --repo "$GITHUB_REPOSITORY" --label health --state open \
+            --author app/github-actions --json number,title \
+            --jq '[.[] | select(.title == "Monthly health check needs attention")][0].number // empty')
           if [ -n "$open" ]; then
             gh issue comment "$open" --repo "$GITHUB_REPOSITORY" --body-file body.md
           else
             gh issue create --repo "$GITHUB_REPOSITORY" --label health \
               --title "Monthly health check needs attention" --body-file body.md
           fi
+
+  close:
+    needs: [links-and-rpi-pages, newest-texlive]
+    if: ${{ success() }}
+    runs-on: ubuntu-24.04
+    permissions:
+      issues: write
+    steps:
+      # Only the issue the report job opens (its title, by GitHub Actions);
+      # health issues people open stay open.
+      - name: Close the open health-check issue, if any
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          for open in $(gh issue list --repo "$GITHUB_REPOSITORY" --label health --state open \
+              --author app/github-actions --json number,title \
+              --jq '.[] | select(.title == "Monthly health check needs attention") | .number'); do
+            gh issue close "$open" --repo "$GITHUB_REPOSITORY" --reason completed \
+              --comment "The health check passed again: $RUN"
+          done

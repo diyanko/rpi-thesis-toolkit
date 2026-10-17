@@ -2,16 +2,19 @@
 """Tests for scripts/rules.py: rule ids in the requirements map and the
 {{rule:...}} / {{cite:...}} references that guide pages use. Stdlib only.
 
-    python3 scripts/test_rules.py
+    python3 scripts/tests/test_rules.py
 """
 import json
 import re
+import shutil
 import unittest
 from pathlib import Path
+import sys
 
-import rules
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # scripts/
+import rules  # noqa: E402
+from common import ROOT  # noqa: E402
 
-ROOT = Path(__file__).resolve().parent.parent
 MAP = """# Map
 
 ### Page numbers
@@ -58,6 +61,7 @@ class Parse(unittest.TestCase):
             rules.parse(MAP.replace("54 | `number-place`", "54 | `nowhere`"))
 
 
+@unittest.skipUnless(shutil.which("pandoc"), "Pandoc not installed")
 class Expand(unittest.TestCase):
     found = rules.parse(MAP)[0]
 
@@ -102,6 +106,7 @@ class Expand(unittest.TestCase):
 
 
 class RealMap(unittest.TestCase):
+    @unittest.skipUnless(shutil.which("pandoc"), "Pandoc not installed")
     def test_every_guide_reference_names_a_rule(self):
         for path in sorted((ROOT / "docs").glob("*.md")):
             _, problems, _ = rules.expand(path.read_text(encoding="utf-8"), f"docs/{path.name}")
@@ -120,18 +125,18 @@ class RealMap(unittest.TestCase):
 
     def test_checker_names_only_known_ids(self):
         # site/pdf-check/core.js: every id in RULE_IDS and MEASURE_IDS is a row of the map.
-        import build_site
-        self.assertEqual(build_site.checker_ids(), [])
+        import site_checks
+        self.assertEqual(site_checks.checker_ids(), [])
 
     def test_checker_ids_cannot_slip_past(self):
         # Review: single quotes or another layout made the old scan find nothing to check.
-        import build_site
+        import site_checks
         good = 'var RULE_IDS = ["page-size"];\nvar MEASURE_IDS = ["margin"];\n'
-        self.assertEqual(build_site.checker_ids(text=good), [])
+        self.assertEqual(site_checks.checker_ids(text=good), [])
         for text in (good.replace('"page-size"', '"nowhere"'), good.replace('"margin"', "'margin'"),
                      good.replace('var RULE_IDS = ["page-size"];\n', ""), good + good):
             with self.subTest(text=text):
-                self.assertTrue(build_site.checker_ids(text=text))
+                self.assertTrue(site_checks.checker_ids(text=text))
 
     def test_embedded_json_is_inert_and_parses(self):
         block = rules.embed()

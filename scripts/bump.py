@@ -13,23 +13,22 @@ docs/project/maintenance.md ("Make a release").
 import re
 import sys
 from datetime import date
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+from common import CLASS_LINE, ROOT
 
 
 def plan(new, today):
     """Validate every source and prepare its replacement before changing any file."""
     source = (ROOT / "rpi-thesis.cls").read_text(encoding="utf-8")
-    match = re.search(r"\\ProvidesClass\{rpi-thesis\}\[\d{4}/\d\d/\d\d v(\d+\.\d+\.\d+)", source)
-    if not match:
+    found = list(CLASS_LINE.finditer(source))
+    if len(found) != 1 or not re.fullmatch(r"\d+\.\d+\.\d+", found[0][4]):
         raise ValueError("rpi-thesis.cls: no class version found")
-    old = match[1]
+    match, old = found[0], found[0][4]
     if tuple(map(int, new.split("."))) <= tuple(map(int, old.split("."))):
         raise ValueError(f"Choose a version newer than {old}; {new} would reuse or lower the release version.")
+    prepared = {"rpi-thesis.cls": source[:match.start()]
+                 + f"\\ProvidesClass{{rpi-thesis}}[{today:%Y/%m/%d} v{new}" + source[match.end():]}
     edits = [
-        ("rpi-thesis.cls", r"(\\ProvidesClass\{rpi-thesis\}\[)\d{4}/\d\d/\d\d v[\d.]+",
-         rf"\g<1>{today:%Y/%m/%d} v{new}"),
         ("main.tex", r"(\\documentclass\{rpi-thesis\}\[)\d{4}/\d\d/\d\d\]", rf"\g<1>{today:%Y/%m/%d}]"),
         ("scripts/build_site.py", r'RELEASE_VERSION = "[\d.]+"', f'RELEASE_VERSION = "{new}"'),
         *[(name, rf"v{re.escape(old)}(/|%2F)rpi-thesis-(starter|overleaf)-v{re.escape(old)}",
@@ -38,7 +37,6 @@ def plan(new, today):
         ("CHANGELOG.md", r"^## Unreleased[ \t]*$",
          f"## {new} (beta), {today.day} {today:%b %Y}\n\nPublished as the pre-release `v{new}`."),
     ]
-    prepared = {}
     for name, pattern, replacement in edits:
         text, count = re.subn(pattern, replacement, (ROOT / name).read_text(encoding="utf-8"), flags=re.M)
         if not count or (name not in {"README.md", "docs/get-started.md"} and count != 1):

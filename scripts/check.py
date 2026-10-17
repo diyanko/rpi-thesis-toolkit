@@ -15,9 +15,8 @@ import tempfile
 try:
     from pypdf import PdfReader
     from pypdf.generic import ContentStream
-except ImportError:
-    sys.exit("check.py needs pypdf. Run python3 scripts/verify.py (it finds .venv), or install it:"
-             " python3 -m venv .venv && .venv/bin/pip install pypdf")
+except ImportError:  # main() says how to install it; --help works without it
+    PdfReader = ContentStream = None
 from build import ROOT, build
 from rules import load as load_rules
 
@@ -411,13 +410,6 @@ def run_rejection(tmp, case):
 
 
 def main():
-    check_legacy_copy()
-    seal = any((ROOT / name).is_file() for name in SEAL_FILES)
-    print(
-        "Seal: "
-        + ("present (title page shows it)" if seal else "absent (title page shows the placeholder)"),
-        flush=True,
-    )
     cases = [
         ("masters", "pdflatex", "masters", "MASTER OF SCIENCE", False, False),
         (
@@ -440,6 +432,16 @@ def main():
         help="Run a selected PDF case; can be repeated",
     )
     args = parser.parse_args()
+    if PdfReader is None:
+        sys.exit("check.py needs pypdf. Run python3 scripts/verify.py (it finds .venv), or install it:"
+                 " python3 -m venv .venv && .venv/bin/pip install pypdf")
+    check_legacy_copy()
+    seal = any((ROOT / name).is_file() for name in SEAL_FILES)
+    print(
+        "Seal: "
+        + ("present (title page shows it)" if seal else "absent (title page shows the placeholder)"),
+        flush=True,
+    )
     if args.case:
         cases = [case for case in cases if case[0] in args.case]
     rejections = [

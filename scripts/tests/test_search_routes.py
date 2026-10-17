@@ -4,13 +4,13 @@
 The patterns in `logRoutes` use only syntax that JavaScript and Python read
 the same way, so they are run here with Python's re module.
 
-    python3 scripts/test_search_routes.py
+    python3 scripts/tests/test_search_routes.py
 """
 from pathlib import Path
 import re
 import unittest
 
-SCRIPT = (Path(__file__).resolve().parent.parent / "site/search.js").read_text(encoding="utf-8")
+SCRIPT = (Path(__file__).resolve().parents[2] / "site/search.js").read_text(encoding="utf-8")
 BLOCK = re.search(r"var logRoutes = \[(.*?)\n  \];", SCRIPT, flags=re.S).group(1)
 ROUTES = [(re.compile(m.group(1), re.I), m.group(2))
           for m in re.finditer(r'\[/(.+?)/i,\s*\["([^"]+)"', BLOCK)]

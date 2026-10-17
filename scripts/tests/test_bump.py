@@ -9,6 +9,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # scripts/
 import bump
 
 

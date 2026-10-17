@@ -19,6 +19,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     name: ${{ matrix.name }}
@@ -42,20 +46,27 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          # mirror.ctan.org redirects to a random mirror, and one may answer with a
-          # bot-check page instead of the file. Try a few until a real ZIP arrives,
-          # then install from that same mirror.
-          $mirrors = @("https://mirror.ctan.org", "https://mirrors.mit.edu/CTAN",
-                       "https://ctan.math.illinois.edu", "https://mirrors.rit.edu/CTAN")
+          # A mirror may answer with a bot-check page instead of the file. Try
+          # concrete mirrors until a real ZIP arrives, then install from that
+          # same mirror. mirror.ctan.org comes last: it redirects each request to
+          # a random mirror, so the installer would not read from the one that
+          # served the ZIP; when it is used, install from the concrete address
+          # it redirected to.
+          $mirrors = @("https://mirrors.mit.edu/CTAN", "https://ctan.math.illinois.edu",
+                       "https://mirrors.rit.edu/CTAN", "https://mirror.ctan.org")
           $repo = $null
           foreach ($m in $mirrors) {
             try {
-              Invoke-WebRequest "$m/systems/texlive/tlnet/install-tl.zip" -OutFile install-tl.zip -MaximumRetryCount 2
+              $reply = Invoke-WebRequest "$m/systems/texlive/tlnet/install-tl.zip" -OutFile install-tl.zip -MaximumRetryCount 2 -PassThru
               Expand-Archive install-tl.zip -DestinationPath C:\tl-installer -Force
-              $repo = "$m/systems/texlive/tlnet"; break
+              # The address that actually served the ZIP, after any redirect.
+              $served = $reply.BaseResponse.RequestMessage.RequestUri.AbsoluteUri
+              if (-not $served) { $served = "$m/systems/texlive/tlnet/install-tl.zip" }
+              $repo = $served -replace '/install-tl\.zip$', ''; break
             } catch { Write-Host "Mirror $m failed: $($_.Exception.Message.Split([Environment]::NewLine)[0])" }
           }
           if (-not $repo) { throw "No CTAN mirror served install-tl.zip" }
+          Write-Host "Installing from $repo"
           $dir = Get-ChildItem C:\tl-installer -Directory | Select-Object -First 1
           @"
           selected_scheme scheme-full
