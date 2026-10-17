@@ -137,7 +137,7 @@ PAGE_SCRIPTS = {"check-pdf": "pdf-check.js"}
 # from it; README.md and docs/get-started.md link the same files by hand, and the build
 # stops if they differ. --publish also requires the class version to match, so the site
 # never describes files the download does not contain (docs/project/maintenance.md).
-RELEASE_VERSION = "0.6.0"
+RELEASE_VERSION = "0.7.0"
 RELEASE_TAG = "v" + RELEASE_VERSION
 # Pictures the guide pages and landing page ask for; --publish fails without them.
 REQUIRED_PREVIEWS = (
