@@ -538,7 +538,7 @@ def biber_errors(output, since, latexmk_text=""):
 COMMON = "Common messages, "
 KNOWN_PROBLEMS = [
     {
-        "id": "biber-mac", "pattern": "lipo", "when": "any",
+        "id": "biber-mac", "pattern": "biber[^\\n]*\\blipo\\b|\\blipo\\b[^\\n]*biber", "when": "any",
         "message": "biber ... lipo (on a Mac)",
         "means": "Biber, the bibliography tool, could not start: older Mac builds of Biber"
                  " fail on newer macOS. Your thesis is fine.",
