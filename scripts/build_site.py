@@ -72,10 +72,9 @@ NAV = [
     ("Tools", [
         ("settings-builder", "Settings builder", False),
         ("bring-your-work-in", "Bring your work in", False),
+        ("check-references", "Check your references", False),
         ("explain-my-error", "Explain my error", False),
         ("check-pdf", "Check your PDF", False),
-        ("check-references", "Check your references", False),
-        ("settings-builder", "Settings builder", False),
     ]),
 ]
 # The first stage is the numbered road most visitors follow; the sidebar numbers
