@@ -37,7 +37,8 @@ PDF_CHECK = ["pdf-check/ui.js", "pdf-check/core.js", "pdf-check/pdfjs/LICENSE",
 # text to LaTeX in the browser: ui.js (the page) and core.js (the readers and
 # the LaTeX writer). Both run in the offline guide too.
 CONVERT = ["convert/ui.js", "convert/core.js"]
-SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js", "share.js", *PDF_CHECK, *CONVERT}
+SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js", "share.js", *PDF_CHECK, *CONVERT,
+                "settings/core.js", "settings/ui.js", "settings/data.js"}
 # The one PDF the website may hold: the cheat sheet (no RPI artwork), built
 # from cheatsheet/cheatsheet.tex with --previews or --cheatsheet. The offline
 # guide never holds it; package.py puts it at the ZIP root, beside guide/, as
