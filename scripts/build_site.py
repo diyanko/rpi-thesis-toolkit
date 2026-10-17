@@ -35,6 +35,8 @@ import sys
 import tempfile
 from urllib.parse import quote, unquote, urlsplit
 
+import rules  # scripts/rules.py: the OGE rules in docs/project/requirements.md
+
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "site"
 NAME = "RPI Thesis Toolkit"
@@ -100,6 +102,7 @@ PROJECT = {
     "docs/project/requirements.md": ("requirements", "Requirements map"),
     "CODE_OF_CONDUCT.md": ("code-of-conduct", None),
     "docs/project/attribution.md": ("attribution", None),
+    "docs/project/components.md": ("components", None),   # design review: every component on one page
 }
 # Footer "Help & feedback" link: the one place the help/feedback form URL lives.
 FEEDBACK = ("docs/troubleshooting.md", "Ask for help")
@@ -461,7 +464,7 @@ class SearchSections(HTMLParser):
         self.entries = list(merged.values())
 
     def flush(self):
-        text = " ".join(" ".join(self.words).split())
+        text = " ".join("".join(self.words).split())   # block tags add the spaces; inline code does not
         if self.label and (text or self.anchor):
             self.entries.append({"page": self.title, "title": self.label,
                                  "context": " / ".join(self.parents.values()),
@@ -910,6 +913,9 @@ class Site:
             title, description, text = read_markdown(source)
             if title == NAME:
                 title = PROJECT[source][1]
+            # {{rule:id}} and {{cite:id}} name a row of the requirements map (scripts/rules.py).
+            text, problems, _ = rules.expand(text, source)
+            self.errors.extend(problems)
             body = pandoc(["--from=gfm", "--to=html5", "--wrap=none", "--syntax-highlighting=none"], text)
             body = self.rewrite(body, source, here, posixpath.dirname(source))
             if source == "docs/troubleshooting.md":
@@ -924,6 +930,8 @@ class Site:
             body = self.pictures(body, source, here)
             body = responsive_tables(body)
             body = keep_short_code(body)
+            if Path(source).stem in PAGE_SCRIPTS:  # the page script reads rules and measurements
+                body += rules.embed()
             # The PDF checker compares a PDF's class version with the release the website links.
             body = body.replace('data-pdf-check data-version=""', f'data-pdf-check data-version="{RELEASE_VERSION}"')
             # Keyboard users must also be able to pan long code lines without
