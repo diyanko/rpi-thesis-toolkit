@@ -104,7 +104,7 @@ class Task(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("--message", result.stdout)
 
-    def test_serious_review_stops_before_commit_and_push(self):
+    def test_serious_review_stops_before_push(self):
         tree = self.started()
         (tree / "new.md").write_text("x\n", encoding="utf-8")
         result = self.task("finish", "-m", "docs(guide): add a page", cwd=tree,
@@ -112,7 +112,8 @@ class Task(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("[P1] new.md:1", result.stdout)
         self.assertIn("P1", (tree / "build/review.md").read_text(encoding="utf-8"))
-        self.assertEqual(git("rev-list", "--count", "origin/main..HEAD", cwd=tree), "0")
+        # committed locally first (no stash), but never pushed or proposed
+        self.assertEqual(git("ls-remote", "--heads", "origin", "issue-*", cwd=tree), "")
         self.assertNotIn("pr create", self.log.read_text(encoding="utf-8"))
 
     def test_finish_commits_pushes_and_opens_pr(self):

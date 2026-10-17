@@ -114,6 +114,12 @@ def finish(args):
     if dirty and not args.message:
         stop("commit", 'there are uncommitted changes; pass --message "type(scope): summary" or commit them.')
     say("branch", branch)
+    if dirty:   # commit first, so the rebase never has to stash and restore edits
+        git("add", "-A", cwd=top)
+        made = git("commit", "-q", "-m", args.message, cwd=top)
+        if made.returncode:
+            stop("commit", (made.stderr.strip() or made.stdout.strip() or "git commit failed").splitlines()[-1])
+        say("commit", args.message)
 
     if git("fetch", "origin", cwd=top).returncode:
         stop("fetch", "git fetch origin failed; check the network and try again.")
@@ -127,7 +133,7 @@ def finish(args):
     if remote and remote != ours and git("merge-base", "--is-ancestor", remote, "HEAD", cwd=top).returncode:
         stop("fetch", f"origin/{branch} has commits this worktree lacks; "
              f"run git pull --rebase origin {branch}, then finish again.")
-    rebased = git("rebase", "--autostash", "origin/main", cwd=top)
+    rebased = git("rebase", "origin/main", cwd=top)
     if rebased.returncode:
         stop("rebase", "conflict with origin/main; fix the files, git add them, "
              "git rebase --continue, then run finish again.")
@@ -179,12 +185,6 @@ def finish(args):
             stop("review", "fix the findings in build/review.md and run finish again "
                  "(or --accept-review if each is noted).")
 
-    if git("status", "--porcelain", "--untracked-files=all", cwd=top).stdout.strip():
-        git("add", "-A", cwd=top)
-        made = git("commit", "-q", "-m", args.message, cwd=top)
-        if made.returncode:
-            stop("commit", (made.stderr.strip() or made.stdout.strip() or "git commit failed").splitlines()[-1])
-        say("commit", args.message)
     subjects = git("log", "--reverse", "--format=%s", "origin/main..HEAD", cwd=top).stdout.splitlines()
     if not subjects:
         stop("commit", "this branch has no commits beyond origin/main; nothing to propose.")
