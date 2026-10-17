@@ -21,7 +21,7 @@
 %    7. Captions and floats
 
 % ---------------------------------------------------------------------------
-% 1. Identity and options
+% 1. Identity and options. Rules: page-size, font (12 pt, US letter)
 % ---------------------------------------------------------------------------
 \NeedsTeXFormat{LaTeX2e}[2022-06-01]
 \ProvidesClass{rpi-thesis}[2026/10/16 v0.7.1 RPI community thesis starter]
@@ -37,6 +37,7 @@
 % ---------------------------------------------------------------------------
 % 2. Fonts: Times-style text and math at 12 pt (manual 2.1, p. 16).
 %    pdfLaTeX (the default) or, for Unicode input, LuaLaTeX and XeLaTeX.
+%    Rules: font
 % ---------------------------------------------------------------------------
 \RequirePackage{iftex}
 \ifPDFTeX
@@ -78,6 +79,7 @@
 
 % ---------------------------------------------------------------------------
 % 3. Packages every thesis uses. Add your own in preamble.tex.
+%    Rules: none here (the sections below use these packages)
 % ---------------------------------------------------------------------------
 \RequirePackage{etoolbox}    % hooks used below
 \RequirePackage{graphicx}    % \includegraphics
@@ -93,21 +95,25 @@
 % 4. Page layout and spacing: 1 in margins (manual 2.2, p. 16); double-
 %    spaced text, single-spaced quotations, captions, tables, and figures
 %    (manual 2.1, p. 16).
+%    Rules: page-size, double-spacing, single-spacing, page-number-position,
+%    url-font, equations
 % ---------------------------------------------------------------------------
 % Page numbers sit 0.75 in from the page edge (footer and header baselines).
 \RequirePackage[margin=1in,footskip=0.25in,headheight=12pt,headsep=0.25in]
   {geometry}
+% Double spacing starts at \begin{document} on purpose: it overrides any
+% \singlespacing, \onehalfspacing, or \setstretch in preamble.tex, because the
+% manual asks for double-spaced text. Use the singlespace environment for
+% the parts the manual lets you single space.
 \AtBeginDocument{\doublespacing\pagestyle{plain}}
-\setlength{\parindent}{0.4in}
+\setlength{\parindent}{0.4in}  % from RPI's template
 \raggedbottom
 \AtBeginEnvironment{quote}{\singlespacing}
 \AtBeginEnvironment{quotation}{\singlespacing}
-% Space around displayed equations grows with the line spacing.
-\everydisplay\expandafter{\the\everydisplay
-  \abovedisplayskip\baselinestretch\abovedisplayskip
-  \belowdisplayskip\abovedisplayskip
-  \abovedisplayshortskip\baselinestretch\abovedisplayshortskip
-  \belowdisplayshortskip\baselinestretch\belowdisplayshortskip}
+% The space around displayed equations grows with the line spacing:
+% setspace already does this (\displayskipstretch), so it is not repeated
+% here. RPI's template scales it inside its own copy of setspace's code;
+% doing both doubled the gap (about 33 pt above an equation instead of 20).
 % Footnotes are numbered through the whole document, not per chapter.
 \counterwithout{footnote}{chapter}
 % URLs in the text font: one font throughout (OGE checklist).
@@ -125,7 +131,13 @@
   \setcounter{biburlucpenalty}{9000}}
 % Called after a package finishes; \@currnamestack starts with the file that
 % loaded it ({name}{ext}{catcode}): another package, or the document itself.
-\def\rpi@bibdefaults@after{\expandafter\rpi@bibdefaults@from\@currnamestack\@nil}
+% If the stack is empty (no file to wait for), apply the defaults at once.
+\def\rpi@bibdefaults@after{%
+  \ifx\@currnamestack\@empty
+    \rpi@bibdefaults
+  \else
+    \expandafter\rpi@bibdefaults@from\@currnamestack\@nil
+  \fi}
 \def\rpi@bibdefaults@from#1#2#3#4\@nil{%
   \def\@tempa{#2}\def\@tempb{sty}%
   \ifx\@tempa\@tempb
@@ -140,10 +152,14 @@
 % 5. Headings (manual 2.3, pp. 17-18), following RPI's original thesis.cls:
 %    large bold centered chapter titles numbered "1. TITLE", and the same
 %    style for CONTENTS, the lists, front-matter sections, and REFERENCES.
+%    Rules: headings, heading-top, contents-match
 % ---------------------------------------------------------------------------
 % The space before a chapter title cancels the empty first line that
 % otherwise pushes it below the 1 in margin (OGE's LaTeX tips sheet calls
-% this a known glitch of the original class).
+% this a known glitch of the original class). 18pt is the line height of
+% \large text at 12 pt, so this removes one stretched line (this project's
+% choice; check.py measures the result). The 15pt after the title and the
+% section spacing are from RPI's template.
 \titleformat{\chapter}[hang]
   {\vskip-\baselinestretch\dimexpr18pt\relax\centering\normalfont\large\bfseries}
   {\thechapter.}{0.4em}{}
@@ -168,6 +184,7 @@
 
 % ---------------------------------------------------------------------------
 % 6. Contents and lists of tables and figures (manual 1.3-1.5, pp. 4-10)
+%    Rules: contents-entries, contents-match, lists
 % ---------------------------------------------------------------------------
 \setcounter{tocdepth}{3}
 \renewcommand{\cftchapfont}{\normalfont}
@@ -175,26 +192,33 @@
 \renewcommand{\cftchapleader}{\cftdotfill{\cftdotsep}}
 % Entries read exactly like the body headings: "1." and "A.".
 \renewcommand{\cftchapaftersnum}{.}
+% Space before each entry (10, 6, 4, 3 pt by level; 10 pt in the lists):
+% from RPI's template.
 \setlength{\cftbeforechapskip}{10pt}
 \setlength{\cftbeforesecskip}{6pt}
 \setlength{\cftbeforesubsecskip}{4pt}
 \setlength{\cftbeforesubsubsecskip}{3pt}
 \setlength{\cftbeforefigskip}{10pt}
 \setlength{\cftbeforetabskip}{10pt}
+% Page-number column wide enough for roman numbers such as xviii (this
+% project's choice; RPI's template used 1.55em).
 \cftsetpnumwidth{3em}
 % Number columns wide enough for 12.10, 12.10.10, and 12.10.10.10, so entry
-% text never runs into the number column.
+% text never runs into the number column (this project's widths; RPI's
+% template is narrower). The regressions case contents-stress measures the
+% gap.
 \cftsetindents{fig}{0em}{2.8em}
 \cftsetindents{tab}{0em}{2.8em}
 \cftsetindents{chap}{0em}{1.6em}
 \cftsetindents{sec}{1.5em}{2.8em}
-\cftsetindents{subsec}{4.3em}{3.8em}
-\cftsetindents{subsubsec}{8.1em}{5em}
+\cftsetindents{subsec}{4.3em}{4em}
+\cftsetindents{subsubsec}{8.3em}{5.3em}
 \cftsetrmarg{4em}
 
 % ---------------------------------------------------------------------------
 % 7. Captions and floats (manual 2.4-2.5, pp. 18-22): bold captions, tables
 %    captioned above and figures below, both single-spaced.
+%    Rules: captions, landscape, single-spacing
 % ---------------------------------------------------------------------------
 \captionsetup{format=hang,font={normalfont,bf},labelfont=bf,labelsep=colon,
   justification=raggedright,singlelinecheck=false}
@@ -204,7 +228,8 @@
 \AtBeginEnvironment{longtable}{\singlespacing}
 \AtBeginEnvironment{sidewaysfigure}{\singlespacing}
 \AtBeginEnvironment{sidewaystable}{\singlespacing}
-% Let floats fill more of a page, so fewer drift away from their text.
+% Let floats fill more of a page, so fewer drift away from their text
+% (this project's choice; LaTeX's defaults are lower).
 \setcounter{topnumber}{2}
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{4}
@@ -218,6 +243,7 @@
 %    matter, arabic from chapter 1, 0.75 in from the page edge. Body pages:
 %    top right. Front matter and the first page of every chapter, the
 %    references, and each appendix: bottom center (plain).
+%    Rules: front-roman, body-arabic, page-number-position
 % ---------------------------------------------------------------------------
 \newcommand{\ps@rpibody}{\let\@mkboth\@gobbletwo
   \renewcommand{\@oddhead}{\hfil\normalfont\thepage}%
@@ -228,17 +254,23 @@
 % 9. Appendices: lettered like chapters ("A. TITLE"), with one APPENDICES
 %    line in the contents, written on the first appendix page so it carries
 %    that page number (manual 1.3, p. 4).
+%    Rules: appendices
 % ---------------------------------------------------------------------------
 \newif\ifrpi@appendixline
 \appto\appendix{\global\rpi@appendixlinetrue}
 \pretocmd{\chapter}{\ifrpi@appendixline
     \global\rpi@appendixlinefalse\clearpage\phantomsection
     \addcontentsline{toc}{chapter}{\appendicesname}\fi}{}
-  {\ClassError{rpi-thesis}{Could not set up appendices}{}}
+  {\ClassError{rpi-thesis}{Could not set up appendices: \string\chapter\space
+    was changed}{A line above \string\documentclass\space in main.tex, or an
+    outdated LaTeX installation, changed \string\chapter. Remove lines added
+    above \string\documentclass, or update TeX Live. See Fixing problems in
+    the guide.}}
 
 % ---------------------------------------------------------------------------
 % 10. Your thesis settings: \thesissetup{...} and \committeemember in
 %     metadata.tex. Every key is in the guide: Going further, "All thesis settings".
+%     Rules: title-page, degree-wording, graduation-date
 % ---------------------------------------------------------------------------
 \ExplSyntaxOn
 \tl_new:N \g_rpi_title_tl
@@ -254,6 +286,7 @@
 \seq_new:N \g_rpi_committee_seq
 \int_new:N \g_rpi_chairs_int
 \tl_new:N \l_rpi_setup_tl
+\tl_new:N \g_rpi_roles_tl   % roles other than Chair and Co-Chair, for errors
 
 \keys_define:nn { rpi/thesis }
   {
@@ -267,8 +300,11 @@
     degree / engineering-doctorate .code:n =
       { \tl_gset:Nn \g_rpi_degree_tl {Doctor~of~Engineering} },
     degree / unknown .code:n =
-      { \ClassError{rpi-thesis}{Unknown~degree~choice~in~metadata.tex}
-          {Use~masters,~doctoral,~or~engineering-doctorate.} },
+      { \ClassError{rpi-thesis}{Unknown~degree~choice~
+          "\tl_to_str:N \l_keys_value_tl"~in~metadata.tex:~use~masters,~
+          doctoral,~or~engineering-doctorate~(lower~case)}
+          {Use~masters,~doctoral,~or~engineering-doctorate,~in~lower~case~
+           exactly~as~written~here~(the~values~are~case-sensitive).} },
     degree-name .tl_gset:N = \g_rpi_degree_tl,
     department .tl_gset:N = \g_rpi_department_tl,
     graduation-month .choice:,
@@ -276,13 +312,23 @@
     graduation-month / August .code:n = { \tl_gset:Nn \g_rpi_month_tl {August} },
     graduation-month / December .code:n = { \tl_gset:Nn \g_rpi_month_tl {December} },
     graduation-month / unknown .code:n =
-      { \ClassError{rpi-thesis}{Unknown~graduation~month~in~metadata.tex}
-          {Use~May,~August,~or~December.} },
+      { \ClassError{rpi-thesis}{Unknown~graduation~month~
+          "\tl_to_str:N \l_keys_value_tl"~in~metadata.tex:~use~May,~August,~
+          or~December~(capital~first~letter)}
+          {Use~May,~August,~or~December,~spelled~out~with~a~capital~first~
+           letter~(the~values~are~case-sensitive).} },
     graduation-year .tl_gset:N = \g_rpi_year_tl,
     seal-file .tl_gset:N = \g_rpi_seal_tl,
     copyright-page .bool_gset:N = \g_rpi_copyright_bool,
     list-of-tables .bool_gset:N = \g_rpi_tables_bool,
     list-of-figures .bool_gset:N = \g_rpi_figures_bool,
+    unknown .code:n =
+      { \ClassError{rpi-thesis}{Unknown~setting~
+          "\l_keys_key_str"~in~metadata.tex.~Check~its~spelling~against~
+          the~guide:~Going~further,~"All~thesis~settings"}
+          {Check~its~spelling~in~the~thesissetup~braces~of~metadata.tex.~
+           Every~setting~is~listed~in~the~guide:~Going~further,~
+           "All~thesis~settings".} },
   }
 % Defaults
 \keys_set:nn { rpi/thesis }
@@ -304,8 +350,13 @@
           {Put~the~member's~name~inside~the~braces~of~each~committeemember~line.} }
     \seq_gput_right:Nn \g_rpi_committee_seq
       { #2 \tl_if_blank:nF {#1} {,~#1} \par }
-    \str_if_eq:nnT {#1} {Chair} { \int_gincr:N \g_rpi_chairs_int }
-    \str_if_eq:nnT {#1} {Co-Chair} { \int_gincr:N \g_rpi_chairs_int }
+    \str_case:nnF {#1}
+      {
+        {Chair} { \int_gincr:N \g_rpi_chairs_int }
+        {Co-Chair} { \int_gincr:N \g_rpi_chairs_int }
+        {} { }
+      }
+      { \tl_gput_right:Nx \g_rpi_roles_tl { ~[\tl_to_str:n {#1}] } }
   }
 
 % Errors name the setting and the fix, before anything is printed.
@@ -330,12 +381,19 @@
       { \ClassError{rpi-thesis}{No~committee~members~in~metadata.tex}
           {Add~committeemember~commands,~including~the~chair.} }
     \int_compare:nNnT {\g_rpi_chairs_int} = {0}
-      { \ClassError{rpi-thesis}{Committee~chair~is~missing}
-          {Use~committeemember[Chair]~or~committeemember[Co-Chair].} }
+      {
+        \ClassError{rpi-thesis}{Committee~chair~is~missing
+            \tl_if_empty:NF \g_rpi_roles_tl
+              {:~roles~given~in~metadata.tex~were\g_rpi_roles_tl,~but~
+               the~role~must~be~written~[Chair]~or~[Co-Chair]}}
+          {Use~committeemember[Chair]~or~committeemember[Co-Chair],~
+           spelled~exactly~so~(the~roles~are~case-sensitive).}
+      }
   }
 
 % ---------------------------------------------------------------------------
 % 11. Title page and seal (manual 1.1, pp. 1-2)
+%     Rules: title-page
 % ---------------------------------------------------------------------------
 % The seal belongs to RPI and is not part of this starter: each student
 % downloads it (assets/README.md). If seal-file is missing, a PNG named
@@ -352,11 +410,11 @@
 \cs_new_protected:Npn \rpi_seal_placeholder:
   {
     \ClassWarning{rpi-thesis}{RPI~seal~not~found.~Download~it~from~RPI's~
-      Thesis~Preparation~page~and~save~it~as~\tl_use:N \g_rpi_seal_tl\space
+      Thesis~Preparation~page~and~save~it~as~\tl_to_str:N \g_rpi_seal_tl\space
       (see~assets/README.md)}
     % latexmk reads these standard log lines and recompiles once either file
     % appears: the seal-file setting or the PNG used in its place.
-    \iow_log:x { No~file~\tl_use:N \g_rpi_seal_tl . }
+    \iow_log:x { No~file~\tl_to_str:N \g_rpi_seal_tl . }
     \tl_if_eq:NNF \g_rpi_seal_tl \c_rpi_seal_png_tl
       { \iow_log:x { No~file~\tl_use:N \c_rpi_seal_png_tl . } }
     \dim_set:Nn \l_rpi_seal_dim { 0.25\linewidth }
@@ -369,7 +427,9 @@
             {
               \centering\small
               RPI~seal:\par add\par
-              \mbox{\tl_use:N \g_rpi_seal_tl}\par
+              % As plain characters: a path may contain _ or other
+              % characters that TeX would otherwise read as commands.
+              \mbox{\tl_to_str:N \g_rpi_seal_tl}\par
             }
         }
     \group_end:
@@ -383,7 +443,7 @@
         \exp_args:NV \file_if_exist:nTF \c_rpi_seal_png_tl
           {
             % Log the missing seal-file too, so adding it later recompiles.
-            \iow_log:x { No~file~\tl_use:N \g_rpi_seal_tl . }
+            \iow_log:x { No~file~\tl_to_str:N \g_rpi_seal_tl . }
             \exp_args:NV \rpi_seal_image:n \c_rpi_seal_png_tl
           }
           { \rpi_seal_placeholder: }
@@ -395,6 +455,8 @@
     % Do not use report's titlepage environment: it resets page counters.
     \pagenumbering{roman}
     \thispagestyle{empty}
+    % The gaps (20, 20, 10, 40, 20, 12 pt) and the 0.25 linewidth seal are
+    % from RPI's template's title page.
     \begin{singlespace}
     \begin{center}
       {\large\bfseries\MakeUppercase{\tl_use:N\g_rpi_title_tl}\par}
@@ -423,6 +485,8 @@
 
 % ---------------------------------------------------------------------------
 % 12. Commands for main.tex, in the order they appear there
+%     Rules: copyright-page, front-matter-order, single-spacing, attribution,
+%     appendices
 % ---------------------------------------------------------------------------
 % \thesisfrontmatter: copyright page (if set; manual 1.2, p. 3), contents,
 % and the lists.
@@ -468,8 +532,11 @@
   \clearpage\phantomsection\addcontentsline{toc}{chapter}{#1}\chapter*{#1}}
 
 % \chapterattribution{...} (manual 2.8, pp. 27-29): a single-spaced note at
-% the foot of the current page, like a footnote but with no number or mark. Put it directly after
-% \chapter so it lands on the chapter's first page. Repeat for several.
+% the foot of the current page, like a footnote but with no number or mark.
+% Put it directly after \chapter so it lands on the chapter's first page.
+% Repeat for several. The code is LaTeX's own \@footnotetext (latex.ltx)
+% without the mark, with \baselinestretch reset to 1 as setspace does for
+% footnotes.
 \NewDocumentCommand{\chapterattribution}{+m}{%
   \insert\footins{%
     \def\baselinestretch{1}\reset@font\footnotesize
@@ -491,11 +558,12 @@
 % ---------------------------------------------------------------------------
 % 13. Links and PDF properties. Links stay black in print and on screen
 %     (manual 2.1, p. 16). hyperref loads last among the class's packages.
+%     Rules: black-text
 % ---------------------------------------------------------------------------
 \RequirePackage[hidelinks,unicode]{hyperref}
 % Title, author, and language for screen readers and library catalogs, and
-% the class version (shown as "Creator"). Use \texorpdfstring for math in a
-% title.
+% the class version (shown as "Creator"). Math in a title needs
+% \texorpdfstring (see the title comment in metadata.tex).
 \ExplSyntaxOn
 \AtBeginDocument
   {

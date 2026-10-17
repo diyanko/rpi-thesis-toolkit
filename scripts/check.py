@@ -27,6 +27,8 @@ PAPER_WIDTH, PAPER_HEIGHT = MEASURES["paper-width"], MEASURES["paper-height"]
 MARGIN, NUMBER_EDGE = MEASURES["margin"], MEASURES["page-number-edge"]
 HEADING_BASELINE, HEADING_TOLERANCE = MEASURES["heading-baseline"], MEASURES["heading-tolerance"]
 BODY_LOW, BODY_HIGH = MARGIN - 2, PAPER_HEIGHT - MARGIN + 2  # the text block, with a little tolerance
+LINE_PITCH, DISPLAY_SKIP = MEASURES["line-pitch"], MEASURES["display-skip"]
+PITCH_TOLERANCE = MEASURES["pitch-tolerance"]
 
 
 def require(condition, message):
@@ -170,7 +172,15 @@ def check_pdf(folder, degree, copyright=False, minimal=False):
         and texts[toc].endswith("iii" if copyright else "ii"),
         "Front-matter pagination",
     )
-    require("Copyright" not in texts[toc], "Copyright must not be listed in contents")
+    # The contents lists neither the title page, the copyright page, nor
+    # itself: its first entry is the page right after it.
+    entries = re.findall(r"\.\s+([ivxlc]+|[0-9]+)\s*$",
+                         reader.pages[toc].extract_text(), flags=re.M)
+    require(
+        entries and entries[0] == roman(toc + 2),
+        f"Contents must start at page {roman(toc + 2)}, after the title, copyright, and"
+        f" contents pages; it starts at {entries[:1]}",
+    )
     require(
         "1. INTRODUCTION" in texts[toc] and "REFERENCES" in texts[toc],
         "Contents entries must match body headings, including the number's period",
@@ -285,6 +295,8 @@ def check_pdf(folder, degree, copyright=False, minimal=False):
             and float(item.top) >= max(lines) - 0.5,
             f"Link target for {item.title} is not at its heading (PDF page {i+1})",
         )
+    check_spacing(reader, texts)
+    check_fonts_and_links(reader)
     log = (folder / "build/main.log").read_text(encoding="utf-8", errors="replace")
     require(
         not re.search(
@@ -294,6 +306,102 @@ def check_pdf(folder, degree, copyright=False, minimal=False):
         "Overflow or unresolved references in final log",
     )
     return len(reader.pages), texts
+
+
+# A full-width paragraph, a wide display, and more text: the display is not
+# "short", so TeX puts abovedisplayskip and belowdisplayskip around it.
+SPACING_FIXTURE = r"""
+\section{Spacing check}
+This paragraph checks the space around a displayed equation. It is long
+enough to fill several lines of the page, so the line spacing of the body
+text can be measured between its lines, and its last line reaches past the
+left edge of the equation that follows it on the page:
+\begin{equation}
+  a + b + c + d + e + f + g + h + i + j + k + l + m + n + p + q = r.
+\end{equation}
+The text after the equation continues the same paragraph and is long enough
+to fill more than one line, so the space below the equation can be measured.
+"""
+
+
+def check_spacing(reader, texts):
+    """Body text is double spaced, and a displayed equation has the space
+    double spacing gives it once (setspace's scaling), not twice."""
+    page = next(
+        (i for i, t in enumerate(texts)
+         if "thisparagraphchecksthespace" in t.replace(" ", "").lower()), None
+    )
+    require(page is not None, "Spacing-check section not found in the PDF")
+    rows = {}
+    for x, y in text_origins(reader.pages[page]):
+        if BODY_LOW <= y <= BODY_HIGH and x is not None:
+            key = round(y, 1)
+            rows[key] = min(x, rows.get(key, x))
+    lines = sorted(rows.items(), reverse=True)  # (y, leftmost x), top to bottom
+    body = lambda x: x < MARGIN + 40  # starts at the margin or a paragraph indent
+    gaps = [a[0] - b[0] for a, b in zip(lines, lines[1:]) if body(a[1]) and body(b[1])]
+    # The most common gap: headings and paragraph breaks add their own space.
+    rounded = [round(g, 1) for g in gaps]
+    pitch = max(set(rounded), key=rounded.count) if gaps else 0
+    require(
+        abs(pitch - LINE_PITCH) < PITCH_TOLERANCE,
+        f"Body line pitch {pitch:.2f} pt on PDF page {page+1}; double spacing gives"
+        f" {LINE_PITCH} pt",
+    )
+    display = [
+        k for k in range(1, len(lines) - 1)
+        if not body(lines[k][1]) and body(lines[k - 1][1]) and body(lines[k + 1][1])
+    ]
+    require(display, f"No displayed equation between body lines on PDF page {page+1}")
+    k = display[-1]
+    above = lines[k - 1][0] - lines[k][0] - pitch
+    below = lines[k][0] - lines[k + 1][0] - pitch
+    require(
+        abs(above - DISPLAY_SKIP) < PITCH_TOLERANCE
+        and abs(below - DISPLAY_SKIP) < PITCH_TOLERANCE,
+        f"Space around a displayed equation is {above:.2f} pt above and {below:.2f} pt below"
+        f" (beyond the line pitch) on PDF page {page+1}; expected {DISPLAY_SKIP} pt",
+    )
+
+
+# Times-like text and math fonts, and the typewriter fonts these engines pair
+# with them (code fonts: see Needs OGE confirmation in the requirements map).
+TIMES_LIKE = ("TeXGyreTermes", "NewTX", "tx", "t1x", "STIXTwo")
+TYPEWRITER = ("t1xtt", "txtt", "LMMono", "lmmono")
+
+
+def check_fonts_and_links(reader):
+    """Every font is Times-like (or a typewriter font for code) and embedded,
+    and no link draws a colored border (hidelinks)."""
+    for i, page in enumerate(reader.pages):
+        for font in (page["/Resources"].get("/Font") or {}).values():
+            font = font.get_object()
+            name = str(font.get("/BaseFont", "")).split("+")[-1].lstrip("/")
+            require(
+                name.startswith(TIMES_LIKE + TYPEWRITER),
+                f"Font {name} on PDF page {i+1} is not Times-like",
+            )
+            described = font
+            if font.get("/Subtype") == "/Type0":
+                described = font["/DescendantFonts"][0].get_object()
+            descriptor = described.get("/FontDescriptor")
+            descriptor = descriptor.get_object() if descriptor is not None else {}
+            require(
+                font.get("/Subtype") == "/Type3"
+                or any(k in descriptor for k in ("/FontFile", "/FontFile2", "/FontFile3")),
+                f"Font {name} on PDF page {i+1} is not embedded",
+            )
+        for annotation in page.get("/Annots") or []:
+            annotation = annotation.get_object()
+            if annotation.get("/Subtype") != "/Link":
+                continue
+            border = annotation.get("/Border")
+            style = annotation.get("/BS")
+            require(
+                (border is not None and float(border[2]) == 0)
+                or (style is not None and float(style.get_object().get("/W", 1)) == 0),
+                f"A link on PDF page {i+1} has a visible border; links must stay black",
+            )
 
 
 # Maintainers keep RPI's original template in _local/legacy/ (ignored by Git;
@@ -369,6 +477,8 @@ def run_pdf_case(tmp, case):
         )
         (folder / "main.tex").write_text(main, encoding="utf-8")
     (folder / "metadata.tex").write_text(text, encoding="utf-8")
+    with (folder / "chapters/03-conclusion.tex").open("a", encoding="utf-8") as chapter:
+        chapter.write(SPACING_FIXTURE)
     require(build(folder, engine=engine) == 0, "Build failed: " + name)
     pages, texts = check_pdf(folder, degree, copyright, minimal)
     if copyright:
@@ -381,7 +491,8 @@ def run_pdf_case(tmp, case):
 
 
 def run_rejection(tmp, case):
-    name, before, after, error = case
+    name, before, after, error, *rest = case
+    engine = rest[0] if rest else "pdflatex"
     folder = tmp / name
     fixture(folder)
     (folder / "metadata.tex").write_text(
@@ -391,7 +502,7 @@ def run_rejection(tmp, case):
     (folder / "build").mkdir()
     result = subprocess.run(
         [
-            "pdflatex",
+            engine,
             "-no-shell-escape",
             "-interaction=nonstopmode",
             "-halt-on-error",
@@ -403,8 +514,10 @@ def run_rejection(tmp, case):
         text=True,
         encoding="utf-8",
     )
+    # TeX wraps long messages at 79 characters, so compare without spaces.
     require(
-        result.returncode != 0 and error in norm(result.stdout),
+        result.returncode != 0
+        and re.sub(r"\s+", "", error) in re.sub(r"\s+", "", result.stdout),
         "Expected rejection: " + name,
     )
     return "PASS: correctly rejects " + name
@@ -453,6 +566,23 @@ def main():
             "graduation-month = January",
             "Unknown graduation month",
         ),
+        # The message names the setting or value given; values are case-sensitive.
+        ("unknown-key", "copyright-page = false", "copyrite-page = false",
+         'Unknown setting "copyrite-page" in metadata.tex'),
+        ("unknown-key-lua", "copyright-page = false", "copyrite-page = false",
+         'Unknown setting "copyrite-page" in metadata.tex', "lualatex"),
+        ("unknown-key-help", "copyright-page = false", "copyrite-page = false",
+         '"All thesis settings"'),
+        ("degree-case", "degree = doctoral", "degree = Doctoral",
+         'Unknown degree choice "Doctoral"'),
+        ("month-case", "graduation-month = May", "graduation-month = may",
+         'Unknown graduation month "may"'),
+        ("chair-case", "[Chair]", "[chair]",
+         "Committee chair is missing: roles given in metadata.tex were [chair]"),
+        ("missing-title", "{Your thesis title}", "{}", "Missing title in metadata.tex"),
+        ("missing-author", "{Your full name}", "{}", "Missing author in metadata.tex"),
+        ("missing-department", "{Department of Your Full Department Name}", "{}",
+         "Missing department in metadata.tex"),
     ]
     with tempfile.TemporaryDirectory(prefix="rpi-thesis-check-") as tmp:
         tmp = Path(tmp)
