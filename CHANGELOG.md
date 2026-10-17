@@ -21,6 +21,12 @@ read [update the formatting safely](docs/going-further.md#update-the-formatting-
   Help; "Suggest a change" needs no account.
 - **Share this guide** copies the link (or opens your phone's share sheet).
 - Refined colors in light and dark; numbers in the text show a plain 0.
+- **Get started** suggests an editor on your computer that compiles when you
+  save (VS Code with LaTeX Workshop as the worked example; other editors with a
+  LaTeX extension work too), with Overleaf as the no-install alternative.
+  Terminal commands moved to Going further; no step needs them.
+- The VS Code settings in the download build on save, open the PDF beside your
+  text, and keep the Problems list to text that runs into the margin.
 
 ## 0.8.0 (beta), 17 Oct 2026
 
