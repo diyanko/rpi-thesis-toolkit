@@ -84,7 +84,11 @@ def active_sources(root, main="main.tex"):
     \\input{glyphtounicode}). The scan is a best guess, so only an unreadable
     main.tex stops a build; everything else is advice.
 
-    Returns a namespace: files (the .tex files read), include_dirs, problems
+    Local .cls and .sty files are followed too, including the packages,
+    classes and \\input files they load. TeX resolves their literal paths from
+    the project folder.
+
+    Returns a namespace: files (the local TeX source files read), include_dirs, problems
     [(where, message, stops_build)], missing_includes [(where, target)],
     includeonly (a set of targets, or None), and, for packaging, assets (other
     project files the document loads: graphics with literal paths, .bib files,
@@ -120,7 +124,8 @@ def active_sources(root, main="main.tex"):
             r"\\(input|include)\s*\{([^}]+)\}",
             r"\\includegraphics\*?\s*(\[[^\]]*\])?\s*\{([^}]+)\}",
             r"\\(addbibresource|bibliography)\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}",
-            r"\\(documentclass|usepackage|RequirePackage)\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}",
+            r"\\(documentclass|usepackage|RequirePackage(?:WithOptions)?|LoadClass(?:WithOptions)?)"
+            r"\s*(?:\[[^\]]*\])?\s*\{([^}]+)\}",
         )
         matches = ((kind, match) for kind, pattern in enumerate(patterns)
                    for match in re.finditer(pattern, text))
@@ -169,9 +174,11 @@ def active_sources(root, main="main.tex"):
             else:
                 for one in target.split(","):
                     one = one.strip()
-                    local = root / (one + (".cls" if command == "documentclass" else ".sty"))
-                    if one and local.is_file():
-                        scan.assets.append((where, local.name, "local"))
+                    extension = ".cls" if command in ("documentclass", "LoadClass", "LoadClassWithOptions") else ".sty"
+                    local = (root / (one + extension)).resolve()
+                    if one and local.is_file() and local.is_relative_to(root):
+                        scan.assets.append((where, local.relative_to(root).as_posix(), "local"))
+                        pending.append((local, where))
     resolved = []
     for where, target, kind in scan.assets:
         options = [target] if kind != "graphic" else [
@@ -206,11 +213,11 @@ def prepare_output(root, output):
 
 
 def unwrapped_log(output):
-    """main.log with the lines TeX wrapped at 79 characters joined again."""
+    """Join TeX's 79-byte log lines before decoding: a wrap may split UTF-8."""
     log = output / "main.log"
     if not log.is_file():
         return ""
-    lines = log.read_text(encoding="utf-8", errors="replace").splitlines()
+    lines = log.read_bytes().splitlines()
     joined, index = [], 0
     while index < len(lines):
         line = lines[index]
@@ -219,7 +226,7 @@ def unwrapped_log(output):
             line += lines[index]
         joined.append(line)
         index += 1
-    return "\n".join(joined)
+    return b"\n".join(joined).decode("utf-8", errors="replace")
 
 
 def missing_chapters(scan, log_text, loaded=()):
@@ -389,6 +396,22 @@ def presubmission_hints(root, output, sources=None, warnings=()):
             "The title page shows a placeholder box instead of the RPI seal. "
             "Download the seal from RPI's Thesis Preparation page (" + SEAL_PAGE
             + ") and save it as assets/rpi-seal.jpg; see assets/README.md."
+        )
+    if "Missing character:" in log_text:
+        messages = re.findall(r"Missing character:([^!]*)(?:!|$)", log_text)
+        codes = sorted(set(re.findall(r"U\+[0-9A-F]+", " ".join(messages))))
+        detail = " (" + ", ".join(codes[:10]) + ")" if codes else ""
+        hints.append(
+            "Some characters are missing from your PDF" + detail + ". Search for "
+            "'Missing character:' in build/main.log and check those places in the PDF. "
+            "A different compile engine or a font with those characters may be needed; see "
+            + guide(root, "troubleshooting") + "."
+        )
+    if "STIX Two Math font not found" in log_text:
+        hints.append(
+            "STIX Two Math font not found: some mathematical symbols may be blank. "
+            "Update your full TeX Live installation, recompile, and check your equations; see "
+            + guide(root, "troubleshooting") + "."
         )
     for bib in student_files(root, "*.bib"):
         text = bib.read_text(encoding="utf-8", errors="replace")

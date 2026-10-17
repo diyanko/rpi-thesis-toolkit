@@ -307,6 +307,17 @@ def case_missing_chapter(proj, work):
           "build.py output lacks 'WITHOUT' and the file name: " + tail(out))
 
 
+def case_missing_unicode_chapter(proj, work):
+    """Audit: TeX split a UTF-8 filename across log lines, hiding an omitted chapter."""
+    name = "chapters/" + "章" * 30
+    (proj / "main.tex").write_text(
+        "\\documentclass{article}\\begin{document}Before.\\include{" + name
+        + "}After.\\end{document}\n", encoding="utf-8")
+    code, out = run([sys.executable, "scripts/build.py"], proj, work)
+    check(code != 0 and "PDF built WITHOUT " + name + ".tex" in out,
+          "a missing Unicode chapter was not rejected with its intact name: " + tail(out))
+
+
 def case_urldate_hint(proj, work):
     """Audit: a month-name urldate was not flagged, though OGE needs an access date."""
     append(proj / "references.bib", """
@@ -356,6 +367,68 @@ def case_package_completeness(proj, work):
                     proj, work, timeout=120)
     check(code == 0, "package probe exited %d: %s" % (code, tail(out)))
     check("OK chapters/04-extra.tex" in out, "probe did not confirm the failure: " + tail(out))
+
+
+def case_local_package_sources(proj, work):
+    """Audit: a local package in a subfolder lost its path and its dependencies were not scanned."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from build import active_sources
+    for folder in ("styles", "classes", "support"):
+        (proj / folder).mkdir()
+    (proj / "classes/custom.cls").write_text(
+        "\\ProvidesClass{custom}\n\\LoadClassWithOptions{classes/base}\n", encoding="utf-8")
+    (proj / "classes/base.cls").write_text(
+        "\\ProvidesClass{base}\n\\LoadClass{article}\n", encoding="utf-8")
+    (proj / "styles/custom.sty").write_text(
+        "\\ProvidesPackage{custom}\n\\RequirePackageWithOptions{styles/nested}\n"
+        "\\input{support/settings}\n", encoding="utf-8")
+    (proj / "styles/nested.sty").write_text(
+        "\\ProvidesPackage{nested}\n\\newcommand{\\nestedmark}{Nested package present.}\n",
+        encoding="utf-8")
+    (proj / "support/settings.tex").write_text(
+        "\\newcommand{\\settingsmark}{Settings source present.}\n", encoding="utf-8")
+    (proj / "main.tex").write_text(
+        "\\documentclass{classes/custom}\n\\usepackage{styles/custom}\n"
+        "\\begin{document}\\nestedmark\\settingsmark\\end{document}\n", encoding="utf-8")
+    code, out = latex(proj, work)
+    check(code == 0, "valid local packages do not compile: " + tail(out))
+    text = pdf_text(proj / "main.pdf")
+    check("Nested package present." in text and "Settings source present." in text,
+          "the local package or its input did not reach the PDF")
+    scan = active_sources(proj)
+    files = {p.relative_to(proj).as_posix() for p in scan.files}
+    expected = {"classes/custom.cls", "classes/base.cls", "styles/custom.sty",
+                "styles/nested.sty", "support/settings.tex"}
+    check(expected <= files, "local package inputs absent from the graph: " + str(expected - files))
+    check(expected - {"support/settings.tex"} <= set(scan.assets),
+          "the graph lost a local class or package path: " + str(scan.assets))
+    check(not scan.problems and not scan.missing_assets,
+          "valid local sources were reported missing: " + str(scan.problems + scan.missing_assets))
+
+
+def case_missing_math_font(proj, work):
+    """Audit: a missing STIX fallback font left blank symbols without actionable build advice."""
+    # Simulate an incomplete installation without changing any installed fonts.
+    shim = r"""\RequirePackage{fontspec}
+\ExplSyntaxOn
+\cs_new_eq:NN \rpi_test_font_exists:nnn \IfFontExistsTF
+\RenewDocumentCommand \IfFontExistsTF {mmm}
+  {\str_if_eq:nnTF {#1} {STIXTwoMath-Regular.otf}
+    {#3} {\rpi_test_font_exists:nnn {#1}{#2}{#3}}}
+\ExplSyntaxOff
+"""
+    (proj / "main.tex").write_text(
+        shim + "\\documentclass{rpi-thesis}\n\\begin{document}\n"
+        "\\tracinglostchars=2 Missing symbol: $\\bigstar$.\\end{document}\n", encoding="utf-8")
+    code, out = run([sys.executable, "scripts/build.py", "--engine", "xelatex"], proj, work)
+    check(code == 0, "an incomplete font installation stopped unrelated compilation: " + tail(out))
+    log = read(proj / "build/main.log")
+    check("STIX Two Math font not found" in log, "the class did not warn about the missing font")
+    check("U+2605" in _missing_chars(log), "the test did not actually lose the fallback glyph")
+    check("Some characters are missing from your PDF (U+2605)" in out,
+          "the helper did not surface the missing character: " + tail(out))
+    check("STIX Two Math font not found: some mathematical symbols may be blank" in out,
+          "the helper did not explain the missing font: " + tail(out))
 
 
 # Every command amssymb and amsfonts define (TeX Live 2026), less the ones that
@@ -581,6 +654,9 @@ def case_class_alone(proj, work):
     doc = (ROOT / "docs/bring-your-draft.md").read_text(encoding="utf-8")
     section = doc[doc.index("## Already have a LaTeX thesis? Use just the class"):]
     recipe = section[section.index("```latex") + 8: section.index("```", section.index("```latex") + 8)]
+    # The writing guide's quotation example must work with this preamble too.
+    recipe = recipe.replace("\\end{document}",
+                            "\\enquote{Quotation from the writing guide.}\n\\end{document}", 1)
     alone = work / "alone"
     alone.mkdir()
     for name in ("rpi-thesis.cls", "references.bib"):
@@ -843,8 +919,11 @@ register("verify-auto-mode", case_verify_auto_mode, tools=("git",))
 register("verify-exact-zips", case_verify_exact_zips, tools=())
 register("verbatim-input", case_verbatim_input)
 register("missing-chapter", case_missing_chapter)
+register("missing-unicode-chapter", case_missing_unicode_chapter)
 register("urldate-hint", case_urldate_hint)
 register("package-completeness", case_package_completeness, tools=())
+register("local-package-sources", case_local_package_sources, tools=("pdflatex",), needs_pdf_text=True)
+register("missing-math-font", case_missing_math_font, tools=("latexmk", "xelatex", "biber"))
 register("class-alone", case_class_alone)
 for _style in ("numeric", "apa", "mla", "chicago"):
     register("bib-output:" + _style, make_bib_output(_style), needs_pdf_text=True)
