@@ -158,6 +158,35 @@ class Convert(unittest.TestCase):
             self.assertNotIn(absent, latex)
         self.assertEqual(sorted(self.notes(result)), ["comment", "footnote", "link", "picture"])
 
+    def test_equation_only_paragraph(self):
+        for equation in ['<span style="font-family:Cambria Math">x = y</span>',
+                         '<math><mi>x</mi></math>']:
+            with self.subTest(equation=equation):
+                result = self.convert(html="<p>" + equation + "</p>")
+                self.assertEqual(result["latex"], "[equation]\n")
+                self.assertEqual(sorted(self.notes(result)), ["equation"])
+                self.assertTrue(self.notes(result)["equation"].startswith("1 equation"))
+
+    def test_html_lists_inside_quotes(self):
+        for items, env in [('<ul><li>Site A<ul><li>North bank</li></ul></li><li>Site B</li></ul>', "itemize"),
+                           ('<ol><li>Site A</li><li>Site B</li></ol>', "enumerate"),
+                           ('<p style="mso-list:l0 level1 lfo1">Site A</p>'
+                            '<p style="mso-list:l0 level1 lfo1">Site B</p>', "itemize")]:
+            for depth in (1, 2):
+                with self.subTest(items=items, depth=depth):
+                    latex = self.convert(html="<blockquote>" * depth + items + "</blockquote>" * depth)["latex"]
+                    self.assertEqual(latex.count(r"\begin{quote}"), depth)
+                    self.assertIn(r"\begin{" + env + "}", latex)
+                    self.assertIn(r"\end{" + env + "}", latex)
+                    start = latex.index(r"\begin{" + env + "}")
+                    end = latex.rindex(r"\end{" + env + "}")
+                    self.assertLess(latex.index(r"\begin{quote}"), start)
+                    self.assertLess(end, latex.rindex(r"\end{quote}"))
+                    self.assertIn(r"\item Site A", latex[start:end])
+                    self.assertIn(r"\item Site B", latex[start:end])
+                    if "North bank" in items:
+                        self.assertIn(r"\item North bank", latex[start:end])
+
     def test_spreadsheet_cells(self):
         result = self.convert(html=fixture("sheets-cells.html"), key="sheets")
         latex = result["latex"]
@@ -202,6 +231,35 @@ class Convert(unittest.TestCase):
         # Plain text: one paragraph per line, every symbol escaped.
         plain = self.convert(text="Line one 100% * 2\nLine_two\n")
         self.assertEqual((plain["source"], plain["latex"]), ("text", "Line one 100\\% * 2\n\nLine\\_two\n"))
+
+    def test_single_row_tab_separated_cells(self):
+        for ending in ("", "\n", "\r\n"):
+            with self.subTest(ending=ending):
+                result = self.convert(text="Site\tVisits\tWeather" + ending)
+                self.assertEqual((result["source"], result["kind"]), ("tsv", "table"))
+                self.assertIn(r"\begin{tabular}{lll}", result["latex"])
+                self.assertIn(r"Site & Visits & Weather \\", result["latex"])
+                self.assertNotIn(r"\midrule", result["latex"])
+                self.assertEqual(sorted(self.notes(result)), ["caption"])
+
+    def test_markdown_block_starts_end_list_continuation(self):
+        cases = [("## Results", r"\section{Results}"),
+                 ("```\nx = 1\n```", r"\begin{verbatim}"),
+                 ("~~~\nx = 1\n~~~", r"\begin{verbatim}"),
+                 ("> Field notes", r"\begin{quote}"),
+                 ("$$x = y$$", r"\begin{equation}"),
+                 ("| Site | Visits |\n| -- | -- |\n| A | 2 |", r"\begin{table}"),
+                 ("---\nResults", "Results"),
+                 ("- - -\nResults", "Results")]
+        for block, expected in cases:
+            for indent in ("", "  "):
+                with self.subTest(block=block, indent=indent):
+                    latex = self.convert(text="- Item\n" + indent + block)["latex"]
+                    self.assertIn("\\item Item\n\\end{itemize}", latex)
+                    self.assertEqual(latex.count(r"\item"), 1)
+                    self.assertIn(expected, latex.split(r"\end{itemize}", 1)[1])
+        latex = self.convert(text="- Item\ncontinued\n  further details")["latex"]
+        self.assertIn(r"\item Item continued further details", latex)
 
     def test_numbered_list_alone_is_a_list(self):
         latex = self.convert(text="1. Collect samples\n2. Compare results")["latex"]
