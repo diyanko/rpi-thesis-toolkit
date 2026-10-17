@@ -39,7 +39,7 @@ The guide has two parts. Follow the core path in order, or go straight to
 what you need.
 
 - **Core path:** [Get started](docs/get-started.md) (your computer or
-  Overleaf, first compile, your first hour) · [Writing basics](docs/writing.md)
+  Overleaf, first compile, your name on the title page) · [Writing basics](docs/writing.md)
   (headings, figures, tables, equations) · [Citations](docs/citations.md)
   (Zotero, styles) · [Fixing problems](docs/troubleshooting.md) (errors and
   getting help) · [Submitting](docs/submission.md) (the path to graduation and
@@ -49,7 +49,11 @@ what you need.
   [Bring your draft](docs/bring-your-draft.md) (from Markdown, Google Docs,
   Word, a paper, or RPI's official LaTeX template) ·
   [Going further](docs/going-further.md) (advisor review, computer and
-  Overleaf, backups, updates, AI help, every setting and build command)
+  Overleaf, backups, updates, AI help and prompts, every setting and build command) ·
+  [Check your PDF](docs/check-pdf.md) (an optional in-browser check of page
+  size, page numbers, headings, margins, and contents) ·
+  [Reviewer checklist](docs/reviewer-checklist.md) (for advisors, committee
+  members, and OGE reviewers: what the class sets and what to check by eye)
 
 Looking for one task? [How do I…?](docs/how-do-i.md) links each common task
 to the section that answers it.

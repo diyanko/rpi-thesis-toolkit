@@ -27,7 +27,7 @@ That is a working citation. Ready for your own sources? Pick a style below,
 then collect them with Zotero or
 [paste an entry by hand](#if-you-cant-use-zotero-paste-an-entry-by-hand).
 
-![How a citation travels. A source's record (author, title, year) gets a citation key such as lamport1994 and goes into references.bib, from Zotero or pasted by hand. The chapter contains only \cite{lamport1994}. When you compile, Biber prints [1] in the text and the full entry under REFERENCES.](diagrams/citation-flow.svg)
+![How a citation travels. A source's record (author, title, year) gets a citation key such as lamport1994 and goes into references.bib, from Zotero or pasted by hand. The chapter contains only \parencite{lamport1994}. When you compile, Biber prints [1] in the text and the full entry under REFERENCES.](diagrams/citation-flow.svg)
 
 *In words:* a source's **key** goes into `references.bib` and into
 `\parencite{key}` in your chapter. Biber (the program that formats references)
@@ -65,11 +65,10 @@ It is a convenience, not an OGE requirement.
    3. On Overleaf, upload the new file over the old one, and again whenever
       it changes. [Auto-export](#set-it-and-forget-it) keeps the file on your
       computer current; you still upload it to Overleaf.
-4. **Cite with `\parencite{your-key}`.** Choose the command by how the
-   citation reads: `\parencite` for a citation in parentheses, `\textcite`
-   when the author is part of the sentence (the style you agreed on in step 1
-   decides what each prints). The key is the word after `@article{` (or
-   `@book{`, ...) in the exported entry. Better BibTeX also shows it in Zotero:
+4. **Cite with `\parencite{your-key}`,** or `\textcite{your-key}` when the
+   author is part of the sentence; the style you agreed on in step 1 decides
+   what each prints. The key is the word after `@article{` (or `@book{`, ...)
+   in the exported entry. Better BibTeX also shows it in Zotero:
 
    ```tex
    An earlier account explains this approach~\parencite{your-key}.
@@ -175,8 +174,9 @@ directly only in a file you maintain by hand, like this one:
 }
 ```
 
-Check that the date **prints** in your PDF; some styles hide it. The build
-helper flags any `url` without a `urldate`. DOIs need no access date.
+Check that the date **prints** in your PDF; some styles hide it. The optional
+[build helper](going-further.md#build-commands) flags any `url` without a
+`urldate`. DOIs need no access date.
 
 ## Change the citation style
 
