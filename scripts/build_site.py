@@ -891,11 +891,11 @@ class Site:
                 for path, (_, label) in PROJECT.items()
                 if label and path in self.pages
             ],
-            # Footer "Tools" column: the optional tools, after the guide's main pages.
+            # Footer "Tools" column: the sidebar's Tools group in its order, then the
+            # reviewer checklist (and the cheat sheet, in the template).
             "tools": [entry for entry in (guide_item(name, label) for name, label in
-                      (("bring-your-draft", "Bring your draft"), ("bring-your-work-in", "Bring your work in"),
-                       ("check-pdf", "Check your PDF"), ("check-references", "Check your references"),
-                       ("reviewer-checklist", "Reviewer checklist"))) if entry],
+                      [(name, label) for name, label, _ in dict(NAV)["Tools"]]
+                      + [("reviewer-checklist", "Reviewer checklist")]) if entry],
             "edition": escape(self.edition),
             "feedback_url": self.relative(here, self.feedback),
             "search_field": search_field("dialog-search"),
