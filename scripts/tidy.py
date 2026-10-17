@@ -13,14 +13,20 @@ clean) and the branch are deleted and `git worktree prune` runs. Never touched:
 main, the current worktree, anything with uncommitted, untracked, or ignored
 files other than build outputs (build/, dist/, .venv, __pycache__), locked
 worktrees, and unmerged branches (these are only listed).
+It also lists entries of the main checkout's _local/design/ and _local/shots/
+untouched for 14 days and deletes them with --apply; the screenshot baseline
+(_local/shots/baseline) and the rest of _local/ are never touched.
 Python standard library only.
 """
 
 from __future__ import annotations
 
 import argparse
+import os
+import shutil
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 BASE = "origin/main"
@@ -52,6 +58,41 @@ def worktrees() -> list[dict]:
 # Ignored paths a worktree may lose: rebuilt by the scripts. Anything else
 # ignored (notes in _local/, a seal copy) keeps the worktree.
 DISPOSABLE_TOP = {"build", "dist", ".venv"}
+# Scratch folders in the main checkout's _local/ whose old entries may go.
+SCRATCH = ("design", "shots")
+KEEP_SCRATCH = {"shots/baseline"}
+MAX_AGE_DAYS = 14
+
+
+def newest_change(path: Path) -> float:
+    """The latest modification time of path or anything inside it."""
+    newest = path.lstat().st_mtime
+    if path.is_dir() and not path.is_symlink():
+        for folder, dirs, files in os.walk(path):
+            for name in dirs + files:
+                newest = max(newest, os.lstat(os.path.join(folder, name)).st_mtime)
+    return newest
+
+
+def stale_scratch(main: Path, now: float | None = None) -> list[Path]:
+    """Entries of _local/design/ and _local/shots/ unchanged for MAX_AGE_DAYS."""
+    cutoff = (now or time.time()) - MAX_AGE_DAYS * 86400
+    found = []
+    for folder in SCRATCH:
+        base = main / "_local" / folder
+        if not base.is_dir() or base.is_symlink():
+            continue
+        for entry in sorted(base.iterdir()):
+            if f"{folder}/{entry.name}" not in KEEP_SCRATCH and newest_change(entry) < cutoff:
+                found.append(entry)
+    return found
+
+
+def remove(path: Path) -> None:
+    if path.is_dir() and not path.is_symlink():
+        shutil.rmtree(path)
+    else:
+        path.unlink()
 
 
 def rebased_into_main(branch: str) -> str | None:
@@ -141,7 +182,8 @@ def main() -> int:
 
     rows = []  # [kind, name, action, why]
     wt_branches = set()
-    for i, wt in enumerate(worktrees()):
+    trees = worktrees()
+    for i, wt in enumerate(trees):
         path = Path(wt["worktree"])
         branch = str(wt.get("branch", "")).removeprefix("refs/heads/")
         if branch:
@@ -178,6 +220,15 @@ def main() -> int:
             rows.append(["branch", b, "keep", "unmerged"])
 
     git("worktree", "prune", *([] if args.apply else ["--dry-run"]))
+
+    main_tree = Path(trees[0]["worktree"])
+    for entry in stale_scratch(main_tree):
+        rows.append(["local", str(entry.relative_to(main_tree)), "delete", f"untouched {MAX_AGE_DAYS}+ days"])
+        if args.apply:
+            try:
+                remove(entry)
+            except OSError as error:
+                rows[-1][2:] = ["keep", str(error)]
 
     w = max([len(r[1]) for r in rows] + [4])
     print(f"{'kind':<9} {'name':<{w}}  {'action':<7} why")
