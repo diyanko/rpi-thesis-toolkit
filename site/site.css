@@ -168,8 +168,17 @@
   --gutter: clamp(16px, 4vw, 40px);
 }
 /* Large screens: a wider frame, so the extra width goes to tables and
-   drawings instead of empty margins (text keeps its 68ch measure). */
+   drawings instead of empty margins (text keeps its 68ch measure). One frame
+   for every page: header, sidebar and footer sit in the same place on the
+   home page, guide pages and tools. */
 @media (min-width: 1560px) { :root { --page-max: 1400px; } }
+@media (min-width: 1920px) { :root { --page-max: 1520px; } }
+/* Very large monitors (2560 and up, 4K at 1x): everything scales a step, type
+   and spacing together, so the page is not a narrow island in a wide void.
+   Text keeps its measure because it is set in ch. */
+@media (min-width: 2560px) { html { font-size: 112.5%; } :root { --page-max: 1760px; } }
+@media (min-width: 3400px) { html { font-size: 125%; } :root { --page-max: 1980px; } }
+@media (min-width: 3800px) { html { font-size: 150%; } :root { --page-max: 2360px; } }   /* 4K at 1x */
 
 /* System follows the device; explicit choices also theme native controls and SVGs. */
 :root[data-theme="light"] { color-scheme: light; }
@@ -437,21 +446,23 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   border: 1.5px dashed var(--line-strong);
   border-radius: 999px;
 }
-.site-nav { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 22px; }
+.site-nav { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 4px; margin-left: -10px; }   /* the first name lines up with the wordmark */
 @media (min-width: 1560px) {
   .site-header { grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px 24px; }
   .header-tools { grid-column: 3; grid-row: 1; }
   .site-nav { grid-column: 2; grid-row: 1; justify-self: center; }
 }
+/* Link states, the same in the header, the sidebar and the footer:
+   hover underlines the text; the current page is the one sage pill. */
 .site-nav a {
   color: var(--ink-soft);
   text-decoration: none;
   font-size: 1rem;
-  padding: 4px 0;
-  border-bottom: 2px solid transparent;
+  padding: 4px 10px;
+  border-radius: var(--sketch);
 }
-.site-nav a:hover { color: var(--ink); border-bottom-color: var(--line-strong); }
-.site-nav a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--sage); }
+.site-nav a:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-strong); }
+.site-nav a[aria-current="page"] { color: var(--ink); background: var(--sage-wash); text-decoration: none; }
 
 /* ---------- 5. Shared pieces -------------------------------------------- */
 .wrap { max-width: var(--page-max); margin: 0 auto; padding: 0 var(--gutter); }
@@ -503,10 +514,13 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   width: 20px; height: 20px; flex: none;
   fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
 }
-/* Disabled: the same button, faded and flat, so the layout never shifts. */
+/* Disabled: the same size, flat and in quiet paper colors (a faded red reads
+   as pink), so the layout never shifts. */
 .button[aria-disabled="true"], .button:disabled {
   cursor: not-allowed;
-  opacity: 0.45;
+  color: var(--muted);
+  background: var(--paper-2);
+  border-color: var(--line-strong);
   box-shadow: none;
   transform: none;
 }
@@ -548,21 +562,13 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .dd .f-card   { fill: var(--card); }
 .doodle .f-butter { fill: var(--butter-wash); stroke: none; }
 
-/* Cards: paper on paper. ".tinted" adds a misregistered color wash behind. */
+/* Cards: paper on paper, with an even edge all round. */
 .card {
   position: relative;
   background: var(--card);
   border: 1.5px solid var(--line-strong);
   border-radius: var(--radius);
   padding: clamp(20px, 3vw, 30px);
-}
-.card.tinted::before {
-  content: "";
-  position: absolute;
-  inset: var(--offset) calc(var(--offset) * -1) calc(var(--offset) * -1) var(--offset);
-  border-radius: var(--radius);
-  background: var(--tint, var(--sage-wash));
-  z-index: -1;
 }
 
 /* Tags: when a student needs a page ("Need now", "Optional", ...), from TAGS
@@ -687,7 +693,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .home-note { max-width: 44rem; margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--muted); }
 .home-figure { max-width: var(--page-max); margin: clamp(14px, 2.4vw, 26px) auto 0; padding: 0 var(--gutter); }
 .home-figure img { display: block; width: 100%; height: auto; margin: 0 auto; }
-.home-figure.wide img { max-width: 920px; }
+.home-figure.wide img { max-width: 57.5rem; }   /* 920px; grows with the type on very large screens */
 .section-title { font-size: clamp(1.35rem, 1.15rem + 0.8vw, 1.75rem); margin: 0 0 16px; }
 
 /* "What's in the toolkit": a quiet overview with small doodles, no links
@@ -713,7 +719,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 
 .doors-section { padding: clamp(24px, 3vw, 36px) 0 clamp(24px, 3vw, 34px); }
 .doors { gap: 26px; isolation: isolate; }
-.doors .card, .here-col { --offset: 7px; box-shadow: var(--card-shadow); }
+.doors .card, .here-col { box-shadow: 3px 3px 0 var(--line-strong); }   /* the pager's and result cards' offset */
 .doors .card { padding: clamp(18px, 2.2vw, 24px) clamp(18px, 2.4vw, 26px) clamp(10px, 1.4vw, 14px); }
 .doors .help-card > svg { position: absolute; top: 16px; right: 18px; width: 46px; height: 46px; margin: 0; }   /* beside the title, not above it */
 .doors .help-card { grid-row: span 3; }   /* kicker, title and text, links */
@@ -721,9 +727,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .doors .help-card p { font-size: 0.98rem; margin-bottom: 0.7rem; }
 .doors .help-card ul { padding-top: 0.5rem; }
 .doors .help-card li a { padding: 7px 0; }
-.door-start, .here-start { --tint: var(--sage-wash); }
-.door-tools, .here-tools { --tint: var(--blue-wash); }
-.door-help, .here-help   { --tint: var(--terra-wash); }
 :is(.door-start, .here-start) .kicker { color: var(--sage); }
 :is(.door-tools, .here-tools) .kicker { color: var(--blue); }
 :is(.door-help, .here-help) .kicker   { color: var(--terra); }
@@ -739,12 +742,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   border: 1.5px solid var(--line-strong);
   border-radius: var(--radius);
   padding: 18px 20px 8px;
-}
-.here-col::before {
-  content: ""; position: absolute; z-index: -1;
-  inset: var(--offset) calc(var(--offset) * -1) calc(var(--offset) * -1) var(--offset);
-  border-radius: var(--radius);
-  background: var(--tint);
 }
 .here-col .kicker { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
 .here-col h3 { margin: 0 0 6px; font-size: 1.25rem; }
@@ -804,11 +801,12 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 
 /* ---------- 7. Guide layout --------------------------------------------- */
 .guide-frame {
+  --sidebar: 14rem;   /* fits the longest page name, in bold ("Check your references"), on one line; scales with the type */
   max-width: var(--page-max);
   margin: 0 auto clamp(32px, 5vw, 56px);
   padding: 8px var(--gutter) 0;
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
+  grid-template-columns: var(--sidebar) minmax(0, 1fr);
   gap: 56px;
   align-items: start;
 }
@@ -877,13 +875,15 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .guide-nav a .tag, .guide-quick .tag { margin-left: 2px; font-size: 0.7rem; padding: 0 7px; }
 .guide-nav a[aria-current="page"] .tag, .guide-quick[aria-current="page"] .tag { font-weight: 700; }
 .guide-nav .tag-optional { padding: 0; background: none; border: 0; font-weight: 600; }
-.guide-nav a:hover { background: var(--paper-2); color: var(--ink); }
+.guide-nav a:hover, .guide-quick:hover { color: var(--ink); }
+:is(.guide-nav a, .guide-quick):hover .nav-text { text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 0.22em; }
 .guide-nav a[aria-current="page"] {
   color: var(--ink);
-  font-weight: 700;   /* safe: no sidebar tags, so a bold label wraps exactly like a regular one (checked on every page) */
+  font-weight: 700;   /* the sidebar is wide enough for the longest name in bold (--sidebar) */
   background: var(--sage-wash);
   border-radius: var(--sketch);
 }
+:is(.guide-nav a, .guide-quick)[aria-current="page"] .nav-text { text-decoration: none; }
 .guide-nav a[aria-current="page"]::before { color: var(--sage); }
 
 /* "How do I…?": quick answers, above the stages */
@@ -912,8 +912,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   border: 1.5px solid var(--ink);
   border-radius: var(--wobble);
 }
-.guide-quick:hover { border-color: var(--ink); color: var(--ink); }
-.guide-quick[aria-current="page"] { background: var(--sage-wash); border-style: solid; border-color: var(--sage); }
+.guide-quick[aria-current="page"] { background: var(--sage-wash); }
 
 /* "Guide topics" disclosure (small screens only, see section 10) */
 .guide-topics { display: none; }
@@ -960,7 +959,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 @media (min-width: 1180px) {
   /* Every guide page keeps the same text column; the right rail stays empty
      on pages without "On this page", so text never jumps between pages. */
-  .guide-frame { grid-template-columns: 210px minmax(0, 1fr) 190px; gap: 44px; }
+  .guide-frame { grid-template-columns: var(--sidebar) minmax(0, 1fr) 11rem; gap: 44px; }
   .guide-sidebar { grid-column: 1; grid-row: 1; }
   .guide-content { grid-column: 2; grid-row: 1; }
   .has-toc .guide-content .page-toc { display: none; }
@@ -978,13 +977,12 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   .page-toc-wide a:hover { color: var(--link); text-decoration: underline; }
 }
 
-/* Tool pages (the build marks them .page-tool): a wider frame, header and
-   footer included, and no right-hand rail ("On this page" stays as the box in
-   the text), so forms, the converter's two panes and results have room.
-   Prose keeps its 68ch measure; the tool itself uses the whole column. */
-.page-tool { --page-max: 1440px; }
+/* Tool pages (the build marks them .page-tool): the same frame as every page,
+   but no right-hand rail ("On this page" stays as the box in the text), so
+   forms, the converter's two panes and results use the whole main column.
+   Prose keeps its 68ch measure. */
 @media (min-width: 1180px) {
-  .page-tool .guide-frame { grid-template-columns: 210px minmax(0, 1fr); gap: 56px; }
+  .page-tool .guide-frame { grid-template-columns: var(--sidebar) minmax(0, 1fr); gap: 56px; }
 }
 .tool-mark { display: inline-block; width: 1.1em; height: 1.1em; margin-right: 0.3em; vertical-align: -0.18em; }   /* the tool's doodle from the home page */
 @media (max-width: 600px) { .tool-mark { width: 0.85em; height: 0.85em; margin-right: 0.2em; vertical-align: -0.1em; } }
@@ -1044,13 +1042,13 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 /* An en space after the number, so the bold numeral never touches the text.
    Only on numbered lists: lists styled without markers carry role="list". */
 .guide-content ol:not([role="list"]) > li::marker { content: counter(list-item) ".\2002"; }
-.guide-content blockquote {
-  margin: 1.4rem 0;
-  padding: 2px 0 2px 18px;
-  border-left: 3px solid var(--line-strong);
+.guide-content blockquote {   /* indented and softer; no rule at the edge */
+  margin: 1.4rem 0 1.4rem 1.4em;
+  padding: 0;
+  font-style: italic;
   color: var(--ink-soft);
 }
-.guide-content blockquote > :last-child { margin-bottom: 0; }   /* the rule ends with the text */
+.guide-content blockquote > :last-child { margin-bottom: 0; }
 .guide-content hr { border: 0; border-top: 1.5px dashed var(--line-strong); margin: 2.4rem 0; }
 
 /* Checklists ("- [ ]" in Markdown): a hand-drawn box you can tick while you
@@ -1449,8 +1447,13 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);   /* underline in the text's own color */
 }
 .footer-col a:hover { color: var(--link); }
-.footer-aside { display: inline-block; font-size: 0.85rem; color: var(--muted); }   /* inline-block: no underline */
-.site-footer a[aria-current="page"] { color: var(--ink); font-weight: 700; text-decoration-color: var(--sage); }
+.footer-aside { display: block; margin-top: -4px; font-size: 0.85rem; color: var(--muted); }
+.site-footer a[aria-current="page"] {   /* the same sage pill as the header and sidebar */
+  margin-left: -8px; padding-inline: 8px;
+  color: var(--ink); text-decoration: none;
+  background: var(--sage-wash);
+  border-radius: var(--sketch);
+}
 @media (max-width: 1080px) { .footer-inner { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 640px) { .footer-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
@@ -1559,15 +1562,14 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .header-tools { gap: 6px; align-self: start; }
   .search-header { width: 44px; padding: 10px; justify-content: center; }
   .search-header > span { display: none; }
-  .site-nav { gap: 0 16px; }
-  .site-nav a { font-size: 0.95rem; padding: 2px 0; }
+  .site-nav { gap: 0 2px; margin-left: -8px; }
+  .site-nav a { font-size: 0.95rem; padding: 2px 8px; }
   .page-guide .site-nav { display: none; }   /* "Guide topics", just below, lists every page */
   .guide-topics-here { display: none; }   /* the page title immediately below already names this page */
   .guide-topics-here::before { content: none; }
   .unofficial-more { display: none; }   /* phones: just "Unofficial" */
   .lead { font-size: 1.15rem; }
   .guide-list { grid-template-columns: minmax(0, 1fr); }
-  .card.tinted::before { inset: 7px -6px -7px 6px; }
   .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1.1rem; }
   .guide-content :is(p:has(> img:only-child), figure.diagram) { margin-inline: -10px; }   /* diagrams get a little more room */
   /* PDF crops keep a readable size and scroll sideways inside their box */
@@ -1717,7 +1719,6 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   }
   .card, details, .table-wrap, .guide-content pre { border-color: #888 !important; }
   .tag { border-color: #888 !important; }
-  .card.tinted::before { display: none; }
   .home-top .squiggle::after {   /* the wave prints as a plain underline, not a heavy bar */
     -webkit-mask: none; mask: none;
     background: none; height: 0; bottom: -0.08em;
@@ -1794,14 +1795,13 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
    A tool's own rules below add layout only, never new colors or sizes. */
 .tool[hidden], .tool-nojs[hidden] { display: none; }
 .guide-content > .tool { max-width: none; margin: 1.8rem 0; }
-.guide-content .tool-privacy {
+.guide-content .tool-privacy {   /* drawn like a tip: an even edge all round, no colored bar */
   margin: 1.2rem 0;
-  padding: 10px 16px;
+  padding: 10px 18px;
   background: var(--sage-wash);
-  border-left: 4px solid var(--sage);
-  border-radius: 4px 10px 10px 4px;
+  border: 1.5px solid color-mix(in srgb, var(--sage) 40%, transparent);
+  border-radius: 6px 18px 8px 16px / 16px 8px 18px 6px;
 }
-.guide-content .tool-privacy strong { color: var(--sage); }
 .guide-content .tool-nojs {
   padding: 12px 16px;
   background: var(--paper-2);
@@ -1893,13 +1893,12 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .tool-switch input:checked::before { left: calc(100% - 1.2em); border-color: var(--sage); }
 .tool-switch input:focus-visible { outline-offset: 3px; }
 
-/* Fieldsets: card paper with a misregistered wash, as in the diagrams. */
+/* Fieldsets: card paper with an even edge. */
 .tool fieldset:not(.convert-options) {
   min-width: 0; margin: 0 0 1.4rem; padding: 6px 20px 20px;
   background: var(--card);
   border: 1.5px solid var(--line-strong);
   border-radius: var(--sketch);
-  box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--blue-wash);
 }
 .tool legend { padding: 0 6px; margin-left: -6px; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
 .tool fieldset fieldset:not(.convert-options) { margin: 1rem 0 0; background: var(--paper); border-style: dashed; box-shadow: none; }
@@ -1946,10 +1945,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   border: 1.5px solid var(--line-strong);
   border-radius: var(--sketch);
   white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; resize: vertical;
-  transition: border-color .2s ease, box-shadow .2s ease;
 }
-/* Output that is ready to copy gets the sage edge and wash of a finished step. */
-.guide-content .tool .tool-output:not(:empty) { border-color: var(--sage); box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--sage-wash); }
 .guide-content .tool-actions { display: flex; flex-wrap: wrap; gap: 10px 14px; margin: 1rem 0 0; }
 .tool-hint { margin: 6px 0 0; font-size: 0.92rem; color: var(--muted); }
 .tool-status { margin: 1rem 0 0; font-weight: 600; }
@@ -1960,7 +1956,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   background: var(--card);
   border: 1.5px solid var(--line-strong);
   border-radius: var(--sketch);
-  box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--butter-wash);
+  box-shadow: 3px 3px 0 var(--line-strong);
 }
 .tool-results h3 { margin: 1.1rem 0 0.4rem; font-size: 1.1rem; }
 .tool-results h3:focus { outline: none; }
@@ -1991,10 +1987,10 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .tool .convert-input, .guide-content .tool .convert-output { height: 22rem; }
 .guide-content .tool-output:empty::before { content: attr(data-empty); font-family: var(--font-body); color: var(--muted); }
 .convert-results { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
-.convert-results section { padding: 12px 18px; background: var(--card); border: 1.5px solid var(--line-strong); border-radius: var(--sketch); box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--butter-wash); }
+.convert-results section { padding: 12px 18px; background: var(--card); border: 1.5px solid var(--line-strong); border-radius: var(--sketch); box-shadow: 3px 3px 0 var(--line-strong); }
 .convert-results h3 { margin-top: 0.2rem; font-size: 1.05rem; }
 .convert-results ol, .convert-results ul { margin: 0 0 0.4rem; padding-left: 1.3rem; }
-@media (max-width: 860px) {
+@media (max-width: 1100px) {   /* below about 360px a pane is too narrow: stack (tablets in landscape too) */
   .convert-panes, .convert-results { grid-template-columns: minmax(0, 1fr); }
   .tool .convert-input, .guide-content .tool .convert-output { height: 15rem; }
 }
@@ -2021,22 +2017,21 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .pdf-check-cancel[hidden] { display: none; }
 .guide-content .pdf-check-list { list-style: none; padding: 0; margin: 1rem 0 0; }
 .guide-content .pdf-check-list > li { margin: 0 0 14px; }
-.pdf-check-item {
-  --c: var(--muted);
-  padding: 12px 16px 12px 18px;
+.pdf-check-item {   /* an even edge; the state label says the status in words */
+  --c: var(--muted); --w: var(--paper-2);
+  padding: 12px 18px;
   background: var(--card);
-  border: 1.5px solid var(--line);
-  border-left: 5px solid var(--c);
-  border-radius: 12px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--sketch);
 }
-.pdf-check-item.is-ok { --c: var(--sage); }
-.pdf-check-item.is-check { --c: var(--terra); }
-.pdf-check-item.is-differs { --c: var(--blue); }
+.pdf-check-item.is-ok { --c: var(--sage); --w: var(--sage-wash); }
+.pdf-check-item.is-check { --c: var(--terra); --w: var(--terra-wash); }
+.pdf-check-item.is-differs { --c: var(--blue); --w: var(--blue-wash); }
 .pdf-check-item p { margin: 0 0 0.4em; }
 .pdf-check-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
 .pdf-check-state {
   font-size: 0.85rem; font-weight: 700; color: var(--c);
-  padding: 1px 8px; border: 1.5px solid var(--c); border-radius: 999px;
+  padding: 1px 8px; background: var(--w); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); border-radius: 999px;
 }
 .pdf-check-source { font-size: 0.92rem; color: var(--muted); }
 .guide-content .pdf-check-item details { margin: 0.5rem 0; padding: 0 14px; }
