@@ -1,8 +1,13 @@
 #!/usr/bin/env python3
 """Set a new version everywhere it appears, for a release.
 
-    python3 scripts/bump.py X.Y.Z
+    python3 scripts/bump.py          choose the version from the change log
+    python3 scripts/bump.py X.Y.Z    use this version
 
+Without a version it reads "## Unreleased" in CHANGELOG.md: minor when its
+"Changes your PDF?" line says anything but No (Yes, "Only if ...") or it
+mentions a new setting, else patch
+(docs/project/maintenance.md, "Versions and compatibility").
 Edits the class line (version and today's date), main.tex's requested date,
 the release the website links, the README and Get started download links,
 CITATION.cff, and turns the change log's "Unreleased" heading into the
@@ -14,7 +19,7 @@ import re
 import sys
 from datetime import date
 
-from common import CLASS_LINE, ROOT
+from common import CLASS_LINE, ROOT, class_version
 
 
 def plan(new, today):
@@ -45,11 +50,34 @@ def plan(new, today):
     return old, prepared
 
 
+def choose(old, changelog):
+    """(new version, why) from the Unreleased section of the change log."""
+    section = re.search(r"(?ms)^## Unreleased[ \t]*$(.*?)(?=^## |\Z)", changelog)
+    if not section:
+        raise ValueError("CHANGELOG.md: no '## Unreleased' section; add the change-log lines first.")
+    text = section[1]
+    pdf = re.search(r"\*\*Changes your PDF\?\*\*\s*\**\s*(\w+)", text)
+    major, minor, patch = map(int, old.split("."))
+    if not pdf:
+        raise ValueError("CHANGELOG.md: the Unreleased section needs a '**Changes your PDF?**' line.")
+    if pdf[1].lower() != "no":  # Yes, or "Only if ...": some PDFs change
+        return f"{major}.{minor + 1}.0", f"minor: Changes your PDF? {pdf[1]}"
+    if re.search(r"(?i)\bnew settings?\b", text):
+        return f"{major}.{minor + 1}.0", "minor: a new setting"
+    return f"{major}.{minor}.{patch + 1}", "patch: no PDF change and no new setting"
+
+
 def main():
-    if len(sys.argv) != 2 or not re.fullmatch(r"\d+\.\d+\.\d+", sys.argv[1]):
+    if len(sys.argv) > 2 or (len(sys.argv) == 2 and not re.fullmatch(r"\d+\.\d+\.\d+", sys.argv[1])):
         sys.exit(__doc__)
-    new, today = sys.argv[1], date.today()
+    today = date.today()
     try:
+        if len(sys.argv) == 2:
+            new = sys.argv[1]
+        else:
+            old, _ = class_version(ROOT)
+            new, why = choose(old, (ROOT / "CHANGELOG.md").read_text(encoding="utf-8"))
+            print(f"version {new} ({why})")
         old, prepared = plan(new, today)
     except (OSError, ValueError) as error:
         sys.exit(str(error))
