@@ -173,38 +173,78 @@ def repository_url():
     return site_setting("repository_url", "the public repository address")
 
 
-MARKDOWN_LINK = re.compile(r"(\]\()([^)\s]+)(\))")
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
+CODE_SPAN = re.compile(r"\\.|(?<!`)(`+)(?!`).+?(?<!`)\1(?!`)", re.S)
+INLINE_LINK = re.compile(
+    r"\]\(\s*(?:<([^<>\n]*)>|([^\s<)][^\s)]*))"
+    r"(?:\s+(?:\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'|\((?:[^)\\]|\\.)*\)))?\s*\)")
+REFERENCE_DEFINITION = re.compile(r"^ {0,3}\[[^\]\n]+\]:[ \t]*(?:\n[ \t]*)?(?:<([^<>\n]*)>|(\S+))", re.M)
+
+
+def without_code(text):
+    """The text with fenced code blocks and inline code spans blanked out (same
+    length, so positions still match), because a link written inside code is a
+    sample for the reader, not a link."""
+    out, fence = [], None
+    for line in text.splitlines(keepends=True):
+        match = FENCE.match(line.rstrip("\r\n"))
+        if fence:
+            closes = match and match[1][0] == fence[0] and len(match[1]) >= len(fence) and not match[2].strip()
+            fence = None if closes else fence
+            out.append(re.sub(r"[^\r\n]", " ", line))
+        elif match and not (match[1][0] == "`" and "`" in match[2]):
+            fence = match[1]
+            out.append(re.sub(r"[^\r\n]", " ", line))
+        else:
+            out.append(line)
+    return CODE_SPAN.sub(lambda m: re.sub(r"[^\r\n]", " ", m[0]) if m[1] else m[0], "".join(out))
+
+
+def markdown_links(text):
+    """(start, end, destination) for each link destination outside code: inline
+    links and images (with an optional title or <angle brackets>) and reference
+    definitions at the start of a line. Nothing else is looked at."""
+    plain = without_code(text)
+    found = []
+    for pattern in (INLINE_LINK, REFERENCE_DEFINITION):
+        for m in pattern.finditer(plain):
+            group = 1 if m[1] is not None else 2
+            found.append((m.start(group), m.end(group), m[group]))
+    return sorted(found)
 
 
 def shipped_markdown(name, text, shipped, version):
-    """A Markdown file as it goes into a ZIP: a relative link to a file the ZIP
-    leaves out (CREDITS.md from LICENSE.md, say) points to that file in the
-    repository at this release instead, so no link inside the ZIP is broken."""
-    def link(match):
-        target = match[2]
+    """A Markdown file as it goes into a ZIP: a relative link or image (inline
+    or reference definition, outside code) to a file the ZIP leaves out
+    (CREDITS.md from LICENSE.md, say) points to that file in the repository at
+    this release instead, so no such link inside the ZIP is broken."""
+    for start, end, target in reversed(markdown_links(text)):
         parts = urlsplit(target)
         if parts.scheme or parts.netloc or not parts.path:
-            return match[0]
+            continue
         path = posixpath.normpath(posixpath.join(posixpath.dirname(name), unquote(parts.path)))
         if path in shipped:
-            return match[0]
+            continue
         if path.startswith("..") or not (ROOT / path).exists():
             raise SystemExit(f"{name}: link to a missing file: {target}")
         kind = "tree" if (ROOT / path).is_dir() else "blob"
         fragment = "#" + parts.fragment if parts.fragment else ""
-        return f"{match[1]}{repository_url()}/{kind}/v{version}/{quote(path)}{fragment}{match[3]}"
-    return MARKDOWN_LINK.sub(link, text)
+        text = f"{text[:start]}{repository_url()}/{kind}/v{version}/{quote(path)}{fragment}{text[end:]}"
+    return text
 
 
 def check_links(label, archive):
-    """Every relative link in the ZIP's Markdown and top-level HTML files must
-    name a file inside the ZIP (the guide checks its own links as it builds)."""
+    """Every relative link in the ZIP's Markdown files (inline links, images and
+    reference definitions, outside code) and every href or url= in its top-level
+    HTML files must name a file inside the ZIP (the guide checks its own links
+    as it builds). Links in other Markdown syntax, such as autolinks or raw
+    HTML, are not checked."""
     names = set(archive.namelist())
     folders = {posixpath.dirname(n) for n in names}
     broken = []
     for name in sorted(names):
         if name.endswith(".md"):
-            targets = [m[2] for m in MARKDOWN_LINK.finditer(archive.read(name).decode("utf-8"))]
+            targets = [t for _, _, t in markdown_links(archive.read(name).decode("utf-8"))]
         elif name.endswith(".html") and "/" not in name:
             targets = re.findall(r'(?:href="|url=)([^"\s>]+)', archive.read(name).decode("utf-8"))
         else:
