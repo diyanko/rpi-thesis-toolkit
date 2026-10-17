@@ -84,12 +84,13 @@ What to run is in [AGENTS.md](../../AGENTS.md#verification). How it works:
   website text.
 - **Full** compiles the thesis and runs `check.py` (isolated MS, PhD with
   copyright and a large committee, minimal DEng, LuaLaTeX, and XeLaTeX
-  variants) and `regressions.py` in parallel, then `scripts/test_*.py`, the
+  variants) and `regressions.py` in parallel, then `scripts/tests/test_*.py`, the
   website, and the ZIPs. Browser tests run after the TeX checks so they do not
   compete with the compilers.
 - **Missing tools:** a step whose tool (TeX Live, Pandoc 3.11 or newer,
-  `pypdf`, Chrome) is missing is skipped and named in the summary; CI has
-  them all. **Release** mode adds a strict publish build, a browser layout
+  `pypdf`, Chrome) is missing is skipped and named in the summary, with
+  skip counts for tests; CI and release mode fail instead, since they have
+  every tool. **Release** mode adds a strict publish build, a browser layout
   sweep, and reproducible ZIPs, and fails when the sweep cannot run. CI's
   container has no browser and sets `VERIFY_ALLOW_NO_BROWSER=1`, so run
   release mode locally before tagging.
@@ -97,7 +98,9 @@ What to run is in [AGENTS.md](../../AGENTS.md#verification). How it works:
   `_local/shots/baseline/`; `--baseline compare` lists which pages, widths,
   and themes changed (informational, exit status unaffected). The component
   gallery is shot full length, so its light and dark pair reviews the whole
-  design at once.
+  design at once. `ui_check.py --pdf-result [PDF]` screenshots Check your PDF
+  showing a result. Shared helpers live in `scripts/common.py` (paths, site
+  settings, class version) and `scripts/chrome.py` (the headless browser).
 - **`tidy.py`** removes local branches and worktrees already merged into
   `origin/main`, including rebase merges when every unique commit's patch is
   in `main` and all changed paths still match it. A branch that changed again,

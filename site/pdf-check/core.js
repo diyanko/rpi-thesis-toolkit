@@ -1,5 +1,5 @@
 // "Check your PDF" (docs/check-pdf.md): reading and analysis, without any page
-// or window code, so scripts/test_pdf_check.py and scripts/check_pdfs.py can
+// or window code, so scripts/tests/test_pdf_check.py and scripts/check_pdfs.py can
 // run it in a headless browser. site/pdf-check/ui.js shows the results.
 //
 //   read(pdfjs, bytes, progress, job) -> plain data: page sizes, text pieces
@@ -33,7 +33,7 @@
 // site/pdf-check/pdfjs/ with its LICENSE. To update it, run this in the
 // repository folder with the new version (macOS or Linux), then set
 // PDFJS_VERSION below to match (build_site.py checks it) and run
-// scripts/test_pdf_check.py:
+// scripts/tests/test_pdf_check.py:
 //   cd site/pdf-check/pdfjs && curl -sL https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-6.3.289.tgz | tar -xz --strip-components=1 package/LICENSE package/legacy/build/pdf.min.mjs package/legacy/build/pdf.worker.min.mjs && mv legacy/build/* . && rm -r legacy
 (function (root) {
   "use strict";
