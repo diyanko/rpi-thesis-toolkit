@@ -38,6 +38,9 @@ export const RULES = {
   aliases: {conference: 'inproceedings', techreport: 'report', phdthesis: 'thesis', mastersthesis: 'thesis', www: 'online'},
   months: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'],
   nameFields: ['author', 'editor', 'translator'],
+  citationSignatures: {command: '\\\\([A-Za-z]*cite[A-Za-z]*|nocite)\\*?', multi: 'cites$', volume: 'volcites?$'},
+  mathPairs: [['$$', '$$'], ['$', '$'], ['\\(', '\\)'], ['\\[', '\\]']],
+  visibilityFields: ['doi', 'url', 'isbn'],
   titleFields: ['title', 'subtitle', 'booktitle'],
   verbatimFields: ['url', 'doi', 'file', 'eprint'],
   ignoredFields: ['abstract', 'keywords', 'file', 'annote'],
@@ -201,12 +204,21 @@ export function detectStyle(preamble = '') {
     }
   }
   // Later options can change a package-level style or visibility choice.
-  for (const m of text.matchAll(/\\ExecuteBibliographyOptions\s*{([^}]+)}/g)) {
+  for (const m of text.matchAll(/\\ExecuteBibliographyOptions\s*{((?:[^{}]|{[^{}]*})*)}/g)) {
     options += ',' + m[1];
     style = /(?:^|,)\s*style\s*=\s*([\w-]+)/.exec(m[1])?.[1] || style;
   }
+  const values = Object.create(null);
+  for (const option of splitTop(options, ',')) {
+    const setting = /^\s*([\w-]+)\s*=\s*(.*?)\s*$/.exec(option);
+    if (setting) {
+      const value = setting[2].replace(/^{(.*)}$/, '$1').trim();
+      values[setting[1]] = value;
+      if (setting[1] === 'style' || setting[1] === 'bibstyle') style = value;
+    }
+  }
   const profile = RULES.profiles.find(p => new RegExp(p.match).test(style));
-  const disabled = [...options.matchAll(/(?:^|,)\s*(doi|url|isbn)\s*=\s*false\b/g)].map(m => m[1]);
+  const disabled = RULES.visibilityFields.filter(field => values[field] === 'false');
   return {style: style || 'unknown', profile: profile || null, disabled};
 }
 
@@ -246,6 +258,25 @@ function unprotected(text) {
   return out;
 }
 
+// Hide mathematical expressions before checking literal text. Preserve offsets
+// so escape detection still counts the original backslashes correctly.
+function literalText(text) {
+  let out = '', close = '';
+  for (let i = 0; i < text.length; i++) {
+    if (!escaped(text, i)) {
+      if (close && text.startsWith(close, i)) {
+        out += ' '.repeat(close.length); i += close.length - 1; close = ''; continue;
+      }
+      const pair = !close && RULES.mathPairs.find(([open]) => text.startsWith(open, i));
+      if (pair) {
+        close = pair[1]; out += ' '.repeat(pair[0].length); i += pair[0].length - 1; continue;
+      }
+    }
+    out += close ? ' ' : text[i];
+  }
+  return out;
+}
+
 export function citedKeys(files = []) {
   const found = new Map();
   let all = false;
@@ -253,17 +284,23 @@ export function citedKeys(files = []) {
     const text = stripComments(file.text).replace(/\\begin{(?:verbatim\*?|lstlisting|minted)}[\s\S]*?\\end{(?:verbatim\*?|lstlisting|minted)}/g, '');
     // Only multicite commands consume another braced group. Ordinary
     // citations can be followed by grouped prose, which is not another key.
-    const commands = /\\([A-Za-z]*cite[A-Za-z]*|nocite)\*?/g;
+    const commands = new RegExp(RULES.citationSignatures.command, 'gi');
     for (const m of text.matchAll(commands)) {
       let rest = text.slice(m.index + m[0].length);
-      const multi = /cites$/i.test(m[1]);
+      const multi = new RegExp(RULES.citationSignatures.multi, 'i').test(m[1]);
+      const volume = new RegExp(RULES.citationSignatures.volume, 'i').test(m[1]);
       if (multi) rest = rest.replace(/^\s*(?:\([^)]*\)\s*){0,2}/, '');
       do {
         rest = rest.replace(/^\s*(?:\[[^\]]*\]\s*){0,2}/, '');
+        if (volume) {
+          const number = /^{([^{}]*)}/.exec(rest);
+          if (!number) break;
+          rest = rest.slice(number[0].length).replace(/^\s*(?:\[[^\]]*\]\s*){0,2}/, '');
+        }
         const group = /^{([^{}]*)}/.exec(rest);
         if (!group) break;
         for (const key of group[1].split(',').map(k => k.trim()).filter(Boolean)) {
-          if (key === '*' && m[1] === 'nocite') all = true;
+          if (key === '*' && m[1].toLowerCase() === 'nocite') all = true;
           else found.set(key, file.name || '.tex file');
         }
         rest = rest.slice(group[0].length);
@@ -344,7 +381,7 @@ export function checkReferences({bib = '', preamble = '', tex = [], unused = fal
         (!style.profile.sentenceTypes || style.profile.sentenceTypes.includes(type))) {
       for (const field of style.profile.sentenceFields || rules.titleFields) {
         if (!f[field]) continue;
-        const raw = unprotected(f[field]);
+        const raw = unprotected(literalText(f[field]));
         const words = [...raw.matchAll(new RegExp(rules.checks.capitals.pattern, 'g'))]
           .filter(m => raw.slice(0, m.index).trim() || new RegExp(rules.checks.capitals.firstWordPattern).test(m[0])).map(m => m[0]);
         if (words.length) add('capitals', key, field, [...new Set(words)].join(', '));
@@ -353,8 +390,9 @@ export function checkReferences({bib = '', preamble = '', tex = [], unused = fal
     for (const [field, value] of Object.entries(f)) {
       if (matches('encoding', value)) add('encoding', key, field);
       if (!rules.verbatimFields.includes(field)) {
-        const chars = [...value.matchAll(new RegExp(rules.checks.special.pattern, 'g'))];
-        if (chars.some(m => !escaped(value, m.index))) add('special', key, field);
+        const literal = literalText(value);
+        const chars = [...literal.matchAll(new RegExp(rules.checks.special.pattern, 'g'))];
+        if (chars.some(m => !escaped(literal, m.index))) add('special', key, field);
       }
     }
     const ids = [f.doi && 'doi:' + f.doi.toLowerCase(), f.title && 'title:' + f.title.normalize('NFKD').replace(/[^\p{L}\p{N}]/gu, '').toLowerCase()].filter(Boolean);

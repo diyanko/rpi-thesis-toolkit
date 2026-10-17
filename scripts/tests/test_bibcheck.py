@@ -19,7 +19,7 @@ BOOK = '@book{key, author={Alice Smith}, title={An example}, date={2024}, publis
 ARTICLE = '@article{key, author={Alice Smith}, title={An example}, date={2024}, journaltitle={Example Journal}, volume={1}, pages={1--9}}'
 NUMERIC = r'\usepackage[style=numeric]{biblatex}'
 
-@unittest.skipUnless(find_chrome(), 'no Chrome')
+@unittest.skipUnless(find_chrome(), 'no Chrome or Chromium')
 class BibCheck(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -88,6 +88,15 @@ class BibCheck(unittest.TestCase):
         self.assertNotIn('unused', {f['id'] for f in report['findings']})
         self.assertIn('unused', self.ids(tex=[{'text': r'\cite{absent}'}], unused=True))
         self.assertNotIn('unused', self.ids(unused=True))
+
+    def test_capitalized_and_volume_citation_signatures(self):
+        for command in ('Cite', 'Citeauthor', 'Textcite', 'Autocite'):
+            with self.subTest(command=command):
+                self.assertIn('missing', self.ids(tex=[{'text': '\\' + command + '{absent}'}]))
+        for citation in (r'\volcite{3}{key}', r'\pvolcite[see]{3}[12]{key}',
+                         r'\Volcite{3}{key}', r'\volcites{3}{key}{4}[12]{key}'):
+            with self.subTest(citation=citation):
+                self.assertEqual(self.ids(tex=[{'text': citation}], unused=True), set())
 
     def test_field_profiles_and_style_detection(self):
         for style in ('numeric', 'authoryear', 'ieee', 'apa', 'mla', 'chem-acs'):
@@ -180,6 +189,20 @@ class BibCheck(unittest.TestCase):
         self.assertIn('duplicateEntry', self.ids(BOOK + BOOK.replace('key,', 'different,')))
         self.assertIn('duplicateEntry', self.ids(BOOK[:-1] + ',doi={10.1234/x}}' + BOOK.replace('key,', 'other,').replace('An example', 'Different title')[:-1] + ',doi={10.1234/x}}'))
 
+    def test_later_visibility_options_win(self):
+        bib = BOOK[:-1] + ', doi={10.1234/x}}'
+        preamble = r'\usepackage[style=numeric,doi=false]{biblatex}'
+        self.assertIn('disabled', self.ids(bib, preamble=preamble))
+        self.assertNotIn('disabled', self.ids(bib, preamble=preamble + r'\ExecuteBibliographyOptions{doi=true}'))
+        self.assertIn('disabled', self.ids(bib, preamble=preamble + r'\ExecuteBibliographyOptions{doi=true,doi={false}}'))
+
+    def test_math_keeps_its_own_special_characters(self):
+        for title in (r'The $L_p$ space', r'The \(L_p\) space', r'The $$L_p$$ space', r'The \[L_p\] space'):
+            with self.subTest(title=title):
+                self.assertNotIn('special', self.ids(BOOK.replace('An example', title)))
+        self.assertIn('special', self.ids(BOOK.replace('An example', r'The $L_p$ space & more')))
+        self.assertIn('special', self.ids(BOOK.replace('An example', r'A \$5 price & more')))
+
     def test_inheritance_is_explicitly_partial(self):
         report = self.check('@inbook{child, crossref={parent}}')
         self.assertIn('unsupported', {f['id'] for f in report['findings']})
@@ -195,7 +218,7 @@ class BibCheck(unittest.TestCase):
             self.assertTrue(finding['href'].startswith('citations.html#'))
 
 
-@unittest.skipUnless(find_chrome(), 'no Chrome')
+@unittest.skipUnless(find_chrome(), 'no Chrome or Chromium')
 class PageControls(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
