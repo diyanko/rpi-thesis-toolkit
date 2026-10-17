@@ -6,6 +6,7 @@ Run: python3 scripts/tests/test_bibcheck.py
 """
 import json
 import re
+import shutil
 from pathlib import Path
 import sys
 import unittest
@@ -68,6 +69,17 @@ class BibCheck(unittest.TestCase):
                 self.assertIn('syntax', self.ids(bib))
         self.assertIn('unsupported', self.ids('@book{k, title=unknownmacro}'))
         self.assertIn('empty', self.ids('% nothing here'))
+
+    def test_value_components_need_delimiters_or_concatenation(self):
+        for value in ('{An} {example}', '"An" "example"', '{An}junk', 'bare words', '{An} #'):
+            with self.subTest(value=value):
+                self.assertIn('syntax', self.ids(BOOK.replace('{An example}', value)))
+        self.assertNotIn('syntax', self.ids(BOOK.replace('{An example}', '{An} # " example"')))
+
+    def test_reference_key_fields_keep_unescaped_underscores(self):
+        for field in ('crossref', 'xref', 'xdata', 'related', 'entryset', 'ids'):
+            with self.subTest(field=field):
+                self.assertNotIn('special', self.ids(BOOK[:-1] + ', ' + field + '={parent_2024}}'))
 
     def test_keys_duplicate_case_and_spaces(self):
         self.assertIn('duplicate', self.ids(BOOK + '\n' + BOOK))
@@ -317,6 +329,21 @@ class PageControls(unittest.TestCase):
             self.assertIn('checklist', self.js("document.querySelector('[data-bibcheck-nojs]').textContent"))
         finally:
             self.browser.call('Emulation.setScriptExecutionDisabled', value=False)
+
+
+class OfflineGuide(unittest.TestCase):
+    @unittest.skipUnless(shutil.which('pandoc'), 'no Pandoc')
+    def test_offline_render_replaces_controls_with_online_route_and_checklist(self):
+        import build_site
+        site = build_site.Site(offline=True)
+        html = site.render('docs/check-references.md')
+        self.assertEqual(site.errors, [])
+        self.assertIn(site.site_url + '/guide/check-references.html', html)
+        self.assertNotIn('data-bibcheck hidden', html)
+        self.assertNotIn('bibcheck/ui.js', html)
+        self.assertNotIn('bibcheck-interactive-start', html)
+        self.assertIn('checklist below', html)
+        self.assertIn('Checklist without JavaScript', html)
 
 
 if __name__ == '__main__':
