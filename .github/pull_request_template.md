@@ -1,5 +1,6 @@
 Thanks for your pull request. Fill in what you can; the maintainer will
-help with the rest.
+help with the rest. By opening this you offer your changes under the
+project's license (see CONTRIBUTING.md).
 
 ## What does this change?
 
@@ -7,8 +8,8 @@ help with the rest.
 
 ## Checks
 
-<!-- Paste the last line of `python3 scripts/verify.py`. "Did not run"
-is fine: the same checks run automatically on this pull request. -->
+<!-- Paste the last line of `python3 scripts/verify.py`. "Did not run" or
+skipped steps are fine: the same checks run automatically here. -->
 
 **Changes the PDF?** <!-- yes, no, or not sure. Formatting changes: name the
 OGE manual or checklist section and page. -->

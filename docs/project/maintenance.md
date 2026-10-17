@@ -1,19 +1,21 @@
 # Maintaining the toolkit
 
-For the person who looks after the RPI Thesis Toolkit (an unofficial,
-community-made project) and the AI coding agents that draft most changes.
-Students never need this page and it is not in the student ZIP. A human
-maintainer reviews every change; the rules agents follow are in
-[AGENTS.md](../../AGENTS.md), and `CLAUDE.md` only points to it. The current
-version and its validation record are in [CHANGELOG.md](../../CHANGELOG.md);
-each entry starts with a **Changes your PDF?** line.
+Reference for the person who looks after the RPI Thesis Toolkit (an
+unofficial, community-made project) and the AI agents that draft most changes.
+Students never need this page and it is not in the student ZIP. Every step to
+follow (verification, maintainer flow, releases, recipes) is in
+[AGENTS.md](../../AGENTS.md), the only process document; this page explains
+how things work and never repeats a step. `CLAUDE.md` only points to
+`AGENTS.md`. The current version and its validation record are in
+[CHANGELOG.md](../../CHANGELOG.md).
 
 Other pages in this folder: [style-guide.md](style-guide.md) (any text a
 student reads), [requirements.md](requirements.md) (each OGE rule, how the
 class meets it, differences from RPI's official LaTeX template, open
 questions for OGE), [attribution.md](attribution.md) (what is ours and what is
-not), `sources.json` (OGE documents reviewed, with dates and fingerprints),
-and `upstream-files.json` (hashes of RPI's original template, compared by
+not), [components.md](components.md) (every website component on one page),
+`sources.json` (OGE documents and helper websites reviewed, with dates), and
+`upstream-files.json` (hashes of RPI's original template, compared by
 `scripts/check.py` when `_local/legacy/` exists).
 
 ## Where things live
@@ -35,116 +37,81 @@ adding it.
 | Student editor settings | `.vscode/settings.json`, `.vscode/extensions.json` (shipped in the ZIP) |
 
 **Generated (never tracked):** every `.html` page, all PDFs, `build/`,
-`dist/site/`, and `dist/*.zip`.
+`dist/site/`, and `dist/*.zip`. Delete stray `.html` files next to Markdown,
+and PDFs or LaTeX working files outside `build/`.
 
 **Local only (ignored, never published):**
 
 | What | Where |
 | --- | --- |
-| Notes, prototypes, agent scratch files | `_local/` |
+| Notes, prototypes, agent scratch files, worktrees | `_local/` |
 | Downloaded OGE manuals and checklists | `_local/oge/` (read them from the official page; never commit or mirror) |
 | RPI's original LaTeX template, for comparison | `_local/legacy/` (from RPI ITS's [Thesis Preparation page](https://itssc.rpi.edu/hc/en-us/articles/360010087512-Thesis-Preparation)) |
 | The RPI seal, to compile the sample | `assets/rpi-seal.jpg` (each student downloads it) |
 | Agent and editor settings | `.claude/`, `.codex/`, `.idea/`, `.venv/`, `__pycache__/` |
 
-Delete stray `.html` files next to Markdown and PDFs or LaTeX working files
-outside `build/`. `git status` should show only intended changes.
-
 Guide stages and page order are defined once, in `NAV` at the top of
 `scripts/build_site.py`. The landing page cards in `site/index.html` and the
-guide list in `README.md` follow the same stages by hand; update them when
-`NAV` changes.
+guide list in `README.md` follow the same stages by hand.
 
-Help arrives through GitHub Issues (the forms in `.github/`) and one
-no-sign-in "help and feedback" form. The form's URL lives only in the "Ask for
-help" section of `docs/troubleshooting.md`; every other page links to that
-section. The repository is on the owner's personal GitHub account; do not
-hard-code an organization name. When a question could come up again, add a row
-to the "Common messages" table in `docs/troubleshooting.md`.
+Help arrives through GitHub Issues (the forms in `.github/ISSUE_TEMPLATE/`)
+and one no-sign-in help and feedback form. The form's URL lives only in the
+"Ask for help" section of `docs/troubleshooting.md`; every other page links to
+that section. The repository is on the owner's personal GitHub account; do not
+hard-code an organization name.
 
 ## RPI materials
-
-Never commit RPI-owned material (seal, original template, manuals, checklists,
-slides). Keep reference copies in `_local/` and link to RPI's pages.
 
 Maintainer decisions (14 Oct 2026), settled:
 
 - **No RPI materials are redistributed.** Nothing RPI-owned is in the
   repository, the ZIPs, or the website, so no redistribution permission is
   needed.
-- **The seal:** the toolkit uses the current seal on RPI ITS's Thesis
+- **The seal:** the toolkit points to the current seal on RPI ITS's Thesis
   Preparation page. Each student downloads it and saves it as
   `assets/rpi-seal.jpg` (or `.png`); until then the title page shows a
-  placeholder. The seal stays out of the repository, the ZIPs, the website
-  artwork, and this project's license. (The 2026 manual's sample title page
-  shows an older design; the Thesis Preparation download is the one we point
-  to.)
+  placeholder. (The 2026 manual's sample title page shows an older design.)
 
 These are project decisions, not OGE approval and not permission to
-redistribute RPI artwork. Present the project as unofficial and
-community-made ([style guide](style-guide.md#talking-about-rpi)).
+redistribute RPI artwork.
 
-## Verification
+## Verification internals
 
-One command; CI runs the same (full logs in `build/verify/`):
+What to run is in [AGENTS.md](../../AGENTS.md#verification). How it works:
 
-```sh
-python3 scripts/verify.py           # picks quick or full from the files changed since main
-python3 scripts/verify.py quick     # guide or website text: hygiene and site, seconds
-python3 scripts/verify.py full      # thesis, PDF checks and regressions (in parallel), website, ZIPs
-python3 scripts/verify.py release   # full + strict publish build, layout sweep, reproducible ZIPs
-```
+- **Auto mode** runs full whenever Git cannot tell what changed, on a clean
+  tree, or when any staged, unstaged, or untracked file is outside guide and
+  website text.
+- **Full** compiles the thesis and runs `check.py` (isolated MS, PhD with
+  copyright and a large committee, minimal DEng, LuaLaTeX, and XeLaTeX
+  variants) and `regressions.py` in parallel, then `scripts/test_*.py`, the
+  website, and the ZIPs. Browser tests run after the TeX checks so they do not
+  compete with the compilers.
+- **Missing tools:** a step whose tool (TeX Live, Pandoc 3.11 or newer,
+  `pypdf`, Chrome) is missing is skipped and named in the summary; CI has
+  them all. **Release** mode adds a strict publish build, a browser layout
+  sweep, and reproducible ZIPs, and fails when the sweep cannot run. CI's
+  container has no browser and sets `VERIFY_ALLOW_NO_BROWSER=1`, so run
+  release mode locally before tagging.
+- **Screenshots:** `ui_check.py --baseline save` keeps them in
+  `_local/shots/baseline/`; `--baseline compare` lists which pages, widths,
+  and themes changed (informational, exit status unaffected). The component
+  gallery is shot full length, so its light and dark pair reviews the whole
+  design at once.
+- **`tidy.py`** removes local branches and worktrees already merged into
+  `origin/main`, including rebase merges when every unique commit's patch is
+  in `main` and all changed paths still match it. A branch that changed again,
+  moved after the check, or cannot be proven merged stays. It never touches
+  `main`, the current worktree, locked worktrees, or uncommitted changes.
 
-Auto mode runs full whenever Git cannot tell what changed, on a clean tree,
-or when any staged, unstaged, or untracked file is outside guide and website
-text. Full also runs `scripts/test_*.py` for the tooling and PDF checker.
-These run after the parallel TeX checks so browser startup and short server
-timeouts do not compete with the compilers. Browser test skips are reported
-when Chrome is absent. Release mode fails when the browser layout sweep cannot run;
-CI's container has no browser and sets `VERIFY_ALLOW_NO_BROWSER=1`, so run
-`verify.py release` locally before tagging.
+## Pull requests from forks
 
-It needs Python 3, TeX Live, Pandoc 3.11 or newer, and `pypdf`.
-`python3 scripts/build.py --doctor` checks a computer's setup.
-
-`check.py` builds isolated variants (MS, PhD with copyright and a large
-committee, minimal DEng, LuaLaTeX, XeLaTeX) in parallel and checks PDF structure. After a
-title-page change, run it with `assets/rpi-seal.jpg` and with the file moved
-aside (as in CI). Parsed PDF text cannot judge layout, so also look at the
-pages. For visible website changes, run `python3 scripts/ui_check.py --shots`.
-
-`python3 scripts/ui_check.py --baseline save` keeps the current screenshots in
-`_local/shots/baseline/`; `--baseline compare` takes new ones and lists which
-pages, widths, and themes changed (informational, exit status unaffected).
-The [component gallery](components.md) shows every list, callout, table, code
-block, badge, figure, and dialog on one page, shot full length, so its light
-and dark pair reviews the whole design at once. Add a new component there.
-
-After a pull request merges, `python3 scripts/tidy.py` lists local branches
-and worktrees already merged into `origin/main`; `--apply` removes them. It
-also recognizes rebase merges when every unique commit's patch is in main
-and the final contents and modes of all changed paths still match main.
-If a file has changed again since the merge, or Git cannot prove equivalence,
-the branch stays. A branch moved after the check stays too. It
-never touches `main`, the current worktree, unmerged work, locked worktrees,
-or anything with uncommitted changes.
-
-One writer per checkout. A second agent or person works in its own git
-worktree and branch, or owns separate files.
-
-## Day-to-day changes
-
-GitHub Issues are the to-do list, labelled by area (`class`, `guide`, `site`,
-`checker`, `tooling`, `health`). One issue becomes one branch and one pull
-request that says `Closes #N`. Small guide, website, or doc changes may go
-straight to `main` after `verify.py`; class, starter, script, and CI changes
-go through a pull request with auto-merge (`gh pr merge --auto --rebase`),
-which merges once CI passes. Then `python3 scripts/tidy.py --apply` removes the
-merged branch and worktree. Class and starter changes collect under
-`## Unreleased` in `CHANGELOG.md` and reach students with the next
-[release](#make-a-release). The exact steps, including the optional external
-review and the screenshot baseline, are in
-[AGENTS.md](../../AGENTS.md#maintainer-flow).
+`main` requires the **build** check to pass (admins may still push small guide
+fixes directly). A first-time contributor's workflows wait for **Approve and
+run workflows** on the pull request. Auto-merge is not available for pull
+requests from forks: wait for the required **build** check, then rebase-merge
+by hand and thank the contributor (offer a credit in
+[CREDITS.md](../../CREDITS.md#people)).
 
 ## Versions and compatibility
 
@@ -152,18 +119,17 @@ One version number everywhere. **The class is the version:** the
 `\ProvidesClass` line in `rpi-thesis.cls` holds a date and `vX.Y.Z`; the
 website footer, ZIP names, `CITATION.cff`, and every PDF's Creator property
 use the same number. `main.tex` asks for that date
-(`\documentclass{rpi-thesis}[YYYY/MM/DD]`), so a class with an earlier date
-warns on every compile. LaTeX compares only dates: two releases on the same
-day look the same to it, and the date says nothing about which versions work
-together (the change log does). `scripts/package.py` refuses a release when
-the dates differ.
+(`\documentclass{rpi-thesis}[YYYY/MM/DD]`), so an older class warns on every
+compile. LaTeX compares only dates, so two releases on the same day look the
+same to it; the change log says which versions work together.
+`scripts/package.py` refuses a release when the dates differ.
 
 - `Z` (patch): fixes that change no PDF, and guide-only changes.
 - `Y` (minor): new settings, or formatting corrected to match OGE
   (**Changes your PDF? Yes**). Before 1.0.0, breaking changes also bump `Y`.
 - `X` (major): from 1.0.0, a breaking change to settings or commands.
-- Versions below 1.0.0 are the beta. Releases use the plain `vX.Y.Z` tag,
-  marked as a pre-release on GitHub; the version never carries `-beta`.
+- Versions below 1.0.0 are the beta: plain `vX.Y.Z` tags, marked as
+  pre-releases on GitHub; the version never carries `-beta`.
 
 ### Compatibility
 
@@ -172,72 +138,52 @@ aliases and no redirects, and the change log says what to do. The guide's
 "Update the formatting safely" section and the README that
 `scripts/package.py` writes into both ZIPs say the same.
 
-The one-file-update promise starts at 1.0: students update by replacing
-`rpi-thesis.cls` alone, often in the middle of a thesis, and an update never
-needs another file changed and never breaks a thesis that compiled before.
-Formatting lives only in the class; every `\thesissetup` key and starter
-command keeps working (a rename keeps the old name as an alias that warns);
-and if an update ever truly needs a change elsewhere, the change-log entry
-gives the exact edit. New keys and commands may be added, and formatting may
-be corrected to match OGE requirements.
+From 1.0, students update by replacing `rpi-thesis.cls` alone, often in the
+middle of a thesis: an update never needs another file changed and never
+breaks a thesis that compiled before. Formatting lives only in the class;
+every `\thesissetup` key and starter command keeps working (a rename keeps the
+old name as an alias that warns); and if an update truly needs a change
+elsewhere, the change-log entry gives the exact edit.
 
 ## Review a requirement change
 
-Once a year, and whenever OGE publishes new guidance or a student reports a
-concrete mismatch:
-
-1. Read the latest document through the OGE submission page linked in
-   [requirements.md](requirements.md). Keep any working copy in `_local/oge/`.
-2. Record its title, edition or date, link, review date, and relevant
-   sections in `sources.json` and the requirements map.
-3. Separate formatting changes from administrative ones. Change code only for
-   formatting; link out for dates, contacts, and forms. Do not change
-   typography from an automated scrape or search result.
-4. Make a small change, run `verify.py`, and look at every affected PDF page.
-5. Add the `CHANGELOG.md` entry with its **Changes your PDF?** line, and bump
-   the version as above.
-6. Ask OGE to clarify an ambiguous requirement only when authorized. Record
-   what was confirmed and by whom; silence is not approval.
+The steps are the "Review a requirement change" recipe in
+[AGENTS.md](../../AGENTS.md#recipes). Reviewed OGE documents are recorded in
+`sources.json` and the [requirements map](requirements.md); the health check
+(below) does not notice a manual replaced at the same address, so the yearly
+review re-reads the documents.
 
 ## The website
 
 Markdown is the only source; HTML is generated and never edited or committed.
 Contributors do not need Pandoc; CI builds everything.
+`python3 scripts/build_site.py` writes `dist/site/` (`--previews` adds pictures
+of sample pages and needs TeX Live and poppler); `python3 scripts/package.py`
+writes the ZIPs to `dist/`.
 
-```sh
-python3 scripts/build_site.py              # website in dist/site/
-python3 scripts/build_site.py --previews   # also pictures of sample pages
-python3 scripts/package.py                 # student ZIP in dist/
-```
-
-Open `dist/site/index.html`. The build checks every local link and heading
-anchor, and refuses linked source files and folders. Every online page carries
-`<meta name="rpi-thesis-build" content="SHA">`, and the site root has
-`build.txt` (`commit=<SHA>` and `release=v<RELEASE_VERSION>`, one per
-line), so a live check can tell exactly which build is served. The SHA is `GITHUB_SHA` in CI, else
-`git rev-parse HEAD`; uncommitted edits do not change it, and `--publish`
-fails without one. The offline guide carries neither. Page lists (`NAV`,
-`PROJECT`) are in `scripts/build_site.py`. Links between Markdown files become
-links between pages; a link to another repository file becomes a GitHub link
-once `repository_url` is set in `site/site.json`. The footer edition line is
-read from `docs/project/sources.json` and the `\ProvidesClass` line.
-
-The website works without JavaScript. The optional scripts in `site/`
-(`copy.js`, `viewer.js`, `theme.js`, `search.js` and its generated index,
-`site/pdf-check/`) are enhancements; search runs in the browser and sends nothing
-anywhere. `site/pdf-check/` (the "Check your PDF" page) reads a student's PDF in
-the browser with pdf.js, vendored unchanged in `site/pdf-check/pdfjs/` with its
-license; to update it, follow the comment at the top of `core.js`. The checks
-name rules and measurements by id from `docs/project/requirements.md`, all
-listed in `RULE_IDS` and `MEASURE_IDS` in `core.js` (`build_site.py` stops on an
-unknown id, and `core.js` refuses an unlisted one), and the offline guide
-leaves the checker out and links to the website's page. `check.py` reads the
-same Measurements table; change a number only there. Light and
-dark colors live in section 2 of `site/site.css`; check both themes when
-changing them. `--previews` compiles the sample thesis and saves PNG pages
-(never the title page) and needs TeX Live and poppler. The site may contain
-only HTML, CSS, SVG, the named scripts, WOFF2 fonts, PNG/WebP under
-`previews/`, and the cheat sheet PDF.
+- **Links:** the build checks every local link and heading anchor and refuses
+  linked source files and folders. Links between Markdown files become links
+  between pages; a link to another repository file becomes a GitHub link. Page
+  lists (`NAV`, `PROJECT`) are in `scripts/build_site.py`.
+- **Build stamp:** every online page carries
+  `<meta name="rpi-thesis-build" content="SHA">`, and the site root has
+  `build.txt` (`commit=<SHA>` and `release=v<RELEASE_VERSION>`), so a live
+  check can tell which build is served. The SHA is `GITHUB_SHA` in CI, else
+  `git rev-parse HEAD`; `--publish` fails without one. The offline guide
+  carries neither.
+- **JavaScript is optional.** The scripts in `site/` (`copy.js`, `viewer.js`,
+  `theme.js`, `search.js` and its index, `site/pdf-check/`) are enhancements;
+  search sends nothing anywhere.
+- **Check your PDF** (`site/pdf-check/`) reads a PDF in the browser with
+  pdf.js, vendored unchanged in `site/pdf-check/pdfjs/` with its license (to
+  update it, follow the comment at the top of `core.js`). Its checks name
+  rules and measurements by id from the requirements map, listed in
+  `RULE_IDS` and `MEASURE_IDS` in `core.js`; `build_site.py` stops on an
+  unknown id. `check.py` reads the same Measurements table, so change a number
+  only there. The offline guide leaves the checker out.
+- **Colors:** light and dark tokens live in section 2 of `site/site.css`.
+- **Allowed files:** HTML, CSS, SVG, the named scripts, WOFF2 fonts, PNG or
+  WebP under `previews/`, and the cheat sheet PDF.
 
 The student ZIP (`rpi-thesis-starter-v<version>.zip`) holds the thesis files,
 `assets/README.md`, `scripts/build.py`, the `.vscode` settings, a student
@@ -246,88 +192,94 @@ and the cheat sheet PDF. Maintainer pages, `AGENTS.md`, `CLAUDE.md`, site
 tooling, and every RPI file stay out; `package.py` refuses any seal file and
 any other PDF, and requires `site_url` and `repository_url` in
 `site/site.json`. A relative link in a shipped Markdown file to a file the ZIP
-leaves out (such as `CREDITS.md` from `LICENSE.md`) becomes a link to that
-file in the repository at the release tag, and both ZIPs fail to build if any
-relative link in their Markdown or top-level HTML is broken.
-Pandoc reads the shipped Markdown links, so code samples, escaped brackets,
-and unused reference definitions are left alone; only the rewritten
-destinations change, and the rest of each file stays as written. A link
-written in a way packaging cannot find in the text (with a character
-reference, say) stops the build.
+leaves out becomes a link to that file at the release tag; only those link
+destinations are rewritten, and a broken or unfindable link stops the build.
 
-Three workflows in `.github/workflows/`:
+### Workflows
 
-- `build.yml` verifies every pull request and push. A push to `main` deploys
-  the website when `scripts/release.py gate` allows it: the commit is still
-  the tip of `main`, its version is the newest published release, and the
-  starter ZIP built in this run equals the released one in every file except
-  the offline guide and cheat sheet (`guide/`, `START-HERE.html`,
-  `rpi-thesis-cheatsheet.pdf`); added or removed files count as differences.
-  So guide fixes go live at once and starter changes wait for a release.
-  Every deploy, from `main` or a tag, also reads the live `build.txt` and
-  refuses when GitHub's compare API shows the live commit is newer than this
-  one (or on a different line of history), unless **rollback** is set; a
-  missing `build.txt` counts as the first deploy. An unreadable `build.txt`
-  fails the gate; check the deployment by hand, or use an explicit release
-  rollback to repair it. So a delayed, re-run, or
-  older run never replaces a newer site. The gate runs again inside the Pages
-  lock just before publishing. A pushed `vX.Y.Z` tag releases (below).
-- `fresh-machines.yml` installs TeX on new Windows, macOS, and Ubuntu machines
-  the way the guide says and compiles the starter: on each release tag, once a
-  month, and on demand. It never blocks a release.
-- `health.yml` runs monthly: external links and RPI's thesis pages
-  (`scripts/health.py`, compared with `scripts/oge-watch.json`; tested by
-  `scripts/test_health.py` against a local server), and a full verify on the
-  newest, unpinned TeX Live. Problems open one issue labelled `health`. The
-  watch compares the links (relative ones resolved) and text in each watched
-  page's `<main>`. A missing or unreadable baseline fails the check.
-  `--update` records every page or nothing: if any page times out, answers
-  with an error, or has no `<main>`, `oge-watch.json` stays as it was and the
-  command exits 1. **Not covered:** a manual or checklist replaced at the same
-  Box address. Box answers with a script-driven page rather than the file, so
-  only the links are compared; the yearly requirement review re-reads the
-  documents.
+- **`build.yml`** verifies every pull request and push. A push to `main`
+  deploys the website when `scripts/release.py gate` allows it: the commit is
+  still the tip of `main`, its version is the newest release, and the starter
+  ZIP built in this run equals the released one except for the offline guide
+  and cheat sheet. So guide fixes go live at once and starter changes wait for
+  a release. Every deploy also reads the live `build.txt` and refuses when the
+  live commit is newer or on another line of history, unless **rollback** is
+  set; a missing `build.txt` counts as the first deploy, an unreadable one
+  fails. The gate runs again inside the Pages lock just before publishing. A
+  pushed `vX.Y.Z` tag releases.
+- **`fresh-machines.yml`** installs TeX on new Windows, macOS, and Ubuntu
+  machines the way the guide says and compiles the starter: on each release
+  tag, monthly, and on demand. It never blocks a release.
+- **`health.yml`** runs monthly: external links and RPI's thesis pages
+  (`scripts/health.py` against `scripts/oge-watch.json`), and a full verify on
+  the newest, unpinned TeX Live. Problems open one issue labelled `health`.
+  The watch compares the links and text in each page's `<main>`; `--update`
+  records every page or nothing. Not covered: a manual or checklist replaced
+  at the same Box address (only its links are compared).
 
 ### Updating pinned tools
 
-CI pins its tools so a build does not change by itself. Once a year, or when
-something breaks:
+CI pins its tools so a build does not change by itself.
 
-- **Pandoc:** set `PANDOC_VERSION` in `build.yml` to your local version and
-  `PANDOC_SHA256` to the checksum of `pandoc-<version>-1-amd64.deb` on the
-  [Pandoc release page](https://github.com/jgm/pandoc/releases).
-- **TeX Live:** replace the `sha256:` digest after `texlive/texlive:latest@`
-  with the current one from [Docker Hub](https://hub.docker.com/r/texlive/texlive/tags)
-  and update the date in the comment. Then run `verify.py` and look at the PDFs.
-- **pypdf:** set `PYPDF_VERSION` and `PYPDF_SHA256` (the `py3-none-any` wheel
-  under **Download files** on [PyPI](https://pypi.org/project/pypdf/#files)).
-- **Actions:** check the latest major version of each `actions/...` step.
-- **Helper websites:** open each tool in the `helpers` list of `sources.json`
-  (named in the "Helpers for common tasks" section of `docs/writing.md`);
-  check that it loads without sign-in, the menu names and the draw.io privacy
-  note still match, and the guide's snippets compile; update `last_reviewed`.
-  Replace or remove a tool that has changed rather than adding alternatives.
-  Mathcha's TikZ export is not verified with this class; verify before
-  expanding. Lagrida was evaluated and omitted as a second similar editor.
+- **Pandoc:** `PANDOC_VERSION` and `PANDOC_SHA256` in `build.yml` (checksum of
+  `pandoc-<version>-1-amd64.deb` on the
+  [Pandoc release page](https://github.com/jgm/pandoc/releases)).
+- **TeX Live:** the `sha256:` digest after `texlive/texlive:latest@`, from
+  [Docker Hub](https://hub.docker.com/r/texlive/texlive/tags), with the date in
+  the comment. Look at the PDFs after a change.
+- **pypdf:** `PYPDF_VERSION` and `PYPDF_SHA256` (the `py3-none-any` wheel on
+  [PyPI](https://pypi.org/project/pypdf/#files)).
+- **Actions:** the latest major version of each `actions/...` step.
+- **Helper websites:** the `helpers` list in `sources.json` (named in
+  "Helpers for common tasks" in `docs/writing.md`). Each must load without
+  sign-in, match the guide's menu names and the draw.io privacy note, and
+  compile the guide's snippets; update `last_reviewed`. Replace a tool that
+  changed rather than adding alternatives. Mathcha's TikZ export is not
+  verified with this class; Lagrida was omitted as a second similar editor.
 
-## Release readiness
+## Release internals
+
+The steps are the "Release" recipe in [AGENTS.md](../../AGENTS.md#recipes).
+
+- **`bump.py`** sets the version everywhere (class line and date, `main.tex`,
+  download links, `CITATION.cff`, the change-log heading). The version must
+  increase, and it checks every source before writing, so a missing heading
+  or link changes no files.
+- **On the tag**, `build.yml` verifies in release mode, creates or resumes the
+  GitHub pre-release with both ZIPs and `rpi-thesis.cls`
+  (`scripts/release.py publish`: existing assets must match by sha256), deploys
+  the website, and checks that the live site serves this build and every
+  download matches (`scripts/release.py live`).
+- **A failed tag run** can be re-run: each step checks what is already done.
+  If it needs a code fix and the release does not exist yet, fix on `main`
+  and move the tag (`git tag -f vX.Y.Z && git push -f origin vX.Y.Z`); once
+  assets are published, make a new patch release instead. A tag older than
+  the newest release never deploys.
+- **Rollback:** Actions, **Build thesis, website, and starter ZIP**, Run
+  workflow on the older tag with **rollback** ticked; the next deploy from
+  `main` replaces it. A tag run uses that tag's own `build.yml`, so never
+  dispatch a tag whose `build.yml` lacks the **rollback** input or the
+  live-site check; revert on `main` and release a patch instead. The
+  `github-pages` environment allows `main` and `v*` tags to deploy.
+
+## Public release readiness
 
 **Keep true at all times:**
 
-- [ ] `git ls-files` lists no seal, original template, manual, checklist, or
-      slides, and neither does the starter ZIP. The published Git history must
-      not contain them either; local backup branches made before a cleanup
-      are never pushed.
+- [ ] `git ls-files`, the starter ZIP, and the published Git history contain
+      no seal, original template, manual, checklist, or slides. Local backup
+      branches made before a cleanup are never pushed.
 - [ ] Every public page presents the project as unofficial and community-made.
 - [ ] CI passes on `main`, and the maintainer authorizes each publication.
 - [ ] GitHub settings: description ("Unofficial, community-made LaTeX thesis
       and dissertation starter and guide for RPI graduate students"); topics
       (latex, thesis, dissertation, rpi, rensselaer, latex-template,
       thesis-template, overleaf, zotero, biblatex); Pages source **GitHub
-      Actions**; Issues on, Discussions off; type labels `question`,
-      `enhancement`, `bug`, `documentation` and area labels `class`, `guide`,
-      `site`, `checker`, `tooling`, `health`; default read-only Actions token;
-      a social preview image without RPI artwork; `site_url` and
+      Actions**; Issues on, Discussions off; `main` requires the **build**
+      check; labels `question`, `enhancement`, `bug`, `documentation`,
+      `good first issue`, `help wanted`, and the areas `class`, `guide`,
+      `site`, `checker`, `tooling`, `health`; default read-only Actions
+      token; a social preview image without RPI artwork; `site_url` and
       `repository_url` in `site/site.json` and `CITATION.cff`.
 
 **Before 1.0.0** (open; releases until then are pre-releases):
@@ -343,41 +295,6 @@ something breaks:
       student would; date and outcome recorded in `requirements.md`.
 
 Until then, do not call a release compliant, approved, or fully tested.
-
-## Make a release
-
-Only with the maintainer's authorization.
-
-1. **Bump:** with the entry under `## Unreleased` in `CHANGELOG.md`, run
-   `python3 scripts/bump.py X.Y.Z`. It sets the version everywhere (class line
-   and date, `main.tex`, download links, `CITATION.cff`, the change-log
-   heading). Patch for fixes; minor for anything that changes a PDF or a
-   setting.
-   The version must increase. The script checks every expected source before
-   writing, so a missing change-log heading or download link changes no files.
-2. **Verify:** `python3 scripts/verify.py release`.
-3. **Commit and tag:** commit `build: release vX.Y.Z` on `main`, `git tag
-   vX.Y.Z`, then `git push --atomic origin main vX.Y.Z`.
-4. **CI does the rest** (`build.yml` on the tag): verifies in release mode,
-   creates or resumes the GitHub pre-release with both ZIPs and
-   `rpi-thesis.cls` (`scripts/release.py publish`: existing assets must match
-   by sha256, missing ones are uploaded, any conflict fails), deploys the
-   website, and checks that the live site serves this exact build
-   (`build.txt`) and that every download matches (`scripts/release.py live`).
-   The fresh-machine test starts on the same tag.
-
-**If a tag run fails**, re-run it: each step checks what is already done and
-continues. If the failure needs a code fix and the release does not exist
-yet, fix on `main`, move the tag (`git tag -f vX.Y.Z && git push -f origin
-vX.Y.Z`), and it runs again; once assets are published, make a new patch
-release instead. A tag older than the newest release never deploys.
-**Rollback:** Actions, **Build thesis, website, and starter ZIP**, Run
-workflow on the older tag with **rollback** ticked; the next deploy from
-`main` replaces it. A run on a tag uses that tag's own `build.yml` and
-`release.py`: never re-run or dispatch a tag whose `build.yml` has no
-**rollback** input or no live-site check. To undo a change from such a
-release, revert it on `main` and make a new patch release. The `github-pages`
-environment allows `main` and `v*` tags to deploy.
 
 ## Roadmap and not yet covered
 
@@ -396,16 +313,16 @@ example, and focused validation before it reaches students.
 
 ## Feedback and the OGE review packet
 
-The most useful feedback describes one task and the moment it became hard: ask
-someone to compile the example, change their name, and edit a paragraph without
-coaching, then ask where they paused. Record their editor, operating system,
-and toolkit version; keep private research out. Send invitations yourself, and
-offer opt-in credit in [CREDITS.md](../../CREDITS.md#people).
+The most useful feedback describes one task and the moment it became hard:
+someone compiles the example, changes their name, and edits a paragraph
+without coaching, then says where they paused. Record their editor, operating
+system, and toolkit version; keep private research out; offer opt-in credit in
+[CREDITS.md](../../CREDITS.md#people).
 
-For OGE, offer the MS and doctoral sample PDFs, a link to the source, the
-requirements map, source dates, and known gaps. Ask about title-page details
-and seal, spacing, font, section order, and common rejection patterns. Keep
-community maintenance independent unless a formal agreement is made, and
+For OGE: the MS and doctoral sample PDFs, a link to the source, the
+requirements map, source dates, and known gaps. Useful questions: title-page
+details and seal, spacing, font, section order, and common rejection patterns.
+Keep community maintenance independent unless a formal agreement is made, and
 record any feedback with the version it applies to.
 
 ## Handing over the project
@@ -415,8 +332,8 @@ record any feedback with the version it applies to.
   `health.py` read them from there; guide pages and `README.md` link them by
   hand, and `CITATION.cff` has its own copy).
 - Hand over the help and feedback form and its response sheet.
-- Confirm no RPI-owned files are tracked and the new maintainer knows the
-  rule in [AGENTS.md](../../AGENTS.md#principles).
+- Confirm no RPI-owned files are tracked and the new maintainer knows
+  [the principles](../../AGENTS.md#principles).
 - Run `verify.py` once on their computer; review open issues and every
   `TODO(verify)` marker.
 - Add the outgoing maintainer to [CREDITS.md](../../CREDITS.md#people), with
