@@ -1848,3 +1848,23 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .settings-builder textarea { font-family: var(--font-mono); resize: vertical; }
 .settings-builder button:disabled { opacity: 0.55; cursor: default; }
 .settings-builder [data-settings-errors] { overflow-wrap: anywhere; }
+
+/* Optional reference checker: native inputs, readable results, no saved data. */
+.bibcheck[hidden], [data-bibcheck-nojs][hidden] { display: none; }
+.bibcheck { margin: 1.8rem 0; }
+.bibcheck label { display: block; font-weight: 600; margin: 0.8rem 0 0.4rem; }
+.bibcheck textarea {
+  display: block; box-sizing: border-box; width: 100%; min-width: 0;
+  padding: 12px; border: 2px solid var(--line-strong); border-radius: 4px;
+  background: var(--card); color: var(--ink); font: 0.9rem/1.5 monospace;
+  resize: vertical;
+}
+.bibcheck input[type="file"] { width: 100%; max-width: 100%; color: var(--ink); }
+.bibcheck-drop { padding: 12px 16px 20px; border: 2px dashed var(--line-strong); border-radius: 4px; }
+.bibcheck-drop.is-over { border-color: var(--blue); background: var(--blue-wash); }
+.bibcheck textarea:focus-visible, .bibcheck input:focus-visible {
+  outline: 3px solid var(--focus); outline-offset: 4px;
+}
+.bibcheck .hero-actions { margin-top: 1rem; }
+.bibcheck [data-results] { overflow-wrap: anywhere; }
+.bibcheck [data-results] h3:focus { outline: none; }
