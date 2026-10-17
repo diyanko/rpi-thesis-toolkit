@@ -53,7 +53,7 @@
     <rect x="868" y="124" width="230" height="300" rx="5" class="ink" style="fill:#fffdf8" transform="rotate(2 983 274)"/>
     <g transform="rotate(2 983 274)">
       <rect x="890" y="150" width="186" height="248" fill="none" stroke="#2b4d7a" stroke-width="2" stroke-dasharray="6 7"/>
-      <text class="display" x="900" y="184" font-size="21">1  Introduction</text>
+      <text class="display" x="983" y="184" font-size="17" text-anchor="middle">1. INTRODUCTION</text>
       <path d="M896 200 C 940 196, 1020 200, 1070 198 L 1069 340 C 1010 344, 950 342, 897 340 Z" fill="#e2ebd9"/>
       <path class="scribble" d="M904 216 H1062 M904 236 H1062 M904 256 H1060 M904 276 H1000 M918 300 H1062 M904 320 H1058"/>
       <text class="display" x="983" y="385" font-size="18" text-anchor="middle" font-weight="400">7</text>

@@ -1289,7 +1289,9 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 
 /* Pictures of the sample PDF (scripts/previews.py), left-aligned under their text */
 .guide-content figure.shot { margin: 0.4rem 0 1.4rem; }
+.guide-content figure.shot figcaption { max-width: none; margin: 0.45rem 0 0; font-size: 0.95rem; text-align: left; }
 .guide-content figure.shot img {
+  display: block;
   width: 100%;
   background: #fff;
   border: 1.5px solid var(--line-strong);
@@ -1681,8 +1683,18 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .anatomy-open { grid-column: 1 / -1; grid-row: 2; margin: 0; }
 }
 @media (max-width: 600px) {
-  .anatomy-lens img { width: 175%; max-width: none; }   /* close-up text near reading size; its right edge is cropped */
-  :is(#anatomy-chapter, #anatomy-appendix, #anatomy-figure-table) .anatomy-lens img { margin-left: -37.5%; }   /* centered headings and tables: crop both sides */
+  /* Close-up text near reading size; its right edge is cropped and fades out,
+     so a line cut mid-word reads as "continues" rather than broken */
+  .anatomy-lens img {
+    width: 175%; max-width: none;
+    -webkit-mask-image: linear-gradient(to right, #000 49%, transparent 57%);
+    mask-image: linear-gradient(to right, #000 49%, transparent 57%);
+  }
+  :is(#anatomy-chapter, #anatomy-appendix, #anatomy-figure-table) .anatomy-lens img {   /* centered headings and tables: crop both sides */
+    margin-left: -37.5%;
+    -webkit-mask-image: linear-gradient(to right, transparent 21.5%, #000 28%, #000 72%, transparent 78.5%);
+    mask-image: linear-gradient(to right, transparent 21.5%, #000 28%, #000 72%, transparent 78.5%);
+  }
 }
 
 @media (max-width: 640px) {
@@ -1733,7 +1745,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1.1rem; }
   .guide-content :is(p:has(> img:only-child), figure.diagram) { margin-inline: -10px; }   /* diagrams get a little more room */
   /* PDF crops keep a readable size and scroll sideways inside their box */
-  .guide-content figure.shot { overflow-x: auto; scrollbar-width: thin; }
+  .guide-content .shot-scroll { overflow-x: auto; scrollbar-width: thin; }
   .guide-content figure.shot img { width: 480px; max-width: none; }
   .note, .tip, .important, .warning, .caution { padding: 12px 16px 14px; }
   .guide-content details { padding: 0 16px; }
