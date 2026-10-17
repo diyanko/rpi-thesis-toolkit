@@ -19,7 +19,7 @@
     const labels = {title: "Thesis or dissertation title", author: "Your full name", degree: "Degree",
       "degree-name": "Custom degree name (optional)", department: "Full department name",
       "graduation-month": "Graduation month", "graduation-year": "Graduation year",
-      "seal-file": "Seal file path", "copyright-page": "Copyright page",
+      "seal-file": "Seal file in your project", "copyright-page": "Copyright page",
       "list-of-tables": "List of tables", "list-of-figures": "List of figures"};
     const controls = new Map();
     function element(tag, text, parent) {
@@ -44,6 +44,24 @@
       control.value = spec.default ?? "";
       if (key === "graduation-year") control.inputMode = "numeric";
       controls.set(key, control);
+      if (key === "seal-file") {
+        const help = element("p", "Put the downloaded seal in your project's assets folder. Keep its filename, including .jpg, .jpeg, or .png. You can select it below to fill in its name; nothing is uploaded.", container);
+        help.id = "seal-file-help";
+        control.setAttribute("aria-describedby", help.id);
+        const fileLabel = element("label", "Use the downloaded seal's filename (optional)", container);
+        fileLabel.htmlFor = "settings-seal-filename";
+        const file = element("input", "", container);
+        file.id = fileLabel.htmlFor;
+        file.type = "file";
+        file.accept = ".jpg,.jpeg,.png,.pdf";
+        file.addEventListener("change", () => {
+          if (file.files[0]) {
+            control.value = "assets/" + file.files[0].name;
+            update();
+          }
+          file.value = ""; // Keep only the filename; the image is never read.
+        });
+      }
     }
     let nextMember = 0;
     function addMember(role = "") {

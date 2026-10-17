@@ -6,27 +6,44 @@
 Uses the existing stdlib Chrome driver. TeX and browser cases skip if their
 runtimes are absent; generation and reference-table checks still run.
 """
+import base64
 import itertools
 import json
 from pathlib import Path
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import tempfile
 import unittest
+import zlib
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import build_site
 from chrome import Chrome, LocalServer
 from common import ROOT, find_chrome
 import settings
+import regressions
 
 VALID = {"title": "A study of communities", "author": "Your full name",
          "degree": "doctoral", "department": "Department of Physics, Applied Physics and Astronomy",
          "graduation-month": "May", "graduation-year": "2027"}
 COMMITTEE = [{"name": "Your committee chair", "role": "Chair"},
              {"name": "Committee member two", "role": ""}]
+
+
+# A synthetic 2 by 2 pixel image; this is not RPI artwork.
+JPEG = base64.b64decode(
+    '/9j/4AAQSkZJRgABAQAASABIAAD/4QBMRXhpZgAATU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAAqADAAQAAAABAAAAAgAAAAD/7QA4UGhvdG9zaG9wIDMuMAA4QklNBAQAAAAAAAA4QklNBCUAAAAAABDUHYzZjwCyBOmACZjs+EJ+/8AAEQgAAgACAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMAAgICAgICAwICAwUDAwMFBgUFBQUGCAYGBgYGCAoICAgICAgKCgoKCgoKCgwMDAwMDA4ODg4ODw8PDw8PDw8PD//bAEMBAgICBAQEBwQEBxALCQsQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEP/dAAQAAf/aAAwDAQACEQMRAD8AKKKKAP/Z'
+)
+
+def png_fixture():
+    def chunk(kind, data):
+        return struct.pack(">I", len(data)) + kind + data + struct.pack(">I", zlib.crc32(kind + data))
+    pixels = (b"\x00" + b"\x80\x80\x80" * 2) * 2
+    return (b"\x89PNG\r\n\x1a\n" + chunk(b"IHDR", struct.pack(">IIBBBBB", 2, 2, 8, 2, 0, 0, 0))
+            + chunk(b"IDAT", zlib.compress(pixels)) + chunk(b"IEND", b""))
 
 
 class Schema(unittest.TestCase):
@@ -154,6 +171,60 @@ class Browser(unittest.TestCase):
         self.assertFalse(result["errors"])
         self.assertLess(result["text"].index("First chair"), result["text"].index("Second chair"))
         self.assertLess(result["text"].index("Second chair"), result["text"].index("Other"))
+
+    def test_seal_names_are_readable_and_windows_separators_work(self):
+        for path in ("assets/my_seal.jpg", "assets/RPI seal (1).jpeg", "assets/Seal.PNG"):
+            result = self.generate({**VALID, "seal-file": path})
+            self.assertIn(f"seal-file = {{{path}}}", result["text"])
+            self.assertNotIn("char_generate", result["text"])
+        result = self.generate({**VALID, "seal-file": r"assets\RPI seal (1).jpeg"})
+        self.assertIn("seal-file = {assets/RPI seal (1).jpeg}", result["text"])
+
+    def test_select_seal_filename_without_reading_or_uploading(self):
+        self.browser.open(self.server.url + "/guide/settings-builder.html?seal")
+        self.wait_for_form()
+        selected = self.browser.evaluate("""(() => {
+          const input = document.getElementById('settings-seal-filename');
+          const data = new DataTransfer();
+          const file = new File(['not image data'], 'RPI seal (1).JPEG');
+          file.text = file.arrayBuffer = file.stream = () => {throw Error('Image must not be read')};
+          data.items.add(file); input.files = data.files;
+          input.dispatchEvent(new Event('change', {bubbles:true}));
+          return {path: document.getElementById('setting-seal-file').value, files: input.files.length};
+        })()""")
+        self.assertEqual(selected, {"path": "assets/RPI seal (1).JPEG", "files": 0})
+        self.assertIn("assets folder", self.browser.evaluate("document.getElementById('seal-file-help').textContent"))
+
+    @unittest.skipUnless(shutil.which("pdflatex"), "no TeX Live (pdflatex)")
+    @unittest.skipUnless(regressions.PdfReader or shutil.which("pdftotext"), "no PDF text reader")
+    def test_seal_filenames_missing_and_present(self):
+        cases = ["my_seal.jpg", "RPI seal (1).jpeg", "seal.png", "seal.PNG", "seal.JPG", "seal.JPEG",
+                 "seal #1%{draft}^~.png", "seal & $1.png"]
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp)
+            shutil.copyfile(ROOT / "rpi-thesis.cls", folder / "rpi-thesis.cls")
+            (folder / "assets").mkdir()
+            for index, name in enumerate(cases):
+                with self.subTest(filename=name):
+                    path = "assets/" + name
+                    metadata = self.generate({**VALID, "seal-file": path})["text"]
+                    (folder / "test.tex").write_text("\\documentclass{rpi-thesis}\n" + metadata + "\n\\begin{document}\\maketitle\\end{document}", encoding="utf-8")
+                    for exists in (False, True):
+                        if exists:
+                            (folder / path).write_bytes(png_fixture() if name.lower().endswith(".png") else JPEG)
+                        run = subprocess.run(["pdflatex", "-no-shell-escape", "-interaction=nonstopmode", "-halt-on-error", "test.tex"], cwd=folder, capture_output=True, text=True)
+                        self.assertEqual(run.returncode, 0, run.stdout[-2000:])
+                        text = regressions.pdf_text(folder / "test.pdf")
+                        log = (folder / "test.log").read_text(encoding="utf-8", errors="replace")
+                        if exists:
+                            self.assertNotIn("RPI seal:", text)
+                            self.assertNotIn("RPI seal not found", " ".join(log.split()))
+                        else:
+                            self.assertIn(path, text)
+                            self.assertNotIn("char_generate", text)
+                            self.assertNotIn("csname", text)
+                            self.assertIn("No file " + path + ".", log.replace("\n", ""))
+                    (folder / path).unlink()
 
     def test_override_escaping_and_text_safety(self):
         result = self.generate({**VALID, "degree-name": "A custom degree", "title": r"100% of A&B_#1 {x} $y$ ~ ^ \input"})
