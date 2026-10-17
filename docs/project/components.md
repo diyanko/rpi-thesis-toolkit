@@ -168,3 +168,18 @@ visible with JavaScript off. A static example of the form controls:
   title = {Your thesis title},
 }</textarea>
 </div>
+
+## Reference checker inputs
+
+The [reference checker](../check-references.md) uses native file controls,
+text areas, a checkbox, and the shared buttons. Results are ordinary lists
+with links, grouped under headings.
+
+<div class="bibcheck">
+<div class="bibcheck-drop"><label for="gallery-bib-file">Choose .bib and .tex files, or drop them here</label><input id="gallery-bib-file" type="file" accept=".bib,.tex" multiple></div>
+<label for="gallery-bib-text">Contents of references.bib</label>
+<textarea id="gallery-bib-text" rows="3" spellcheck="false">@book{example, title = {An example}}</textarea>
+<label><input type="checkbox"> Also list entries not cited in the supplied files</label>
+<p class="hero-actions"><button type="button" class="button">Check references</button> <button type="button" class="button button-secondary">Clear files and text</button></p>
+<div data-results><h3>Reference check results</h3><h4>May print wrong (1)</h4><ul><li><strong>example — date or year:</strong> Check the source and add its publication date if available. <a href="../citations.md#check-the-output-yourself">Citations guide</a></li></ul></div>
+</div>
