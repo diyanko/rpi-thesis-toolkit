@@ -14,6 +14,8 @@ read [update the formatting safely](docs/going-further.md#update-the-formatting-
 
 **Changes your PDF?** No.
 
+- **Settings builder:** fill in a form and copy a checked `\thesissetup` block
+  for `metadata.tex`; it rejects the same values the class rejects.
 - **Bring your work in:** a new tool in the guide's Tools group. Paste text
   from Word, Google Docs, or Markdown, or a table from Excel or Sheets, and
   get LaTeX ready for a chapter: headings, emphasis, lists, links, special
