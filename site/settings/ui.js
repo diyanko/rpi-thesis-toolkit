@@ -14,7 +14,15 @@
     const members = root.querySelector("[data-settings-members]");
     const status = root.querySelector("[data-settings-status]");
     const errors = root.querySelector("[data-settings-errors]");
-    const output = root.querySelector("textarea");
+    const output = root.querySelector("[data-settings-output]");
+    let block = "";
+    function selectOutput() {
+      const range = document.createRange();
+      range.selectNodeContents(output);
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
     const copy = root.querySelector("[data-settings-copy]");
     const labels = {title: "Thesis or dissertation title", author: "Your full name", degree: "Degree",
       "degree-name": "Custom degree name (optional)", department: "Full department name",
@@ -28,7 +36,24 @@
       if (parent) parent.append(node);
       return node;
     }
+    const isYesNo = spec => Boolean(spec.choices) && spec.choices.length === 2 &&
+      spec.choices.includes("true") && spec.choices.includes("false");
     for (const [key, spec] of Object.entries(schema.keys)) {
+      if (isYesNo(spec)) {  // a yes/no setting: a native checkbox drawn as a switch, all in one row
+        const row = fields.querySelector(".settings-switches") || element("div", "", fields);
+        row.className = "settings-switches";
+        const label = element("label", "", row);
+        label.className = "tool-switch";
+        const control = element("input", "", label);
+        control.type = "checkbox";
+        control.setAttribute("role", "switch");
+        control.id = `setting-${key}`;
+        control.name = key;
+        control.checked = spec.default === "true";
+        element("span", labels[key] || key, label);
+        controls.set(key, control);
+        continue;
+      }
       const container = element("div", "", fields);
       const label = element("label", labels[key] || key, container);
       label.htmlFor = `setting-${key}`;
@@ -89,7 +114,8 @@
       return name;
     }
     function update() {
-      const settings = Object.fromEntries([...controls].map(([key, control]) => [key, control.value]));
+      const settings = Object.fromEntries([...controls].map(([key, control]) =>
+        [key, control.type === "checkbox" ? String(control.checked) : control.value]));
       // An empty optional override uses the class's degree default.
       if (settings["degree-name"] === "") delete settings["degree-name"];
       const committee = [...members.querySelectorAll("fieldset")].map(row => ({
@@ -99,7 +125,9 @@
       const result = generate(settings, committee, schema);
       errors.replaceChildren();
       for (const error of result.errors) element("li", error, errors);
-      output.value = result.text;
+      block = result.text;
+      if (window.ToolsHighlight) window.ToolsHighlight.render(output, block);  // colored; Copy uses the plain text
+      else output.textContent = block;
       copy.disabled = Boolean(result.errors.length);
       status.textContent = result.errors.length ? "Still to fill in:" : "Looks fine: your block is ready to copy.";
     }
@@ -108,13 +136,13 @@
     form.addEventListener("input", update);
     form.addEventListener("change", update);
     copy.addEventListener("click", async () => {
-      const text = output.value;
+      const text = block;
       try {
         await navigator.clipboard.writeText(text);
-        status.textContent = output.value === text ? "Copied. Replace the settings and committee lines in metadata.tex." : "Settings changed. Copy the current block again.";
+        status.textContent = block === text ? "Copied. Replace the settings and committee lines in metadata.tex." : "Settings changed. Copy the current block again.";
       } catch {
         output.focus();
-        output.select();
+        selectOutput();
         status.textContent = "Select and copy the block below.";
       }
     });

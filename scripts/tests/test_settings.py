@@ -257,7 +257,7 @@ class Browser(unittest.TestCase):
           for (const [key,value] of Object.entries(values)) document.getElementById('setting-'+key).value=value;
           document.querySelector('[data-member-name]').value='Your committee chair';
           document.querySelector('form').dispatchEvent(new Event('input'));
-          return {{output:document.querySelector('textarea').value, disabled:document.querySelector('[data-settings-copy]').disabled}};
+          return {{output:document.querySelector('[data-settings-output]').textContent, disabled:document.querySelector('[data-settings-copy]').disabled}};
         }})()""")
         self.assertFalse(result["disabled"])
         self.assertIn('<script>', result["output"])
@@ -266,12 +266,12 @@ class Browser(unittest.TestCase):
         self.assertEqual(self.browser.evaluate("document.querySelector('[data-settings-status]').textContent"), "Select and copy the block below.")
         self.browser.evaluate("document.querySelector('[data-settings-add]').click()")
         self.assertTrue(self.browser.evaluate("document.querySelector('[data-settings-copy]').disabled"))
-        self.assertEqual(self.browser.evaluate("document.querySelector('textarea').value"), "")
+        self.assertEqual(self.browser.evaluate("document.querySelector('[data-settings-output]').textContent"), "")
         self.browser.evaluate("document.querySelectorAll('[data-settings-members] button')[1].click()")
         self.assertFalse(self.browser.evaluate("document.querySelector('[data-settings-copy]').disabled"))
         self.browser.evaluate("document.getElementById('setting-graduation-year').value='27'; document.querySelector('form').dispatchEvent(new Event('input'))")
         self.assertTrue(self.browser.evaluate("document.querySelector('[data-settings-copy]').disabled"))
-        self.assertEqual(self.browser.evaluate("document.querySelector('textarea').value"), "")
+        self.assertEqual(self.browser.evaluate("document.querySelector('[data-settings-output]').textContent"), "")
         self.assertEqual(self.browser.evaluate("[localStorage.length,sessionStorage.length]"), [0, 0])
         self.browser.open(self.server.url + "/guide/settings-builder.html?reload")
         self.wait_for_form()
