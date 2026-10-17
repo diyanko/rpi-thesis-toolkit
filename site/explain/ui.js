@@ -16,6 +16,13 @@
   var form = root.querySelector("form");
   var input = root.querySelector("textarea");
   var result = root.querySelector(".explain-result");
+  var status = root.querySelector(".explain-status");
+  var submit = root.querySelector("button[type=submit]");
+  // The shared states (ToolState in tools-highlight.js); plain text without it.
+  var State = window.ToolState || { set: function (r, s, state, c) {
+    s.textContent = typeof c === "string" ? c : c ? c.title + ". " + c.text : ""; } };
+  function say(text, state) { State.set(root, status, state || "", text, submit); }
+  function fail(title, text, href, link) { State.set(root, status, "error", { title: title, text: text, href: href, link: link }); }
 
   function el(tag, text, attrs) {
     var node = document.createElement(tag);
@@ -40,6 +47,8 @@
   function show(found) {
     result.textContent = "";
     var error = found.error, problem = found.problem;
+    say(error ? "Found the first error" + (problem ? ": a known message." : ".") : problem ? "Found a known message."
+      : "No LaTeX error found in the text.", "done");
     var head = el("h3", error ? "The first error" : problem ? "The message" : "No LaTeX error found", { tabindex: "-1" });
     result.appendChild(head);
     if (error) {
@@ -53,8 +62,9 @@
       if (error.line) place.push("Line: " + error.line + ".");
       if (place.length) result.appendChild(para(place));
     } else if (!problem) {
-      result.appendChild(el("p", "Paste the lines that start with ! or with a file name and a line number" +
-        " (such as ./chapters/01-introduction.tex:13:), or the whole log."));
+      result.appendChild(el("p", "Nothing in the text looks like a LaTeX error. If the PDF was made, the log may be" +
+        " from a run that worked; warnings are not errors. Otherwise paste the lines that start with ! or with a file name" +
+        " and a line number (such as ./chapters/01-introduction.tex:13:), or the whole log."));
     }
     if (problem) {
       result.appendChild(el("h3", "What it means"));
@@ -90,15 +100,37 @@
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       // Edge cases first: nothing pasted, or far more than a log.
+      if (State.busy && State.busy(submit)) return;
       var text = input.value;
-      if (!/\S/.test(text) || text.length > 5000000) {
-        result.textContent = "";
-        result.appendChild(el("p", /\S/.test(text) ? "That is more than a log. Paste the part from the first line that starts with ! instead."
-          : "Paste the error or the whole log first."));
+      result.textContent = "";
+      if (!/\S/.test(text)) {
+        fail("Nothing to explain yet", "Paste the error or the whole log in the box, then choose Explain the error.",
+             "#where-to-copy-the-error-from", "Where to copy the error from");
         input.focus();
         return;
       }
-      show(window.ExplainCore.explain(text, problems));
+      if (text.length > 5000000) {
+        fail("That is more than a log", "Paste the part that starts at the first line beginning with !, instead of the whole text.",
+             "#where-to-copy-the-error-from", "Where to copy the error from");
+        input.focus();
+        return;
+      }
+      say("Reading the text…", "working");
+      setTimeout(function () {
+        show(window.ExplainCore.explain(text, problems));
+      }, 30);
+    });
+    // New text makes the old answer stale: remove it.
+    input.addEventListener("input", function () {
+      if (!result.textContent && status.getAttribute("data-state") !== "done") return;
+      result.textContent = "";
+      say("The text changed. Choose Explain the error to read it again.");
+    });
+    root.querySelector(".explain-clear").addEventListener("click", function () {
+      input.value = "";
+      result.textContent = "";
+      say("");
+      input.focus();
     });
     root.hidden = false;
     var note = document.querySelector("[data-explain-nojs]");
