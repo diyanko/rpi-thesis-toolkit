@@ -4,7 +4,8 @@ For anyone with a draft in Word, Google Docs, Markdown, or LaTeX: you do not
 have to start over. Get the sample compiling first
 ([get started](get-started.md)) and keep your original untouched. Move **one
 small section** first, to meet any surprises early. Then go one chapter at a
-time, compiling after each.
+time, compiling after each. Moving a section or a table? Paste it into
+[Bring your work in](bring-your-work-in.md) for a first pass in LaTeX.
 
 Where do you start?
 
