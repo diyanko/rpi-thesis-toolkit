@@ -10,6 +10,18 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
 
+## Unreleased
+
+**Changes your PDF?** No.
+
+- **A shorter home page:** one line about what the toolkit does, buttons to
+  download the starter or open it in Overleaf right under it, one drawing of
+  what you get, and a "What's here" overview of every part of the toolkit.
+- **A cleaner footer** on every page, grouped by Guide, Tools, Project, and
+  Help; "Suggest a change" needs no account.
+- **Share this guide** copies the link (or opens your phone's share sheet).
+- Refined colors in light and dark; numbers in the text show a plain 0.
+
 ## 0.8.0 (beta), 17 Oct 2026
 
 Published as the pre-release `v0.8.0`.

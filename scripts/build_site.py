@@ -106,7 +106,7 @@ PROJECT = {
     "docs/project/attribution.md": ("attribution", None),
     "docs/project/components.md": ("components", None),   # design review: every component on one page
 }
-# Footer "Help & feedback" link: the one place the help/feedback form URL lives.
+# Footer "Ask for help" and "Suggest a change" links: the one place the help/feedback form URL lives.
 FEEDBACK = ("docs/troubleshooting.md", "Ask for help")
 # Scripts that only one guide page loads: page -> script.
 PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js"}
@@ -429,15 +429,17 @@ class Site:
                        "site/copy.js": "copy.js",       # optional "Copy" buttons on code blocks
                        "site/viewer.js": "viewer.js",   # optional: full-size pictures open as a dialog
                        "site/theme.js": "theme.js",     # optional: saved System/Light/Dark appearance
-                       "site/search.js": "search.js"}   # optional: offline section search
+                       "site/search.js": "search.js",   # optional: offline section search
+                       "site/share.js": "share.js"}     # optional: the home page's "Share this guide" button
         if not offline:  # optional: "Check your PDF" page; online only (see PDF_CHECK)
             self.assets.update({f"site/{name}": name for name in PDF_CHECK})
-        self.starter_zip = ""
+        self.starter_zip = self.overleaf = ""
         if not offline and self.repo:
             version = RELEASE_VERSION
             base = f"{self.repo}/releases/download/{RELEASE_TAG}"
             self.starter_zip = f"{base}/rpi-thesis-starter-v{version}.zip"
             overleaf = "https://www.overleaf.com/docs?snip_uri=" + quote(f"{base}/rpi-thesis-overleaf-v{version}.zip", safe="")
+            self.overleaf = overleaf   # the home page's "Open in Overleaf" button
             for source, links in (("README.md", [self.starter_zip]), ("docs/get-started.md", [self.starter_zip, overleaf])):
                 text = (ROOT / source).read_text(encoding="utf-8")
                 for link in links:
@@ -467,7 +469,7 @@ class Site:
         else:
             self.warnings.append(
                 f"{source} has no '## {heading}' section; "
-                "the footer Help & feedback link opens the top of that page."
+                "the footer Ask for help link opens the top of that page."
             )
 
     @staticmethod
@@ -831,6 +833,10 @@ class Site:
                 for path, (_, label) in PROJECT.items()
                 if label and path in self.pages
             ],
+            # Footer "Tools" column: the optional tools, after the guide's main pages.
+            "tools": [entry for entry in (guide_item(name, label) for name, label in
+                      (("bring-your-draft", "Bring your draft"), ("check-pdf", "Check your PDF"),
+                       ("reviewer-checklist", "Reviewer checklist"))) if entry],
             "edition": escape(self.edition),
             "feedback_url": self.relative(here, self.feedback),
             "search_field": search_field("dialog-search"),
@@ -842,12 +848,15 @@ class Site:
             news = whats_new()
             if news:
                 values["whats_new"] = news
-            if self.site_url:  # "Share this guide": a plain e-mail link, no scripts or trackers
+            if self.site_url:  # "Share this guide": an e-mail link; share.js adds share or copy, no trackers
+                values["share_link"] = escape(self.site_url + "/")
                 values["share_url"] = escape("mailto:?subject=" + quote("RPI Thesis Toolkit")
                                              + "&body=" + quote("A free, unofficial LaTeX starter and guide for "
                                                                 "RPI theses and dissertations: " + self.site_url + "/"))
             if self.starter_zip:
                 values["starter_zip"] = self.starter_zip
+            if self.overleaf:
+                values["overleaf_url"] = escape(self.overleaf)
         if kind == "guide":
             names = [name for name, _, _ in chain]
             if Path(source).stem in names:
@@ -879,7 +888,6 @@ class Site:
         if self.repo:
             values["repo_url"] = self.repo
             values["edit_url"] = f"{self.repo}/edit/main/{source}"
-            values["suggest_url"] = f"{self.repo}/issues/new?template=suggestion.yml"
         if self.offline:
             values["offline"] = True
         if self.build_id:
