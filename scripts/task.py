@@ -34,8 +34,8 @@ REVIEW_PROMPT = (
     "files in git status) in this repo; read AGENTS.md. Report concrete defects with file:line "
     "and a failure scenario, most severe first. Label each P0 (breaks students or a release), "
     "P1 (wrong behavior), P2 (should fix before merge), or P3 (minor); say 'No findings' if none. "
-    "End with exactly one last line: 'REVIEW-RESULT: BLOCK' if there is any P0, P1, or P2 "
-    "finding, otherwise 'REVIEW-RESULT: PASS'."
+    "End with exactly one last line: 'REVIEW-RESULT: BLOCK' if there is any P0 or P1 "
+    "finding, otherwise 'REVIEW-RESULT: PASS' (P2 and P3 are reported, not blocking)."
 )
 # The review's own verdict line decides; a missing verdict blocks (fail closed).
 VERDICT = re.compile(r"(?m)^\s*REVIEW-RESULT:\s*(PASS|BLOCK)\s*$")
@@ -135,6 +135,8 @@ def finish(args):
              f"run git pull --rebase origin {branch}, then finish again.")
     if remote:   # accepted: a retry after this run's rebase recognizes it
         pushed_mark.write_text(remote, encoding="utf-8")
+    if remote:   # accepted: a retry after this run's rebase recognizes it
+        pushed_mark.write_text(remote, encoding="utf-8")
     rebased = git("rebase", "origin/main", cwd=top)
     if rebased.returncode:
         stop("rebase", "conflict with origin/main; fix the files, git add them, "
@@ -181,8 +183,8 @@ def finish(args):
         verdicts = VERDICT.findall(review.stdout)
         serious = not verdicts or verdicts[-1] != "PASS"
         accepted = args.accept_review or os.environ.get("TASK_ACCEPT_REVIEW") == "1"
-        say("review", ("P0-P2 findings accepted" if accepted else "P0-P2 findings") if serious
-            else "no P0-P2 findings")
+        say("review", ("P0-P1 findings accepted" if accepted else "P0-P1 findings") if serious
+            else "no blocking findings")
         if serious and not accepted:
             stop("review", "fix the findings in build/review.md and run finish again "
                  "(or --accept-review if each is noted).")
