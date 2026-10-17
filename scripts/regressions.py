@@ -933,6 +933,203 @@ register("bib-output:chicago-own-setting", make_bib_output("chicago", own_settin
 register("class-alone-order", case_class_alone_order, needs_pdf_text=True)
 
 
+# ---- class stress test and build-helper messages ------------------------------
+
+STRESS_DOC = r"""\documentclass{rpi-thesis}
+\usepackage{longtable}
+\usepackage{rotating}
+\thesissetup{title={T}, author={A}, department={Department of X},
+  graduation-month=May, graduation-year={2027}}
+\committeemember[Chair]{C}
+\begin{document}
+\maketitle
+\thesisfrontmatter
+\thesismainmatter
+\setcounter{chapter}{11}
+\chapter{STRESS TEST}
+%s
+\setcounter{section}{8}
+\section{Ninth section}
+\section{Tenth section}
+\setcounter{subsection}{9}
+\subsection{Tenth subsection}
+\setcounter{subsubsection}{9}
+\subsubsection{Deepest heading title}
+Text before the long table.
+\begin{longtable}{ll}
+\caption{A long table}\\
+\toprule
+LTROW one & a \\ LTROW two & b \\ LTROW three & c \\ LTROW four & d \\
+\bottomrule
+\end{longtable}
+\begin{sidewaystable}
+\centering
+\caption{A rotated table}
+\begin{tabular}{ll}
+SWROW one & a \\ SWROW two & b \\ SWROW three & c \\
+\end{tabular}
+\end{sidewaystable}
+\end{document}
+"""
+
+
+def _chunks(page):
+    """(x, y, text) of each text run on a page, from pypdf's text positions."""
+    found = []
+
+    def visit(text, cm, tm, *_):
+        if text.strip():
+            found.append((tm[4] * cm[0] + tm[5] * cm[2] + cm[4],
+                          tm[4] * cm[1] + tm[5] * cm[3] + cm[5], text))
+    page.extract_text(visitor_text=visit)
+    return found
+
+
+def _number_gaps(page):
+    """Space between an entry's number and its text on a contents page, in pt:
+    the kern pdfTeX writes after the number in the entry's TJ array."""
+    from pypdf.generic import ContentStream
+    gaps, size = {}, 12.0
+    for operands, operator in ContentStream(page.get_contents(), page.pdf).operations:
+        if operator == b"Tf":
+            size = float(operands[1])
+        elif operator == b"TJ" and len(operands[0]) > 1:
+            first, kern = operands[0][0], operands[0][1]
+            if isinstance(first, str) and re.fullmatch(r"\d+(\.\d+)*\.?", first) \
+                    and not isinstance(kern, str):
+                gaps[first] = -float(kern) * size / 1000
+    return gaps
+
+
+def case_contents_stress(proj, work):
+    """Requirements map stress test: numbers to 12.10.10.10 stay clear of the
+    entry text, a contents over two pages, and single spacing in a longtable
+    and a rotated (landscape) table that keeps its top-right page number."""
+    if PdfReader is None:
+        raise Skip("needs pypdf")
+    many = "\n".join("\\section{Filler section number %d}\nText." % n for n in range(1, 31))
+    (proj / "stress.tex").write_text(STRESS_DOC % many, encoding="utf-8")
+    for _ in range(3):  # contents, longtable widths, page references
+        code, out = latex(proj, work, name="stress.tex")
+        check(code == 0, "stress test does not compile: " + tail(out))
+    check(not re.search(r"Overfull \\[hv]box", read(proj / "stress.log")),
+          "the stress test overflows a line or a page (Overfull in stress.log)")
+    reader = PdfReader(str(proj / "stress.pdf"))
+    texts = [" ".join((p.extract_text() or "").split()) for p in reader.pages]
+    toc = [i for i, t in enumerate(texts) if t.startswith("CONTENTS")]
+    check(toc, "no CONTENTS page")
+    second = toc[0] + 1
+    check(not texts[second].startswith("LIST OF") and texts[second].endswith(" iii"),
+          "the contents does not continue on page iii: " + texts[second][-60:])
+    gaps = {}
+    for index in (toc[0], second):
+        gaps.update(_number_gaps(reader.pages[index]))
+    for number in ("12.", "12.10", "12.10.10", "12.10.10.10"):
+        check(number in gaps, "contents entry %s not found, or its text touches the number"
+              " (numbers found: %s)" % (number, sorted(gaps)))
+        check(gaps[number] >= 3.5, "contents entry %s: only %.2f pt between the number and"
+              " its text" % (number, gaps[number]))
+    long_page = next((i for i, t in enumerate(texts) if "LTROW" in t), None)
+    check(long_page is not None, "longtable not found")
+    rows = sorted({round(y, 1) for x, y, t in _chunks(reader.pages[long_page]) if "LTROW" in t},
+                  reverse=True)
+    pitch = [a - b for a, b in zip(rows, rows[1:])]
+    check(len(pitch) == 3 and all(12 < g < 16 for g in pitch),
+          "longtable rows are not single spaced: row pitch %s pt" % [round(g, 2) for g in pitch])
+    side_page = next((i for i, t in enumerate(texts) if "SWROW" in t), None)
+    check(side_page is not None, "rotated table not found")
+    chunks = _chunks(reader.pages[side_page])
+    columns = sorted({round(x, 1) for x, y, t in chunks if "SWROW" in t})
+    pitch = [b - a for a, b in zip(columns, columns[1:])]
+    check(len(pitch) == 2 and all(12 < g < 16 for g in pitch),
+          "rotated table rows are not single spaced: row pitch %s pt" % [round(g, 2) for g in pitch])
+    body = next(i for i, t in enumerate(texts) if t.startswith("12. STRESS TEST"))
+    numbers = [(x, y) for x, y, t in chunks if t.strip() == str(side_page - body + 1)]
+    check(any(x > 500 and abs(y - 738) < 3 for x, y in numbers),
+          "the rotated table's page number is not top right: %s" % numbers)
+
+
+def case_seal_underscore(proj, work):
+    """Audit: a seal-file path with _ that does not exist stopped with 'Missing $ inserted'."""
+    replace_once(proj / "metadata.tex", "  % Optional pages",
+                 "  seal-file = {assets/my_seal.jpg},\n  % Optional pages")
+    code, out = latex(proj, work)
+    check(code == 0, "a missing seal-file with _ stopped the build: " + tail(out))
+    check("No file assets/my_seal.jpg." in read(proj / "main.log"),
+          "the log does not name the missing seal file")
+    if (proj / "assets/rpi-seal.png").is_file():
+        raise Skip("assets/rpi-seal.png is used in place of the placeholder")
+    text = pdf_text(proj / "main.pdf")
+    check("assets/my_seal.jpg" in text, "the placeholder does not show the seal path")
+
+
+def case_build_first_error(proj, work):
+    """Audit: a failed build printed the tail of latexmk's output and a stale
+    Biber log instead of the first error and where it is."""
+    replace_once(proj / "chapters/01-introduction.tex", "example~\\parencite{lamport1994}",
+                 "example~\\parencit{lamport1994}")
+    (proj / "build").mkdir()
+    blg = proj / "build/main.blg"
+    blg.write_text("[0] Utils.pm:1> ERROR - STALE BIBER ERROR FROM AN OLD BUILD\n")
+    os.utime(blg, (time.time() - 3600, time.time() - 3600))
+    code, out = run([sys.executable, "scripts/build.py"], proj, work)
+    check(code != 0, "build.py exited 0 with a typo in chapter 1")
+    check("STALE BIBER ERROR" not in out, "build.py printed an old Biber log: " + tail(out))
+    match = re.search(r"First error \(from build/main\.log\):\n(.*?)\n\n", out + "\n\n", re.S)
+    check(match, "build.py did not print the first error: " + tail(out))
+    block = match.group(1)
+    check(block.startswith("./chapters/01-introduction.tex:13: Undefined control sequence")
+          and re.search(r"^l\.13 .*\\parencit$", block, re.M),
+          "the first error is not the typo with its l.13 line: " + block)
+
+
+def case_build_missing_figure(proj, work):
+    """Audit: a missing figure file failed the build with no hint about figures."""
+    replace_once(proj / "chapters/02-research.tex", "{example-image}", "{figures/no-such-plot}")
+    code, out = run([sys.executable, "scripts/build.py"], proj, work)
+    check(code != 0, "build.py exited 0 with a missing figure")
+    check("Likely cause: A figure file named in \\includegraphics is missing" in out
+          and "troubleshooting" in out,
+          "no figure hint naming the troubleshooting page: " + tail(out))
+
+
+def case_build_undefined(proj, work):
+    """Audit: undefined citations and references (?? or bold keys) built without a hint."""
+    append(proj / "chapters/01-introduction.tex",
+           "\nUnknown \\parencite{nosuchkey} and \\ref{sec:nosuchlabel}.\n")
+    code, out = run([sys.executable, "scripts/build.py"], proj, work)
+    check(code == 0, "build.py exited %d: %s" % (code, tail(out)))
+    check("A citation or cross-reference is undefined" in out and "troubleshooting" in out,
+          "no hint for the undefined citation and reference: " + tail(out))
+
+
+def case_build_no_main(proj, work):
+    """Audit: without main.tex the helper said only 'cannot read main.tex'."""
+    (proj / "main.tex").unlink()
+    code, out = run([sys.executable, "scripts/build.py"], proj, work)
+    check(code == 2 and "there is no main.tex in this folder" in out
+          and "rename your main file to main.tex" in out,
+          "unclear message without main.tex (exit %d): %s" % (code, tail(out)))
+
+
+def case_build_biber_error(proj, work):
+    """Audit: when Biber failed, its error was buried in the tail of latexmk's output."""
+    append(proj / "references.bib", "\n@book{broken,\n  title = {Unclosed,\n")
+    code, out = run([sys.executable, "scripts/build.py"], proj, work)
+    check(code != 0, "build.py exited 0 with a broken references.bib")
+    check(re.search(r"Biber failed \(from build/main\.blg\):\n.*ERROR - ", out),
+          "build.py did not show Biber's error: " + tail(out))
+
+
+register("contents-stress", case_contents_stress, tools=("pdflatex",), needs_pdf_text=True)
+register("seal-underscore", case_seal_underscore, tools=("pdflatex",), needs_pdf_text=True)
+register("build-first-error", case_build_first_error)
+register("build-missing-figure", case_build_missing_figure)
+register("build-undefined", case_build_undefined)
+register("build-no-main", case_build_no_main)
+register("build-biber-error", case_build_biber_error)
+
+
 def selected(patterns):
     if not patterns:
         return list(CASES)

@@ -48,16 +48,16 @@ together with the pages that use it (`python3 scripts/rules.py` lists them).
 | --- | --- | --- | --- |
 | `page-size` US letter, 1 in margins on every page | §2.2 p. 16; FC | cls §4: `geometry` options | check (paper size); visual |
 | `heading-top` Level-1 headings start at the top margin, not lower | §2.2; LT ("known glitch") | cls §5: `\titleformat{\chapter}` | check (heading baseline 84 pt on every opening page) |
-| `double-spacing` Body double spaced (≤ 4 lines/in) | §2.1 p. 16; FC | cls §4: `\doublespacing` | visual |
-| `single-spacing` Single spaced: captions, footnotes, block quotes, chapter attributions; references single with a blank line between | §2.1 p. 16 | cls §4, §7: `\AtBeginEnvironment` (`\singlespacing`); cls §12: `\chapterattribution`, `\thesisreferences`; cls §4: `\bibitemsep` set once biblatex has loaded, or once a package that loads it (such as `biblatex-chicago`) has finished, so a student's later line still wins | visual (stress test incl. longtable and rotated table); regressions `bib-output` (measured gap between entries = one line, numeric, APA, MLA, Chicago author-date; a later `\bibitemsep` line still wins) |
+| `double-spacing` Body double spaced (≤ 4 lines/in) | §2.1 p. 16; FC | cls §4: `\doublespacing` at `\begin{document}` | check (line pitch on a body page, `line-pitch`); visual |
+| `single-spacing` Single spaced: captions, footnotes, block quotes, chapter attributions; references single with a blank line between | §2.1 p. 16 | cls §4, §7: `\AtBeginEnvironment` (`\singlespacing`); cls §12: `\chapterattribution`, `\thesisreferences`; cls §4: `\bibitemsep` set once biblatex has loaded, or once a package that loads it (such as `biblatex-chicago`) has finished, so a student's later line still wins | regressions `contents-stress` (measured row pitch in a `longtable` and a rotated table); visual; regressions `bib-output` (measured gap between entries = one line, numeric, APA, MLA, Chicago author-date; a later `\bibitemsep` line still wins) |
 
 ### Fonts
 
 | Rule | Manual | Where | Checked by |
 | --- | --- | --- | --- |
-| `font` Same font for text and page numbers; text ≥ 10 pt (12 pt Times-like) | §2.1 p. 16; FC | cls §2: `newtxtext` (pdfLaTeX), `\setmainfont` (LuaLaTeX, XeLaTeX); cls §8: `\ps@rpibody` | visual; fonts embedded (pdfTeX default) |
-| `black-text` All text black, including URLs and links | §2.1 p. 16; §1.3 p. 4; FC | cls §13: `hyperref` option `hidelinks` | visual |
-| `url-font` URLs in the text font | FC ("same font throughout") | cls §13: `\urlstyle{same}` | visual |
+| `font` Same font for text and page numbers; text ≥ 10 pt (12 pt Times-like) | §2.1 p. 16; FC | cls §2: `newtxtext` (pdfLaTeX), `\setmainfont` (LuaLaTeX, XeLaTeX); cls §8: `\ps@rpibody` | check (every font Times-like, or a typewriter font for code, and embedded; three engines); visual |
+| `black-text` All text black, including URLs and links | §2.1 p. 16; §1.3 p. 4; FC | cls §13: `hyperref` option `hidelinks` | check (no link has a visible border); visual |
+| `url-font` URLs in the text font | FC ("same font throughout") | cls §4: `\urlstyle{same}` | visual |
 
 ### Page numbers
 
@@ -71,9 +71,9 @@ together with the pages that use it (`python3 scripts/rules.py` lists them).
 
 | Rule | Manual | Where | Checked by |
 | --- | --- | --- | --- |
-| `title-page` Title page: title caps bold; name bold; degree caps italic; "Approved by:"; names single spaced with ", Chair"; department italic; RPI, Troy, New York; [Month Year]; seal | §1.1 pp. 1-2; FC | cls §11: `\maketitle`, seal box `\rpi_seal:` and `\rpi_seal_placeholder:`; `metadata.tex`; seal downloaded by the student (`assets/README.md`) | check (degree, date, placeholder exactly when the seal is absent); visual |
+| `title-page` Title page: title caps bold; name bold; degree caps italic; "Approved by:"; names single spaced with ", Chair"; department italic; RPI, Troy, New York; [Month Year]; seal | §1.1 pp. 1-2; FC | cls §11: `\maketitle`, seal box `\rpi_seal:` and `\rpi_seal_placeholder:`; `metadata.tex`; seal downloaded by the student (`assets/README.md`) | check (degree, date, placeholder exactly when the seal is absent; rejections for a missing title, author, or department, and for an unknown setting); regressions `seal-underscore` (a missing `seal-file` path with `_` shows the placeholder); visual |
 | `degree-wording` Degree wording: Master of Science / Doctor of Philosophy / Doctor of Engineering | §1.1 p. 1 | cls §10: `\thesissetup` key `degree` | check (three degree cases) |
-| `graduation-date` Graduation month only May, August, December; four-digit year; chair present | §1.1 p. 1 | cls §10: `\thesissetup` key `graduation-month`; `\rpi_validate:` | check (rejections) |
+| `graduation-date` Graduation month only May, August, December; four-digit year; chair present | §1.1 p. 1 | cls §10: `\thesissetup` key `graduation-month`; `\rpi_validate:` | check (rejections, including a wrongly capitalized month, degree, or `[Chair]`, each echoed in the message) |
 | `department-name` Full department name | §1.1 p. 1 | `metadata.tex` comment | student |
 | `copyright-page` Copyright page optional; page ii; "© year / By / Name / All rights reserved" | §1.2 p. 3; FC | cls §12: `\thesisfrontmatter` (key `copyright-page`) | check (page ii, text) |
 
@@ -82,7 +82,7 @@ together with the pages that use it (`python3 scripts/rules.py` lists them).
 | Rule | Manual | Where | Checked by |
 | --- | --- | --- | --- |
 | `front-matter-order` Front-matter order: title, copyright, contents, tables, figures, (nomenclature), preface/acknowledgment, abstract | Table 1.1 p. 15; FC | cls §12: `\thesisfrontmatter`; `main.tex` | check (order) |
-| `contents-entries` Contents lists all front matter except title, copyright, itself; all chapters, sections, references, appendices; plain weight; numbers right aligned; text clear of number column | §1.3 p. 4; FC | cls §6 "Contents and lists"; `\frontchapter` | check (entries); stress test to 12.10.10.10 |
+| `contents-entries` Contents lists all front matter except title, copyright, itself; all chapters, sections, references, appendices; plain weight; numbers right aligned; text clear of number column | §1.3 p. 4; FC | cls §6 "Contents and lists"; `\frontchapter` | check (entries; the first entry is the page after the contents); regressions `contents-stress` (numbers to 12.10.10.10 at least 3.5 pt from their text, measured; contents over two pages) |
 | `contents-match` Contents entries identical to body headings | §1.3 p. 4 | cls §6: `\cftchapaftersnum` ("1." and "A.") | check |
 | `lists` Lists of tables/figures when present; full caption; entries separated by a space; appendix objects included | §§1.4-1.5 pp. 7-10; FC | cls §6 "Contents and lists"; cls §12: `\thesisfrontmatter` (`\listoftables`, `\listoffigures`); `build.py` short-caption hint | check (full captions); visual |
 | `nomenclature` Nomenclature/list of equations optional, after lists, in contents, formatted like the lists | §1.6 p. 13; FC | `main.tex` comment; cls §12: `\frontchapter`; recipe in `docs/going-further.md` (`longtable`, single spaced by the class, 10 pt between entries like the lists) | visual (recipe, three engines); student |
@@ -99,7 +99,7 @@ together with the pages that use it (`python3 scripts/rules.py` lists them).
 | Rule | Manual | Where | Checked by |
 | --- | --- | --- | --- |
 | `captions` Tables/figures centered; table captions above, figure captions below; bold; one alignment; colon delimiter; chapter numbering with periods; no color | §§2.4-2.5 pp. 18-22; FC | cls §7: `\captionsetup`; sample floats | visual |
-| `landscape` Landscape table: caption "above" (left); page number placement | §2.4 p. 19, Fig. 2.4 | cls §7: `rotating` `sidewaystable`; top-right number stays in place | visual (stress test); see confirmation list |
+| `landscape` Landscape table: caption "above" (left); page number placement | §2.4 p. 19, Fig. 2.4 | cls §7: `rotating` `sidewaystable`; top-right number stays in place | regressions `contents-stress` (rotated table single spaced, page number top right); visual; see confirmation list |
 | `lettered-parts` Lettered figure parts: only the letter in the figure, explanation in the caption, one letter style throughout | §2.5 pp. 22-23 | subfigure recipe in `docs/going-further.md` (`subcaption`, empty sub-captions print "(a)"); only the main caption enters the list of figures | visual (recipe, three engines); student (letter style) |
 | `reproduced` Reproduced tables/figures: full citation and permission or license wording in caption | §2.6 pp. 24-25 | `chapters/02-research.tex` example | student |
 
@@ -107,7 +107,7 @@ together with the pages that use it (`python3 scripts/rules.py` lists them).
 
 | Rule | Manual | Where | Checked by |
 | --- | --- | --- | --- |
-| `equations` Equations centered, numbered right in parentheses, multi-line number centered, every display numbered | §2.7 pp. 26-27; FC | amsmath defaults; sample `split` | visual; student |
+| `equations` Equations centered, numbered right in parentheses, multi-line number centered, every display numbered | §2.7 pp. 26-27; FC | amsmath defaults; sample `split`; cls §4: space around displays scaled once by the line spacing (`setspace`) | check (space above and below a display, `display-skip`); visual; student |
 | `unnumbered-displays` Displays inside a lemma, algorithm, theorem, or proof may be unnumbered | §2.7 p. 27 | theorem and algorithm recipes in `docs/going-further.md` (`amsthm`, `algorithm`, `algpseudocode`; lines commented out in `preamble.tex`); `package/amsthm/before` hook lets `amsthm` load after `newtxmath` (pdfLaTeX) | visual (recipe, three engines) |
 
 ### Chapter attributions
@@ -172,6 +172,9 @@ citation.
 | `page-number-center` Page-number center accepted either way of the page center (half a digit; this project's choice) | 6 | `page-number-position` |
 | `contents-column` A contents line ending in a number is an entry, without dot leaders, if it ends this close to the right end of the page-number column (this project's choice) | 6 | `contents-match` |
 | `heading-size-tolerance` A line at the top of a page counts as a level-1 heading only if its type is at least the body text size less this much (headings are never smaller than text; this project's choice) | 0.5 | `headings` |
+| `line-pitch` Baseline to baseline in double-spaced body text (the class's setting: 14.5 pt × 1.655, setspace's double spacing at 12 pt) | 23.91 | `double-spacing` |
+| `display-skip` Space above and below a displayed equation beyond the line pitch (the class's setting: 12 pt × 1.655, scaled once by the line spacing as RPI's template does) | 19.79 | `equations` |
+| `pitch-tolerance` `line-pitch` and `display-skip` accepted either way of the value above on a PDF this class made (this project's choice) | 0.5 | `double-spacing` |
 
 The browser checker reports a small measured difference on a point listed
 under [Needs OGE confirmation](#needs-oge-confirmation) as **Differs from the
@@ -209,7 +212,7 @@ from RPI ITS; files dated 2018); it is not part of this project.
 | Appendix heading | "APPENDIX A" above the title | "A. TITLE" | Appendices formatted like chapters (App. A p. 38); matches contents entry |
 | APPENDICES contents line | No page number | With page number | §1.3 p. 4: sections listed with page numbers; Fig. 1.4 p. 6 <!-- TODO(verify): not rechecked on 16 Oct 2026; no copy of RPI's template sample files was in _local/legacy/, and its class file does not write this line itself. --> |
 | Level-4 heading | Bold, same as level 3 | Italic | §2.3 p. 17: each level distinguished |
-| Contents/list number columns | 1.4 em / 2.3 em / 3.2 em | 1.6 / 2.8 / 3.8 / 5 em | Bug: 12.10 touches and 12.10.10 overlaps the entry text (§1.3 p. 4) |
+| Contents/list number columns | 1.4 em / 2.3 em / 3.2 em | 1.6 / 2.8 / 4 / 5.3 em | Bug: 12.10 touches and 12.10.10 overlaps the entry text (§1.3 p. 4); measured by regressions `contents-stress` |
 | Contents page-number column | 1.55 em | 3 em | Bug: roman numbers such as xviii overflow |
 | Block quotes, longtable, rotated floats | Not single spaced | Single spaced | §2.1 p. 16 |
 | References spacing | Small item gap | One blank line | §2.1 p. 16 |
