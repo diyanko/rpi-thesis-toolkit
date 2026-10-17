@@ -293,6 +293,10 @@ Citation managers handle journal articles well but are far less reliable for
 **websites, reports, theses, datasets, software, standards, and archival
 sources**. Compare every reference in the PDF with your style guide.
 
+Optional: [check your references](check-references.md) in your browser before
+compiling. It looks for common key, field, name, and date problems; nothing
+is uploaded.
+
 ### Numbered styles: check delayed figures and tables
 
 In a style numbered in order of first citation (such as IEEE, or the
