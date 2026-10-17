@@ -203,6 +203,16 @@ class Convert(unittest.TestCase):
         plain = self.convert(text="Line one 100% * 2\nLine_two\n")
         self.assertEqual((plain["source"], plain["latex"]), ("text", "Line one 100\\% * 2\n\nLine\\_two\n"))
 
+    def test_numbered_list_alone_is_a_list(self):
+        latex = self.convert(text="1. Collect samples\n2. Compare results")["latex"]
+        self.assertIn("\\begin{enumerate}", latex)
+        self.assertEqual(latex.count("\\item"), 2)
+
+    def test_list_type_change_starts_a_new_list(self):
+        latex = self.convert(text="- Site A\n  1. first\n  2. second\n  - a bullet\n- Site B")["latex"]
+        self.assertIn("\\begin{enumerate}", latex)
+        self.assertEqual(latex.count("\\begin{itemize}"), 2)   # outer list and the bulleted sublist
+
     def test_malformed_input(self):
         for html in ["<p><b>unclosed <i>tags", "<table><tr><td>a<td>b<tr><td>c</table>", "<" * 50 + "p>x",
                      "<div>" * 3000 + "deep" + "</div>" * 3000]:
