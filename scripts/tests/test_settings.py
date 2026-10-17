@@ -240,7 +240,8 @@ class Browser(unittest.TestCase):
                   "title": r"A study of 100% of A&B_#1 {x} $y$ ~ ^ \text", "author": "Your full name",
                   "copyright-page": "true", "list-of-tables": "true", "list-of-figures": "true",
                   "seal-file": "assets/missing_seal%file.jpg"}
-        result = self.generate(values, [{"name": "Member, Two", "role": "Reader]"}, *COMMITTEE])
+        result = self.generate(values, [{"name": "Member, Two", "role": "Reader]"},
+                                        {"name": "Member three", "role": "Reader [external]"}, *COMMITTEE])
         self.assertFalse(result["errors"])
         with tempfile.TemporaryDirectory() as tmp:
             folder = Path(tmp)
@@ -256,6 +257,7 @@ class Browser(unittest.TestCase):
             log = (folder / "build/main.log").read_text(encoding="utf-8", errors="replace")
             self.assertNotIn("Missing character:", log)
             self.assertIn("char_generate:nn", result["text"])
+            self.assertIn(r"\committeemember[Reader {[}external{]}]", result["text"])
 
 
 if __name__ == "__main__":

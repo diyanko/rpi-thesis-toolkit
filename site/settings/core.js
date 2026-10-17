@@ -63,6 +63,6 @@ export function generate(settings, committee, schema) {
   const chairs = committee.filter(member => schema.chairRoles.includes(member.role));
   const others = committee.filter(member => !schema.chairRoles.includes(member.role));
   const members = [...chairs, ...others].map(member =>
-    `\\committeemember${member.role ? `[${escapeText(member.role).replace(/\]/g, "{]}")}]` : ""}{${escapeText(member.name)}}`);
+    `\\committeemember${member.role ? `[${escapeText(member.role).replace(/[\[\]]/g, char => `{${char}}`)}]` : ""}{${escapeText(member.name)}}`);
   return {errors: [], text: `\\thesissetup{\n${lines.join("\n")}\n}\n\n${members.join("\n")}\n`};
 }
