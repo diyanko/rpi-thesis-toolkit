@@ -115,6 +115,12 @@ def finish(args):
 
     if git("fetch", "origin", cwd=top).returncode:
         stop("fetch", "git fetch origin failed; check the network and try again.")
+    # Never overwrite commits someone else pushed to this branch: the remote
+    # branch, if any, must already be part of this one before we rebase.
+    remote = git("rev-parse", "--verify", "-q", f"origin/{branch}", cwd=top).stdout.strip()
+    if remote and git("merge-base", "--is-ancestor", remote, "HEAD", cwd=top).returncode:
+        stop("fetch", f"origin/{branch} has commits this worktree lacks; "
+             f"run git pull --rebase origin {branch}, then finish again.")
     rebased = git("rebase", "--autostash", "origin/main", cwd=top)
     if rebased.returncode:
         stop("rebase", "conflict with origin/main; fix the files, git add them, "
@@ -131,6 +137,10 @@ def finish(args):
     files = changed_files(top)
     if any(name.startswith(("site/", "docs/")) for name in files):
         if find_chrome():
+            sweep = run(sys.executable, "scripts/ui_check.py", cwd=top)   # layout problems stop finish
+            if sweep.returncode:
+                print(sweep.stdout.strip())
+                stop("layout", "fix the layout problems ui_check.py lists, then run finish again.")
             shots = run(sys.executable, "scripts/ui_check.py", "--baseline", "compare", cwd=top)
             lines = shots.stdout.splitlines()
             for line in lines:
@@ -170,7 +180,8 @@ def finish(args):
     if not subjects:
         stop("commit", "this branch has no commits beyond origin/main; nothing to propose.")
 
-    pushed = git("push", "--force-with-lease", "-u", "origin", "HEAD", cwd=top)
+    lease = f"--force-with-lease={branch}:{remote}" if remote else "--force-with-lease"
+    pushed = git("push", lease, "-u", "origin", "HEAD", cwd=top)
     if pushed.returncode:
         stop("push", "git push failed; check your access to origin and try again.")
     say("push", f"origin/{branch}")
