@@ -101,12 +101,20 @@ present (CI has no seal). A bug worth fixing twice gets a case in
 `scripts/regressions.py`; do not add tests that merely restate prose.
 
 Parallel work: one writer per checkout. A second session or agent works in its
-own git worktree and branch, and agents sharing a task own separate files.
+own git worktree and branch, and agents sharing a task own separate files. Keep
+it to about three at once. The shared files (`CHANGELOG.md`, `README.md`, `NAV`
+and `TAGS` in `scripts/build_site.py`, and the tokens in section 2 of
+`site/site.css`) belong to whoever merges the work: other agents put their
+proposed lines in their report instead of editing them.
 
 ## Maintainer flow
 
 With the maintainer's OK for each push:
 
+- **The to-do list is GitHub Issues**, labelled by area (`class`, `guide`,
+  `site`, `checker`, `tooling`, `health`). One issue becomes one branch and
+  one pull request that says `Closes #N`; anyone, person or agent, can pick
+  one up without the history of a chat.
 - **Small guide, website, or doc change:** verify, commit, push to `main`.
   CI deploys the website by itself when the starter files are unchanged since
   the last release.
