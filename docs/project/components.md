@@ -121,6 +121,10 @@ An example prompt in ordinary sentences. Prompts wrap like text instead of scrol
 
 *In words:* a caption paragraph right after a picture reads as its caption.
 
+A crop of the sample PDF (made by `build_site.py --previews`; absent otherwise). Its caption is the alt text's first clause, and on phones it scrolls sideways:
+
+<!-- preview compile-pass-2-chapter: Chapter 1 after step 3: "a real citation example [1]", then "Chapter 2 contains small examples you can adapt, and Chapter 3 closes the document." -->
+
 ## Disclosure
 
 <details><summary>Optional: a closed section with a longer summary line that may wrap on phones</summary>

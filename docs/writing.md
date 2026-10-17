@@ -28,7 +28,7 @@ To print a special character, put a backslash before it: `\&`, `\%`, `\_`,
 on the same line as its number. That's most of a thesis; the rest is your
 writing.
 
-![A few lines of a chapter file with six numbered pins: commands start with a backslash; braces hold what a command acts on; \begin and \end wrap an environment such as a figure, table, or equation; a line starting with % is a note LaTeX ignores; a blank line starts a new paragraph; \cite and \ref are filled in when you compile.](diagrams/read-a-tex-file.svg)
+![A few lines of a chapter file with six numbered pins: commands start with a backslash; braces hold what a command acts on; \begin and \end wrap an environment such as a figure, table, or equation; a line starting with % is a note LaTeX ignores; a blank line starts a new paragraph; \parencite and \ref are filled in when you compile.](diagrams/read-a-tex-file.svg)
 
 *In words:* commands start with `\`, braces hold their text, `\begin` and
 `\end` wrap a block (an *environment*), `%` starts a note, and a blank line
