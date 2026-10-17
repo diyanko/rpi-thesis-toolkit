@@ -97,8 +97,10 @@ python3 scripts/verify.py release   # full + strict publish build, layout sweep,
 
 Auto mode runs full whenever Git cannot tell what changed, on a clean tree,
 or when any staged, unstaged, or untracked file is outside guide and website
-text. Full also runs `scripts/test_*.py` (unit tests for the release and
-health scripts). Release mode fails when the browser layout sweep cannot run;
+text. Full also runs `scripts/test_*.py` for the tooling and PDF checker.
+These run after the parallel TeX checks so browser startup and short server
+timeouts do not compete with the compilers. Browser test skips are reported
+when Chrome is absent. Release mode fails when the browser layout sweep cannot run;
 CI's container has no browser and sets `VERIFY_ALLOW_NO_BROWSER=1`, so run
 `verify.py release` locally before tagging.
 
@@ -120,6 +122,10 @@ and dark pair reviews the whole design at once. Add a new component there.
 
 After a pull request merges, `python3 scripts/tidy.py` lists local branches
 and worktrees already merged into `origin/main`; `--apply` removes them. It
+also recognizes rebase merges when every unique commit's patch is in main
+and the final contents and modes of all changed paths still match main.
+If a file has changed again since the merge, or Git cannot prove equivalence,
+the branch stays. A branch moved after the check stays too. It
 never touches `main`, the current worktree, unmerged work, locked worktrees,
 or anything with uncommitted changes.
 
@@ -222,10 +228,11 @@ The website works without JavaScript. The optional scripts in `site/`
 anywhere. `site/pdf-check/` (the "Check your PDF" page) reads a student's PDF in
 the browser with pdf.js, vendored unchanged in `site/pdf-check/pdfjs/` with its
 license; to update it, follow the comment at the top of `core.js`. The checks
-name rules and measurements by id from `docs/project/requirements.md`
-(`build_site.py` stops on an unknown id), and the offline guide leaves the
-checker out and links to the website's page. Its checks mirror `check.py`; when
-a measurement there changes, change its row in the Measurements table. Light and
+name rules and measurements by id from `docs/project/requirements.md`, all
+listed in `RULE_IDS` and `MEASURE_IDS` in `core.js` (`build_site.py` stops on an
+unknown id, and `core.js` refuses an unlisted one), and the offline guide
+leaves the checker out and links to the website's page. `check.py` reads the
+same Measurements table; change a number only there. Light and
 dark colors live in section 2 of `site/site.css`; check both themes when
 changing them. `--previews` compiles the sample thesis and saves PNG pages
 (never the title page) and needs TeX Live and poppler. The site may contain
@@ -242,6 +249,11 @@ any other PDF, and requires `site_url` and `repository_url` in
 leaves out (such as `CREDITS.md` from `LICENSE.md`) becomes a link to that
 file in the repository at the release tag, and both ZIPs fail to build if any
 relative link in their Markdown or top-level HTML is broken.
+Pandoc reads the shipped Markdown links, so code samples, escaped brackets,
+and unused reference definitions are left alone; only the rewritten
+destinations change, and the rest of each file stays as written. A link
+written in a way packaging cannot find in the text (with a character
+reference, say) stops the build.
 
 Three workflows in `.github/workflows/`:
 
@@ -255,7 +267,9 @@ Three workflows in `.github/workflows/`:
   Every deploy, from `main` or a tag, also reads the live `build.txt` and
   refuses when GitHub's compare API shows the live commit is newer than this
   one (or on a different line of history), unless **rollback** is set; a
-  missing `build.txt` counts as the first deploy. So a delayed, re-run, or
+  missing `build.txt` counts as the first deploy. An unreadable `build.txt`
+  fails the gate; check the deployment by hand, or use an explicit release
+  rollback to repair it. So a delayed, re-run, or
   older run never replaces a newer site. The gate runs again inside the Pages
   lock just before publishing. A pushed `vX.Y.Z` tag releases (below).
 - `fresh-machines.yml` installs TeX on new Windows, macOS, and Ubuntu machines
@@ -339,6 +353,8 @@ Only with the maintainer's authorization.
    and date, `main.tex`, download links, `CITATION.cff`, the change-log
    heading). Patch for fixes; minor for anything that changes a PDF or a
    setting.
+   The version must increase. The script checks every expected source before
+   writing, so a missing change-log heading or download link changes no files.
 2. **Verify:** `python3 scripts/verify.py release`.
 3. **Commit and tag:** commit `build: release vX.Y.Z` on `main`, `git tag
    vX.Y.Z`, then `git push --atomic origin main vX.Y.Z`.

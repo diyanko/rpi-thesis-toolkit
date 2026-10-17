@@ -1509,6 +1509,8 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .pdf-check-or { color: var(--muted); }
 .pdf-check-status:empty { display: none; }
 .pdf-check-status { margin: 1rem 0 0; font-weight: 600; }
+.pdf-check-cancel { margin: 0.75rem 0 0; }
+.pdf-check-cancel[hidden] { display: none; }
 .pdf-check-results h3:focus { outline: none; }
 .guide-content .pdf-check-list { list-style: none; padding: 0; margin: 1rem 0 0; }
 .guide-content .pdf-check-list > li { margin: 0 0 14px; }
@@ -1522,6 +1524,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 }
 .pdf-check-item.is-ok { --c: var(--sage); }
 .pdf-check-item.is-check { --c: var(--terra); }
+.pdf-check-item.is-differs { --c: var(--blue); }
 .pdf-check-item p { margin: 0 0 0.4em; }
 .pdf-check-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
 .pdf-check-state {

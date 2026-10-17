@@ -43,7 +43,7 @@ The full record, with sources and how each item is treated, is the
 
 ## Tools
 
-The toolkit uses or recommends these free tools; none is bundled.
+The toolkit uses or recommends these free tools; none is bundled in the starter.
 
 - [LaTeX](https://www.latex-project.org/) and its packages from
   [CTAN](https://ctan.org/), including
@@ -52,6 +52,9 @@ The toolkit uses or recommends these free tools; none is bundled.
   [latexmk](https://ctan.org/pkg/latexmk), as distributed in
   [TeX Live](https://tug.org/texlive/)
 - [Pandoc](https://pandoc.org/), which builds this website and the offline guide
+- [pdf.js](https://github.com/mozilla/pdf.js), by Mozilla and contributors
+  (Apache License 2.0), which the website's optional "Check your PDF" page
+  includes unchanged to read a PDF in your browser
 - [Zotero](https://www.zotero.org/) and
   [Better BibTeX for Zotero](https://retorque.re/zotero-better-bibtex/)
 - [LaTeX Workshop](https://github.com/James-Yu/LaTeX-Workshop) for

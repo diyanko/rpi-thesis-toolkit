@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 516" width="720" height="516" role="img" aria-labelledby="t d">
   <title id="t">Research workflow: separate pieces come together, and you iterate</title>
-  <desc id="d">The thesis grows from several independent pieces. On the left, under "draft and discuss": Markdown notes, for example in Obsidian or HackMD; Google Docs with advisor comments; and an existing Word draft. Below them, references kept in a Zotero library, and figure sources such as data, plotting scripts, and .drawio diagrams. Stable sections move gradually from the drafts into separate chapter files in chapters/, such as 01-introduction.tex, 02-research.tex, and 03. Zotero exports references.bib, and figures are exported as image files into figures/. main.tex brings the chapters, references, and figures together and is compiled into one thesis PDF. A loop arrow runs from the PDF back to the drafts: read, get feedback, revise. A note says to check the assembled PDF throughout.</desc>
+  <desc id="d">The thesis grows from several independent pieces. On the left, under "draft and discuss": Markdown notes, for example in Obsidian or HackMD; Google Docs with advisor comments; and an existing Word draft. Below them, references kept in a Zotero library, and figure sources such as data, plotting scripts, and .drawio diagrams. Stable sections move gradually from the drafts into separate chapter files in chapters/, such as 01-introduction.tex, 02-research.tex, and 03. Zotero exports references.bib, and figures are exported as image files into figures/. main.tex brings the chapters, references, and figures together and is compiled into one thesis PDF. After a section moves into LaTeX, revise its .tex file; changes do not flow back to the drafting app. A note says to check the assembled PDF throughout.</desc>
   <style>
     svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
       --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
@@ -118,6 +118,5 @@
   <text class="hand hs mid" x="624" y="79" style="font-size:16px">check the assembled</text>
   <text class="hand hs mid" x="624" y="103" style="font-size:16px">PDF throughout</text>
   </g>
-  <path class="ln terra" d="M576.3 430.2C573.8 443 566 457 548 463.5S502 469.6 430 469.4S300 470.4 200 470S100 469.6 60 470.2C30 470.6 8.6 462 8.3 440.5S8.6 330 8.4 262C8.3 246 18 238.4 40 238.2S88 238.8 102 236.6S110.4 228 110.2 217.5" marker-end="url(#at)"/>
-  <text class="hand mid" x="340" y="498" style="font-size:18px">read, get feedback, revise</text>
+  <text class="hand mid" x="340" y="498" style="font-size:18px">Revise moved sections in their .tex files</text>
 </svg>

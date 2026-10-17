@@ -127,6 +127,7 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 | `Missing $ inserted` | Look for an unescaped `_` or a math command outside `$...$`. Write `\_` for an underscore. |
 | `Runaway argument` or a brace error | Check your last edit for a missing `}`. |
 | A special character (such as an accented letter, or one from another alphabet) is missing or garbled | Use a LaTeX accent command, or try another engine ([compile engines](going-further.md#choose-a-compile-engine)). |
+| `STIX Two Math font not found` | On Overleaf, choose the newest available TeX Live version. On your computer, update your full LaTeX installation. Then do a [clean recompile](#clean-recompile) and inspect the affected math: a few symbols, such as `\bigstar`, `\digamma`, and `\subseteqq`, need this fallback font with LuaLaTeX or XeLaTeX. |
 | `Overfull \hbox` | Something is wider than the text area: a long URL, table, equation, or image. Find it in the PDF and resize or break it. |
 | `Overfull \vbox` on the title page | Remove manual line breaks from the title; check long names and committee lines. |
 | A figure floats to a different page | Normal. Use `[htbp]` after `\begin{figure}` and write "Figure~\ref{...}", not "below". |
