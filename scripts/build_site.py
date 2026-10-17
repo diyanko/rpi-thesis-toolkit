@@ -70,6 +70,7 @@ NAV = [
     ]),
     # Only tools that exist; each is also linked from the page where it helps most.
     ("Tools", [
+        ("settings-builder", "Settings builder", False),
         ("bring-your-work-in", "Bring your work in", False),
         ("explain-my-error", "Explain my error", False),
         ("check-pdf", "Check your PDF", False),

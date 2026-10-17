@@ -133,7 +133,7 @@ class SharedTable(unittest.TestCase):
         self.assertIn("docs/troubleshooting.md (Read an error message)", advice[0])
 
 
-@unittest.skipUnless(find_chrome(), "Chrome is not installed")
+@unittest.skipUnless(find_chrome(), "no Chrome or Chromium")
 class Page(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
