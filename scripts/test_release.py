@@ -114,6 +114,9 @@ class FakeWorld:
                     status = "ahead" if order > 0 else "behind" if order < 0 else "identical"
                 return json.dumps({"status": status}).encode() if status else None
             if path.startswith("releases?"):
+                if getattr(self, "hide_listing", 0):  # GitHub lists a new release late
+                    self.hide_listing -= 1
+                    return b"[]"
                 page = int(path.rsplit("page=", 1)[1])
                 return json.dumps(self.releases[(page - 1) * 100:page * 100]).encode() if page else b"[]"
             if path.startswith("releases/tags/"):
@@ -458,7 +461,7 @@ class Publish(Base):
 
     def publish(self, gh, sha=NEW):
         release.publish(self.world.net(), CFG, gh, tag=self.TAG, sha=sha, files=self.files,
-                        notes_text="notes", log=lambda *a: None)
+                        notes_text="notes", log=lambda *a: None, sleep=lambda s: None)
 
     def assertComplete(self):
         rel = self.world.find(self.TAG)
@@ -468,6 +471,13 @@ class Publish(Base):
             self.assertEqual(asset["digest"], "sha256:" + digest(self.files[asset["name"]]))
 
     def test_fresh_release(self):
+        gh = self.world.gh()
+        self.publish(gh)
+        self.assertEqual([c[1] for c in gh.calls], ["create"])
+        self.assertComplete()
+
+    def test_new_release_listed_late_is_found(self):
+        self.world.hide_listing = 3  # the lookup before create, then two after it
         gh = self.world.gh()
         self.publish(gh)
         self.assertEqual([c[1] for c in gh.calls], ["create"])
