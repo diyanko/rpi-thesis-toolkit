@@ -187,15 +187,17 @@
     });
   }
   // Rebuild nesting from a flat run of list items {level, ordered, children}.
+  // Returns the top-level lists: a change of list type starts a new list.
   function nestItems(flat, notes) {
-    var rootList = null, stack = [];
+    var roots = [], stack = [];
     flat.forEach(function (item) {
       var level = Math.max(1, item.level || 1);
       if (level > 4) { notes.add("nested"); level = 4; }
       while (stack.length > level) stack.pop();
+      if (stack.length === level && stack[level - 1].ordered !== !!item.ordered) stack.pop();
       while (stack.length < level) {
-        var list = { type: "list", ordered: item.ordered, items: [] };
-        if (!stack.length) rootList = list;
+        var list = { type: "list", ordered: !!item.ordered, items: [] };
+        if (!stack.length) roots.push(list);
         else {
           var parent = stack[stack.length - 1];
           if (!parent.items.length) parent.items.push({ children: [], lists: [] });
@@ -205,7 +207,7 @@
       }
       stack[stack.length - 1].items.push({ children: item.children, lists: [] });
     });
-    return rootList;
+    return roots;
   }
 
   // ---------- Reading HTML (Word, Google Docs, spreadsheets, web pages) ------
@@ -442,7 +444,7 @@
   // starts another.
   function groupItems(blocks, notes) {
     var out = [], run = [];
-    function end() { if (run.length) out.push(nestItems(run, notes)); run = []; }
+    function end() { if (run.length) Array.prototype.push.apply(out, nestItems(run, notes)); run = []; }
     blocks.forEach(function (b) {
       if (b.type !== "item") { end(); out.push(b); return; }
       if (run.length && ((b.group && b.group !== run[0].group) || (b.level <= run[0].level && b.ordered !== run[0].ordered))) end();
@@ -520,7 +522,7 @@
   // pipe tables, $math$ and $$display math$$.
   function looksLikeMarkdown(text) {
     return /^#{1,6}\s+\S/m.test(text) || /\*\*\S[\s\S]*?\S\*\*/.test(text) || /^\s*[-*+]\s+\S/m.test(text) ||
-      /^```/m.test(text) || /\[[^\]\n]+\]\([^)\s]+\)/.test(text) || /^\|.*\|\s*$/m.test(text) ||
+      /^```/m.test(text) || /^\s*\d+[.)]\s+\S/m.test(text) || /\[[^\]\n]+\]\([^)\s]+\)/.test(text) || /^\|.*\|\s*$/m.test(text) ||
       /(^|\s)_\S[^_\n]*\S_(\s|[.,;:!?]|$)/m.test(text) || /(^|\s)\*\S[^*\n]*\*(\s|[.,;:!?]|$)/m.test(text) ||
       /^\s*>\s/m.test(text) || /\$\$/.test(text);
   }
@@ -654,7 +656,7 @@
             i++;                                                            // a blank line between items
           } else break;
         }
-        blocks.push(nestItems(flat.map(function (f) {
+        Array.prototype.push.apply(blocks, nestItems(flat.map(function (f) {
           return { level: f.level, ordered: f.ordered, children: readInline(f.text.join(" "), notes, true) };
         }), notes));
         continue;
