@@ -51,7 +51,7 @@
 /.idea/
 
 # Python and operating-system clutter.
-/.venv/
+/.venv
 __pycache__/
 .DS_Store
 Thumbs.db
