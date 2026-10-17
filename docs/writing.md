@@ -2,8 +2,8 @@
 
 For anyone writing the chapters of a thesis or dissertation, once the sample
 compiles ([get started](get-started.md)). You write ordinary text plus a few
-*commands*: short instructions that start with a backslash, `\`. The class
-file (`rpi-thesis.cls`) handles the layout. Compile after each small change,
+*commands*: short instructions that start with a backslash, `\`. The *class
+file* (`rpi-thesis.cls`, the file of formatting rules) handles the layout. Compile after each small change,
 so you always know what broke. Prefer paper? Print the
 [one-page cheat sheet](../cheatsheet/). Need a table, equation, figure, or
 code listing? Jump to [helpers for common tasks](#helpers-for-common-tasks).
@@ -58,7 +58,7 @@ Use at most four levels (`\chapter` to `\subsubsection`).
 for each kind of heading. The starter's own convention is CAPITALS for
 chapter and appendix titles, matching its built-in titles (CONTENTS,
 REFERENCES), so type them that way unless you choose another consistent case
-([redefine the names](going-further.md#not-yet-covered)). For sections and captions, pick sentence
+([use another case](going-further.md#use-another-case-for-chapter-titles)). For sections and captions, pick sentence
 case ("Results of the field study") or title case ("Results of the Field
 Study") and never mix them. To change the reference-list title, add
 `\renewcommand{\referencesname}{References}` to `preamble.tex`.
@@ -254,8 +254,8 @@ than a page, uncomment the `longtable` line in `preamble.tex` and put
 
 Write `\caption{Your full caption.}`, never `\caption[Short]{Long}`: OGE
 expects the lists to match the captions word for word. A long caption is
-fine. Sentence-case captions end with a period. The build helper flags short
-captions.
+fine. Sentence-case captions end with a period. The optional
+[build helper](going-further.md#build-commands) flags short captions.
 
 ### Reproduced figures and permissions
 
@@ -484,7 +484,8 @@ Fix this formatting problem with the smallest change. Preserve my content and th
 Before you use the result, compare every table cell, equation symbol, and
 diagram label with the original (a clean compile doesn't prove it is right),
 paste only the table, equation, or figure into the template's examples (never
-another document's preamble, and don't change `rpi-thesis.cls`), and share only
+another document's *preamble*, the setup lines before `\begin{document}`, and
+don't change `rpi-thesis.cls`), and share only
 material you're comfortable sending to that service.
 
 More: [AI for technical help](going-further.md#use-ai-for-technical-help). Stuck?

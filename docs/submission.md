@@ -1,8 +1,8 @@
 # Submitting your thesis or dissertation
 
 For master's and doctoral students approaching their defense or final
-submission with a draft that compiles. The usual path from finished draft to
-approved PDF, and what to double-check along the way.
+submission with a draft that compiles. This page gives the usual path from
+finished draft to approved PDF, and what to double-check along the way.
 
 > [!IMPORTANT]
 > This toolkit is unofficial and community-made, not affiliated with or
@@ -38,7 +38,7 @@ advisor and committee informed of the current deadline policy.
    **Unresolved case:** if your sole-authored paper is *submitted or in review
    but not yet published*, the manual's wording is unclear about whether it
    goes on the declaration. Check OGE's current checklist, or ask OGE, before
-   you decide ([what we could not confirm](project/requirements.md#needs-oge-confirmation)).
+   you decide ([points that need OGE confirmation](project/requirements.md#needs-oge-confirmation)).
    The declaration describes your role in each paper; the
    [CRediT contributor roles](https://credit.niso.org/) help you name it.
 7. **Upload your final PDF to ProQuest promptly.** Any embargo is chosen in ProQuest
@@ -62,7 +62,7 @@ The toolkit follows the manual edition recorded in the
 | Attributions and co-contribution | A `\chapterattribution{...}` command that prints an unnumbered note on the chapter's first page | Exact wording from the current OGE manual; the citation in your reference style (`\fullcite{key}` does this); an attribution for every reused paper, including ones you wrote alone; every co-authored one listed on the Declaration of Co-Contribution |
 | Reproduced figures and tables | A caption example and wording for material used with permission or under a Creative Commons license | Permission or license for each item; credit in the caption; permissions documents as OGE instructs |
 | Equations | Numbered `equation` examples, including a multi-line one with a single centered number | Every displayed equation numbered, number on the same line, long equations broken |
-| References | Consistent formatting from one style; references placed before appendices; printed access dates; a build hint for URLs without one | Style agreed with advisor; an access date printed for every URL; non-journal sources checked against the style guide |
+| References | Consistent formatting from one style; references placed before appendices; printed access dates; a hint from the optional build helper for URLs without one | Style agreed with advisor; an access date printed for every URL; non-journal sources checked against the style guide |
 
 ## Final PDF checklist
 

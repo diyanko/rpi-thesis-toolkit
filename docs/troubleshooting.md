@@ -54,7 +54,8 @@ and undo it if the PDF gets worse.
 Here is the first LaTeX error and a short example. I use Overleaf (or: my computer, with macOS/Windows/Linux). Explain what it means and suggest the smallest fix. Keep my text, data, citations, and template formatting unchanged. Show the lines to change.
 ```
 
-More, including assistants that can edit your files:
+More, including assistants that can edit your files and
+[prompts for setup, errors, and conversions](going-further.md#prompts-to-copy):
 [AI for technical help](going-further.md#use-ai-for-technical-help). A web search
 or [Overleaf Learn](https://www.overleaf.com/learn) works too.
 
@@ -70,7 +71,7 @@ terminal.
   **Settings** (the gear icon) and, under **Compiler**, pick pdfLaTeX, XeLaTeX,
   or LuaLaTeX ([Overleaf: selecting a compiler](https://docs.overleaf.com/getting-started/recompiling-your-project/selecting-a-tex-live-version-and-latex-compiler)).
 - **VS Code:** open the Command Palette (Ctrl+Shift+P, or Cmd+Shift+P on
-  macOS), run **LaTeX Workshop: Clean up auxiliary files**, then build again.
+  macOS), run **LaTeX Workshop: Clean up auxiliary files**, then compile again.
   To change the engine, run **LaTeX Workshop: Build with recipe** and pick
   **RPI Thesis Toolkit: XeLaTeX + Biber** or **LuaLaTeX + Biber**; the
   starter's settings keep your last choice for later builds.
@@ -114,8 +115,8 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 | --- | --- |
 | A citation key in **bold** | Run the bibliography step (Biber), then compile twice. Check the key spelling. |
 | **??** instead of a number | Compile again. Check the `\label` and `\ref` spelling. |
-| The reference list is empty | Cite at least one entry with `\cite{key}`, then run Biber. |
-| A new Zotero source doesn't appear | Re-export, run Biber, and check that `\cite{key}` matches the key in the `.bib` file exactly. |
+| The reference list is empty | Cite at least one entry, for example with `\parencite{key}`, then run Biber. |
+| A new Zotero source doesn't appear | Re-export, run Biber, and check that the key in your citation command matches the key in the `.bib` file exactly. |
 | `Misplaced alignment tab character &` in the references | A title in the `.bib` file contains `&`. Write it as `\&`. |
 
 ### Layout and the PDF
@@ -129,7 +130,7 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 | `Overfull \vbox` on the title page | Remove manual line breaks from the title; check long names and committee lines. |
 | A figure floats to a different page | Normal. Use `[htbp]` after `\begin{figure}` and write "Figure~\ref{...}", not "below". |
 | An edit, the contents, or the references do not update | Save every file and check you are viewing the new PDF, not an old copy ([where it ends up](how-it-works.md#where-the-pdf-ends-up)). Still stale? Do a [clean recompile](#clean-recompile). |
-| The build helper prints "Pre-submission hints" | Your PDF was built. Fix each listed line before submitting ([web sources](citations.md#web-sources-need-an-access-date), [short captions](writing.md#use-one-full-caption-not-a-short-one)). |
+| The optional [build helper](going-further.md#build-commands) prints "Pre-submission hints" | Your PDF was built. Fix each listed line before submitting ([web sources](citations.md#web-sources-need-an-access-date), [short captions](writing.md#use-one-full-caption-not-a-short-one)). |
 
 ### Tools and installs
 
@@ -138,7 +139,7 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 | `latexmk`, `pdflatex`, or `biber` not found, or `spawn latexmk ENOENT` | Finish installing the full LaTeX distribution, then quit your editor completely and reopen it (on Windows, restart the computer if needed). On Linux, use VS Code's `.deb` or `.rpm`, not the Flatpak. Optional, in a terminal: `python3 scripts/build.py --doctor` (Windows: `py scripts/build.py --doctor`) names the missing tool. |
 | VS Code says **Restricted Mode**, or LaTeX Workshop does nothing | Click **Restricted Mode** in the status bar and choose **Trust**. LaTeX Workshop is off in untrusted folders. |
 | Overleaf says the compile timed out | Try **Fast [draft]** from the Recompile menu, shrink large photos, export plots as PDF, or compile on your computer. **Fast draft** shows images as empty boxes, so switch back to **Normal** and check every figure and the seal before you share or submit ([Overleaf: compile timeouts](https://docs.overleaf.com/troubleshooting-and-support/fixing-and-preventing-compile-timeouts)). |
-| `python3` is not recognized, or opens the Microsoft Store (Windows) | On Windows, `python3` may open the Microsoft Store or say it is not recognized. Close the Store and type `py scripts/build.py` instead. Python is optional: editors compile without it. |
+| `python3` is not recognized, or opens the Microsoft Store (Windows) | Close the Store and type `py scripts/build.py` instead. Python is optional: editors compile without it. |
 
 <details><summary>Rare messages: old TeX Live, Biber version mismatch, Biber on a Mac, hand-typed builds</summary>
 
@@ -146,7 +147,7 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 | --- | --- |
 | `You have requested release '...' of LaTeX` | Your installed LaTeX is older than this starter needs. Install the current full [TeX Live from tug.org](https://tug.org/texlive/quickinstall.html), or use [Overleaf](get-started.md#step-3b-overleaf-route). |
 | `Found biblatex control file version ..., expected version ...` | Try a [clean recompile](#clean-recompile) first. If it persists, Biber and biblatex probably come from different TeX installations: keep one distribution, update it fully, and use its `biber`. |
-| On a Mac, Biber fails and the log mentions `lipo` | An older Mac build of Biber that newer macOS can't start; your thesis is fine. Update TeX Live and build again. On macOS (MacTeX), use TeX Live Utility, **Update all packages**, or run `sudo tlmgr update --self --all`. On Linux with apt, update with your package manager: first `sudo apt update`, then `sudo apt upgrade`. |
+| On a Mac, Biber fails and the log mentions `lipo` | An older Mac build of Biber that newer macOS can't start; your thesis is fine. Update TeX Live and build again. On macOS (MacTeX), use TeX Live Utility, **Update all packages**, or run `sudo tlmgr update --self --all`. |
 | `I can't write on file build/chapters/...aux` (or `chapters/...aux`, `appendices/...aux`) | The starter's settings create those folders for you. If you see this, do a [clean recompile](#clean-recompile). If you typed your own `latexmk -outdir=...` command, build with `python3 scripts/build.py` (Windows: `py scripts/build.py`) or `latexmk -norc -pdf main.tex` instead. |
 
 </details>

@@ -13,7 +13,7 @@ Still drafting elsewhere? That is fine
 
 This is where your thesis becomes a PDF. With the same files, engine,
 packages, and fonts, both routes make the same PDF. Your first checkpoint is
-the same on either route: the sample PDF with your name on it ([Step 4](#step-4-your-first-compile)
+the same on either route: the sample PDF with your name on it ([Step 4](#step-4-check-your-first-pdf)
 and [Step 5](#step-5-make-it-yours)).
 
 | | Your computer | Overleaf (in your browser) |
@@ -64,8 +64,7 @@ Next: [set up your computer](#step-3a-your-computer-route) or
 On Overleaf? Skip to [Step 3b](#step-3b-overleaf-route).
 
 You need **LaTeX** (the programs that make the PDF) and **an editor** (where
-you type). Every editor runs the same programs, so with the same files, engine,
-packages, and fonts they make the same PDF.
+you type). Any editor works; this guide walks through VS Code.
 
 1. **Install a current, full LaTeX distribution** using the route for your
    system below. Allow an hour or more.
@@ -123,7 +122,7 @@ packages, and fonts they make the same PDF.
 7. **See the PDF:** click **View LaTeX PDF file**, next to the triangle. The
    file is `build/main.pdf`.
 
-Build failed? **View → Problems** shows the first error. "latexmk not found"
+Compile failed? **View → Problems** shows the first error. "latexmk not found"
 or `spawn latexmk ENOENT` right after installing means VS Code can't see
 LaTeX yet: quit it completely and reopen it (on Windows, restart the
 computer). Then see [fixing problems](troubleshooting.md#common-messages).
@@ -169,7 +168,7 @@ fonts the PDF should match. Other editors don't read this starter's
   latexmk -norc -pdf main.tex
   ```
 
-  Or use the starter's helper, `python3 scripts/build.py` (on Windows,
+  Or use the starter's optional build helper, `python3 scripts/build.py` (on Windows,
   `py scripts/build.py`), which writes `build/main.pdf` and checks your setup
   with `--doctor`
   ([build commands](going-further.md#build-commands)).
@@ -200,7 +199,7 @@ fonts the PDF should match. Other editors don't read this starter's
 
 </details>
 
-Then go to [Step 4](#step-4-your-first-compile).
+Then go to [Step 4](#step-4-check-your-first-pdf).
 
 ## Step 3b: Overleaf route
 
@@ -232,22 +231,22 @@ Automated runs on fresh Windows Server 2025, macOS, and Ubuntu machines:
 installing TeX as described here and compiling the starter. No separate
 Windows 11 test is recorded. Overleaf's free plan: opening and compiling
 it. A Mac: VS Code with LaTeX Workshop, and TeXShop. Other editors and
-systems should work the same way. Tried one? Tell us through the
+systems should work the same way. Tried one? Share how it went through the
 [help and feedback form](troubleshooting.md#ask-for-help).
 
 </details>
 
-Then go to [Step 4](#step-4-your-first-compile).
+Then go to [Step 4](#step-4-check-your-first-pdf).
 
-## Step 4: Your first compile
+## Step 4: Check your first PDF
 
 > [!TIP]
 > **You can't break it.** Compiling reads your files and makes a PDF; it
 > never changes your writing. An error means "fix this spot and compile
 > again".
 
-Compile the **unchanged** sample first, so any problem is the installation.
-You should see a title page reading "YOUR THESIS TITLE" with a seal
+Your first compile uses the **unchanged** sample, so any problem comes from
+the installation, not from your edits. You should see a title page reading "YOUR THESIS TITLE" with a seal
 placeholder, the contents, and three short chapters. Can't find the PDF? See
 [where the PDF ends up](how-it-works.md#where-the-pdf-ends-up).
 

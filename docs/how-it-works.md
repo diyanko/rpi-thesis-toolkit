@@ -198,8 +198,8 @@ it does not remove the need to revise the argument for its audience.
   apply their edits by hand ([common situations](going-further.md#common-situations)).
 - **Tables take a bit more effort.** Copy the sample chapters' example and
   adapt it.
-- **OGE staff can't debug LaTeX.** The Office of Graduate Education (OGE)
-  reviews your formatting, not your code
+- **The Office of Graduate Education (OGE) can't debug LaTeX.** Its staff
+  review your formatting, not your code
   ([ask for help](troubleshooting.md#ask-for-help)).
 
 ## When Word might still make sense
@@ -231,10 +231,12 @@ file, recompile, and the same words come out with the updated formatting
 (check the changelog first: an update may need other edits, see
 [update the formatting safely](going-further.md#update-the-formatting-safely)).
 
-So when OGE changes a rule or the toolkit fixes something, you usually replace **one
-file** and your chapters are untouched. Before version 1.0, anything may
-change, and the changelog says what to do. That is also why you normally
-leave the class file alone: edits there would be lost in the next update. (If you know Word, formatting lives with your text
+So when OGE changes a rule or the toolkit fixes something, you usually replace
+**one file** and your chapters are untouched. Before version 1.0, anything may
+change, and the changelog says what to do.
+
+That is also why you normally leave the class file alone: edits there would be
+lost in the next update. (If you know Word, formatting lives with your text
 there; here it lives in one separate file.)
 
 What the class takes care of on every page:
@@ -263,7 +265,7 @@ type your headings and decide where each caption goes.
 
 ## What "compiling" does
 
-**Compiling** turns your plain-text `.tex` files into a PDF. A full build runs
+**Compiling** turns your plain-text `.tex` files into a PDF. A full compile runs
 several programs in a row, repeated as needed:
 
 ![Build pipeline. Step 1: pdfLaTeX reads main.tex and writes notes about labels, headings, and the citations it needs. Step 2: Biber reads that citation list and references.bib and writes a formatted reference list. Step 3: pdfLaTeX runs again and places the references. Step 4: pdfLaTeX runs once more so page numbers in the contents and cross-references settle. One Compile runs these steps as often as needed. The result is main.pdf.](diagrams/build-pipeline.svg)
@@ -303,7 +305,7 @@ if you run each program yourself, follow the
 
 | You see | It means | Fix |
 | --- | --- | --- |
-| A citation key in **bold**, like **lamport1994** | Not in the reference list yet | Run a full compile. If it stays bold, check the key's spelling in `\cite{}` and `references.bib` |
+| A citation key in **bold**, like **lamport1994** | Not in the reference list yet | Run a full compile. If it stays bold, check the key's spelling in your citation command and in `references.bib` |
 | **??** where a number should be | The `\ref{}` label is not known yet | Compile again. If it stays, check `\label{}` and `\ref{}` |
 | An empty or outdated contents page | Written on one pass, read on the next | Compile again |
 
@@ -413,7 +415,7 @@ an entry in `references.bib`, lets LaTeX build the citation and reference list,
 so [collect real records early](citations.md#step-2-collect-and-cite-sources-with-zotero)
 and keep their keys stable. For a tool for a specific task, try the
 [helper picker](writing.md#helpers-for-common-tasks) or the
-[How do I...? task index](how-do-i.md).
+[How do I…? task index](how-do-i.md).
 
 ## Want to learn more LaTeX?
 

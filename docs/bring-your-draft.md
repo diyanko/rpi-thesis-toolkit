@@ -1,6 +1,7 @@
 # Bring your existing draft
 
-You do not have to start over. Get the sample compiling first
+For anyone with a draft in Word, Google Docs, Markdown, or LaTeX: you do not
+have to start over. Get the sample compiling first
 ([get started](get-started.md)) and keep your original untouched. Move **one
 small section** first, to meet any surprises early. Then go one chapter at a
 time, compiling after each.
@@ -11,6 +12,7 @@ Where do you start?
 - **Markdown:** [From Markdown](#from-markdown)
 - **A LaTeX paper (IEEE, ACM, Elsevier):** [From a LaTeX paper](#from-a-latex-paper-ieee-acm-elsevier)
 - **RPI's official LaTeX template:** [From RPI's official LaTeX template](#from-rpis-official-latex-template)
+- **Your own LaTeX thesis project:** [Use just the class](#already-have-a-latex-thesis-use-just-the-class)
 
 ## What goes where
 
@@ -68,7 +70,7 @@ route below changes your original file.
 | --- | --- | --- |
 | `# Title` | Replace the title in the existing `\chapter{...}`, in CAPITALS; keep one chapter heading per file | [Headings](writing.md#paragraphs-and-headings) |
 | `## Heading`, `### Heading` | `\section{...}`, `\subsection{...}` | [Headings](writing.md#paragraphs-and-headings) |
-| `**bold**`, `*italics*` | `\textbf{bold}`, `\emph{italics}` | [Headings](writing.md#paragraphs-and-headings) |
+| `**bold**`, `*italics*` | `\textbf{bold}`, `\emph{italics}` | [Commands](writing.md#the-10-commands-youll-actually-use) |
 | `[@key]` | `\parencite{key}` (key from `references.bib`) | [Cite a source](writing.md#cite-a-source) |
 | `@key` as part of a sentence | `\textcite{key}` | [Cite a source](writing.md#cite-a-source) |
 | `$x$` in a sentence | `$x$`, unchanged | [Equations](writing.md#equations) |
@@ -83,9 +85,8 @@ route below changes your original file.
 [Pandoc](https://pandoc.org/) is a free program that converts Markdown or
 Word (`.docx`) files. It saves typing but does not make a finished chapter.
 It runs in a terminal (a text window for commands). Prefer not to use one?
-No terminal needed: for Markdown use the
-[by-hand route](#move-a-section-by-hand); for Word or Google Docs use
-[From Word or Google Docs](#from-word-or-google-docs).
+For Markdown, use the [by-hand route](#move-a-section-by-hand); for Word or
+Google Docs, use [From Word or Google Docs](#from-word-or-google-docs).
 
 **Tip:** installing Pandoc and running terminal commands is where an AI chat
 helps most. Never paste confidential or unpublished material, and keep your
@@ -279,7 +280,7 @@ stable ([where to draft](how-it-works.md#draft-where-you-and-your-advisor-can-wo
 It goes smoothly if you:
 
 - **move one small section early,** long before a deadline;
-- **write citation keys,** such as `\cite{lamport1994}` (or `[@lamport1994]`
+- **write citation keys,** such as `\parencite{lamport1994}` (or `[@lamport1994]`
   in Markdown), with the key from Zotero
   ([citations](citations.md#step-2-collect-and-cite-sources-with-zotero));
 - **keep equations, tables, and cross-references simple,** or mark them

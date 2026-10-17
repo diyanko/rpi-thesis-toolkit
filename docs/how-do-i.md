@@ -8,6 +8,7 @@ on a Mac) and type a word.
 - [Look up a common error](troubleshooting.md#common-messages)
 - [Read an error message](troubleshooting.md#read-an-error-message)
 - [Ask an AI chat to explain an error](troubleshooting.md#ask-an-ai-chat-to-explain-it)
+- [Copy a prompt for AI help with setup, errors, or conversions](going-further.md#prompts-to-copy)
 - [Fix a bold citation key or ??](how-it-works.md#bold-citation-keys-and-question-marks)
 - [Get help](troubleshooting.md#ask-for-help)
 
@@ -74,3 +75,4 @@ on a Mac) and type a word.
 - [See the steps to graduation](submission.md#the-path-to-graduation)
 - [Run a final check of my PDF](submission.md#final-pdf-checklist)
 - [Find OGE's manual, checklists, and forms](submission.md#official-resources)
+- [Give my advisor or committee a checklist for reviewing my PDF](reviewer-checklist.md)

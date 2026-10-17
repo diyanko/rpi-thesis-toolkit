@@ -15,6 +15,7 @@ technical help, or change a setting. For the bigger picture, see
 **Settings and extras:** [where customizations belong](#where-customizations-belong) ·
 [all thesis settings](#all-thesis-settings) ·
 [build commands](#build-commands) ·
+[chapter-title case](#use-another-case-for-chapter-titles) ·
 [recipes for common extras](#recipes-for-common-extras)
 
 ## Common situations
@@ -29,7 +30,7 @@ technical help, or change a setting. For the bigger picture, see
 - [Turn a chapter into a paper](#turn-a-chapter-into-a-paper) or [make slides](#make-slides)
 - [Back up your work](#back-up-your-work), or [use a private GitHub repository](#use-a-private-github-repository)
 - [Update to a newer toolkit version](#update-the-formatting-safely)
-- [Get help with a technical task](#use-ai-for-technical-help) or [convert a file](#ask-for-a-file-conversion)
+- [Get help with a technical task](#use-ai-for-technical-help), with [prompts to copy](#prompts-to-copy), or [convert a file](#ask-for-a-file-conversion)
 
 ### Overleaf to your computer
 
@@ -37,7 +38,7 @@ technical help, or change a setting. For the bigger picture, see
    ([Overleaf: downloading a project](https://docs.overleaf.com/managing-projects-and-files/downloading-a-project)).
 2. Extract it into a normal folder, keeping the folders together.
 3. **Add any missing desktop build files.** The small Overleaf starter leaves
-   out the build helper and editor settings. Find your version in the
+   out the build helper (`scripts/build.py`) and editor settings. Find your version in the
    `\ProvidesClass` line near the top of `rpi-thesis.cls`, then download that
    version's **starter ZIP** from [all releases](https://github.com/diyanko/rpi-thesis-toolkit/releases)
    into a separate folder. Copy only missing `scripts/build.py`, `latexmkrc`,
@@ -222,18 +223,23 @@ silently disappear. To fix this:
 
 - Export a BibTeX-format file for the paper, keeping the same citation keys.
   In Zotero, choose **Better BibTeX** (not Better BibLaTeX) or plain **BibTeX**.
-- Swap `\thesisreferences` for the venue's bibliography lines (often `\printbibliography` or `\bibliography{...}`).
-- Replace biblatex-only commands such as `\textcite`, then check the
-  reference list.
+- Swap `\thesisreferences` for the venue's bibliography lines (with BibTeX,
+  usually `\bibliographystyle{...}` and `\bibliography{...}`).
+- Replace biblatex-only commands such as `\textcite` (with `natbib`, `\citet`;
+  see [the citation commands](citations.md#change-the-citation-style)), then
+  check the reference list.
 
 ### Make slides
 
 Reuse the images in `figures/` in any slide or poster tool. To stay in LaTeX,
 start from a **Beamer** template or a poster template (Overleaf's gallery has
-many) and copy in your figures. To turn Markdown slides into PowerPoint, see
-[Pandoc](#an-advisor-wants-word-with-track-changes):
-`pandoc talk.md --slide-level=1 --output=talk.pptx` starts a new slide at each
-top-level heading (`# Slide title`). Lower-level headings stay on that slide.
+many) and copy in your figures.
+
+Optional: to turn Markdown slides into PowerPoint, run
+`pandoc talk.md --slide-level=1 --output=talk.pptx` in a terminal
+([Pandoc](https://pandoc.org/) is a free converter). It starts a new slide at
+each top-level heading (`# Slide title`); lower-level headings stay on that
+slide.
 
 ## Back up your work
 
@@ -423,6 +429,38 @@ To stay in control:
 An **AI assistant that can edit files** can apply fixes for you: work on a
 backup, keep the task small, and review every change.
 
+### Prompts to copy
+
+These work in any AI chat or AI assistant that can edit files. Replace the
+parts in [brackets]. Each one asks the tool to leave the formatting alone and
+not to guess at OGE's rules. Leave out unpublished data, participant details,
+and anything else confidential.
+
+**Set up:**
+
+```prompt
+I am setting up the RPI Thesis Toolkit, an unofficial, community-made LaTeX starter for RPI theses and dissertations. Its guide is https://diyanko.github.io/rpi-thesis-toolkit/guide/get-started.html. I use [Overleaf / my computer with Windows, macOS, or Linux]. Walk me through [installing LaTeX / opening the starter] one step at a time, following that guide. Do not change rpi-thesis.cls, and do not invent OGE rules: say when I should check OGE's own pages.
+```
+
+**Fix an error:**
+
+```prompt
+I am using the RPI Thesis Toolkit, an unofficial LaTeX starter for RPI theses. Here is the first error from my compile, with its file and line: [paste the error and the few lines around it]. I use [Overleaf / my computer with Windows, macOS, or Linux]. Explain the cause and suggest the smallest fix. Keep my text, data, and citations unchanged, do not change rpi-thesis.cls or any formatting setting, and do not invent OGE rules.
+```
+
+**Convert to LaTeX:**
+
+```prompt
+I am using the RPI Thesis Toolkit, an unofficial LaTeX starter for RPI theses. Convert this [Word section / Markdown text / table / equation] into LaTeX for a chapter file of that starter: [paste it or attach the file]. Preserve every word, value, and symbol, and flag anything unclear instead of guessing. Use plain LaTeX commands, add no formatting packages, leave rpi-thesis.cls untouched, and do not invent OGE rules.
+```
+
+**Suggest a change to the toolkit** (for an AI assistant that can edit files;
+see [CONTRIBUTING.md](../CONTRIBUTING.md)):
+
+```prompt
+Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its "Contributing as an agent" steps. What I'd like changed: [describe it].
+```
+
 ### Ask for a file conversion
 
 Describe the result in ordinary words: a LaTeX chapter as a Word review copy, a
@@ -556,7 +594,7 @@ type `latexmk -outdir=...` yourself, create those subfolders first, or let
 
 pdfLaTeX uses New TX fonts; LuaLaTeX and XeLaTeX use TeX Gyre Termes via
 `fontspec`/`unicode-math`. Switch for characters pdfLaTeX can't handle, then
-check glyphs and pagination. Other scripts are untested.
+check glyphs and pagination. Other writing systems are untested.
 
 With the build helper, run this from the folder containing `main.tex` (on
 Windows, `py scripts/build.py --engine lualatex`):
@@ -719,19 +757,21 @@ FEM   & Finite element method \\
 Packages that sort entries for you, such as `nomencl` or `glossaries`, need an
 extra program run that the build helper does not do.
 
+## Use another case for chapter titles
+
+The starter writes chapter, appendix, and built-in titles (CONTENTS,
+REFERENCES) in capitals. To use another consistent case (OGE manual §2.3),
+redefine the built-in names in `preamble.tex`
+(`\renewcommand{\contentsname}{Contents}`, likewise `\listtablename`,
+`\listfigurename`, `\appendicesname`, and `\referencesname`), then match
+every chapter, appendix, and front-matter title.
+
 ## Not yet covered
 
 Publication-based theses need a dedicated, tested example and are on the
 [roadmap](project/maintenance.md#roadmap-and-not-yet-covered). Until then,
 try the usual LaTeX packages in `preamble.tex` and check the PDF against the
 manual. Want to help add one? See [how to contribute](../CONTRIBUTING.md).
-
-To use a capitalization other than capitals for level-1 titles, redefine the
-built-in names in `preamble.tex` (`\renewcommand{\contentsname}{Contents}`,
-likewise `\listtablename`, `\listfigurename`, and `\appendicesname`), add
-`\renewcommand{\referencesname}{References}` (or your chosen capitalization),
-and match every chapter, appendix, and
-front-matter title (OGE manual §2.3).
 
 The PDF is not validated as tagged or PDF/UA accessible. Use descriptive
 captions, meaningful headings, and legible figures.
