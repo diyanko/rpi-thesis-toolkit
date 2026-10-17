@@ -1482,7 +1482,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content td code, .guide-content td:first-child code:not(.phrase, .long) { white-space: normal; overflow-wrap: anywhere; }
 }
 
-/* "Check your PDF" (docs/check-pdf.md, site/pdf-check.js). Without JavaScript
+/* "Check your PDF" (docs/check-pdf.md, site/pdf-check/ui.js). Without JavaScript
    the checker stays hidden and .pdf-check-nojs explains why. */
 .pdf-check[hidden], .pdf-check-nojs[hidden] { display: none; }
 .pdf-check { margin: 1.8rem 0; }

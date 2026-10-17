@@ -106,6 +106,8 @@ def hygiene():
         path = ROOT / name
         if path.suffix.lower() in {".png", ".jpg", ".pdf", ".woff2", ".zip", ".webp"} or not path.is_file():
             continue
+        if name.startswith("site/pdf-check/pdfjs/"):  # vendored pdf.js, unchanged from its release
+            continue
         try:
             text = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
