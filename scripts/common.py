@@ -10,6 +10,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import subprocess
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -62,3 +63,13 @@ def find_chrome():
 def missing(*tools):
     """The programs among `tools` that are not on PATH."""
     return [tool for tool in tools if not shutil.which(tool)]
+
+
+def main_checkout(cwd=None):
+    """The main checkout (not a worktree) of the repository at cwd, or ROOT.
+    Shared local folders (_local/shots, _local/wt) live there."""
+    result = subprocess.run(["git", "rev-parse", "--path-format=absolute", "--git-common-dir"],
+                            cwd=cwd or ROOT, capture_output=True, text=True)
+    if result.returncode:
+        return Path(cwd or ROOT)
+    return Path(result.stdout.strip()).parent
