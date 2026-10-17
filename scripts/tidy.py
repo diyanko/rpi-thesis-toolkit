@@ -6,7 +6,9 @@ Usage:
     python3 scripts/tidy.py --apply    # remove merged, clean worktrees and branches
 
 Fetches origin, then lists every local branch and worktree. A branch whose
-commits are all in origin/main is "merged"; with --apply its worktree (if
+commits are all in origin/main is "merged". Rebase merges also count when
+every unique commit has the same patch in main and the final contents and
+modes of all changed paths still match main. With --apply its worktree (if
 clean) and the branch are deleted and `git worktree prune` runs. Never touched:
 main, the current worktree, anything with uncommitted, untracked, or ignored
 files other than build outputs (build/, dist/, .venv, __pycache__), locked
@@ -27,13 +29,16 @@ PROTECTED = {"main", "master"}
 
 def git(*args: str, cwd: str | None = None) -> tuple[int, str]:
     res = subprocess.run(["git", *args], cwd=cwd, capture_output=True, text=True)
-    return res.returncode, (res.stdout if res.returncode == 0 else res.stderr).strip()
+    out = res.stdout if res.returncode == 0 else res.stderr
+    return res.returncode, out if "-z" in args else out.strip()
 
 
 def worktrees() -> list[dict]:
-    _, out = git("worktree", "list", "--porcelain")
+    code, out = git("worktree", "list", "--porcelain", "-z")
+    if code:
+        raise RuntimeError("cannot list worktrees: " + out)
     items, cur = [], {}
-    for line in out.splitlines() + [""]:
+    for line in out.split("\0") + [""]:
         if not line:
             if cur:
                 items.append(cur)
@@ -47,6 +52,44 @@ def worktrees() -> list[dict]:
 # Ignored paths a worktree may lose: rebuilt by the scripts. Anything else
 # ignored (notes in _local/, a seal copy) keeps the worktree.
 DISPOSABLE_TOP = {"build", "dist", ".venv"}
+
+
+def rebased_into_main(branch: str) -> str | None:
+    """The branch tip when both its patches and final changed files are in main.
+    Any missing evidence keeps the branch, including merge/empty commits that
+    git cherry does not account for, or files edited again after the merge."""
+    code, tip = git("rev-parse", "--verify", "refs/heads/" + branch)
+    if code:
+        return None
+    code, base = git("merge-base", BASE, tip)
+    if code:
+        return None
+    code, commits = git("rev-list", f"{BASE}..{tip}")
+    if code or not commits:
+        return None
+    code, patches = git("cherry", BASE, tip)
+    lines = patches.splitlines()
+    if code or not lines or any(not line.startswith("- ") for line in lines):
+        return None
+    if {line[2:] for line in lines} != set(commits.splitlines()):
+        return None
+    code, names = git("diff", "--name-only", "--no-renames", "-z", base, tip)
+    paths = [name for name in names.split("\0") if name]
+    if code or not paths:
+        return None
+    a, original = git("--literal-pathspecs", "ls-tree", "-z", tip, "--", *paths)
+    b, integrated = git("--literal-pathspecs", "ls-tree", "-z", BASE, "--", *paths)
+    return tip if not a and not b and original == integrated else None
+
+
+def delete_branch(branch: str, rebased_tip: str | None = None) -> tuple[int, str]:
+    if rebased_tip is None:
+        return git("branch", "-d", branch)
+    # Compare-and-delete: a commit added after the proof above must survive.
+    code, message = git("update-ref", "-d", "refs/heads/" + branch, rebased_tip)
+    if not code:
+        git("config", "--remove-section", "branch." + branch)
+    return code, message
 
 
 def keep_reason(path: str) -> str | None:
@@ -82,6 +125,16 @@ def main() -> int:
         print(f"tidy: cannot read {BASE}: {out}", file=sys.stderr)
         return 1
     merged = set(out.split())
+    code, branches = git("branch", "--format=%(refname:short)")
+    if code:
+        print(f"tidy: cannot list local branches: {branches}", file=sys.stderr)
+        return 1
+    rebased = {}
+    for branch in branches.split():
+        if branch not in merged and branch not in PROTECTED:
+            if tip := rebased_into_main(branch):
+                rebased[branch] = tip
+                merged.add(branch)
     _, top = git("rev-parse", "--show-toplevel")
     here = Path(top).resolve()
     _, current = git("branch", "--show-current")
@@ -94,7 +147,7 @@ def main() -> int:
         if branch:
             wt_branches.add(branch)
         label = branch or "(detached)"
-        if i == 0 or path.resolve() == here or branch in PROTECTED:
+        if i == 0 or path.resolve() == here or branch in PROTECTED or branch == current:
             rows.append(["worktree", label, "keep", "main or current"])
         elif "locked" in wt:
             rows.append(["worktree", label, "keep", "locked"])
@@ -110,7 +163,6 @@ def main() -> int:
                     rows[-1][2:] = ["keep", err.splitlines()[-1] if err else "failed"]
 
     removed = {r[1] for r in rows if r[0] == "worktree" and r[2] == "remove"}
-    _, branches = git("branch", "--format=%(refname:short)")
     for b in branches.split():
         if b in PROTECTED or b == current:
             continue
@@ -119,7 +171,7 @@ def main() -> int:
         if b in merged:
             rows.append(["branch", b, "delete", f"merged into {BASE}"])
             if args.apply:
-                code, err = git("branch", "-d", b)
+                code, err = delete_branch(b, rebased.get(b))
                 if code:
                     rows[-1][2:] = ["keep", err.splitlines()[-1] if err else "failed"]
         else:

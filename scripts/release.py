@@ -259,8 +259,11 @@ def newer_live_site(net, cfg, sha, rollback, log=print):
         log(f"::notice::{cfg.site}{BUILD_FILE} is missing; treating this as the first deploy")
         return None
     if live == "unreadable":
-        log(f"::warning::{cfg.site}{BUILD_FILE} has no commit=<sha> line; deploying anyway")
-        return None
+        if rollback:
+            return None
+        raise ReleaseError(f"{cfg.site}{BUILD_FILE} has no valid commit=<sha> line; "
+                           "the live build cannot be ordered safely. Check the Pages deployment "
+                           "by hand, or use an explicit release rollback to repair it.")
     if live == sha or rollback:
         return None
     found = net.json(f"{cfg.api}/compare/{sha}...{live}?per_page=1")

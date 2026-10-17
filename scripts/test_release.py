@@ -300,10 +300,10 @@ class MainGate(Base):
         self.assertTrue(self.decide().deploy)
         self.assertIn("first deploy", self.logs[-1])
 
-    def test_unreadable_build_txt_deploys_with_warning(self):
+    def test_unreadable_build_txt_fails_closed(self):
         self.world.site["build.txt"] = b"garbage\n"
-        self.assertTrue(self.decide().deploy)
-        self.assertIn("::warning::", self.logs[-1])
+        with self.assertRaisesRegex(ReleaseError, "cannot be ordered safely"):
+            self.decide()
 
     def test_live_site_older_deploys(self):
         self.live_site(OLD)
@@ -405,6 +405,13 @@ class TagGate(Base):
         decision = self.decide("tag", "v0.5.0", sha=OLD, stage="deploy", rollback=True, version="0.5.0")
         self.assertTrue(decision.deploy)
         self.assertIn("rollback", decision.reason)
+
+    def test_explicit_rollback_can_repair_unreadable_build_identity(self):
+        self.world.standard_release("v0.5.0", OLD)
+        self.world.standard_release("v0.6.0", NEWER)
+        self.world.site["build.txt"] = b"commit=truncated\n"
+        self.assertTrue(self.decide("tag", "v0.5.0", sha=OLD, stage="deploy",
+                                    rollback=True, version="0.5.0").deploy)
 
     def test_moved_tag_fails(self):
         self.world.standard_release("v0.6.0", NEWER)

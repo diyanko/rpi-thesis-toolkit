@@ -48,6 +48,11 @@ class Parse(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, "start the Rule cell with an id"):
             rules.parse(MAP.replace("`black-text` ", ""))
 
+    def test_nonfinite_and_nonpositive_measurements_stop(self):
+        for value in ("NaN", "Infinity", "-Infinity", "0", "-1"):
+            with self.subTest(value=value), self.assertRaisesRegex(SystemExit, "finite positive"):
+                rules.parse(MAP.replace("| 54 |", f"| {value} |"))
+
     def test_measure_needs_a_known_rule(self):
         with self.assertRaisesRegex(SystemExit, "has no row"):
             rules.parse(MAP.replace("54 | `number-place`", "54 | `nowhere`"))
@@ -80,6 +85,17 @@ class Expand(unittest.TestCase):
         source = "`{{cite:black-text}}`\n\n```\n{{rule:nothing}}\n```\n"
         self.assertEqual(self.expand(source), (source, [], []))
 
+    def test_every_form_of_code_is_left_alone(self):
+        # Review: tilde fences, indented code, and a longer fence holding ``` were expanded.
+        for source in ("~~~\n{{rule:nothing}}\n~~~\n", "Text.\n\n    {{rule:nothing}}\n",
+                       "````\n```\n{{rule:nothing}}\n```\n````\n", "``a `{{rule:nothing}}` b``\n"):
+            with self.subTest(source=source):
+                self.assertEqual(self.expand(source), (source, [], []))
+        # Prose next to code is still filled in, and list text indented under its item is prose.
+        text, problems, _ = self.expand("`{{rule:black-text}}` {{rule:black-text}}\n\n- Item\n\n    {{rule:black-text}}\n")
+        self.assertEqual(problems, [])
+        self.assertEqual(text, "`{{rule:black-text}}` All text black\n\n- Item\n\n    All text black\n")
+
     def test_link_is_relative_to_the_page(self):
         text, _, _ = rules.expand("{{cite:black-text}}", "README.md", self.found)
         self.assertIn("(docs/project/requirements.md#fonts)", text)
@@ -103,9 +119,19 @@ class RealMap(unittest.TestCase):
         self.assertEqual(rows, len(rules.load()[0]) + len(rules.load()[1]))
 
     def test_checker_names_only_known_ids(self):
-        # site/pdf-check/: every rules: [...] and measure("...") id is a row of the map.
+        # site/pdf-check/core.js: every id in RULE_IDS and MEASURE_IDS is a row of the map.
         import build_site
         self.assertEqual(build_site.checker_ids(), [])
+
+    def test_checker_ids_cannot_slip_past(self):
+        # Review: single quotes or another layout made the old scan find nothing to check.
+        import build_site
+        good = 'var RULE_IDS = ["page-size"];\nvar MEASURE_IDS = ["margin"];\n'
+        self.assertEqual(build_site.checker_ids(text=good), [])
+        for text in (good.replace('"page-size"', '"nowhere"'), good.replace('"margin"', "'margin'"),
+                     good.replace('var RULE_IDS = ["page-size"];\n', ""), good + good):
+            with self.subTest(text=text):
+                self.assertTrue(build_site.checker_ids(text=text))
 
     def test_embedded_json_is_inert_and_parses(self):
         block = rules.embed()

@@ -13,6 +13,7 @@ from pathlib import Path
 import json
 import posixpath
 import re
+import subprocess
 import tempfile
 from urllib.parse import quote, unquote, urlsplit
 import zipfile
@@ -173,52 +174,44 @@ def repository_url():
     return site_setting("repository_url", "the public repository address")
 
 
-FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})(.*)$")
-CODE_SPAN = re.compile(r"\\.|(?<!`)(`+)(?!`).+?(?<!`)\1(?!`)", re.S)
-INLINE_LINK = re.compile(
-    r"\]\(\s*(?:<([^<>\n]*)>|([^\s<)][^\s)]*))"
-    r"(?:\s+(?:\"(?:[^\"\\]|\\.)*\"|'(?:[^'\\]|\\.)*'|\((?:[^)\\]|\\.)*\)))?\s*\)")
-REFERENCE_DEFINITION = re.compile(r"^ {0,3}\[[^\]\n]+\]:[ \t]*(?:\n[ \t]*)?(?:<([^<>\n]*)>|(\S+))", re.M)
+def pandoc_json(text):
+    """Pandoc's GFM reading of `text`: the same Markdown reader as the guide's."""
+    try:
+        result = subprocess.run(["pandoc", "--from=gfm", "--to=json"], input=text, text=True,
+                                capture_output=True, encoding="utf-8")
+    except OSError as error:
+        raise SystemExit(f"Packaging shipped Markdown needs Pandoc: {error}") from None
+    if result.returncode:
+        raise SystemExit("Pandoc could not read shipped Markdown: " + result.stderr.strip())
+    return json.loads(result.stdout)
 
 
-def without_code(text):
-    """The text with fenced code blocks and inline code spans blanked out (same
-    length, so positions still match), because a link written inside code is a
-    sample for the reader, not a link."""
-    out, fence = [], None
-    for line in text.splitlines(keepends=True):
-        match = FENCE.match(line.rstrip("\r\n"))
-        if fence:
-            closes = match and match[1][0] == fence[0] and len(match[1]) >= len(fence) and not match[2].strip()
-            fence = None if closes else fence
-            out.append(re.sub(r"[^\r\n]", " ", line))
-        elif match and not (match[1][0] == "`" and "`" in match[2]):
-            fence = match[1]
-            out.append(re.sub(r"[^\r\n]", " ", line))
-        else:
-            out.append(line)
-    return CODE_SPAN.sub(lambda m: re.sub(r"[^\r\n]", " ", m[0]) if m[1] else m[0], "".join(out))
-
-
-def markdown_links(text):
-    """(start, end, destination) for each link destination outside code: inline
-    links and images (with an optional title or <angle brackets>) and reference
-    definitions at the start of a line. Nothing else is looked at."""
-    plain = without_code(text)
+def link_targets(text):
+    """The destination of every link and image Pandoc reads in the Markdown
+    `text`. Code, escaped brackets, and unused reference definitions are not
+    links, so they are not here."""
     found = []
-    for pattern in (INLINE_LINK, REFERENCE_DEFINITION):
-        for m in pattern.finditer(plain):
-            group = 1 if m[1] is not None else 2
-            found.append((m.start(group), m.end(group), m[group]))
-    return sorted(found)
+
+    def walk(node):
+        if isinstance(node, dict):
+            if node.get("t") in ("Link", "Image"):
+                found.append(node["c"][-1][0])
+            walk(node.get("c"))
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+    walk(pandoc_json(text)["blocks"])
+    return found
 
 
 def shipped_markdown(name, text, shipped, version):
-    """A Markdown file as it goes into a ZIP: a relative link or image (inline
-    or reference definition, outside code) to a file the ZIP leaves out
-    (CREDITS.md from LICENSE.md, say) points to that file in the repository at
-    this release instead, so no such link inside the ZIP is broken."""
-    for start, end, target in reversed(markdown_links(text)):
+    """A Markdown file as it goes into a ZIP: a relative link or image to a
+    file the ZIP leaves out (CREDITS.md from LICENSE.md, say) points to that
+    file in the repository at this release instead, so no such link inside
+    the ZIP is broken. Only those destinations change; the rest of the file
+    stays exactly as written."""
+    new = {}
+    for target in link_targets(text):
         parts = urlsplit(target)
         if parts.scheme or parts.netloc or not parts.path:
             continue
@@ -229,22 +222,44 @@ def shipped_markdown(name, text, shipped, version):
             raise SystemExit(f"{name}: link to a missing file: {target}")
         kind = "tree" if (ROOT / path).is_dir() else "blob"
         fragment = "#" + parts.fragment if parts.fragment else ""
-        text = f"{text[:start]}{repository_url()}/{kind}/v{version}/{quote(path)}{fragment}{text[end:]}"
+        new[target] = f"{repository_url()}/{kind}/v{version}/{quote(path)}{fragment}"
+    if not new:
+        return text
+    # Where is each destination written? Put a numbered mark at every place
+    # its text appears; the marks Pandoc then reads as a whole link
+    # destination are the links (the others are in code or other words).
+    spots, taken = [], set()
+    for target in sorted(new, key=len, reverse=True):
+        for m in re.finditer(re.escape(target), text):
+            if not taken & set(range(m.start(), m.end())):
+                spots.append((m.start(), m.end(), target))
+                taken |= set(range(m.start(), m.end()))
+    spots.sort()
+    marked = text
+    for index, (start, end, _) in reversed(list(enumerate(spots))):
+        marked = f"{marked[:start]}rpi-link-{index}-mark{marked[end:]}"
+    links = {int(m[1]) for m in (re.fullmatch(r"rpi-link-(\d+)-mark", t) for t in link_targets(marked)) if m}
+    unplaced = sorted(set(new) - {spots[index][2] for index in links})
+    if unplaced:
+        raise SystemExit(f"{name}: could not find where the link to {unplaced[0]} is written; write it plainly,"
+                         f" as [text]({unplaced[0]}), so packaging can point it at the repository.")
+    for index in sorted(links, reverse=True):
+        start, end, target = spots[index]
+        text = text[:start] + new[target] + text[end:]
     return text
 
 
 def check_links(label, archive):
-    """Every relative link in the ZIP's Markdown files (inline links, images and
-    reference definitions, outside code) and every href or url= in its top-level
-    HTML files must name a file inside the ZIP (the guide checks its own links
-    as it builds). Links in other Markdown syntax, such as autolinks or raw
-    HTML, are not checked."""
+    """Every relative link and image Pandoc reads in the ZIP's Markdown files,
+    and every href or url= in its top-level HTML files, must name a file inside
+    the ZIP (the guide checks its own links as it builds). Raw HTML inside
+    Markdown is not checked."""
     names = set(archive.namelist())
     folders = {posixpath.dirname(n) for n in names}
     broken = []
     for name in sorted(names):
         if name.endswith(".md"):
-            targets = [t for _, _, t in markdown_links(archive.read(name).decode("utf-8"))]
+            targets = link_targets(archive.read(name).decode("utf-8"))
         elif name.endswith(".html") and "/" not in name:
             targets = re.findall(r'(?:href="|url=)([^"\s>]+)', archive.read(name).decode("utf-8"))
         else:

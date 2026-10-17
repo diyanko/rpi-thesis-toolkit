@@ -122,6 +122,22 @@ class WatchTest(unittest.TestCase):
         health.WATCH_FILE.write_text(json.dumps({"https://example.org/other": data.popitem()[1]}))
         self.assertEqual(self.watch("/watch")[1], 1)
 
+    def test_malformed_nested_records_fail_and_can_be_repaired(self):
+        for malformed in ({"links": None, "text": "invalid"},
+                          {"links": "a link", "text": "0" * 64},
+                          {"links": [None], "text": "0" * 64},
+                          {"links": [], "text": None},
+                          {"links": [], "text": "short hash"}):
+            with self.subTest(record=malformed):
+                self.record()
+                health.WATCH_FILE.write_text(json.dumps({self.base + "/watch": malformed}))
+                report, problems = self.watch("/watch")
+                self.assertEqual(problems, 1, report)
+                self.assertIn("No recorded baseline", report[0])
+                report, problems = self.watch("/watch", update=True)
+                self.assertEqual(problems, 0, report)
+                self.assertEqual(self.watch("/watch")[1], 0)
+
     def test_check_reports_malformed_page(self):
         self.record()
         health.WATCHED = [self.base + "/no-main"]
