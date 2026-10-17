@@ -100,14 +100,16 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 | --- | --- |
 | `File rpi-thesis.cls not found` | Extract the whole ZIP and open the folder that contains `main.tex`. On Overleaf, `main.tex` must be at the top of the file list ([Overleaf route](get-started.md#step-3b-overleaf-route)). |
 | `Missing title in metadata.tex` (or author, department, ...) | Fill in that setting inside `\thesissetup{...}`. |
-| `Committee chair is missing` | Put `[Chair]` (or `[Co-Chair]`) on one `\committeemember` line. |
+| `Committee chair is missing` | Put `[Chair]` (or `[Co-Chair]`) on one `\committeemember` line, spelled exactly so: `[chair]` is not recognized. |
 | `You have requested ... version ... of document class rpi-thesis` | Your `rpi-thesis.cls` is older than the rest of your starter files. Copy `rpi-thesis.cls` from the newest starter ([update safely](going-further.md#update-the-formatting-safely)). |
-| `Unknown degree choice` | Use `masters`, `doctoral`, or `engineering-doctorate`. |
-| `Unknown graduation month` | Use `May`, `August`, or `December`. |
+| `Unknown setting "..." in metadata.tex` | A setting name in `\thesissetup{...}` is misspelled. Compare it with [all thesis settings](going-further.md#all-thesis-settings). |
+| `Unknown degree choice` | Use `masters`, `doctoral`, or `engineering-doctorate`, in lower case. |
+| `Unknown graduation month` | Use `May`, `August`, or `December`, with a capital first letter. |
 | `Graduation year must have four digits` | Write the year like `2027`. |
 | `RPI seal not found`, or a seal placeholder on the title page | Save the seal as `assets/rpi-seal.jpg` ([add the RPI seal](get-started.md#add-the-rpi-seal-one-minute)). |
 | `Unsupported class option` | Use `\documentclass{rpi-thesis}` with no options; settings go in `metadata.tex`. |
-| A figure file cannot be found | Check the file name, capital letters, extension, and the `figures/` path. |
+| A figure file cannot be found | The message reads ``LaTeX Error: File `figures/...' not found``. Check the file name, capital letters, extension, and the `figures/` path. |
+| `Could not set up appendices` | A line above `\documentclass` in `main.tex`, or an outdated LaTeX installation, changed `\chapter`. Remove lines added above `\documentclass`, or update TeX Live. |
 | A file can't be found, and the folder is in OneDrive or iCloud or its path has non-English letters | Set the folder to "Always keep on this device", or move it to a short, plain path such as `C:\thesis` or `~/thesis`. |
 
 ### Citations and references

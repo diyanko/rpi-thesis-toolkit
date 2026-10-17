@@ -502,11 +502,14 @@ silently break a requirement; prefer the documented settings. Also:
 
 ## All thesis settings
 
-Settings go inside `\thesissetup{...}` in `metadata.tex`.
+Settings go inside `\thesissetup{...}` in `metadata.tex`. Names and
+values are case-sensitive: `degree = doctoral` and `graduation-month = May`
+work, `Doctoral` and `may` stop the compile with a message naming them, as
+does a setting name the class does not know.
 
 | Key | Values | Notes |
 | --- | --- | --- |
-| `title` | text, required | Printed in capitals |
+| `title` | text, required | Printed in capitals. For math, write `\texorpdfstring{$\alpha$}{alpha}` so the PDF's title property (shown by PDF readers and library catalogs) reads as plain text |
 | `author` | text, required | |
 | `degree` | `doctoral` (default), `masters`, `engineering-doctorate` | Doctor of Philosophy, Master of Science, Doctor of Engineering |
 | `degree-name` | text (default: from `degree`) | Overrides the degree name shown; put it **after** `degree` |

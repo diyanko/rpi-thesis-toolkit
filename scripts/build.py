@@ -8,6 +8,7 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 import types
 
 if sys.version_info < (3, 9):
@@ -110,7 +111,14 @@ def active_sources(root, main="main.tex"):
         try:
             text = read_source(source)
         except OSError:
-            scan.problems.append((origin, "cannot read " + name, source == root / main))
+            if source == root / main and not source.exists():
+                scan.problems.append((str(root), f"there is no {main} in this folder. The"
+                                      f" helper always builds {main}: restore it, or rename"
+                                      f" your main file to {main}.", True))
+            else:
+                scan.problems.append((origin, f"cannot read {name}. Close any program that"
+                                      " has it open, check that it is a file and not a"
+                                      " folder, then build again.", source == root / main))
             continue
         scan.files.append(source)
         text = clean_tex(text)
@@ -391,6 +399,7 @@ def presubmission_hints(root, output, sources=None, warnings=()):
     log_text = unwrapped_log(output)
     layout = layout_warnings(log_text)
     hints = list(warnings) + layout + biber_warnings(output)
+    hints += known_problem(log_text, "built", root)
     if "RPI seal not found" in log_text:
         hints.append(
             "The title page shows a placeholder box instead of the RPI seal. "
@@ -469,7 +478,38 @@ def presubmission_hints(root, output, sources=None, warnings=()):
     return len(layout)
 
 
-# Known problems outside the thesis itself: (text to find, what to tell the student).
+def first_error(log_text):
+    """The first error in a LaTeX log, as the lines a student needs: the
+    message (./file.tex:N: ... with -file-line-error, or ! ...) up to and
+    including the l.N line that shows where TeX stopped. Empty if none."""
+    lines = log_text.splitlines()
+    start = re.compile(r"^(?:\S[^:]*\.(?:tex|sty|cls|bbl|cfg|def|ltx):\d+: |! )")
+    for index, line in enumerate(lines):
+        if start.match(line):
+            block = lines[index:index + 12]
+            for offset, part in enumerate(block):
+                if re.match(r"l\.\d+", part):
+                    block = block[:offset + 2]  # l.N and the rest of that source line
+                    break
+            # Drop TeX's generic help lines; keep the message and its place.
+            noise = re.compile(r"See the .* (?:documentation|manual|Companion)|Type +H <return>"
+                               r"|\s*\.\.\.\s*$|\s*$")
+            return "\n".join(part for part in block if not noise.match(part))
+    return ""
+
+
+def biber_errors(output, since):
+    """ERROR lines from main.blg when Biber ran in this build and failed."""
+    blg = output / "main.blg"
+    if not blg.is_file() or blg.stat().st_mtime < since:
+        return []
+    return [line for line in blg.read_text(encoding="utf-8", errors="replace").splitlines()
+            if "ERROR - " in line][:10]
+
+
+# Known problems: (regular expression to find, what to tell the student, when).
+# when is "failed" (look in a failed build's output), "built" (look in the log
+# of a build that made a PDF), or "any".
 KNOWN_PROBLEMS = [
     (
         "lipo",
@@ -497,11 +537,32 @@ KNOWN_PROBLEMS = [
         "Your LaTeX is older than this class needs (TeX Live " + str(MIN_TEXLIVE)
         + " or newer). Install a current TeX Live.",
     ),
+    (
+        # A missing graphic; a missing .sty, .cls, or .tex is another problem.
+        r"LaTeX Error: File `(?![^']*\.(?:sty|cls|tex)')[^']*' not found",
+        "A figure file named in \\includegraphics is missing. Check the file name,"
+        " capital letters, extension, and folder (figures/...); see {troubleshooting}"
+        " (Common messages, Setup and files).",
+        "failed",
+    ),
+    (
+        r"Citation [`'][^']*' (?:on page \d+ )?undefined|Reference [`'][^']*'"
+        r" (?:on page \d+ )?undefined|There were undefined (?:references|citations)",
+        "A citation or cross-reference is undefined: the PDF shows ?? or a citation key"
+        " in bold. Check that the key in \\parencite or \\ref matches references.bib or"
+        " the \\label exactly, then build again; see {troubleshooting} (Common messages,"
+        " Citations and references).",
+        "built",
+    ),
 ]
 
 
-def known_problem(text):
-    return [advice for pattern, advice in KNOWN_PROBLEMS if pattern in text]
+def known_problem(text, when="failed", root=ROOT):
+    found = []
+    for pattern, advice, *rest in KNOWN_PROBLEMS:
+        if (rest[0] if rest else "any") in (when, "any") and re.search(pattern, text):
+            found.append(advice.replace("{troubleshooting}", guide(root, "troubleshooting")))
+    return found
 
 
 def build(root=ROOT, engine="pdflatex", fresh=False, output=None):
@@ -532,6 +593,7 @@ def build(root=ROOT, engine="pdflatex", fresh=False, output=None):
         command.append("-gg")
     command.append("main.tex")
     log = output / "build-command.log"
+    started = time.time() - 2  # a little slack for coarse file-system clocks
     environment = os.environ.copy()
     if engine == "lualatex":
         # Lua's font loader must have a writable cache, including in restricted
@@ -554,18 +616,27 @@ def build(root=ROOT, engine="pdflatex", fresh=False, output=None):
             command, cwd=root, env=environment, stdout=stream, stderr=subprocess.STDOUT
         )
     if result.returncode:
-        print("Build failed. Read the first error in " + str(log), file=sys.stderr)
+        print("Build failed. The full output is in " + str(log), file=sys.stderr)
         print(
             "See " + guide(root, "troubleshooting")
             + ". Your source files have not been changed.",
             file=sys.stderr,
         )
         text = log.read_text(encoding="utf-8", errors="replace")
-        blg = output / "main.blg"
-        if blg.exists():
-            text += blg.read_text(encoding="utf-8", errors="replace")
-        print("\n".join(text.splitlines()[-20:]), file=sys.stderr)
-        for advice in known_problem(text):
+        main_log = output / "main.log"
+        # The log is current if LaTeX ran now, or if latexmk reran nothing
+        # because the same error stopped the previous build.
+        fresh_log = main_log.is_file() and (
+            main_log.stat().st_mtime >= started or "error in previous invocation" in text)
+        error = first_error(unwrapped_log(output)) if fresh_log else ""
+        if error:
+            print("\nFirst error (from build/main.log):\n" + error, file=sys.stderr)
+        biber = biber_errors(output, started)
+        if biber:
+            print("\nBiber failed (from build/main.blg):\n" + "\n".join(biber), file=sys.stderr)
+        if not error and not biber:
+            print("\n".join(text.splitlines()[-20:]), file=sys.stderr)
+        for advice in known_problem(text + "\n" + error + "\n" + "\n".join(biber), "failed", root):
             print("\nLikely cause: " + advice, file=sys.stderr)
         for note in warnings:
             print("\nCheck: " + note, file=sys.stderr)
