@@ -104,8 +104,7 @@
       var text = input.value;
       result.textContent = "";
       if (!/\S/.test(text)) {
-        fail("Nothing to explain yet", "Paste the error or the whole log in the box, then choose Explain the error.",
-             "#where-to-copy-the-error-from", "Where to copy the error from");
+        State.set(root, status, "", "Paste the error or the whole log in the box first.");
         input.focus();
         return;
       }
