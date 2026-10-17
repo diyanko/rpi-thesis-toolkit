@@ -17,7 +17,8 @@ What it does:
     clipped code at phone widths, duplicate ids, and a 200% root font size pass
     at 390 px. Image loading is checked in light and dark mode.
   * With --shots, saves PNG screenshots (390 and 1280 px, light and dark) to
-    _local/shots/<timestamp>/ (ignored by git).
+    _local/shots/<timestamp>/ (ignored by git). Each shot is the first screen,
+    except the component gallery (project/components.html), shot at full length.
   * With --baseline save, also copies that set to _local/shots/baseline/.
     With --baseline compare, takes shots and lists the pages, widths and
     themes whose image differs from the baseline (informational; exit status
@@ -290,15 +291,22 @@ def run_dump(chrome: str, port: int, mode: str, dark: bool, budget_ms: int) -> d
     return data
 
 
+# The component gallery (docs/project/components.md) is shot at full length,
+# so one light/dark pair per width reviews every component; other pages show
+# their first screen only.
+GALLERY = "project/components.html"
+GALLERY_HEIGHT = 7000   # the page is about 6850 px long at 390 px wide
+
+
 def take_shot(chrome: str, port: int, page: str, width: int, dark: bool, dest: Path) -> str | None:
     with tempfile.TemporaryDirectory(prefix="ui_shot_") as profile:
         if width <= 600:
             win_w = 600
-            h = 1000
+            h = GALLERY_HEIGHT if page == GALLERY else 1000
             src = f"http://127.0.0.1:{port}/__ui_shot__.html?w={width}&h={h}&src=/{page}"
             win = f"{win_w},{h}"
         else:
-            h = 1000
+            h = GALLERY_HEIGHT if page == GALLERY else 1000
             src = f"http://127.0.0.1:{port}/{page}"
             win = f"{width},{h}"
         tmp = dest.with_suffix(".tmp.png")
@@ -311,7 +319,7 @@ def take_shot(chrome: str, port: int, page: str, width: int, dark: bool, dest: P
     if not tmp.exists():
         return f"{page} {width}: no screenshot produced"
     if width <= 600 and shutil.which("sips"):
-        subprocess.run(["sips", "-c", "1000", str(width), str(tmp), "--out", str(dest)],
+        subprocess.run(["sips", "-c", str(h), str(width), str(tmp), "--out", str(dest)],
                        capture_output=True)
         tmp.unlink(missing_ok=True)
     else:

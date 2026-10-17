@@ -114,6 +114,9 @@ pages. For visible website changes, run `python3 scripts/ui_check.py --shots`.
 `python3 scripts/ui_check.py --baseline save` keeps the current screenshots in
 `_local/shots/baseline/`; `--baseline compare` takes new ones and lists which
 pages, widths, and themes changed (informational, exit status unaffected).
+The [component gallery](components.md) shows every list, callout, table, code
+block, badge, figure, and dialog on one page, shot full length, so its light
+and dark pair reviews the whole design at once. Add a new component there.
 
 After a pull request merges, `python3 scripts/tidy.py` lists local branches
 and worktrees already merged into `origin/main`; `--apply` removes them. It

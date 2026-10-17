@@ -857,8 +857,8 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .help-card p { color: var(--ink-soft); font-size: 1.02rem; margin-bottom: 0.9rem; }
 .help-card ul { list-style: none; margin: auto 0 0; padding: 0.8rem 0 0; border-top: 1.5px dashed var(--line-strong); }
 .help-card li { margin: 0; font-size: 1.02rem; line-height: 1.4; }
-.help-card li a { display: inline-block; padding: 9px 0; }
-.help-card li a::after { content: "\00a0→"; }
+.help-card li a { display: inline-block; padding: 9px 0; white-space: nowrap; }   /* the arrow never wraps alone; page names are short */
+.help-card li a::after { content: "→" / ""; display: inline-block; margin-left: 0.3em; }   /* inline-block: the arrow is not underlined, as with .text-link */
 
 /* Cards lift a little while you point at them or tab into them */
 .help-card:is(:hover, :focus-within), .route-card:is(:hover, :focus-within) {
@@ -938,10 +938,10 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .guide-groups { list-style: none; margin: 0; padding: 0; counter-reset: topic; }
 .guide-sidebar .guide-groups { margin-inline: -10px 0; }   /* text, not the pill, sits on the page's left edge */
-.guide-groups > li { margin: 0 0 12px; }
+.guide-groups > li { margin: 0 0 16px; }   /* the same gap as under "How do I…?" */
 .guide-group {   /* label above each group of pages: Core path, Go further */
   display: block;
-  padding: 0 10px 2px;
+  padding: 0 10px 4px;
   font-size: 0.8rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -950,9 +950,9 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .guide-nav { list-style: none; margin: 0; padding: 0; }
 .guide-nav li { margin: 1px 0; counter-increment: topic; }
-/* Only the core path is numbered; the optional "Go further" pages get a plain dot. */
-.guide-groups > li + li .guide-nav li { counter-increment: none; }
-.guide-groups > li + li .guide-nav a::before { content: "\00b7"; }
+/* One marker column for the whole list, as wide as the "?" bubble above it:
+   the core path is numbered, the optional "Go further" pages get a small
+   hand-drawn ring in the same column, same color, centred on the first line. */
 .guide-nav a {
   display: flex; gap: 10px; align-items: baseline;
   padding: 6px 10px;
@@ -964,11 +964,21 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .guide-nav a::before {
   content: counter(topic);
+  flex: 0 0 1.6rem;
   font-family: var(--font-display);
   font-size: 0.875rem;
+  text-align: center;
   color: var(--muted);
-  flex: 0 0 1.4em;
   white-space: nowrap;
+}
+.guide-groups > li + li .guide-nav li { counter-increment: none; }
+.guide-groups > li + li .guide-nav a::before {
+  content: "";
+  align-self: flex-start;
+  height: 1.35rem;   /* one line of the label (1rem at line-height 1.35) */
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5.3 1.3C7.5 1.2 8.9 2.9 8.8 5.1 8.7 7.3 7.1 8.8 4.9 8.8 2.8 8.7 1.2 7.2 1.2 5 1.3 2.8 2.9 1.3 5.6 1.5' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center calc(50% + 1px) / 10px 10px;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M5.3 1.3C7.5 1.2 8.9 2.9 8.8 5.1 8.7 7.3 7.1 8.8 4.9 8.8 2.8 8.7 1.2 7.2 1.2 5 1.3 2.8 2.9 1.3 5.6 1.5' fill='none' stroke='black' stroke-width='1.7' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center calc(50% + 1px) / 10px 10px;
 }
 .guide-nav .nav-text { min-width: 0; }
 .guide-nav a .tag, .guide-quick .tag { margin-left: 2px; font-size: 0.7rem; padding: 0 7px; }
@@ -988,7 +998,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   display: flex; gap: 10px; align-items: center;
   min-height: 44px;
   margin: 0 0 16px;
-  padding: 8px 10px;
+  padding: 8px 10px 8px 8.5px;   /* 8.5px + the 1.5px border: the "?" sits in the list's marker column */
   color: var(--ink);
   font-weight: 700;
   font-size: 1rem;
@@ -1022,7 +1032,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .guide-content > h1:first-child { margin-top: 26px; font-size: clamp(2.2rem, 1.7rem + 2.2vw, 3.1rem); }
 .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1.2rem; color: var(--ink-soft); line-height: 1.6; }
 .guide-content > h1:first-child:has(+ .page-tag) { margin-bottom: 0.25em; }
-.page-tag { margin: 0 0 1.1rem; }
+.page-tag { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 1.1rem; }   /* several tags wrap with a gap (component gallery) */
 .page-tag .tag { font-size: 0.85rem; padding: 1px 12px; }
 .guide-content :is(h2, h3, h4) { scroll-margin-top: 20px; }
 
@@ -1047,7 +1057,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   border-radius: var(--sketch);
   font-size: 1rem;
 }
-.guide-content .page-toc > summary { padding: 9px 0; font-weight: 700; }
+.guide-content .page-toc > summary { margin: 0 -10px; padding: 9px 10px; font-weight: 700; }
 .guide-content .page-toc[open] > summary { margin-bottom: 6px; }
 .page-toc ol, .page-toc-wide ol { list-style: none; margin: 0; padding: 0; }
 .guide-content .page-toc ol { padding: 0 0 10px 24px; columns: 2 16rem; column-gap: 28px; }
@@ -1121,16 +1131,22 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 
 /* ---------- 8. Guide content (what Pandoc makes from Markdown) ----------- */
 .guide-content ul, .guide-content ol { padding-left: 1.4em; margin: 0 0 1.1em; }
+.guide-content ol { padding-left: 1.7em; }   /* room for "10." and its space */
 .guide-content li { margin: 0.3em 0; }
 .guide-content li > p { margin-bottom: 0.4em; }
+.guide-content li > :is(ul, ol) { margin: 0.3em 0 0; }   /* a nested list keeps the items' rhythm */
 .guide-content li::marker { color: var(--terra); }
 .guide-content ol > li::marker { font-family: var(--font-display); font-weight: 600; }
+/* An en space after the number, so the bold numeral never touches the text.
+   Only on numbered lists: lists styled without markers carry role="list". */
+.guide-content ol:not([role="list"]) > li::marker { content: counter(list-item) ".\2002"; }
 .guide-content blockquote {
   margin: 1.4rem 0;
   padding: 2px 0 2px 18px;
   border-left: 3px solid var(--line-strong);
   color: var(--ink-soft);
 }
+.guide-content blockquote > :last-child { margin-bottom: 0; }   /* the rule ends with the text */
 .guide-content hr { border: 0; border-top: 1.5px dashed var(--line-strong); margin: 2.4rem 0; }
 
 /* Checklists ("- [ ]" in Markdown): a hand-drawn box you can tick while you
@@ -1330,7 +1346,9 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .guide-content summary {
   list-style: none;
   cursor: pointer;
-  padding: 14px 0;
+  margin: 0 -12px;   /* room inside the box for the focus ring, which then never crosses the dashed edge */
+  padding: 14px 12px;
+  border-radius: 10px;
   font-weight: 700;
   line-height: 1.4;
   display: flex; align-items: flex-start; gap: 12px;
@@ -1346,9 +1364,10 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   transition: transform .15s ease;
 }
 .guide-content details[open] { padding-bottom: 6px; }
-.guide-content details[open] > summary { margin-bottom: 14px; border-bottom: 1.5px dashed var(--line); }
+.guide-content details[open] > summary { margin-bottom: 14px; border-bottom: 1.5px dashed var(--line); border-radius: 10px 10px 0 0; }   /* a straight rule under the summary */
 .guide-content details[open] > summary::before { transform: rotate(45deg); }
 .guide-content summary:hover { color: var(--link); }
+.guide-content summary:focus-visible { outline-offset: -3px; }
 
 /* Code blocks */
 /* Long lines scroll sideways. A soft shadow at an edge means "more this way";
@@ -1395,7 +1414,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .code-toolbar {
   display: flex; align-items: center; justify-content: space-between;
   gap: 12px;
-  padding: 6px 8px 6px 16px;
+  padding: 6px 10px 6px 20px;   /* the label starts where the code does */
   border-bottom: 1px solid var(--line);
   line-height: 1.2;
   color: var(--muted);
@@ -1551,7 +1570,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .footer-actions, .footer-links { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 1rem; }
 .footer-actions { margin: -9px 0 10px; padding-bottom: 6px; border-bottom: 1.5px dashed var(--line-strong); }   /* -9px: text-link touch padding */
 .footer-actions { gap: 0 24px; }
-.footer-links a { color: var(--ink-soft); display: inline-block; padding: 6px 0; }
+.footer-links a { color: var(--ink-soft); display: inline-block; padding: 6px 0; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }   /* underline in the text's own color */
 .site-footer a[aria-current="page"] { color: var(--ink); text-decoration-color: var(--sage); }
 
 /* Optional guide search: the same paper and ink in both themes. */
@@ -1601,7 +1620,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .search-result-page { color: var(--muted); font-size: 0.8rem; }
 .search-result-title { font-weight: 700; line-height: 1.35; margin: 3px 0 5px; }
 .search-result .search-result-text { color: var(--ink-soft); font-size: 0.9rem; line-height: 1.45; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
-.search-result mark { color: inherit; background: var(--butter-wash); border-radius: 2px; }
+.search-result mark { color: inherit; background: var(--butter-wash); border-radius: 2px; margin: 0 -2px; }   /* the highlight adds no space between letters */
 .guide-content tr:target { outline: 2px solid var(--focus); outline-offset: 2px; scroll-margin-top: 24px; }
 @media (max-width: 600px) {
   .search-dialog { padding: 16px; margin-top: 12px; max-height: calc(100dvh - 24px); }
@@ -1651,7 +1670,8 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-topics > nav { padding: 0 12px 8px; }
   .guide-topics .guide-groups { padding: 10px 0 4px; border-top: 1.5px dashed var(--line); }
   .guide-topics .guide-group { padding-inline: 8px; }
-  .guide-topics .guide-nav a { padding: 9px 8px; min-height: 44px; }
+  .guide-topics .guide-nav a { padding: 11px 8px; min-height: 44px; }   /* label centred in the 44px row */
+  .guide-topics .guide-quick { padding-left: 6.5px; }   /* + 1.5px border: "?" in the marker column */
   /* Stacked: the close-up takes the full width, the whole page sits under it */
   .anatomy-pages { gap: 38px; }
   .anatomy-pages > li { display: block; }
@@ -1718,6 +1738,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .note, .tip, .important, .warning, .caution { padding: 12px 16px 14px; }
   .guide-content details { padding: 0 16px; }
   .guide-content pre { padding: 12px 14px; font-size: 0.85rem; }
+  .code-toolbar { padding-left: 14px; }
   .copy-button { min-height: 36px; }
   .guide-content pre, .guide-content pre code { white-space: pre-wrap; overflow-wrap: anywhere; }   /* phones: wrap, never clip; Copy still copies the original lines */
   .guide-content th, .guide-content td { padding: 9px 11px; }
