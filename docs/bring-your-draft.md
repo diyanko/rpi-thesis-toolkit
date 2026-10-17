@@ -269,7 +269,8 @@ instead. The class still puts one blank line between references (tested with
 numeric, APA, MLA, and Chicago author-date); check your PDF with any other
 style ([citations](citations.md#change-the-citation-style)).
 
-Compile it with pdfLaTeX, Biber, and pdfLaTeX twice, and compare with the
+Compile it (save in your editor, or click **Recompile** on Overleaf; both run
+the bibliography step for you), and compare with the
 [settings list](going-further.md#all-thesis-settings) if something is missing.
 From RPI's official template, [the section above](#from-rpis-official-latex-template)
 maps its settings one by one.

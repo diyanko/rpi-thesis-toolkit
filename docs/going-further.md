@@ -55,7 +55,7 @@ put `main.pdf` beside `main.tex`.
    `assets/` (you can leave out `build/`).
 2. Upload it as a new Overleaf project, then set the main document and
    compiler as in [the Overleaf route](get-started.md#step-3b-overleaf-route).
-3. Recompile. Overleaf compiles with `latexmk`, so Biber runs automatically.
+3. Recompile. Overleaf runs the bibliography step for you.
 
 ### Use your computer and Overleaf
 
@@ -556,24 +556,36 @@ other document types; those need their own requirements check.
 
 ## Build commands
 
-Overleaf, VS Code (with the recipe in `.vscode/`), and the optional build
-helper use `latexmk` to run the engine and Biber as often as needed. For
-TeXShop, TeXworks, or TeXstudio, see the
-[other-editor compile steps](get-started.md#other-editors-and-the-command-line).
+Optional: no step in this guide needs a terminal (a text window for
+commands). Your editor or Overleaf compiles when you save or click
+**Recompile**. These commands are for anyone who prefers typing them, or who
+wants the build helper's setup check and pre-submission hints.
 
-These terminal commands are optional. Run them from the folder containing
-`main.tex`: either `latexmk -norc -pdf main.tex` (PDF next to `main.tex`) or
-the build helper below. An AI assistant can explain or adapt any command for
+Overleaf, VS Code (with the recipe in `.vscode/`), and the build helper use
+`latexmk`, a tool that runs the engine and the bibliography step (Biber) as
+often as needed. For TeXShop, TeXworks, or TeXstudio, see
+[other editors](get-started.md#other-editors).
+
+Run these from the folder containing `main.tex`. The plainest is
+
+```sh
+latexmk -norc -pdf main.tex
+```
+
+which puts `main.pdf` next to `main.tex`. Or use the build helper below. An AI assistant can explain or adapt any command for
 your system: give it your operating system and the command or its error
 output, then check the result
 ([more on AI help](#use-ai-for-technical-help)).
 
 The helper needs Python 3.9 or newer (no extra packages) and TeX Live 2022 or
 newer with `latexmk`, your engine, and Biber. On Windows, prefer TeX Live,
-which includes the Perl that `latexmk` needs.
+which includes the Perl that `latexmk` needs; with MiKTeX, install Perl too.
 
 The commands below use `python3`, which works on macOS and Linux. On Windows,
-type `py` instead of `python3`: `py scripts/build.py`.
+type `py` instead of `python3`: `py scripts/build.py`. If `python3` is not
+recognized or opens the Microsoft Store, close the Store and use `py`. On
+macOS, the first `python3` may offer to install developer tools; accept, or
+use `latexmk` instead.
 
 Check the installed tools and see the next steps:
 
@@ -608,7 +620,14 @@ pdfLaTeX uses New TX fonts; LuaLaTeX and XeLaTeX use TeX Gyre Termes via
 `fontspec`/`unicode-math`. Switch for characters pdfLaTeX can't handle, then
 check glyphs and pagination. Other writing systems are untested.
 
-With the build helper, run this from the folder containing `main.tex` (on
+- **Overleaf:** **Settings** (the gear icon), then under **Compiler**, pick
+  LuaLaTeX or XeLaTeX.
+- **VS Code:** open the Command Palette (Ctrl+Shift+P, or Cmd+Shift+P on
+  macOS), run **LaTeX Workshop: Build with recipe**, and pick
+  **RPI Thesis Toolkit: LuaLaTeX + Biber** or **XeLaTeX + Biber**. Pick it
+  again after you reopen VS Code.
+
+Optional, with the build helper, from the folder containing `main.tex` (on
 Windows, `py scripts/build.py --engine lualatex`):
 
 ```sh

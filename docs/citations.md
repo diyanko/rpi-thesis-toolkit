@@ -30,8 +30,8 @@ then collect them with Zotero or
 ![How a citation travels. A source's record (author, title, year) gets a citation key such as lamport1994 and goes into references.bib, from Zotero or pasted by hand. The chapter contains only \parencite{lamport1994}. When you compile, Biber prints [1] in the text and the full entry under REFERENCES.](diagrams/citation-flow.svg)
 
 *In words:* a source's **key** goes into `references.bib` and into
-`\parencite{key}` in your chapter. Biber (the program that formats references)
-turns that into [1] and a full reference-list entry when you compile.
+`\parencite{key}` in your chapter. When you compile, the bibliography step (a
+program called Biber) turns that into [1] and a full reference-list entry.
 
 ## Step 1: Agree on a style with your advisor
 
@@ -77,7 +77,8 @@ It is a convenience, not an OGE requirement.
 
 5. **Compile.** Only sources you cite appear in the reference list.
 
-A key in **bold** means Biber has not run or the key is not in the file
+A key in **bold** means the bibliography step has not run yet (compile again)
+or the key is not in the file
 ([bold keys](how-it-works.md#bold-citation-keys-and-question-marks)). The
 style chosen inside Zotero does not affect your PDF.
 
@@ -182,7 +183,7 @@ Check that the date **prints** in your PDF; some styles hide it. The optional
 
 Four parts work together: the **class** sets the page layout, **biblatex**
 provides the citation commands, the **style** decides what they print, and
-**Biber** processes `references.bib`. In `preamble.tex` (the file for the
+**Biber** (the bibliography step) processes `references.bib`. In `preamble.tex` (the file for the
 citation style and extra packages), find this line:
 
 ```tex

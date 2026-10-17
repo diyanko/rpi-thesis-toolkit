@@ -273,8 +273,8 @@ several programs in a row, repeated as needed:
    and headings exist, and which citations you used. At this point a citation
    shows its key in bold, like [**lamport1994**], cross-references show **??**,
    and the contents page is empty.
-2. **Biber** reads those notes and `references.bib`, and writes the formatted
-   reference list (`.bbl`). The PDF does not change yet.
+2. **The bibliography step** (a program called Biber) reads those notes and
+   `references.bib`, and writes the formatted reference list (`.bbl`). The PDF does not change yet.
 3. **pdfLaTeX** reads the `.bbl`: the citation becomes [1], the **??** become
    chapter numbers, and the contents fill in.
 4. **pdfLaTeX** once more settles page numbers in the contents and
@@ -288,7 +288,7 @@ that their alt text still matches the pictures. -->
 
 <!-- preview compile-pass-2-chapter: Chapter 1 after step 3: "a real citation example [1]", then "Chapter 2 contains small examples you can adapt, and Chapter 3 closes the document." -->
 
-Overleaf, VS Code, and the build helper run every step for you, repeating
+Overleaf and VS Code run every step for you each time you compile, repeating
 passes until the output stops changing (via a tool called `latexmk`). The extra
 files (`.aux`, `.bbl`, `.toc`, ...) are scratch notes you never edit; the
 `.log` file holds the full error messages and is worth reading.
@@ -299,12 +299,12 @@ These are LaTeX saying "I haven't finished filling this in yet". Start with
 your editor's compile ([your computer](get-started.md#step-3a-your-computer-route)
 or [Overleaf](get-started.md#step-3b-overleaf-route));
 if it does not clear, try a [clean recompile](troubleshooting.md#clean-recompile);
-if you run each program yourself, follow the
-[other-editor compile steps](get-started.md#other-editors-and-the-command-line).
+in TeXShop, TeXworks, or TeXstudio, follow the
+[other-editor steps](get-started.md#other-editors).
 
 | You see | It means | Fix |
 | --- | --- | --- |
-| A citation key in **bold**, like **lamport1994** | Not in the reference list yet | Run a full compile. If it stays bold, check the key's spelling in your citation command and in `references.bib` |
+| A citation key in **bold**, like **lamport1994** | Not in the reference list yet | Compile again. If it stays bold, check the key's spelling in your citation command and in `references.bib` |
 | **??** where a number should be | The `\ref{}` label is not known yet | Compile again. If it stays, check `\label{}` and `\ref{}` |
 | An empty or outdated contents page | Written on one pass, read on the next | Compile again |
 
@@ -312,11 +312,10 @@ if you run each program yourself, follow the
 
 | How you compile | Your PDF |
 | --- | --- |
+| VS Code (with the starter's settings) | The tab beside your text; the file is `build/main.pdf` |
 | Overleaf | The preview pane; use its download button for a copy |
-| TeXShop or TeXstudio | `main.pdf`, next to `main.tex` |
-| VS Code (included recipe) | `build/main.pdf` |
-| Optional build helper (`python3 scripts/build.py`, or `py scripts/build.py` on Windows, typed in a terminal) | `build/main.pdf` |
-| `latexmk` in a terminal | `main.pdf`, next to `main.tex` |
+| Another editor, TeXShop, TeXworks, or TeXstudio | Usually `main.pdf`, next to `main.tex` |
+| Optional [build commands](going-further.md#build-commands) in a terminal | `build/main.pdf` (build helper) or `main.pdf` (`latexmk`) |
 
 Switched methods? Open the PDF from the method you just used, not an old copy.
 

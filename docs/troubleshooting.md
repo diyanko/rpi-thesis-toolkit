@@ -19,6 +19,18 @@ left it.
 *In words:* find the **first** error, look at the file and line it names (and
 the line before), check the usual culprits, fix, and compile again.
 
+Where the errors are:
+
+- **VS Code:** **View → Problems** lists each error with its file and line;
+  click one to jump there. The full log is in the **Output** panel, under
+  **LaTeX Compiler**.
+- **Overleaf:** the **Logs and output files** button beside **Recompile**
+  lists the errors; click one to jump there. **Raw logs**, at the bottom of
+  that list, shows the full log.
+- **Another editor:** look for its log or messages panel, or open
+  `main.log` (in `build/` or next to `main.tex`).
+<!-- TODO(verify): Overleaf's "Logs and output files" and "Raw logs" labels and VS Code's "LaTeX Compiler" output channel name were not rechecked in the current versions. -->
+
 Compile after each small change so you know what caused a problem. A warning
 still produces a PDF, but review warnings before you submit.
 
@@ -47,7 +59,8 @@ only the first; the later ones are often side effects.
 ### Ask an AI chat to explain it
 
 An AI chat is a quick way to decode a cryptic error. Paste the first error and
-the few lines around it, and say whether you use Overleaf or your computer.
+the few lines around it (or the whole log from your editor or Overleaf), and
+say whether you use Overleaf or your computer.
 Never paste confidential or unpublished material. Try one change, compile,
 and undo it if the PDF gets worse.
 
@@ -64,8 +77,7 @@ or [Overleaf Learn](https://www.overleaf.com/learn) works too.
 
 A clean recompile throws away LaTeX's scratch files and builds everything
 again. Try it when the PDF will not update, numbers stay as **??**, or an error
-looks impossible. It never changes your writing. You can do it without a
-terminal.
+looks impossible. It never changes your writing.
 
 - **Overleaf:** open the **Recompile** menu (the small arrow beside the
   button) and choose **Recompile from scratch**. To change the engine, open
@@ -74,20 +86,19 @@ terminal.
 - **VS Code:** open the Command Palette (Ctrl+Shift+P, or Cmd+Shift+P on
   macOS), run **LaTeX Workshop: Clean up auxiliary files**, then compile again.
   To change the engine, run **LaTeX Workshop: Build with recipe** and pick
-  **RPI Thesis Toolkit: XeLaTeX + Biber** or **LuaLaTeX + Biber**; the
-  starter's settings keep your last choice for later builds.
-  <!-- TODO(verify): recipe picker and lastUsed persistence not hand-tested in VS Code. -->
+  **RPI Thesis Toolkit: XeLaTeX + Biber** or **LuaLaTeX + Biber** (Biber is
+  the bibliography step). Saving keeps using that choice until you close
+  VS Code; after you reopen it, pick it again the same way.
+  <!-- TODO(verify): read from LaTeX Workshop 10.19 source (the last recipe is remembered in memory only); not hand-tested in VS Code. -->
 - **TeXShop, TeXstudio, or TeXworks:** each editor has its own way to remove
   auxiliary files and to choose an engine, and the steps differ by version.
   Look in that editor's own documentation
   ([TeXShop](https://pages.uoregon.edu/koch/texshop/),
   [TeXstudio](https://texstudio.org/),
-  [TeXworks](https://tug.org/texworks/)), or use the terminal command in the
-  next item. Then run the steps from
-  [Get started](get-started.md#other-editors-and-the-command-line) again.
+  [TeXworks](https://tug.org/texworks/)). Then run the steps from
+  [Get started](get-started.md#other-editors) again.
   <!-- TODO(verify): menu names in current TeXShop, TeXstudio, and TeXworks were not checked, so none are named here. -->
-- **Any editor, in a terminal (optional):** `python3 scripts/build.py --fresh`
-  (on Windows, `py scripts/build.py --fresh`).
+- **Optional, in a terminal:** see [build commands](going-further.md#build-commands).
 
 Switch engine only to fix characters pdfLaTeX cannot handle, then check
 the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
@@ -116,10 +127,10 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 
 | What you see | What to try |
 | --- | --- |
-| A citation key in **bold** | Run the bibliography step (Biber), then compile twice. Check the key spelling. |
+| A citation key in **bold** | Compile again; your editor and Overleaf run the bibliography step for you. Still bold? Check that the key is spelled the same in your citation command and in `references.bib`. |
 | **??** instead of a number | Compile again. Check the `\label` and `\ref` spelling. |
-| The reference list is empty | Cite at least one entry, for example with `\parencite{key}`, then run Biber. |
-| A new Zotero source doesn't appear | Re-export, run Biber, and check that the key in your citation command matches the key in the `.bib` file exactly. |
+| The reference list is empty | Cite at least one entry, for example with `\parencite{key}`, then compile again. |
+| A new Zotero source doesn't appear | Re-export, compile again, and check that the key in your citation command matches the key in the `.bib` file exactly. |
 | `Misplaced alignment tab character &` in the references | A title in the `.bib` file contains `&`. Write it as `\&`. |
 
 ### Layout and the PDF
@@ -140,19 +151,18 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 
 | What you see | What to try |
 | --- | --- |
-| `latexmk`, `pdflatex`, or `biber` not found, or `spawn latexmk ENOENT` | Finish installing the full LaTeX distribution, then quit your editor completely and reopen it (on Windows, restart the computer if needed). On Linux, use VS Code's `.deb` or `.rpm`, not the Flatpak. Optional, in a terminal: `python3 scripts/build.py --doctor` (Windows: `py scripts/build.py --doctor`) names the missing tool. |
+| `latexmk`, `pdflatex`, or `biber` not found, or `spawn latexmk ENOENT` | Finish installing the full LaTeX distribution, then quit your editor completely and reopen it (on Windows, restart the computer if needed). On Linux, use VS Code's `.deb` or `.rpm`, not the Flatpak. Optional: the build helper's setup check names the missing tool ([build commands](going-further.md#build-commands)). |
 | VS Code says **Restricted Mode**, or LaTeX Workshop does nothing | Click **Restricted Mode** in the status bar and choose **Trust**. LaTeX Workshop is off in untrusted folders. |
 | Overleaf says the compile timed out | Try **Fast [draft]** from the Recompile menu, shrink large photos, export plots as PDF, or compile on your computer. **Fast draft** shows images as empty boxes, so switch back to **Normal** and check every figure and the seal before you share or submit ([Overleaf: compile timeouts](https://docs.overleaf.com/troubleshooting-and-support/fixing-and-preventing-compile-timeouts)). |
-| `python3` is not recognized, or opens the Microsoft Store (Windows) | Close the Store and type `py scripts/build.py` instead. Python is optional: editors compile without it. |
 
-<details><summary>Rare messages: old TeX Live, Biber version mismatch, Biber on a Mac, hand-typed builds</summary>
+<details><summary>Rare messages: old TeX Live, a bibliography version mismatch, the bibliography step on a Mac, typed build commands</summary>
 
 | What you see | What to try |
 | --- | --- |
 | `You have requested release '...' of LaTeX` | Your installed LaTeX is older than this starter needs. Install the current full [TeX Live from tug.org](https://tug.org/texlive/quickinstall.html), or use [Overleaf](get-started.md#step-3b-overleaf-route). |
-| `Found biblatex control file version ..., expected version ...` | Try a [clean recompile](#clean-recompile) first. If it persists, Biber and biblatex probably come from different TeX installations: keep one distribution, update it fully, and use its `biber`. |
-| On a Mac, Biber fails and the log mentions `lipo` | An older Mac build of Biber that newer macOS can't start; your thesis is fine. Update TeX Live and build again. On macOS (MacTeX), use TeX Live Utility, **Update all packages**, or run `sudo tlmgr update --self --all`. |
-| `I can't write on file build/chapters/...aux` (or `chapters/...aux`, `appendices/...aux`) | The starter's settings create those folders for you. If you see this, do a [clean recompile](#clean-recompile). If you typed your own `latexmk -outdir=...` command, build with `python3 scripts/build.py` (Windows: `py scripts/build.py`) or `latexmk -norc -pdf main.tex` instead. |
+| `Found biblatex control file version ..., expected version ...` | Try a [clean recompile](#clean-recompile) first. If it persists, the bibliography step and biblatex probably come from different LaTeX installations: keep one distribution and update it fully. |
+| On a Mac, the bibliography step fails and the log mentions `biber` and `lipo` | An older Mac build of the bibliography program (Biber) that newer macOS can't start; your thesis is fine. Open **TeX Live Utility** (Applications → TeX), choose **Update all packages**, and compile again. |
+| `I can't write on file build/chapters/...aux` (or `chapters/...aux`, `appendices/...aux`) | The starter's settings create those folders for you. If you see this, do a [clean recompile](#clean-recompile). If you typed your own build command, use one from [build commands](going-further.md#build-commands) instead. |
 
 </details>
 
@@ -181,7 +191,7 @@ about LaTeX, Zotero, files, or "where does this go?" are all welcome.
 Copy and fill in:
 
 ```text
-Where I write:   Overleaf / TeXShop / TeXstudio / VS Code / other: ...
+Where I write:   Overleaf / VS Code / other editor: ...
 Computer:        macOS / Windows / Linux
 What I did:      ...
 What I expected: ...
