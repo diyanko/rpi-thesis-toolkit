@@ -167,3 +167,13 @@ class Page(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FileNames(unittest.TestCase):
+    def test_file_name_does_not_pick_a_problem(self):
+        import re
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        import build
+        pattern = next(p["pattern"] for p in build.KNOWN_PROBLEMS if p["id"] == "biber-mac")
+        self.assertIsNone(re.search(pattern, "./chapters/liposomes.tex:13: Undefined control sequence."))
+        self.assertTrue(re.search(pattern, "biber: error: lipo not found"))
