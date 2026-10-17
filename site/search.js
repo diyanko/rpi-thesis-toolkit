@@ -46,7 +46,11 @@
     ["differences", "difference", "diff", "changes", "changed", "compare", "versions"],
     ["placeholder", "box", "boxes", "framed", "rectangles"], ["document", "draft"],
     ["brace", "braces", "curly", "bracket", "brackets", "openingbrace", "closingbrace"],
-    ["update", "updated", "updating", "stale", "refresh"], ["source", "sources", "entry", "record"]
+    ["update", "updated", "updating", "stale", "refresh"], ["source", "sources", "entry", "record"],
+    ["abbreviation", "abbreviations", "acronym", "acronyms", "glossary", "glossaries", "nomenclature", "nomencl"],
+    ["landscape", "sideways", "rotate", "rotated", "rotating", "sidewaystable", "sidewaysfigure"],
+    ["subfigure", "subfigures", "subfig", "subcaption", "panel", "panels"],
+    ["hyperlink", "hyperlinks", "hyperref", "hypersetup", "hidelinks"]
   ];
   var aliases = new Map();
   groups.forEach(function (group) { group.forEach(function (word) { aliases.set(word, group); }); });
@@ -58,7 +62,16 @@
   var routes = [
     [/^(apa|ieee|mla|chicago)( style)?$/, ["Change the citation style", "Print a full reference in the text"]],
     [/^(title page|committee|committee chair|graduation( month| year| date)?|masters( degree)?|doctoral( degree)?|engineering doctorate)$/, ["Put your name on it", "All thesis settings"]],
-    [/^(copyright|metadata( tex)?)$/, ["All thesis settings", "Put your name on it"]],
+    [/^(copyright( page)?|metadata( tex)?)$/, ["All thesis settings", "Put your name on it"]],
+    [/^(list )?(abbreviations?|acronyms?|glossary|glossaries|nomenclature|symbols? list)$/, ["Add a list of symbols or abbreviations"]],
+    [/^((landscape|sideways|rotate|rotated|rotating)( (page|pages|table|tables|figure|figures))?|(rotate|turn) (table|figure|page)( sideways)?)$/, ["Too wide for the page?"]],
+    [/^(page (number|numbers|numbering)( roman| arabic| roman numerals| position| placement)?|pagination|roman( numerals?)?)$/,
+      ["Your words and your formatting are separate", "What OGE commonly flags", "Final PDF checklist"]],
+    [/^(font size|font sizes|10pt|11pt|12pt|class options?)$/, ["Where customizations belong", "Your words and your formatting are separate"]],
+    [/^(hyperlinks?|hyperref|link colou?rs?)$/, ["Where customizations belong"]],
+    [/^signatures?( page| pages| form| forms)?$/, ["The path to graduation", "Official resources"]],
+    [/^(mendeley|endnote|jabref|reference manager)( export)?$/, ["If you can't use Zotero: paste an entry by hand", "Step 2: Collect and cite sources with Zotero"]],
+    [/^(bibliography|references|reference list|bib|refs) (missing|empty)$/, ["The reference list is empty", "A citation key in bold"], "troubleshooting"],
     [/^(abstract|acknowledg[em]+ents?|front matter)$/, ["What each file does", "Optional sections"]],
     [/^appendi(x|ces)$/, ["What each file does", "Optional sections"]],
     [/^(main tex|file structure|files)$/, ["What each file does"]],
@@ -72,9 +85,23 @@
     [/^vs code( install| setup)?$/, ["Step 3a: Your-computer route", "Clean recompile"]],
     [/^(symbol|symbols)$/, ["Find a symbol's command", "Add a list of symbols or abbreviations"]],
     [/^(contents|table contents|list figures|list tables)$/, ["All thesis settings", 'What "compiling" does']],
-    [/^(page numbers|margins|font|fonts|double spacing|line spacing)$/, ["Your words and your formatting are separate", "Final PDF checklist"]],
+    [/^(margins|font|fonts|double spacing|line spacing)$/, ["Your words and your formatting are separate", "Final PDF checklist"]],
     [/^(update template|update class|upgrade)$/, ["Update the formatting safely"]],
+    [/^(eps|svg|tiff?|bmp|heic|webp)( file| files| image| images| figure| figures)?$/, ["Export a chart or convert an image", "Add a figure"]],
     [/^(deadline|submission deadline|forms|requirements)$/, ["Official resources", "The path to graduation"]]
+  ];
+  // Pasted compiler warnings whose wording differs from the guide's row
+  // names. The third item says the row answers that message directly.
+  var logRoutes = [
+    [/\bcitation\b.*\bundefined\b|\bundefined citations\b/i, ["A citation key in bold", "Bold citation keys and question marks"], true],
+    [/\bempty bibliography\b/i, ["The reference list is empty"], true],
+    [/\breference\b.*\bundefined\b|\bundefined references\b|\blabel\(?s\)? may have changed\b|\brerun to get cross-references\b/i,
+      ["?? instead of a number", "Cross-references"], true],
+    [/\blabel\b.*\bmultiply[- ]defined\b|\bmultiply-defined labels\b/i, ["Cross-references", "?? instead of a number"], false],
+    [/\bfile\b.*\.(?:png|jpe?g|pdf|eps|svg|tiff?)\b.*\bnot found\b|\bpdftex\.def error\b.*\bnot found\b|\bcannot determine size of graphic\b/i,
+      ["A figure file cannot be found", "Add a figure"], true],
+    [/\bunknown graphics extension\b/i, ["Export a chart or convert an image", "Add a figure"], true],
+    [/\benvironment sideways(?:table|figure) undefined\b/i, ["Too wide for the page?"], true]
   ];
 
   // Bounded Damerau-Levenshtein tolerates adjacent swapped letters too.
@@ -121,16 +148,28 @@
   }
 
   function analyze(query) {
-    var line = firstError(query), selected = line ? line.replace(/^.*?:\d+(?::\d+)?:\s*/, "") : query;
+    var line = firstError(query);
+    // A lone context line such as "l.42 \foo" is still a pasted log.
+    if (!line && /^\s*l\.\d+\b/.test(query)) line = query.trim();
+    var selected = line ? line.replace(/^.*?:\d+(?::\d+)?:\s*/, "")
+      // Drop the generic prefix and positions; keep the message itself.
+      .replace(/^\s*!?\s*(?:(?:LaTeX|pdfTeX|Package\s+\S+|Class\s+\S+)\s+)?(?:Error|Warning|Info)\s*:\s*/i, "")
+      .replace(/\s*\(?\bon (?:input )?line \d+\)?|\bon page \d+\b|^\s*l\.\d+\s*/gi, " ") : query;
     var phrase = normalize(selected);
+    var logRouteTitles = [];
+    logRoutes.forEach(function (route) {
+      if (route[0].test(line || query)) route[1].forEach(function (title) { logRouteTitles.push({title: title, exact: route[2]}); });
+    });
     if (line) phrase = phrase.replace(/\b\d+(?:pt|in|cm|mm|px)?\b/g, " ").replace(/\b(?:paragraph|lines?|badness|high|low)\b/g, " ").replace(/\s+/g, " ").trim();
     var failedCompile = /\b(wont|dont|doesnt|cannot|cant|failed|fails|stops?|stopped|will not|does not)\b/.test(phrase)
       && /\b(pdf|compile|compiling|build|building)\b/.test(phrase);
     var tokens = Array.from(new Set(words(phrase).filter(function (word) { return !stop.has(word) && !/^\d+$/.test(word); }))).slice(0, 32);
     if (!tokens.length) tokens = words(phrase).filter(function (word) { return ["latex", "thesis", "dissertation", "rpi"].includes(word); });
     var inserted = selected.match(/\bmissing\s+(\S+)\s+inserted\b/i);
-    return {phrase: phrase, log: Boolean(line), inserted: inserted && inserted[1], failed: failedCompile,
-      policy: /\b(oge|rpi|university)\b/.test(phrase) && /\b(allow|allowed|policy|policies|permission|permit|approved)\b/.test(phrase),
+    return {phrase: phrase, log: Boolean(line), inserted: inserted && inserted[1], failed: failedCompile, logRoutes: logRouteTitles,
+      // Length and size limits are institutional rules the guide does not restate.
+      policy: !line && (/\b(oge|rpi|university)\b/.test(phrase) && /\b(allow|allowed|policy|policies|permission|permit|approved)\b/.test(phrase)
+        || /\b(word|page|length|size) limits?\b|\bhow long (should|can|must|may|is|are)\b.*\b(abstract|thesis|dissertation|title|chapters?)\b|\b(maximum|max|minimum|min) (length|pages|words|size)\b|\bhow many (pages|words)\b/.test(phrase)),
       pdfLocation: /\bwhere\b/.test(phrase) && /\bpdf\b/.test(phrase),
       draftImages: /\b(figures?|pictures?|photos?|images?)\b/.test(phrase) && /\b(box|boxes|rectangles?|placeholder)\b/.test(phrase),
       citationStyle: /\b(switch|change|instead)\b/.test(phrase) && /\b(apa|ieee|chicago|mla|author year|numbered)\b/.test(phrase),
@@ -140,12 +179,14 @@
       tokens: tokens};
   }
 
-  function tokenMatches(token) {
+  function tokenMatches(token, exactOnly) {
     var result = new Map(), alternatives = aliases.get(token) || [token];
     vocabulary.forEach(function (_, word) {
       if (word === token) result.set(word, 1);
       else if (alternatives.indexOf(word) !== -1) result.set(word, 0.9);
       else if (token.length >= 3 && (word === token + "s" || token === word + "s")) result.set(word, 0.95);
+      // Pasted logs are exact text: no prefixes or spelling corrections.
+      else if (exactOnly) return;
       else if (token.length >= 3 && word.startsWith(token)) result.set(word, 0.72);
       else if (token.length >= 4) {
         var limit = token.length >= 8 ? 2 : 1, edits = distance(token, word, limit);
@@ -181,32 +222,36 @@
       });
       return !tied && best <= (token.length >= 8 ? 2 : 1) ? closest : token;
     }).join(" ");
-    var routeTitles = [];
+    var routeTitles = request.logRoutes.slice();
     routes.forEach(function (route) {
       if (route[0].test(routeWords)) routeTitles = routeTitles.concat(route[1].map(function (title) { return {title: title, page: route[2]}; }));
     });
-    var terms = request.tokens.map(tokenMatches), totalWeight = terms.reduce(function (sum, term) { return sum + term.weight; }, 0);
+    var terms = request.tokens.map(function (token) { return tokenMatches(token, request.log); }), totalWeight = terms.reduce(function (sum, term) { return sum + term.weight; }, 0);
     var fieldWeights = [10, 8, 2, 1.5, 1];
     var results = entries.map(function (entry) {
       var inserted = entry.source.title.match(/\bmissing\s+(\S+)\s+inserted\b/i);
       // These are distinct TeX errors, even when most words are identical.
       if (request.inserted && inserted && request.inserted !== inserted[1]) return null;
-      var score = 0, coverage = 0, matched = 0;
+      var score = 0, coverage = 0, closeness = 0, matched = 0;
       terms.forEach(function (term) {
-        var best = 0, support = 0;
+        var best = 0, support = 0, closest = 0;
         entry.fields.forEach(function (field, f) {
           var fieldBest = 0;
           term.matches.forEach(function (quality, word) {
             var count = field.get(word);
             if (!count) return;
+            closest = Math.max(closest, quality);
             // Repetition saturates; a long section cannot win by sheer size.
             fieldBest = Math.max(fieldBest, quality * fieldWeights[f] * (1 + 0.15 * count / (count + 1)));
           });
           best = Math.max(best, fieldBest); support += fieldBest;
         });
-        if (best) { coverage += term.weight; matched++; score += term.weight * (best + support * 0.12); }
+        if (best) { coverage += term.weight; closeness += term.weight * Math.min(1, closest / 0.6); matched++; score += term.weight * (best + support * 0.12); }
       });
-      coverage /= totalWeight;
+      coverage /= totalWeight; closeness /= totalWeight;
+      // A distant spelling only half covers a word, so a lone far-fetched
+      // match (dedication ~ education) is not offered as an answer.
+      if (closeness < 0.55) coverage = closeness;
       var titlePhrase = entry.title.includes(request.phrase), bodyPhrase = entry.text.includes(request.phrase);
       var exactMessage = entry.source.kind === "message" && (entry.title.length > 8 && request.phrase.includes(entry.title)
         || entry.signatures.some(function (signature) { return request.phrase.includes(signature); }));
@@ -229,9 +274,10 @@
         return route.title === entry.source.title && (!route.page || entry.source.href.split("#")[0].split("/").pop() === route.page + ".html");
       });
       if (routePosition >= 0) { score += 90 - routePosition * 15; coverage = 1; matched++; }
+      var logAnswer = routePosition >= 0 && routeTitles[routePosition].exact;
       if (!matched || coverage < 0.55) return null;
       score *= coverage * coverage;
-      return {entry: entry.source, score: score, coverage: coverage, exact: exactMessage || titlePhrase || bodyPhrase};
+      return {entry: entry.source, score: score, coverage: coverage, exact: exactMessage || titlePhrase || bodyPhrase || logAnswer};
     }).filter(Boolean).sort(function (a, b) {
       // Resolve equal scores the same way in every browser locale.
       return b.score - a.score || (a.entry.href < b.entry.href ? -1 : a.entry.href > b.entry.href ? 1 : 0);
@@ -244,7 +290,19 @@
       results = entries.filter(function (entry) { return ["Read an error message", "When a compile stops", "Ask for help"].includes(entry.source.title); })
         .map(function (entry) { return {entry: entry.source, score: 0}; });
       results.unknownError = true;
+    } else if (!results.length) {
+      // Nothing matched: offer the task index and the troubleshooting page.
+      results = ["How do I…?", "Fixing problems"].map(function (page) {
+        return entries.find(function (entry) { return entry.source.title === page && entry.source.page === page; });
+      }).filter(Boolean).map(function (entry) { return {entry: entry.source, score: 0}; });
+      results.none = true;
     }
+    // Highlight the words that actually matched, including aliases and
+    // corrected spellings, not only the letters typed.
+    results.highlight = new Set();
+    terms.forEach(function (term) {
+      term.matches.forEach(function (quality, word) { if (quality >= 0.4) results.highlight.add(word); });
+    });
     return results;
   }
 
@@ -255,24 +313,36 @@
     node.textContent = text;
     return node;
   }
-  function excerpt(text, query) {
+  function matcher(query, matched) {
     var terms = words(query).filter(function (word) { return !stop.has(word); });
-    var lower = text.toLowerCase(), position = -1;
-    terms.some(function (word) { position = lower.indexOf(word); return position >= 0; });
+    return function (part) {
+      var word = normalize(part);
+      return word.length > 1 && (matched && matched.has(word)
+        || terms.some(function (term) { return term.length > 1 && word.startsWith(term); }));
+    };
+  }
+  function excerpt(text, isMatch) {
+    // Start near the passage with the most distinct matched words.
+    var hits = [], found, pattern = /[A-Za-z0-9]+/g;
+    while ((found = pattern.exec(text))) if (isMatch(found[0])) hits.push({at: found.index, word: normalize(found[0])});
+    var position = -1, most = 0;
+    hits.forEach(function (hit) {
+      var near = new Set(hits.filter(function (other) { return other.at >= hit.at && other.at < hit.at + 120; })
+        .map(function (other) { return other.word; }));
+      if (near.size > most) { most = near.size; position = hit.at; }
+    });
     var start = Math.max(0, position - 65);
     if (start) start = text.indexOf(" ", start) + 1;
     var snippet = text.slice(start, start + 185);
     if (start + 185 < text.length) snippet = snippet.replace(/\s+\S*$/, "") + "…";
     return (start ? "…" : "") + snippet;
   }
-  function highlighted(text, query) {
+  function highlighted(text, isMatch) {
     var fragment = document.createDocumentFragment();
-    var terms = words(query).filter(function (word) { return !stop.has(word); });
     // Split without altering offsets in the displayed text; punctuation stays.
     text.split(/([a-zA-Z0-9]+)/).forEach(function (part) {
-      if (terms.some(function (word) { return word.length > 1 && normalize(part).startsWith(word); })) {
-        fragment.appendChild(element("mark", "", part));
-      } else fragment.appendChild(document.createTextNode(part));
+      if (isMatch(part)) fragment.appendChild(element("mark", "", part));
+      else fragment.appendChild(document.createTextNode(part));
     });
     return fragment;
   }
@@ -288,18 +358,20 @@
       if (normalize(query).length < 2) { status.textContent = "Type at least two letters or numbers."; return; }
       var results = search(query), shown = results.slice(0, 8);
       status.textContent = results.length ? (results.length > 8 ? "Showing 8 of " + results.length + " results." : results.length + (results.length === 1 ? " result." : " results.")) : "No matching sections. Try fewer words or a different topic. The task links on How do I…? can also help.";
-      if (results.unknownError) status.textContent = "This exact error is not covered in the guide. These sections explain how to read it and get help.";
+      var isMatch = results.none || results.policy ? function () { return false; } : matcher(query, results.highlight);
+      if (results.none) status.textContent = "No matching sections. Try fewer or different words, or start from one of these pages.";
+      else if (results.unknownError) status.textContent = "This exact error is not covered in the guide. These sections explain how to read it and get help.";
       else if (results.policy) status.textContent = "For institutional policy, check the current official resources.";
       else if (results.related) status.textContent = "Related sections found for part of your question. Try fewer words to narrow the search.";
       shown.forEach(function (result) {
         var entry = result.entry, item = element("li", "", ""), link = element("a", "search-result", "");
         link.href = new URL(entry.href, root).href;
         var title = element("span", "search-result-title", "");
-        title.appendChild(highlighted(entry.title, query));
+        title.appendChild(highlighted(entry.title, isMatch));
         link.appendChild(element("span", "search-result-page", entry.page + (entry.kind === "message" ? " / Common messages" : "")));
         link.appendChild(title);
         var summary = element("span", "search-result-text", "");
-        summary.appendChild(highlighted(excerpt(entry.text, query), query));
+        summary.appendChild(highlighted(excerpt(entry.text, isMatch), isMatch));
         link.appendChild(summary);
         item.appendChild(link);
         list.appendChild(item);
@@ -366,6 +438,11 @@
     });
     document.addEventListener("keydown", function (event) {
       if ((event.ctrlKey || event.metaKey) && !event.altKey && event.key.toLowerCase() === "k") {
+        event.preventDefault(); openSearch();
+      } else if (event.key === "/" && !event.ctrlKey && !event.metaKey && !event.altKey && !event.isComposing && !dialog.open) {
+        // "/" also opens search, unless the reader is typing somewhere.
+        var target = event.target;
+        if (target && (target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName))) return;
         event.preventDefault(); openSearch();
       }
     });
