@@ -19,7 +19,8 @@ from urllib.parse import quote, unquote, urlsplit
 import zipfile
 
 from build import active_sources
-from build_site import OFFLINE_CHEATSHEET, ROOT, build_site, class_version
+from build_site import OFFLINE_CHEATSHEET, build_site
+from common import ROOT, class_version, site_config
 
 # Everything a student needs, and nothing for maintainers (no AGENTS.md,
 # CLAUDE.md, site tooling, docs/ Markdown, or docs/project/). RPI's seal and
@@ -157,7 +158,7 @@ Education. Check the current OGE requirements before you submit.
 
 def site_setting(key, what):
     """An address from site/site.json, the one place to change it."""
-    config = json.loads((ROOT / "site/site.json").read_text(encoding="utf-8"))
+    config = site_config(ROOT)
     url = config.get(key)
     if not isinstance(url, str) or not url.strip().startswith("https://"):
         raise SystemExit(f"site/site.json: set {key} to {what} (an https:// address) before packaging.")

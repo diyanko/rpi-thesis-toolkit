@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 """Make the test PDFs for the "Check your PDF" page (site/pdf-check/).
 
-    python3 scripts/pdf_fixtures.py OUT_FOLDER [NAME ...]
+    python3 scripts/tests/pdf_fixtures.py OUT_FOLDER [NAME ...]
 
 Compiles the starter, a few variants of it that break one formatting point
 each, and small documents from other classes, in parallel, in a temporary
-folder, and copies each PDF to OUT_FOLDER/NAME.pdf. scripts/test_pdf_check.py
+folder, and copies each PDF to OUT_FOLDER/NAME.pdf. test_pdf_check.py (beside it)
 uses them; nothing here is tracked. Needs TeX Live (latexmk, pdfLaTeX,
 LuaLaTeX, Biber). Python standard library only.
 """
+import argparse
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import shutil
@@ -16,7 +17,9 @@ import subprocess
 import sys
 import tempfile
 
-ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # scripts/
+from common import ROOT  # noqa: E402
+
 STARTER = ["main.tex", "metadata.tex", "preamble.tex", "rpi-thesis.cls", "references.bib", "latexmkrc"]
 STARTER_FOLDERS = ["chapters", "frontmatter", "appendices", "assets", "figures"]
 
@@ -191,20 +194,21 @@ def make(out, names=None, jobs=6):
 
 
 def main():
-    if len(sys.argv) < 2:
-        print(__doc__.strip())
-        return 2
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("out", metavar="OUT_FOLDER", help="where each NAME.pdf goes")
+    parser.add_argument("names", nargs="*", metavar="NAME",
+                        help="fixtures to make (default: all): " + ", ".join(FIXTURES))
+    args = parser.parse_args()
+    unknown = [name for name in args.names if name not in FIXTURES]
+    if unknown:
+        parser.error("unknown fixture(s): " + ", ".join(unknown))
     if not tex_available():
         print("pdf_fixtures.py: needs latexmk, pdflatex, lualatex and biber (TeX Live).")
         return 1
-    unknown = [name for name in sys.argv[2:] if name not in FIXTURES]
-    if unknown:
-        print("pdf_fixtures.py: unknown fixture(s): " + ", ".join(unknown) + "; known: " + ", ".join(FIXTURES))
-        return 2
-    errors = make(sys.argv[1], sys.argv[2:] or None)
+    errors = make(args.out, args.names or None)
     for name, error in errors.items():
         print(f"FAIL {name}: {error}")
-    print(f"pdf_fixtures: {len(sys.argv[2:] or FIXTURES) - len(errors)} PDFs in {sys.argv[1]}, {len(errors)} failed")
+    print(f"pdf_fixtures: {len(args.names or FIXTURES) - len(errors)} PDFs in {args.out}, {len(errors)} failed")
     return 1 if errors else 0
 
 

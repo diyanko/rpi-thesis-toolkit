@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for the OGE page watch in health.py, against a local web server. Stdlib only.
 
-    python3 scripts/test_health.py
+    python3 scripts/tests/test_health.py
 
 Nothing leaves this computer: every watched page is served from 127.0.0.1, and
 oge-watch.json is a temporary copy.
@@ -17,7 +17,7 @@ import threading
 import time
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # scripts/
 import health  # noqa: E402
 
 PAGE = """<!doctype html><html><body><nav><a href="/elsewhere">menu</a></nav>
@@ -119,7 +119,7 @@ class WatchTest(unittest.TestCase):
     def test_check_fails_when_page_missing_from_baseline(self):
         self.record()
         data = json.loads(health.WATCH_FILE.read_text(encoding="utf-8"))
-        health.WATCH_FILE.write_text(json.dumps({"https://example.org/other": data.popitem()[1]}))
+        health.WATCH_FILE.write_text(json.dumps({"https://example.org/other": data.popitem()[1]}), encoding="utf-8")
         self.assertEqual(self.watch("/watch")[1], 1)
 
     def test_malformed_nested_records_fail_and_can_be_repaired(self):
@@ -130,7 +130,7 @@ class WatchTest(unittest.TestCase):
                           {"links": [], "text": "short hash"}):
             with self.subTest(record=malformed):
                 self.record()
-                health.WATCH_FILE.write_text(json.dumps({self.base + "/watch": malformed}))
+                health.WATCH_FILE.write_text(json.dumps({self.base + "/watch": malformed}), encoding="utf-8")
                 report, problems = self.watch("/watch")
                 self.assertEqual(problems, 1, report)
                 self.assertIn("No recorded baseline", report[0])

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Tests for scripts/release.py against a fake GitHub and website. Stdlib only.
 
-    python3 -m unittest discover -s scripts -p "test_*.py"
+    python3 -m unittest discover -s scripts/tests
 """
 
 import hashlib
@@ -13,7 +13,9 @@ import unittest
 import urllib.error
 import zipfile
 from pathlib import Path
+import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # scripts/
 import release
 from release import Config, Net, NetworkError, ReleaseError
 
@@ -676,7 +678,7 @@ class Notes(unittest.TestCase):
     def test_notes_use_site_json_address(self):
         with tempfile.TemporaryDirectory() as folder:
             root = Path(folder)
-            (root / "CHANGELOG.md").write_text("# Changes\n\n## 0.6.0 (beta)\n\n- Fixed a thing.\n\n## 0.5.0\n\n- Old.\n")
+            (root / "CHANGELOG.md").write_text("# Changes\n\n## 0.6.0 (beta)\n\n- Fixed a thing.\n\n## 0.5.0\n\n- Old.\n", encoding="utf-8")
             text = release.notes_text(CFG, version="0.6.0", root=root)
         self.assertIn(CFG.site, text)
         self.assertIn("Fixed a thing.", text)

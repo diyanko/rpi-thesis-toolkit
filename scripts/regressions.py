@@ -24,7 +24,8 @@ import sys
 import tempfile
 import time
 
-ROOT = Path(__file__).resolve().parents[1]
+from common import ROOT
+
 sys.dont_write_bytecode = True  # never leave __pycache__ in the repository
 
 TIMEOUT = 420  # seconds for any one command
@@ -154,7 +155,7 @@ def case_deep_include(proj, work):
     """Audit: latexmkrc did not create output folders for deeply nested chapters."""
     deep = proj / "chapters/a/b/c/d/e"
     deep.mkdir(parents=True)
-    (deep / "deep.tex").write_text("\\chapter{DEEPCHAPTER}\nDeep text.\n")
+    (deep / "deep.tex").write_text("\\chapter{DEEPCHAPTER}\nDeep text.\n", encoding="utf-8")
     replace_once(proj / "main.tex", "\\thesisreferences",
                  "\\include{chapters/a/b/c/d/e/deep}\n\\thesisreferences")
     code, out = editor_build(proj, work)
@@ -240,7 +241,7 @@ def make_fullcite(style):
         check(match is not None, "fixture drift: no \\label in 02-research.tex")
         attribution = "\\chapterattribution{Portions of this chapter have previously appeared as: %s.}\n" % (
             "; ".join("\\fullcite{%s}" % key for key, _, _ in FULLCITE_KEYS))
-        chapter.write_text(text[:match.end()] + attribution + text[match.end():])
+        chapter.write_text(text[:match.end()] + attribution + text[match.end():], encoding="utf-8")
 
         code, out = latexmk(proj, work)
         check(code == 0, "latexmk (%s) exited %d: %s" % (style, code, tail(out)))
@@ -345,10 +346,10 @@ package.ROOT = proj   # read the copy, never the real repository
 names = set(package.FILES)
 package.verify_archive("starter ZIP", names)  # the unmodified sample is complete
 extra = "chapters/04-extra.tex"
-(proj / extra).write_text("\\chapter{EXTRA}\nText.\n")
+(proj / extra).write_text("\\chapter{EXTRA}\nText.\n", encoding="utf-8")
 main = proj / "main.tex"
-main.write_text(main.read_text().replace(
-    "\\thesisreferences", "\\include{chapters/04-extra}\n\\thesisreferences", 1))
+main.write_text(main.read_text(encoding="utf-8").replace(
+    "\\thesisreferences", "\\include{chapters/04-extra}\n\\thesisreferences", 1), encoding="utf-8")
 assert extra not in names
 try:
     package.verify_archive("starter ZIP", names)  # \\include'd chapter missing from FILES
@@ -572,8 +573,8 @@ def case_verify_auto_mode(proj, work):
 
     expect("full", "not a git checkout")
     git("init", "-q", "-b", "trunk")
-    (repo / "docs/page.md").write_text("text\n")
-    (repo / "scripts/tool.py").write_text("x = 1\n")
+    (repo / "docs/page.md").write_text("text\n", encoding="utf-8")
+    (repo / "scripts/tool.py").write_text("x = 1\n", encoding="utf-8")
     git("add", "-A")
     git("commit", "-q", "-m", "base")
     expect("full", "no main branch")
@@ -581,31 +582,31 @@ def case_verify_auto_mode(proj, work):
     expect("full", "clean main")
     git("checkout", "-q", "-b", "feature")
     expect("full", "clean feature branch")
-    (repo / "docs/page.md").write_text("changed\n")
+    (repo / "docs/page.md").write_text("changed\n", encoding="utf-8")
     expect("quick", "unstaged guide change")
     git("commit", "-q", "-am", "guide")
     expect("quick", "committed guide change")
-    (repo / "scripts/tool.py").write_text("x = 2\n")
+    (repo / "scripts/tool.py").write_text("x = 2\n", encoding="utf-8")
     expect("full", "unstaged script change")
     git("add", "scripts/tool.py")
     expect("full", "staged script change")
     git("reset", "-q", "--hard")
-    (repo / "scripts/new.py").write_text("")
+    (repo / "scripts/new.py").write_text("", encoding="utf-8")
     expect("full", "untracked script")
     git("add", "scripts/new.py")
     expect("full", "staged new script")
     git("reset", "-q", "--hard")
-    (repo / "docs/new.md").write_text("new\n")
+    (repo / "docs/new.md").write_text("new\n", encoding="utf-8")
     expect("quick", "untracked guide page")
     (repo / "docs/new.md").unlink()
     git("mv", "scripts/tool.py", "docs/tool.md")
     git("commit", "-q", "-m", "rename")
     expect("full", "script renamed to a guide page")
     git("reset", "-q", "--hard", "HEAD~1")
-    (repo / "docs/bring-your-draft.md").write_text("recipe\n")
+    (repo / "docs/bring-your-draft.md").write_text("recipe\n", encoding="utf-8")
     expect("full", "guide page that a regression case compiles")
     (repo / "docs/bring-your-draft.md").unlink()
-    (repo / "docs/page.md").write_text("again\n")
+    (repo / "docs/page.md").write_text("again\n", encoding="utf-8")
     real = verify.git
     for failing in ("diff", "ls-files"):
         def broken(*args, cwd=verify.ROOT, failing=failing):
@@ -627,7 +628,7 @@ def case_verify_exact_zips(proj, work):
         root = work / current
         (root / "dist").mkdir(parents=True)
         (root / "rpi-thesis.cls").write_text(
-            "\\ProvidesClass{rpi-thesis}[2026/10/16 v%s RPI community thesis starter]\n" % current)
+            "\\ProvidesClass{rpi-thesis}[2026/10/16 v%s RPI community thesis starter]\n" % current, encoding="utf-8")
         for version in (older, current):
             for kind in ("starter", "overleaf"):
                 (root / ("dist/rpi-thesis-%s-v%s.zip" % (kind, version))).write_bytes(b"")
@@ -819,7 +820,7 @@ def make_bib_output(style, own_setting=False):
                 "\\caption{A figure reproduced from \\textcite{whit2}.}\n"
                 "\\end{figure}\n\n"
                 "Last: \\parencite{akey}.\n\n")
-        chapter.write_text(text[:match.end()] + attribution + body + text[match.end():])
+        chapter.write_text(text[:match.end()] + attribution + body + text[match.end():], encoding="utf-8")
 
         code, out = latexmk(proj, work)
         check(code == 0, "latexmk (%s) exited %d: %s" % (style, code, tail(out)))
@@ -987,19 +988,20 @@ def main():
         return 2
     if not (PdfReader or shutil.which("pdftotext")) and any(CASES[n][2] for n in names):
         print("Note: pypdf is not installed; PDF-text checks will be skipped.")
-    failures = 0
+    failures = skips = 0
     started = time.time()
     with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:
         for name, status, detail, elapsed in pool.map(lambda n: run_case(n, args.keep), names):
             if status == "PASS":
                 print("PASS %s (%.1fs)" % (name, elapsed))
             elif status == "SKIP":
+                skips += 1
                 print("SKIP %s (%s)" % (name, detail))
             else:
                 failures += 1
                 print("FAIL %s: %s" % (name, detail))
             sys.stdout.flush()
-    print("%d case(s), %d failed, %.0fs total" % (len(names), failures, time.time() - started))
+    print("%d case(s), %d failed, %d skipped, %.0fs total" % (len(names), failures, skips, time.time() - started))
     return 1 if failures else 0
 
 

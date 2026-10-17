@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Tests for the "Check your PDF" checks (site/pdf-check/core.js).
 
-    python3 scripts/test_pdf_check.py
+    python3 scripts/tests/test_pdf_check.py
 
-Compiles the test PDFs of scripts/pdf_fixtures.py (the starter, variants that
+Compiles the test PDFs of scripts/tests/pdf_fixtures.py (the starter, variants that
 break one point each, and documents from other classes) in a temporary
 folder, runs the checks on each in headless Chrome exactly as the page does
 (scripts/check_pdfs.py), and compares every check's result with the table
-below. Skipped when Chrome or TeX Live is missing. Standard library only.
+below. Skipped when Chrome or TeX Live is missing; with both present, a
+fixture that does not compile is an error. Standard library only.
 """
 import json
 from pathlib import Path
@@ -15,8 +16,9 @@ import sys
 import tempfile
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # scripts/
 import check_pdfs  # noqa: E402
+from chrome import Chrome  # noqa: E402
 import pdf_fixtures  # noqa: E402
 
 OK, DIFFERS, CHECK, UNKNOWN, INFO = "ok", "differs", "check", "unknown", "info"
@@ -100,7 +102,7 @@ class CheckPdf(unittest.TestCase):
     def setUpClass(cls):
         folder, cls.errors = fixtures()
         made = [name for name in EXPECTED if name not in cls.errors]
-        results = check_pdfs.check([str(folder / f"{name}.pdf") for name in made], current=check_pdfs.class_version())
+        results = check_pdfs.check([str(folder / f"{name}.pdf") for name in made], current=check_pdfs.class_version()[0])
         cls.results = {Path(pdf).stem: found for pdf, found in results}
 
     def found(self, name):
@@ -176,14 +178,9 @@ class Measurements(unittest.TestCase):
     """The analysis alone, on page data written by hand."""
 
     def evaluate(self, expression):
-        server = check_pdfs.Server(check_pdfs.ROOT / "site")
-        browser = check_pdfs.Chrome(check_pdfs.find_chrome())
-        try:
-            browser.open(server.url + "/__pdf_check__.html")
+        with check_pdfs.server(check_pdfs.ROOT / "site") as site, Chrome(check_pdfs.find_chrome()) as browser:
+            browser.open(site.url + "/__pdf_check__.html")
             return browser.evaluate(expression)
-        finally:
-            browser.close()
-            server.close()
 
     def analyse(self, data):
         found = self.evaluate(f"PdfCheckCore.analyse({json.dumps(data)}, {{current: '0.7.0', rules: {check_pdfs.RULES}}})")
@@ -345,11 +342,12 @@ class Upload(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         folder, errors = fixtures()
-        if {"starter", "a4-paper", "many-pages"} & set(errors):
-            raise unittest.SkipTest("the fixtures did not compile")
+        failed = {"starter", "a4-paper", "many-pages"} & set(errors)
+        if failed:  # TeX is here, so a fixture that does not compile is an error, never a skip
+            raise AssertionError("fixtures did not compile: " + "; ".join(f"{n}: {errors[n]}" for n in sorted(failed)))
         names = ["starter", "a4-paper", "many-pages"]
-        cls.server = check_pdfs.Server(check_pdfs.ROOT / "site", [folder / f"{name}.pdf" for name in names])
-        cls.browser = check_pdfs.Chrome(check_pdfs.find_chrome())
+        cls.server = check_pdfs.server(check_pdfs.ROOT / "site", [folder / f"{name}.pdf" for name in names])
+        cls.browser = Chrome(check_pdfs.find_chrome())
 
     @classmethod
     def tearDownClass(cls):

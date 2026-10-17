@@ -26,9 +26,9 @@ import posixpath
 import re
 import subprocess
 import sys
-from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
+from common import ROOT
+
 SOURCE = "docs/project/requirements.md"
 LABELLED = re.compile(r"`([a-z][a-z0-9]*(?:-[a-z0-9]+)*)` +(\S.*)")  # `page-size` US letter, ...
 KINDS = {"Rule": "Manual", "Measure": "pt"}  # first column -> the column that marks the table
