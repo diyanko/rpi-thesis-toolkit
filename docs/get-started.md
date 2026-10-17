@@ -14,7 +14,7 @@ Have a draft? Do these steps first, then [bring your draft](bring-your-draft.md)
 Still drafting elsewhere? That is fine
 ([the suggested workflow](how-it-works.md#the-suggested-workflow-and-why)).
 
-## Step 1: Choose your LaTeX workspace
+## Step 1: Choose your LaTeX workspace {#step-1-choose-your-latex-workspace}
 
 This is where your thesis becomes a PDF. With the same files, engine,
 packages, and fonts, both make the same PDF, and your first checkpoint is the
@@ -35,7 +35,7 @@ with you. Overleaf suits you if you would rather install nothing or want to
 co-edit in real time. Either is your choice, not an OGE requirement, and you
 can [switch later](going-further.md#use-your-computer-and-overleaf).
 
-## Step 2: Get the files
+## Step 2: Get the files {#step-2-get-the-files}
 
 <!-- Maintainer: scripts/bump.py moves the download link in this step and
 the Overleaf link in Step 3b to the new tag, and build_site.py stops if they
@@ -65,7 +65,7 @@ project. You can ignore `docs/` and `site/`.
 Next: [set up your computer](#step-3a-your-computer-route) or
 [open the starter on Overleaf](#step-3b-overleaf-route).
 
-## Step 3a: Your-computer route
+## Step 3a: Your-computer route {#step-3a-your-computer-route}
 
 On Overleaf? Skip to [Step 3b](#step-3b-overleaf-route).
 
@@ -158,7 +158,7 @@ For VS Code, use the `.deb` or `.rpm`, not the Flatpak, which
 
 </details>
 
-### Other editors
+### Other editors {#other-editors}
 
 Any editor with a LaTeX extension can compile this starter, including AI
 assistants that can edit files and open a local folder. Open the folder that
@@ -197,7 +197,7 @@ BibTeX in its menus), then compiles twice more.
 
 Then go to [Step 4](#step-4-check-your-first-pdf).
 
-## Step 3b: Overleaf route
+## Step 3b: Overleaf route {#step-3b-overleaf-route}
 
 1. Sign in to [Overleaf](https://www.overleaf.com/); the free plan is enough
    to start.
@@ -248,7 +248,7 @@ the installation, not from your edits. You should see a title page reading "YOUR
 placeholder, the contents, and three short chapters. Can't find the PDF? See
 [where the PDF ends up](how-it-works.md#where-the-pdf-ends-up).
 
-### Add the RPI seal (one minute)
+### Add the RPI seal (one minute) {#add-the-rpi-seal-one-minute}
 
 The seal belongs to RPI, so this unofficial starter doesn't include it.
 
@@ -260,7 +260,7 @@ The seal belongs to RPI, so this unofficial starter doesn't include it.
 
 ## Step 5: Make it yours
 
-### Put your name on it
+### Put your name on it {#put-your-name-on-it}
 
 Open **`metadata.tex`** and replace the value after each `=`. Keep the
 setting names, braces, and commas. Check `degree`: write `masters` for a

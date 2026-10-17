@@ -34,7 +34,7 @@ Where the errors are:
 Compile after each small change so you know what caused a problem. A warning
 still produces a PDF, but review warnings before you submit.
 
-## Read an error message
+## Read an error message {#read-an-error-message}
 
 LaTeX errors look long, but the useful part is short. This is the real error
 from the sample thesis after one typo, `\parencit` instead of `\parencite` in
@@ -56,7 +56,7 @@ l.13 example~\parencit
 Fix: write `\parencite{lamport1994}` and compile again. With several errors, fix
 only the first; the later ones are often side effects.
 
-### Ask an AI chat to explain it
+### Ask an AI chat to explain it {#ask-an-ai-chat-to-explain-it}
 
 An AI chat is a quick way to decode a cryptic error. Paste the first error and
 the few lines around it (or the whole log from your editor or Overleaf), and
@@ -73,7 +73,7 @@ More, including assistants that can edit your files and
 [AI for technical help](going-further.md#use-ai-for-technical-help). A web search
 or [Overleaf Learn](https://www.overleaf.com/learn) works too.
 
-## Clean recompile
+## Clean recompile {#clean-recompile}
 
 A clean recompile throws away LaTeX's scratch files and builds everything
 again. Try it when the PDF will not update, numbers stay as **??**, or an error
@@ -103,7 +103,7 @@ looks impossible. It never changes your writing.
 Switch engine only to fix characters pdfLaTeX cannot handle, then check
 the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 
-## Common messages
+## Common messages {#common-messages}
 
 ### Setup and files
 
@@ -169,7 +169,7 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 Please don't make an error disappear by changing margins, spacing, or the
 class file. Adjust the object instead, or ask for help.
 
-## Ask for help
+## Ask for help {#ask-for-help}
 
 Stuck on something odd? Every question helps the next student, and questions
 about LaTeX, Zotero, files, or "where does this go?" are all welcome.

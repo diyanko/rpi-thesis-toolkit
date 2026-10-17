@@ -9,7 +9,7 @@ You type or paste your text, and one file of formatting rules (the *class
 file*, `rpi-thesis.cls`) keeps headings, numbering, and spacing consistent.
 You still check the PDF.
 
-## Why LaTeX for a thesis
+## Why LaTeX for a thesis {#why-latex-for-a-thesis}
 
 Keep your attention on the chapter you are writing. Let shared rules handle
 the repetition.
@@ -216,7 +216,7 @@ An AI chat can help you get unstuck, as one route beside web search and
 [community help](troubleshooting.md#ask-for-help)
 ([AI for technical help](going-further.md#use-ai-for-technical-help)).
 
-## Your words and your formatting are separate
+## Your words and your formatting are separate {#your-words-and-your-formatting-are-separate}
 
 Each chapter is its own file, your sources live in `references.bib`, and your
 images live in `figures/`. One more file, `rpi-thesis.cls`, is the **formatting
@@ -293,7 +293,7 @@ passes until the output stops changing (via a tool called `latexmk`). The extra
 files (`.aux`, `.bbl`, `.toc`, ...) are scratch notes you never edit; the
 `.log` file holds the full error messages and is worth reading.
 
-## Bold citation keys and question marks
+## Bold citation keys and question marks {#bold-citation-keys-and-question-marks}
 
 These are LaTeX saying "I haven't finished filling this in yet". Start with
 your editor's compile ([your computer](get-started.md#step-3a-your-computer-route)
@@ -308,7 +308,7 @@ in TeXShop, TeXworks, or TeXstudio, follow the
 | **??** where a number should be | The `\ref{}` label is not known yet | Compile again. If it stays, check `\label{}` and `\ref{}` |
 | An empty or outdated contents page | Written on one pass, read on the next | Compile again |
 
-## Where the PDF ends up
+## Where the PDF ends up {#where-the-pdf-ends-up}
 
 | How you compile | Your PDF |
 | --- | --- |
@@ -328,7 +328,7 @@ both use matching files, engine, packages, and fonts. Overleaf lets you choose
 the TeX distribution version in its settings.
 To move or use both, see [going further](going-further.md#use-your-computer-and-overleaf).
 
-## The suggested workflow, and why
+## The suggested workflow, and why {#the-suggested-workflow-and-why}
 
 A thesis is not just a document you format at the end. This is one way to
 connect drafting, advisor feedback, sources, and figures. It is a suggestion,
@@ -371,7 +371,7 @@ can swap out.
 
 More recipes are in [going further](going-further.md).
 
-### Draft where you and your advisor can work comfortably
+### Draft where you and your advisor can work comfortably {#draft-where-you-and-your-advisor-can-work-comfortably}
 
 Use what lets you and your advisor read, comment, and revise without
 friction; you don't need a new app to start. If you are choosing, this guide
