@@ -112,6 +112,13 @@ With the maintainer's OK for each push:
   the last release.
 - **Class, starter, script, or CI change:** a branch and pull request; merge
   when CI passes. Class changes reach students only with a release.
+- **Pull requests use auto-merge:** after opening one, run
+  `gh pr merge --auto --rebase`; it merges when CI passes. After it merges,
+  run `python3 scripts/tidy.py --apply` (dry run without `--apply`) to remove
+  merged branches and worktrees.
+- **Releases are batched:** guide fixes deploy on push; class and starter
+  changes collect under `## Unreleased` and ship together when they matter to
+  students.
 
 ## Recipes
 
@@ -134,6 +141,14 @@ Short, repeatable tasks. Follow them as written; each ends with verify.
   rule moved, run `python3 scripts/health.py --update`, and commit
   `scripts/oge-watch.json`; for a TeX Live failure, fix the class or starter
   before students meet it.
+- **External review:** before opening a PR, if the Codex CLI is installed
+  (optional for contributors), run `codex exec -s read-only "Review the
+  uncommitted changes (git diff HEAD) in this repo; read AGENTS.md; report
+  concrete defects with file:line and a failure scenario, most severe first"
+  < /dev/null`. Fix or note each finding.
+- **Visual change:** run `python3 scripts/ui_check.py --baseline compare`
+  before you finish, look at what changed, and after the changes are
+  accepted run `--baseline save`.
 - **Update pinned tools:** follow "Updating pinned tools" in
   [maintenance](docs/project/maintenance.md#updating-pinned-tools).
 

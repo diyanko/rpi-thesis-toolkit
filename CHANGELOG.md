@@ -10,6 +10,36 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
 
+## Unreleased
+
+**Changes your PDF?** Only if you compile with LuaLaTeX or XeLaTeX and use
+one of the 24 AMS symbols listed below: they printed as blank space before
+and now appear. Recompile and check the pages that use them. pdfLaTeX does
+not change.
+
+- **AMS symbols no longer print blank on LuaLaTeX and XeLaTeX.** The math
+  font lacks `\bigstar`, `\Finv`, `\Game`, `\digamma`, `\backepsilon`,
+  `\pitchfork`, `\Join`, `\doublebarwedge`, `\blacktriangle`,
+  `\vartriangle`, `\blacktriangledown`, `\triangledown`, `\diagup`,
+  `\diagdown`, `\precneqq`, `\succneqq`, `\precapprox`, `\succapprox`,
+  `\precnapprox`, `\succnapprox`, `\subseteqq`, `\supseteqq`,
+  `\subsetneqq`, and `\supsetneqq`. The class now takes just these from
+  STIX Two Math, a Times-style math font included in TeX Live and Overleaf.
+- **Check your PDF:** a new optional guide page,
+  [Check your PDF](docs/check-pdf.md), reads your PDF in your browser (it is
+  never uploaded) and reports paper size, page numbering and its position,
+  level-1 heading position, side margins, contents entries, and the toolkit
+  version, each with the manual section it comes from. It is not an OGE
+  review.
+- **Reviewer checklist:** a two-page [checklist](docs/reviewer-checklist.md)
+  for advisors, committee members, and OGE reviewers: what the class sets,
+  what still needs a look, and where students record exceptions. Guide pages
+  with long tables now print without a blank half page.
+- **Search** understands more words (acronyms, landscape, glossary, Mendeley)
+  and pasted LaTeX warnings, highlights what matched, and opens with `/`.
+- **AI prompts to copy** for setting up, fixing an error, converting to
+  LaTeX, and suggesting a change: [Going further](docs/going-further.md#prompts-to-copy).
+
 ## 0.6.0 (beta), 16 Oct 2026
 
 Published as the pre-release `v0.6.0`.

@@ -111,6 +111,15 @@ title-page change, run it with `assets/rpi-seal.jpg` and with the file moved
 aside (as in CI). Parsed PDF text cannot judge layout, so also look at the
 pages. For visible website changes, run `python3 scripts/ui_check.py --shots`.
 
+`python3 scripts/ui_check.py --baseline save` keeps the current screenshots in
+`_local/shots/baseline/`; `--baseline compare` takes new ones and lists which
+pages, widths, and themes changed (informational, exit status unaffected).
+
+After a pull request merges, `python3 scripts/tidy.py` lists local branches
+and worktrees already merged into `origin/main`; `--apply` removes them. It
+never touches `main`, the current worktree, unmerged work, locked worktrees,
+or anything with uncommitted changes.
+
 One writer per checkout. A second agent or person works in its own git
 worktree and branch, or owns separate files.
 
@@ -191,8 +200,13 @@ once `repository_url` is set in `site/site.json`. The footer edition line is
 read from `docs/project/sources.json` and the `\ProvidesClass` line.
 
 The website works without JavaScript. The optional scripts in `site/`
-(`copy.js`, `viewer.js`, `theme.js`, `search.js` and its generated index) are
-enhancements; search runs in the browser and sends nothing anywhere. Light and
+(`copy.js`, `viewer.js`, `theme.js`, `search.js` and its generated index,
+`pdf-check.js`) are enhancements; search runs in the browser and sends nothing
+anywhere. `pdf-check.js` (the "Check your PDF" page) reads a student's PDF in
+the browser with pdf.js, downloaded from cdnjs at a pinned version and checked
+against its SHA-384 hash; to update it, follow the comment at the top of the
+script. Its checks mirror `check.py`; when a measurement there changes, change
+the script too. Light and
 dark colors live in section 2 of `site/site.css`; check both themes when
 changing them. `--previews` compiles the sample thesis and saves PNG pages
 (never the title page) and needs TeX Live and poppler. The site may contain
@@ -215,11 +229,16 @@ Three workflows in `.github/workflows/`:
 - `build.yml` verifies every pull request and push. A push to `main` deploys
   the website when `scripts/release.py gate` allows it: the commit is still
   the tip of `main`, its version is the newest published release, and the
-  starter's interface files (`rpi-thesis.cls`, `main.tex`, `metadata.tex`,
-  `preamble.tex`, `latexmkrc`, `scripts/build.py`) equal the released starter
-  ZIP's. So guide fixes go live at once, starter changes wait for a release,
-  and a delayed or older run never replaces a newer site. The gate runs again
-  just before publishing. A pushed `vX.Y.Z` tag releases (below).
+  starter ZIP built in this run equals the released one in every file except
+  the offline guide and cheat sheet (`guide/`, `START-HERE.html`,
+  `rpi-thesis-cheatsheet.pdf`); added or removed files count as differences.
+  So guide fixes go live at once and starter changes wait for a release.
+  Every deploy, from `main` or a tag, also reads the live `build.txt` and
+  refuses when GitHub's compare API shows the live commit is newer than this
+  one (or on a different line of history), unless **rollback** is set; a
+  missing `build.txt` counts as the first deploy. So a delayed, re-run, or
+  older run never replaces a newer site. The gate runs again inside the Pages
+  lock just before publishing. A pushed `vX.Y.Z` tag releases (below).
 - `fresh-machines.yml` installs TeX on new Windows, macOS, and Ubuntu machines
   the way the guide says and compiles the starter: on each release tag, once a
   month, and on demand. It never blocks a release.
@@ -321,9 +340,14 @@ vX.Y.Z`), and it runs again; once assets are published, make a new patch
 release instead. A tag older than the newest release never deploys.
 **Rollback:** Actions, **Build thesis, website, and starter ZIP**, Run
 workflow on the older tag with **rollback** ticked; the next deploy from
-`main` replaces it. Never re-run workflow runs from before 17 Oct 2026: they
-use the old deploy rule. The `github-pages` environment allows `main` and
-`v*` tags to deploy.
+`main` replaces it. A run on a tag uses that tag's own `build.yml` and
+`release.py`, so rollback works only on tags v0.6.0 and later. Tags before
+v0.6.0 have no rollback input and an unsafe deploy rule: never re-run or
+dispatch their runs. To undo a change from such a release, revert it on
+`main` and make a new patch release. Re-running a tag run without rollback is
+safe from the first release after v0.6.0 on (the live-site check); a v0.6.0
+re-run can still replace a newer guide fix from `main`. The `github-pages`
+environment allows `main` and `v*` tags to deploy.
 
 ## Roadmap and not yet covered
 
