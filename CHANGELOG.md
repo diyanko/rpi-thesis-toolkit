@@ -10,7 +10,9 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
 
-## Unreleased
+## 0.8.1 (beta), 17 Oct 2026
+
+Published as the pre-release `v0.8.1`.
 
 **Changes your PDF?** No.
 
