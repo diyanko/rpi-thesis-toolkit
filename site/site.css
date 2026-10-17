@@ -48,6 +48,34 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
+/* Atkinson Hyperlegible Next draws 0 with a slash and this subset has no
+   plain alternate. "Plain Zero" covers only the digit 0, from a plain sans
+   the device already has, and comes first in --font-body, so prose, tags
+   and the footer get a plain 0 and every other character stays Atkinson.
+   Code uses --font-mono and keeps its own zero. Without any of these fonts
+   installed, the slashed 0 stays. */
+@font-face {
+  font-family: "Plain Zero";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Arial"), local("ArialMT"), local("Helvetica Neue"), local("Liberation Sans"), local("Arimo");
+  unicode-range: U+0030;
+}
+@font-face {
+  font-family: "Plain Zero";
+  font-style: normal;
+  font-weight: 700;
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Helvetica Neue Bold"), local("Liberation Sans Bold"), local("Arimo Bold");
+  unicode-range: U+0030;
+}
+@font-face {
+  font-family: "Plain Zero";
+  font-style: italic;
+  font-weight: 400;
+  src: local("Arial Italic"), local("Arial-ItalicMT"), local("Helvetica Neue Italic"), local("Liberation Sans Italic"), local("Arimo Italic");
+  unicode-range: U+0030;
+}
+
 /* ---------- 2. Colors and sizes ----------------------------------------- */
 :root {
   color-scheme: light dark;
@@ -114,7 +142,7 @@
   --dark-checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%23a9c9a1' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 
   --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
-  --font-body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Plain Zero", "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 
   --radius: 14px;
@@ -262,8 +290,6 @@ p { margin: 0 0 1.1em; text-wrap: pretty; }
 strong, b { font-weight: 700; }
 
 code, kbd, pre { font-family: var(--font-mono); }
-body { font-feature-settings: "zero" 0; font-variant-numeric: normal; }   /* no slashed zeros in prose; code below keeps them */
-code, kbd, pre, samp { font-feature-settings: "zero" 1; }
 code {
   font-size: 0.86em;
   background: var(--paper-2);
@@ -303,7 +329,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   border-radius: 10px;
 }
 .skip-link:focus { top: 12px; }
-
 
 /* Read by screen readers, not shown */
 .visually-hidden {
@@ -556,19 +581,8 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 
 /* ---------- 6. Landing page --------------------------------------------- */
-/* Hero */
-.hero {
-  max-width: var(--page-max);
-  margin: 0 auto;
-  padding: clamp(16px, 3.5vw, 40px) var(--gutter) clamp(40px, 6vw, 80px);
-  display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-  gap: clamp(24px, 4vw, 56px);
-  align-items: center;
-}
-.hero h1 { max-width: 14ch; }
-.hero .squiggle { position: relative; white-space: nowrap; }
-.hero .squiggle::after {   /* a hand-drawn wave under the word; it draws itself once (section 11) */
+.home-top .squiggle { position: relative; white-space: nowrap; }
+.home-top .squiggle::after {   /* a hand-drawn wave under the word; it draws itself once (section 11) */
   content: "";
   position: absolute;
   left: 0; right: 0.05em;
@@ -579,259 +593,10 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
           mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 7'%3E%3Cpath d='M-1 4.2 C 2 1.6, 6 1.4, 10 3.5 S 17 5.6, 21 2.9' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left center / 0.4em 100%;
 }
 .lead { font-size: 1.25rem; line-height: 1.55; color: var(--ink-soft); max-width: 36ch; margin-bottom: 1.5em; }
-.hero-aside { margin: 1.3em 0 0; font-size: 1rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 0.25em 1.1em; }
-.hero-aside > span { white-space: nowrap; }   /* each question stays with its link */
-.hero-next { margin: 0.7em 0 0; font-size: 0.95rem; color: var(--muted); }   /* under "Get the starter", which downloads */
-.hero-next + .hero-aside { margin-top: 0.5em; }
-.hero-art { margin: 0; }
-.hero-art img { display: block; width: 100%; }
 
-/* Sections and bands */
-.section { padding: clamp(40px, 5vw, 64px) 0; }
-.section:not(.band) + .section:not(.band) { padding-top: 0; }   /* no doubled gap between two plain sections */
-.band { background: var(--paper-2); border-block: 1px solid var(--line); }
-.section-head { max-width: 46rem; margin-bottom: 2rem; }
-.section-head h2 { margin-top: 0; }
-.section-head p:last-child { color: var(--ink-soft); margin: 0; }
-
-/* Anatomy: the compile drawing sits beside the section heading */
-.anatomy-head {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
-  gap: clamp(20px, 4vw, 56px);
-  align-items: center;
-  margin-bottom: 2rem;
-}
-.anatomy-head .section-head { margin-bottom: 0; }
-.anatomy-flow { margin: 0; }
-.anatomy-flow img { display: block; width: 100%; height: auto; }
-@media (max-width: 860px) {
-  .anatomy-head { grid-template-columns: minmax(0, 1fr); }
-  .anatomy-flow { max-width: 360px; }
-}
-
-/* Your thesis, start to finish */
-.timeline-figure { margin: 0; }   /* as wide as the stage cards under it */
-.timeline-figure img { display: block; width: 100%; height: auto; }
-.guide-list-title { margin: clamp(2.2rem, 4vw, 3rem) 0 1.1rem; font-size: 1.35rem; }   /* the stage cards under the drawing */
-
-/* Pick your path */
-.routes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 36px;
-  isolation: isolate;
-}
-.route-card { --tint: var(--sage-wash); display: flex; flex-direction: column; }
-.route-card.local { --tint: var(--blue-wash); }
-.route-badge {   /* "Suggested for a full thesis", on the card's top border */
-  position: absolute;
-  top: 0; left: clamp(20px, 3vw, 30px);
-  transform: translateY(-50%);
-  margin: 0;
-  padding: 2px 12px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--blue);
-  background: var(--blue-wash);
-  border: 1.5px solid color-mix(in srgb, var(--blue) 45%, transparent);
-  border-radius: 999px;
-}
-.route-top { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
-.route-top > div { flex: 1 1 10rem; min-width: 0; }
-.route-top svg { width: 60px; height: 60px; flex: none; }
-.route-card h3 { margin: 0; font-size: 1.55rem; }
 .kicker { margin: 0; color: var(--muted); font-size: 1rem; }
-.best-if { margin: 1.1rem 0 1.2rem; padding: 0; list-style: none; }
-.best-if::before {
-  content: "Best if…";
-  display: block;
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--terra);
-  margin-bottom: 0.2em;
-}
-.best-if li { position: relative; padding-left: 30px; margin: 0.4em 0; }
-.best-if li::before {   /* hand-drawn check mark */
-  content: "";
-  position: absolute; left: 2px; top: 0.45em;
-  width: 16px; height: 12px;
-  background: var(--sage);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'%3E%3Cpath d='M1.5 6.5 C 3 7.5, 4.5 9, 5.8 10.5 C 8 6.5, 11 3.5, 14.5 1.5' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
-          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 12'%3E%3Cpath d='M1.5 6.5 C 3 7.5, 4.5 9, 5.8 10.5 C 8 6.5, 11 3.5, 14.5 1.5' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
-}
-.tradeoff {
-  margin: auto 0 0;
-  padding-top: 1rem;
-  border-top: 1.5px dashed var(--line-strong);
-  font-size: 1rem;
-  color: var(--muted);
-}
-.route-go { margin: 0.2rem 0 -9px; }   /* -9px: the link's touch padding */
-.routes-foot { margin: 2.4rem 0 0; max-width: 42rem; font-size: 1.1rem; }
-.routes-foot::before {   /* curly arrow pointing up at the cards */
-  content: "";
-  display: inline-block;
-  vertical-align: -0.2em;
-  width: 40px; height: 22px;
-  margin-right: 10px;
-  background: var(--terra);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 22'%3E%3Cpath d='M3 4 C 8 16, 20 20, 34 16 M28 11 L35 16 L28 20' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
-          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 22'%3E%3Cpath d='M3 4 C 8 16, 20 20, 34 16 M28 11 L35 16 L28 20' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
-}
 
-/* Your first hour: numbered step bubbles joined by a dashed trail */
-.steps {
-  list-style: none;
-  margin: 0; padding: 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 28px;
-}
-.steps li { position: relative; }
-.steps li:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  top: 1.3rem; left: 3.4rem; right: -18px;
-  border-top: 2px dashed var(--line-strong);
-  transform: rotate(-1.5deg);
-}
-.step-bubble {
-  display: inline-grid;
-  justify-self: start;
-  place-items: center;
-  width: 2.6rem; height: 2.6rem;
-  margin-bottom: 0.7rem;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.3rem;
-  color: var(--ink);
-  background: var(--butter-wash);
-  border: 2px solid var(--ink);
-  border-radius: var(--wobble);
-}
-.steps li:nth-child(2) .step-bubble { background: var(--sage-wash); border-radius: 45% 55% 50% 50% / 55% 45% 55% 45%; }
-.steps li:nth-child(3) .step-bubble { background: var(--blue-wash); border-radius: 52% 48% 44% 56% / 46% 52% 48% 54%; }
-.steps h3 { margin: 0 0 0.3rem; font-size: 1.3rem; }
-.steps p { margin: 0 0 0.6rem; color: var(--ink-soft); font-size: 1.05rem; }
-.steps .see { font-family: var(--font-display); font-style: italic; font-size: 1rem; color: var(--muted); }
-.snippet {   /* short code in a step card: wraps, never scrolls */
-  display: block;
-  margin: 0.2rem 0 0.7rem;
-  padding: 9px 12px;
-  background: var(--card);
-  border: 1.5px solid var(--line);
-  border-radius: 10px;
-  font-size: 0.88rem;
-  line-height: 1.5;
-  white-space: pre-wrap;
-  overflow-wrap: break-word;
-}
-
-
-/* Anatomy of your thesis: one row per part of the sample. The whole page is
-   small, with the close-up area outlined; the close-up beside it shows the
-   text at about its printed size. Both link to the page at full size. The
-   pictures are white paper in both themes. Without page pictures (no
-   --previews) the same rows show as .anatomy-table. */
-.anatomy-pages {
-  list-style: none;
-  margin: 0; padding: 0;
-  display: grid;
-  gap: 30px;
-}
-.anatomy-pages > li {
-  display: grid;
-  grid-template-columns: minmax(0, 580px) minmax(0, 1fr);
-  column-gap: 44px;
-  align-items: center;
-}
-.anatomy-pages > li:nth-child(even) { --tint: var(--blue-wash); }
-.anatomy-pages > li:nth-child(3n) { --tint: var(--plum-wash); }
-.anatomy-shot {
-  position: relative;
-  display: grid;
-  grid-template-columns: 84px minmax(0, 1fr);
-  align-items: center;
-  color: var(--link);
-  text-decoration: none;
-  border-radius: 10px;
-}
-.anatomy-shot:focus-visible { outline-offset: 8px; }
-.anatomy-shot img { display: block; width: 100%; height: auto; }
-.anatomy-page {
-  position: relative;
-  display: block;
-  background: #fff;
-  color: #2b4d7a;   /* readable fallback text on actual PDF paper in either theme */
-  border: 1.5px solid var(--line-strong);
-  border-radius: 2px;
-  box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--tint, var(--sage-wash));
-  transform: rotate(-1.5deg);
-}
-.anatomy-spot {   /* on white paper in both themes, so one dark color */
-  position: absolute;
-  border: 1.5px solid #9e4526;
-  border-radius: 2px;
-  background: rgba(158, 69, 38, 0.12);
-}
-.anatomy-lens {
-  position: relative;
-  z-index: 1;
-  margin-left: -12px;
-  padding: 6px 10px;
-  background: #fff;
-  color: #2b4d7a;
-  border: 2px solid var(--lens-edge, var(--ink));
-  border-radius: 16px 13px 17px 14px / 13px 17px 14px 16px;
-  box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--tint, var(--sage-wash));
-}
-/* Pointing at a page (or tabbing to it) lifts the close-up, like a card */
-.anatomy-shot:is(:hover, :focus-visible) .anatomy-lens {
-  box-shadow: calc(var(--offset-sm) + 2px) calc(var(--offset-sm) + 2px) 0 var(--tint, var(--sage-wash));
-}
-.anatomy-open {   /* under the close-up, like "View larger" under a diagram */
-  grid-column: 2;
-  justify-self: start;
-  margin-top: 10px;
-  padding: 2px 0;
-  font-size: 0.9rem;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-.anatomy-shot:is(:hover, :focus-visible) .anatomy-open { text-decoration-thickness: 2px; }
-.anatomy-text h3 { margin: 0 0 0.3rem; font-size: 1.2rem; }
-.anatomy-pages dl {
-  margin: 0;
-  display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  gap: 4px 14px;
-  font-size: 0.95rem;
-  line-height: 1.45;
-}
-.anatomy-pages dt {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--terra);
-}
-.anatomy-pages dd { margin: 0; color: var(--ink-soft); }
-.anatomy code { overflow-wrap: break-word; }
-.anatomy .nowrap { white-space: nowrap; }
-.anatomy-table { --fill: var(--card); border: 1.5px solid var(--line); border-radius: 12px; }
-.anatomy-table table { width: 100%; border-collapse: collapse; font-size: 1rem; line-height: 1.45; }
-.anatomy-table th, .anatomy-table td { padding: 10px 14px; text-align: left; vertical-align: top; }
-.anatomy-table thead th {
-  font-family: var(--font-display);
-  font-weight: 600;
-  background: var(--table-head);
-  border-bottom: 2px solid var(--line-strong);
-}
-.anatomy-table tbody th { font-weight: 700; white-space: nowrap; }
-.anatomy-table tbody tr + tr > * { border-top: 1px solid var(--line); }
-.anatomy-table td { color: var(--ink-soft); }
-.cheatsheet-note { margin: 1.8rem 0 0; font-size: 1.1rem; }
-
-/* Help at your level */
+/* Cards with an icon, a kicker, a title and text, and a list of links (the home page's doors) */
 .guide-list {
   list-style: none;
   margin: 0; padding: 0;
@@ -850,7 +615,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   font-size: 0.8rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
   margin-bottom: 2px;
 }
-.help-card h3 { margin: 0 0 0.35rem; font-size: 1.3rem; }
+.help-card :is(h2, h3) { margin: 0 0 0.35rem; font-size: 1.3rem; }
 .help-text > :last-child { margin-bottom: 0.9rem; }
 .help-card p { color: var(--ink-soft); font-size: 1.02rem; margin-bottom: 0.9rem; }
 .help-card ul { list-style: none; margin: auto 0 0; padding: 0.8rem 0 0; border-top: 1.5px dashed var(--line-strong); }
@@ -859,19 +624,14 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .help-card li a::after { content: "→" / ""; display: inline-block; margin-left: 0.3em; }   /* inline-block: the arrow is not underlined, as with .text-link */
 
 /* Cards lift a little while you point at them or tab into them */
-.help-card:is(:hover, :focus-within), .route-card:is(:hover, :focus-within) {
+.help-card:is(:hover, :focus-within) {
   border-color: color-mix(in srgb, var(--ink) 45%, var(--line-strong));
 }
 
-/* Comparable cards share row lines. The first-hour steps keep their natural
-   flow, so a code example in one step never leaves a blank row in another. */
+/* Cards in a row share row lines, so their link lists start at the same height. */
 @supports (grid-template-rows: subgrid) {
-  .guide-list, .routes { grid-auto-rows: auto; }
-  /* An empty shared row (no badge, no snippet) would still keep the outer
-     row gap, so gaps between rows of cards come from margins instead. */
-  .routes { row-gap: 0; }
-  @media (max-width: 860px) { .route-card + .route-card { margin-top: 36px; } }
-  .help-card, .route-card {
+  .guide-list { grid-auto-rows: auto; }
+  .help-card {
     display: grid;
     grid-template-rows: subgrid;
     row-gap: 0;
@@ -879,25 +639,47 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   }
   .help-card { grid-row: span 4; }   /* icon, stage, title and text, links */
   .help-card ul { margin-top: 0; }
-  .route-card { grid-row: span 4; }  /* title, "Best if", trade-off, link; the badge sits on the border */
-  .route-top { grid-row: 1; }
-  .best-if { grid-row: 2; }
-  .tradeoff { grid-row: 3; margin-top: 0; }
-  .route-go { grid-row: 4; }
 }
 
-/* Community note */
-.community { padding: clamp(32px, 4vw, 48px) 0 clamp(40px, 5vw, 56px); }
-.community-note {   /* heading beside the text on wide screens */
-  display: grid;
-  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
-  gap: 0 clamp(20px, 4vw, 48px);
-  padding: 22px 26px 8px;
-  border: 1.5px dashed var(--line-strong);
-  border-radius: var(--sketch);
+/* Short home page (#16): the message, one drawing, three doors (Start,
+   Tools, Help), then a "What's new" line and "Share this guide". */
+.home-top { max-width: var(--page-max); margin: 0 auto; padding: clamp(20px, 4vw, 48px) var(--gutter) 0; }
+.home-top h1 { max-width: 20ch; }
+.home-top .lead { max-width: 44ch; margin-bottom: 0.9em; }
+.home-top.center { text-align: center; }
+.home-top.center h1 { max-width: 26ch; }
+.home-top.center .lead { max-width: 60ch; }
+.home-top.center :is(h1, .lead, .home-note) { margin-inline: auto; }
+.home-note { max-width: 44rem; margin: 0; font-size: 0.95rem; color: var(--muted); }
+.home-figure { max-width: var(--page-max); margin: clamp(16px, 3vw, 32px) auto 0; padding: 0 var(--gutter); }
+.home-figure img { display: block; width: 100%; height: auto; margin: 0 auto; }
+.home-figure.wide img { max-width: 1040px; }
+.doors-section { padding: clamp(28px, 4vw, 48px) 0 clamp(28px, 3vw, 40px); }
+.doors { gap: 30px; isolation: isolate; }
+.door-start { --tint: var(--sage-wash); }
+.door-tools { --tint: var(--blue-wash); }
+.door-help  { --tint: var(--terra-wash); }
+.door-start .kicker { color: var(--sage); }
+.door-tools .kicker { color: var(--blue); }
+.door-help .kicker  { color: var(--terra); }
+.doors li a { white-space: normal; }   /* longer link names wrap at large text sizes */
+.home-foot {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 4px 28px;
+  margin-bottom: clamp(32px, 4vw, 56px);
+  padding-top: 14px;
+  border-top: 1.5px dashed var(--line-strong);
 }
-.community h2 { font-size: 1.4rem; margin: 0 0 0.4rem; }
-.community p { color: var(--ink-soft); }
+.home-news { margin: 0; max-width: 60rem; color: var(--ink-soft); }
+.home-news .tag { margin-right: 0.4em; }
+.home-share { margin: 0; }
+@media (max-width: 1080px) { .guide-list.doors { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; } }
+@media (max-width: 860px) {
+  .guide-list.doors { grid-template-columns: minmax(0, 1fr); padding-right: 6px; }
+}
+@media (max-width: 600px) {
+  .home-top br { display: none; }   /* the message wraps naturally on phones */
+}
 
 /* Page not found (site/404.html) */
 .notfound { padding: clamp(24px, 6vw, 72px) var(--gutter) clamp(48px, 8vw, 96px); }
@@ -1207,8 +989,8 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   border-color: var(--link);
   background: var(--blue-wash);
 }
-/* Full-size pictures (viewer_dialog in scripts/build_site.py, and the anatomy
-   pages): a dialog over the page that viewer.js opens as a modal. Without
+/* Full-size pictures (viewer_dialog in scripts/build_site.py, and the class
+   example): a dialog over the page that viewer.js opens as a modal. Without
    JavaScript the dialog stays closed and the link opens the picture file. Same look in both
    themes: a dark surround, the picture on its own paper. */
 dialog.viewer {
@@ -1478,8 +1260,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .page-project .guide-content td code { white-space: normal; overflow-wrap: anywhere; }   /* maintainer tables carry long identifiers */   /* a 50-character \includegraphics line */
 .guide-content th:empty { padding: 0; }
 @media (max-width: 640px) {   /* narrow screens or large text: a long name wraps rather than widening the page */
-  .hero-aside > span { white-space: normal; }
-  .guide-content code.keep, .guide-content code.keep-path .nowrap, .anatomy code, .anatomy .nowrap, .anatomy-table tbody th,
+  .guide-content code.keep, .guide-content code.keep-path .nowrap,
   .guide-content td code, .guide-content td:first-child code:not(.phrase, .long) { white-space: normal; overflow-wrap: anywhere; }
 }
 
@@ -1550,7 +1331,6 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 /* The edition line, styled as a calm "last checked" stamp */
 .edition {
   display: inline-block;
-  font-variant-numeric: normal; font-feature-settings: "zero" 0;   /* no slashed zeros in "2026" */
   margin: 0;
   padding: 7px 14px 7px 36px;
   font-size: 0.875rem;
@@ -1633,16 +1413,11 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 
 /* ---------- 10. Small screens ------------------------------------------- */
 @media (max-width: 1080px) {
-  .anatomy-pages > li { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); column-gap: 30px; }
   .guide-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 860px) {
-  .community-note { grid-template-columns: minmax(0, 1fr); }
-  .hero { grid-template-columns: minmax(0, 1fr); }
-  .hero h1 { max-width: 16ch; }
-  .hero-art { max-width: min(460px, 78%); justify-self: center; width: 100%; }   /* a smaller sketch keeps the next step in view */
-  .routes, .footer-inner { grid-template-columns: minmax(0, 1fr); }
+  .footer-inner { grid-template-columns: minmax(0, 1fr); }
 
   .guide-frame { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .guide-sidebar { display: none; }
@@ -1676,27 +1451,6 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-topics .guide-group { padding-inline: 8px; }
   .guide-topics .guide-nav a { padding: 11px 8px; min-height: 44px; }   /* label centred in the 44px row */
   .guide-topics .guide-quick { padding-left: 6.5px; }   /* + 1.5px border: "?" in the marker column */
-  /* Stacked: the close-up takes the full width, the whole page sits under it */
-  .anatomy-pages { gap: 38px; }
-  .anatomy-pages > li { display: block; }
-  .anatomy-shot { grid-template-columns: 60px minmax(0, 1fr); row-gap: 14px; margin-bottom: 14px; }
-  .anatomy-lens { grid-column: 1 / -1; grid-row: 1; margin: 0; padding: 4px 6px; overflow: hidden; }
-  .anatomy-page { display: none; }   /* the full page is one tap away */
-  .anatomy-open { grid-column: 1 / -1; grid-row: 2; margin: 0; }
-}
-@media (max-width: 600px) {
-  /* Close-up text near reading size; its right edge is cropped and fades out,
-     so a line cut mid-word reads as "continues" rather than broken */
-  .anatomy-lens img {
-    width: 175%; max-width: none;
-    -webkit-mask-image: linear-gradient(to right, #000 49%, transparent 57%);
-    mask-image: linear-gradient(to right, #000 49%, transparent 57%);
-  }
-  :is(#anatomy-chapter, #anatomy-appendix, #anatomy-figure-table) .anatomy-lens img {   /* centered headings and tables: crop both sides */
-    margin-left: -37.5%;
-    -webkit-mask-image: linear-gradient(to right, transparent 21.5%, #000 28%, #000 72%, transparent 78.5%);
-    mask-image: linear-gradient(to right, transparent 21.5%, #000 28%, #000 72%, transparent 78.5%);
-  }
 }
 
 @media (max-width: 640px) {
@@ -1716,34 +1470,8 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-topics-here::before { content: none; }
   .unofficial-more { display: none; }   /* phones: just "Unofficial" */
   .lead { font-size: 1.15rem; }
-  .steps { grid-template-columns: minmax(0, 1fr); row-gap: 0; }
-  .steps li { padding: 0 0 26px 58px; }
-  .step-bubble { position: absolute; left: 0; top: -4px; }
-  .steps li:nth-child(n)::after {   /* the trail runs down instead of across */
-    display: block;
-    top: 46px; bottom: 4px; left: 20px; right: auto;
-    border-top: 0;
-    border-left: 2px dashed var(--line-strong);
-    transform: none;
-  }
-  .steps li:last-child::after { display: none; }
   .guide-list { grid-template-columns: minmax(0, 1fr); }
   .card.tinted::before { inset: 7px -6px -7px 6px; }
-  .routes { padding-right: 6px; }
-  /* The fallback table becomes one small card per row */
-  .anatomy-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-  .anatomy-table :is(tr, th, td) { display: block; }
-  .anatomy-table tbody tr { padding: 10px 0; }
-  .anatomy-table tbody tr + tr > * { border-top: 0; }
-  .anatomy-table tbody tr + tr { border-top: 1px solid var(--line); }
-  .anatomy-table tbody :is(th, td) { padding: 2px 14px; }
-  .anatomy-table td::before {
-    content: attr(data-label);
-    display: block;
-    font-family: var(--font-display);
-    font-style: italic;
-    color: var(--terra);
-  }
   .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1.1rem; }
   .guide-content :is(p:has(> img:only-child), figure.diagram) { margin-inline: -10px; }   /* diagrams get a little more room */
   /* PDF crops keep a readable size and scroll sideways inside their box */
@@ -1759,9 +1487,6 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content td:first-child code { white-space: normal; overflow-wrap: break-word; padding: 0.05em 0.25em; }
   .pager { grid-template-columns: minmax(0, 1fr); }
   .pager-next { grid-column: 1; }
-  /* Keep the complete close-up visible; the full-size view is available
-     when the reader needs larger text. */
-  .anatomy-lens { padding: 4px; }
 }
 
 @media (max-width: 420px) {
@@ -1776,17 +1501,16 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 /* ===== Optional motion: three small touches, each under 1 s, none looping.
    Delete this whole block for a fully still site; nothing else depends on it.
    Off for anyone who asks for reduced motion.
-     1. the hero's underline draws itself once on load
-     2. cards (and anatomy close-ups) lift a little on hover or keyboard focus
+     1. the home page message's underline draws itself once on load
+     2. cards lift a little on hover or keyboard focus
      3. Optional details boxes ease open */
 @media (prefers-reduced-motion: no-preference) {
-  .hero .squiggle::after { animation: draw-in .8s .35s ease-out both; }
+  .home-top .squiggle::after { animation: draw-in .8s .35s ease-out both; }
 
-  .help-card, .route-card, .anatomy-lens {
+  .help-card {
     transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
   }
-  .help-card:is(:hover, :focus-within), .route-card:is(:hover, :focus-within),
-  .anatomy-shot:is(:hover, :focus-visible) .anatomy-lens { transform: translate(-1px, -2px); }
+  .help-card:is(:hover, :focus-within) { transform: translate(-1px, -2px); }
 
   @supports (interpolate-size: allow-keywords) {
     .guide-content details { interpolate-size: allow-keywords; }
@@ -1858,8 +1582,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 }
 
 @media print {
-  .site-header, .guide-sidebar, .guide-topics, .pager, .guide-end, .skip-link, .site-footer,
-  .hero-actions, .hero-next, .diagram-open, .viewer, .page-toc, .page-toc-wide, .code-toolbar { display: none !important; }
+  .site-header, .guide-sidebar, .guide-topics, .pager, .guide-end, .skip-link, .site-footer, .hero-actions, .diagram-open, .viewer, .page-toc, .page-toc-wide, .code-toolbar { display: none !important; }
   .code-block { border: 0; background: none; }
   .guide-content .code-block > pre { padding-top: 16px; }
   :root, :root[data-theme], :root:not([data-theme]) {
@@ -1886,18 +1609,14 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
     background: none; -webkit-mask: none; mask: none;
   }
   /* White boxes, black text, thin grey borders */
-  .band, .card, .note, .tip, .important, .warning, .caution, details, summary, code, kbd, mark,
-  .guide-content pre, .snippet, .table-wrap, .anatomy-table, th, td, .tag, .route-badge, .edition,
-  .step-bubble, .guide-quick {
+  .card, .note, .tip, .important, .warning, .caution, details, summary, code, kbd, mark, .guide-content pre, .table-wrap, th, td, .tag, .edition, .guide-quick {
     background: #fff !important;
     color: #000 !important;
   }
-  .card, details, .table-wrap, .guide-content pre, .snippet, .anatomy-table { border-color: #888 !important; }
-  .tag, .route-badge { border-color: #888 !important; }
+  .card, details, .table-wrap, .guide-content pre { border-color: #888 !important; }
+  .tag { border-color: #888 !important; }
   .card.tinted::before { display: none; }
-  .anatomy-page { transform: none; }
-  .anatomy-open { display: none; }
-  .hero .squiggle::after {   /* the wave prints as a plain underline, not a heavy bar */
+  .home-top .squiggle::after {   /* the wave prints as a plain underline, not a heavy bar */
     -webkit-mask: none; mask: none;
     background: none; height: 0; bottom: -0.08em;
     border-bottom: 2px solid var(--rpi-red);
@@ -1907,14 +1626,13 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content pre { white-space: pre-wrap; overflow: visible; }
   .table-wrap { overflow: visible; }
   .guide-content td:first-child code { white-space: normal; }
-  pre, .table-wrap, figure, p:has(> img:only-child), .note, .tip, .important, .warning, .caution, tr,
-  .card, .steps li, .anatomy-pages li {
+  pre, .table-wrap, figure, p:has(> img:only-child), .note, .tip, .important, .warning, .caution, tr, .card {
     break-inside: avoid;
   }
   /* A table of six or more rows may break between rows (each row stays whole)
      rather than leave a blank half page before it. */
   .table-wrap:has(tbody tr:nth-child(6)) { break-inside: auto; }
-  h1, h2, h3, h4, summary, .eyebrow, .section-head { break-after: avoid; }   /* a heading block stays with what follows */
+  h1, h2, h3, h4, summary, .eyebrow { break-after: avoid; }   /* a heading block stays with what follows */
   /* Diagrams and pictures: always shown, never recolored */
   img { filter: none !important; }
   .guide-content img { max-height: 5.5in; width: auto; }

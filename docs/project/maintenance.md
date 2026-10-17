@@ -61,8 +61,9 @@ and PDFs or LaTeX working files outside `build/`.
 | Agent and editor settings | `.claude/`, `.codex/`, `.idea/`, `.venv/`, `__pycache__/` |
 
 Guide stages and page order are defined once, in `NAV` at the top of
-`scripts/build_site.py`. The landing page cards in `site/index.html` and the
-guide list in `README.md` follow the same stages by hand.
+`scripts/build_site.py`. The guide list in `README.md` follows the same stages
+by hand. The home page (`site/index.html`) links pages from its three cards
+(Start, Tools, Help) by hand; its "What's new" line comes from `CHANGELOG.md`.
 
 Help arrives through GitHub Issues (the forms in `.github/ISSUE_TEMPLATE/`)
 and one no-sign-in help and feedback form. The form's URL lives only in the

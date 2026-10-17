@@ -1,4 +1,4 @@
-// Full-size pictures (diagrams, anatomy pages, the class example) open as a dialog
+// Full-size pictures (diagrams, the class example) open as a dialog
 // on the same page: Escape, Close, or a click beside the picture closes it, and
 // focus goes back to the link. An extra only: each "View larger" link points at the
 // picture file itself, so with JavaScript off (or an old browser) it opens the
