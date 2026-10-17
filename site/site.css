@@ -262,6 +262,8 @@ p { margin: 0 0 1.1em; text-wrap: pretty; }
 strong, b { font-weight: 700; }
 
 code, kbd, pre { font-family: var(--font-mono); }
+body { font-feature-settings: "zero" 0; font-variant-numeric: normal; }   /* no slashed zeros in prose; code below keeps them */
+code, kbd, pre, samp { font-feature-settings: "zero" 1; }
 code {
   font-size: 0.86em;
   background: var(--paper-2);
@@ -499,11 +501,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .dd .w-butter { fill: var(--butter-wash); }
 .dd .w-terra  { fill: var(--terra-wash); }
 .dd .w-plum   { fill: var(--plum-wash); }
-.dd .f-sage   { fill: var(--sage-wash); }
-.dd .f-blue   { fill: var(--blue-wash); }
-.dd .f-terra  { fill: var(--terra-wash); }
 .dd .f-card   { fill: var(--card); }
-.dd .f-butter-strong { fill: var(--butter-wash); }
 .doodle .f-butter { fill: var(--butter-wash); stroke: none; }
 
 /* Cards: paper on paper. ".tinted" adds a misregistered color wash behind. */
@@ -1103,7 +1101,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   padding: 14px 18px;
   background: var(--card);
   color: var(--link);
-  border: 1.5px solid var(--line-strong);
+  border: 1.5px solid var(--control-edge);   /* >= 3:1 UI boundary; the soft shadow stays decorative */
   border-radius: var(--sketch);
   box-shadow: 3px 3px 0 var(--line-strong);
   font-weight: 700;
@@ -1492,7 +1490,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px;
   padding: 22px 20px;
   background: var(--card);
-  border: 2px dashed var(--line-strong);
+  border: 2px dashed var(--control-edge);
   border-radius: var(--radius);
   cursor: pointer;
 }
@@ -1582,7 +1580,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .search-open {
   display: inline-flex; align-items: center; gap: 8px;
   color: var(--ink-soft); background: transparent;
-  border: 1px solid var(--line-strong); border-radius: 999px;
+  border: 1.5px solid var(--control-edge); border-radius: 999px;
   font: inherit; font-size: 0.95rem; cursor: pointer; min-height: 44px;
   padding: 8px 13px; text-align: left;
 }
@@ -1591,7 +1589,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .search-open[hidden], .guide-search[hidden] { display: none; }
 .search-dialog {
   color: var(--ink); background: var(--paper);
-  border: 1.5px solid var(--line-strong); border-radius: 16px;
+  border: 1.5px solid var(--control-edge); border-radius: 16px;
   padding: 22px; width: min(680px, calc(100% - 24px));
   max-width: none; max-height: min(760px, calc(100dvh - 64px));
   margin: 5vh auto auto; overflow: hidden;
@@ -1898,7 +1896,13 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .card.tinted::before { display: none; }
   .anatomy-page { transform: none; }
   .anatomy-open { display: none; }
-  .hero .squiggle::after { background: var(--rpi-red); }
+  .hero .squiggle::after {   /* the wave prints as a plain underline, not a heavy bar */
+    -webkit-mask: none; mask: none;
+    background: none; height: 0; bottom: -0.08em;
+    border-bottom: 2px solid var(--rpi-red);
+  }
+  .lead { font-size: 1.1rem; max-width: 36ch; }
+  .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1em; max-width: 68ch; }
   .guide-content pre { white-space: pre-wrap; overflow: visible; }
   .table-wrap { overflow: visible; }
   .guide-content td:first-child code { white-space: normal; }
@@ -1909,7 +1913,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   /* A table of six or more rows may break between rows (each row stays whole)
      rather than leave a blank half page before it. */
   .table-wrap:has(tbody tr:nth-child(6)) { break-inside: auto; }
-  h1, h2, h3, h4, summary, .eyebrow { break-after: avoid; }
+  h1, h2, h3, h4, summary, .eyebrow, .section-head { break-after: avoid; }   /* a heading block stays with what follows */
   /* Diagrams and pictures: always shown, never recolored */
   img { filter: none !important; }
   .guide-content img { max-height: 5.5in; width: auto; }
