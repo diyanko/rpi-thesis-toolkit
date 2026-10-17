@@ -9,8 +9,9 @@ Fetches origin, then lists every local branch and worktree. A branch whose
 commits are all in origin/main is "merged". Rebase merges also count when
 every unique commit has the same patch in main and the final contents and
 modes of all changed paths still match main. A branch also counts when gh
-reports a merged pull request whose head commit is exactly the branch tip
-(without gh, or offline, only the git checks apply). With --apply its worktree
+reports a pull request into main whose head commit is exactly the branch tip
+and whose merge commit is in origin/main (without gh, or offline, only the git
+checks apply). With --apply its worktree
 (if clean) and the branch are deleted and `git worktree prune` runs. Never touched:
 main, the current worktree, anything with uncommitted, untracked, or ignored
 files other than build outputs (build/, dist/, .venv, __pycache__), locked
@@ -127,19 +128,24 @@ def rebased_into_main(branch: str) -> str | None:
 
 
 def merged_pr(branch: str, tip: str) -> int | None:
-    """The number of a merged pull request whose head commit is exactly tip.
-    None when gh is missing, offline, or reports no such pull request."""
+    """The number of a pull request merged into main whose head commit is
+    exactly tip and whose merge commit is in BASE. None when gh is missing,
+    offline, or reports no such pull request."""
     if not shutil.which("gh"):
         return None
     try:
-        res = subprocess.run(["gh", "pr", "list", "--head", branch, "--state", "merged",
-                              "--json", "number,headRefOid"],
+        res = subprocess.run(["gh", "pr", "list", "--head", branch, "--base", BASE.split("/", 1)[1],
+                              "--state", "merged", "--json", "number,headRefOid,mergeCommit"],
                              capture_output=True, text=True, timeout=30)
         prs = json.loads(res.stdout) if res.returncode == 0 else []
     except (OSError, subprocess.TimeoutExpired, ValueError):
         return None
     for pr in prs if isinstance(prs, list) else []:
-        if isinstance(pr, dict) and pr.get("headRefOid") == tip and isinstance(pr.get("number"), int):
+        if not isinstance(pr, dict) or pr.get("headRefOid") != tip or not isinstance(pr.get("number"), int):
+            continue
+        merge = pr.get("mergeCommit")
+        oid = merge.get("oid") if isinstance(merge, dict) else None
+        if isinstance(oid, str) and oid and not git("merge-base", "--is-ancestor", oid, BASE)[0]:
             return pr["number"]
     return None
 

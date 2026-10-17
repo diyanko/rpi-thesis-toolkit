@@ -192,7 +192,12 @@ class MergedPullRequest(Repo):
         run("git", "checkout", "-q", "main", cwd=self.repo)
         (self.repo / "a.txt").write_text("feature, edited on merge\n", encoding="utf-8")
         run("git", "commit", "-qam", "feature (#7)", cwd=self.repo)
+        run("git", "update-ref", "refs/remotes/origin/main", "HEAD", cwd=self.repo)
+        self.merge = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=self.repo, text=True).strip()
         return tip
+
+    def pr(self, tip, merge=None):
+        return [{"number": 7, "headRefOid": tip, "mergeCommit": {"oid": merge or self.merge}}]
 
     def tidy_apply(self):
         out = io.StringIO()
@@ -207,11 +212,24 @@ class MergedPullRequest(Repo):
 
     def test_pr_head_must_equal_branch_tip(self):
         tip = self.prepare_rewritten_merge()
-        with self.fake_gh([{"number": 7, "headRefOid": tip}]):
+        with self.in_repo(), self.fake_gh(self.pr(tip)):
             self.assertEqual(tidy.merged_pr("feature", tip), 7)
-        self.assertEqual(self.gh_calls[0][:4], ["gh", "pr", "list", "--head"])
-        with self.fake_gh([{"number": 7, "headRefOid": "0" * 40}]):
+        call = self.gh_calls[0]
+        self.assertEqual(call[call.index("--base") + 1], "main")
+        with self.in_repo(), self.fake_gh(self.pr("0" * 40)):
             self.assertIsNone(tidy.merged_pr("feature", tip))
+
+    def test_merge_commit_must_be_in_main(self):
+        tip = self.prepare_rewritten_merge()
+        run("git", "checkout", "-qb", "staging", "HEAD~1", cwd=self.repo)
+        (self.repo / "a.txt").write_text("feature on staging\n", encoding="utf-8")
+        run("git", "commit", "-qam", "feature into staging", cwd=self.repo)
+        staging = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=self.repo, text=True).strip()
+        run("git", "checkout", "-q", "main", cwd=self.repo)
+        for merge in (staging, "", None):
+            with self.subTest(merge=merge), self.in_repo(), \
+                    self.fake_gh([{"number": 7, "headRefOid": tip, "mergeCommit": merge and {"oid": merge}}]):
+                self.assertIsNone(tidy.merged_pr("feature", tip))
 
     def test_missing_or_offline_gh_falls_back(self):
         tip = self.prepare_rewritten_merge()
@@ -219,7 +237,7 @@ class MergedPullRequest(Repo):
             self.assertIsNone(tidy.merged_pr("feature", tip))
         for kw in ({"code": 1}, {"error": OSError("no gh")},
                    {"error": subprocess.TimeoutExpired("gh", 30)}):
-            with self.subTest(**{k: str(v) for k, v in kw.items()}), self.fake_gh(**kw):
+            with self.subTest(**{k: str(v) for k, v in kw.items()}), self.in_repo(), self.fake_gh(**kw):
                 self.assertIsNone(tidy.merged_pr("feature", tip))
 
     def test_apply_removes_worktree_of_merged_pr_and_names_it(self):
@@ -231,11 +249,11 @@ class MergedPullRequest(Repo):
             self.assertIn("unmerged", self.tidy_apply())
         self.assertTrue(worktree.exists())
         (worktree / "a.txt").write_text("uncommitted\n", encoding="utf-8")
-        with self.fake_gh([{"number": 7, "headRefOid": tip}]):
+        with self.fake_gh(self.pr(tip)):
             self.assertIn("uncommitted changes", self.tidy_apply())
         self.assertTrue(worktree.exists())
         run("git", "checkout", "--", "a.txt", cwd=worktree)
-        with self.fake_gh([{"number": 7, "headRefOid": tip}]):
+        with self.fake_gh(self.pr(tip)):
             self.assertIn("PR #7 merged", self.tidy_apply())
         self.assertFalse(worktree.exists())
         self.assertFalse(self.branch_exists())
@@ -248,7 +266,7 @@ class MergedPullRequest(Repo):
         run("git", "add", "more.txt", cwd=self.repo)
         run("git", "commit", "-qm", "more work", cwd=self.repo)
         run("git", "checkout", "-q", "main", cwd=self.repo)
-        with self.fake_gh([{"number": 7, "headRefOid": tip}]):
+        with self.fake_gh(self.pr(tip)):
             self.assertIn("unmerged", self.tidy_apply())
         self.assertTrue(self.branch_exists())
 
