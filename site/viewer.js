@@ -67,7 +67,7 @@
     var id;
     try { id = decodeURIComponent(location.hash.slice(1)); } catch (e) { return; }   // a malformed hash such as "#%"
     if (id.indexOf("view-") === 0 && openDialog(id)) {
-      history.replaceState(null, "", location.pathname + location.search);
+      try { history.replaceState(null, "", location.pathname + location.search); } catch (e) { /* file:// pages */ }
     }
   }
   fromHash();

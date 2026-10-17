@@ -14,6 +14,12 @@
         if (picture.getAttribute(attribute) !== source) picture.setAttribute(attribute, source);
       }
     });
+    // WebKit does not always re-pick a <picture> image when only a <source>
+    // changes; setting the <img> src again makes it choose.
+    document.querySelectorAll("picture > img").forEach(function (img) {
+      var src = img.getAttribute("src");
+      if (src) img.src = src;
+    });
   }
 
   function apply(value) {
@@ -63,8 +69,9 @@
         close(true);
       });
     });
-    document.addEventListener("click", function (event) {
-      if (!control.contains(event.target)) close(false);
+    // pointerdown, not click: iOS fires no click for a tap on plain text.
+    document.addEventListener("pointerdown", function (event) {
+      if (!menu.hidden && !control.contains(event.target)) close(false);
     });
     document.addEventListener("keydown", function (event) {
       if (event.key === "Escape" && !menu.hidden) {
@@ -72,8 +79,11 @@
         close(true);
       }
     });
+    // Close when focus moves to something else on the page (Tab). Safari does
+    // not focus a button on click, so focus moving to nothing (relatedTarget
+    // null) is a click in progress: the document click handler decides then.
     control.addEventListener("focusout", function (event) {
-      if (!control.contains(event.relatedTarget)) close(false);
+      if (event.relatedTarget && !control.contains(event.relatedTarget)) close(false);
     });
     control.hidden = false;
   }
