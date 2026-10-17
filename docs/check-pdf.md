@@ -1,6 +1,6 @@
 # Check your PDF
 
-Optional. This page reads a thesis or dissertation PDF and measures a few
+This page reads a thesis or dissertation PDF and measures a few
 formatting points: paper size, page numbers, heading position, side margins,
 the contents, and fonts. It works on a PDF from any program, not only this
 toolkit, so you can also use it on a PDF someone sent you. Each result names
@@ -8,13 +8,11 @@ the part of the OGE *Dissertation and Thesis Manual* it comes from. It is not
 an OGE review, and a clean result does not mean OGE will accept the PDF; use
 the [final PDF checklist](submission.md#final-pdf-checklist) as well.
 
-The PDF stays on your computer: the page reads it in your browser and never
-uploads it. The PDF reader it uses, Mozilla's free pdf.js, is part of the
-toolkit's website, so nothing is downloaded from another website.
+<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page reads your PDF in your browser. Its PDF reader, Mozilla's free pdf.js, is part of this website, so nothing is downloaded from another website.</p>
 
 <div class="pdf-check" data-pdf-check data-version="" hidden><label class="pdf-check-drop" for="pdf-check-file"><span class="pdf-check-button">Choose your PDF</span> <span class="pdf-check-or">or drop it here</span></label><input class="visually-hidden" id="pdf-check-file" type="file" accept="application/pdf,.pdf"><p class="pdf-check-status" role="status" aria-live="polite"></p><button type="button" class="button button-secondary pdf-check-cancel" hidden>Cancel the check</button><div class="pdf-check-results"></div></div>
 
-<p class="pdf-check-nojs" data-pdf-check-nojs>The checker needs JavaScript, which is off or not available in this browser. Everything it looks at is listed below; check those points by eye, then use the <a href="submission.md#final-pdf-checklist">final PDF checklist</a>.</p>
+<p class="pdf-check-nojs tool-nojs" data-pdf-check-nojs>The checker needs JavaScript, which is off or not available in this browser. Everything it looks at is listed below; check those points by eye, then use the <a href="submission.md#final-pdf-checklist">final PDF checklist</a>.</p>
 
 ## Reading the results
 

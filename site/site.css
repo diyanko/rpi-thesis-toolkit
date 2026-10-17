@@ -700,7 +700,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   border-radius: var(--sketch);
 }
 .toolkit-isnt strong { color: var(--ink); }
-.toolkit-coming { color: var(--muted); font-style: italic; }
 
 .doors-section { padding: clamp(24px, 3vw, 36px) 0 clamp(24px, 3vw, 34px); }
 .doors { gap: 26px; isolation: isolate; }
@@ -1423,7 +1422,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
    pasted text on the left, the LaTeX on the right; stacked on narrow screens.
    Without JavaScript the converter stays hidden and .convert-nojs explains. */
 .convert[hidden], .convert-nojs[hidden] { display: none; }
-.guide-content > .convert { max-width: none; margin: 1.6rem 0; }
+.guide-content > .convert { max-width: none; margin: 1.8rem 0; }
 .convert-options { margin: 0 0 1rem; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; }
 .convert-options legend { padding: 0; margin: 0 0 6px; font-weight: 700; }
 .convert-options label { display: flex; align-items: baseline; gap: 8px; cursor: pointer; }
@@ -1446,7 +1445,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .guide-content .convert-output { overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; resize: vertical; }   /* long lines wrap in the narrow pane */
 .guide-content .convert-output:empty::before { content: "The LaTeX appears here."; font-family: var(--font-body); color: var(--muted); }
 .convert-hint { margin: 6px 0 0; font-size: 0.92rem; color: var(--muted); }
-.convert-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 0; }
+.convert-actions { display: flex; flex-wrap: wrap; gap: 10px 14px; margin: 1rem 0 0; }
 .convert-status:empty { display: none; }
 .convert-status { margin: 1rem 0 0; font-weight: 600; }
 .convert-results { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; margin: 1rem 0 0; }
@@ -1835,39 +1834,121 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .benefit-preview img, .benefit-preview img[src$=".svg"] { width: 100%; max-width: 100%; max-height: none; padding: 0; }
 @media (max-width: 600px) { dialog.benefit-preview { padding-top: 72px; } }
 
-/* Settings builder: optional form; the generated reference table stays visible. */
-.settings-builder[hidden] { display: none; }
-.settings-builder fieldset { min-width: 0; margin: 1rem 0; padding: 1rem; border: 1px solid var(--line); }
-.settings-builder legend { font-weight: 700; }
-.settings-builder label { display: block; margin-top: 0.8rem; font-weight: 600; }
-.settings-builder input, .settings-builder select, .settings-builder textarea {
-  box-sizing: border-box; display: block; width: 100%; min-width: 0;
-  padding: 0.6rem; margin: 0.3rem 0 0.8rem; border: 1px solid var(--muted);
-  border-radius: 4px; color: var(--ink); background: var(--paper); font: inherit;
+/* ---------- Tools: one family ------------------------------------------
+   Settings builder, Bring your work in, Check your references, Explain my
+   error, Check your PDF. Every tool page has the same parts, styled here once:
+     .tool-privacy   "Nothing is uploaded." under the one-line purpose
+     inputs          labels above; text fields and textareas on card paper,
+                     a solid edge; the main paste area or drop zone dashed
+     actions         .button (one primary) and .button-secondary, 1rem above
+     status line     bold, hidden while empty
+     results         a card under the actions, hidden while empty
+     .tool-nojs      the no-JavaScript note, a quiet dashed box
+   Each tool's script and its own section above add only what differs. */
+.guide-content .tool-privacy {
+  margin: 1.2rem 0;
+  padding: 10px 16px;
+  background: var(--sage-wash);
+  border-left: 4px solid var(--sage);
+  border-radius: 4px 10px 10px 4px;
 }
-.settings-builder textarea { font-family: var(--font-mono); resize: vertical; }
-.settings-builder button:disabled { opacity: 0.55; cursor: default; }
-.settings-builder [data-settings-errors] { overflow-wrap: anywhere; }
+.guide-content .tool-privacy strong { color: var(--sage); }
+.guide-content .tool-nojs {
+  padding: 12px 16px;
+  background: var(--paper-2);
+  border: 1.5px dashed var(--line-strong);
+  border-radius: 12px;
+}
+:is(.settings-builder, .bibcheck, .explain) label:not(:has(input[type="checkbox"])) {
+  display: block; margin: 1rem 0 6px; font-weight: 700;
+}
+:is(.settings-builder, .bibcheck, .explain) :where(input[type="text"], select, textarea) {
+  display: block; box-sizing: border-box; width: 100%; min-width: 0; margin: 0;
+  padding: 10px 14px;
+  font: inherit; color: var(--ink);
+  background: var(--card);
+  border: 1.5px solid var(--control-edge);
+  border-radius: 10px;
+}
+:is(.settings-builder, .bibcheck, .explain) textarea {
+  padding: 14px 16px; font: 0.88rem/1.6 var(--font-mono); tab-size: 2; resize: vertical;
+}
+:is(.settings-builder, .bibcheck, .explain) :is(input, select, textarea):focus-visible {
+  outline: 3px solid var(--focus); outline-offset: 2px;
+}
+:is(.settings-builder, .bibcheck, .explain) input[type="checkbox"] { accent-color: var(--rpi-red); width: 1.1em; height: 1.1em; vertical-align: -0.15em; margin-right: 6px; }
+/* The main place to paste or drop: dashed, like the PDF drop zone */
+.explain textarea[id] { min-height: 14rem; border-width: 2px; border-style: dashed; border-radius: 12px; }
+:is(.settings-builder, .bibcheck, .explain) [role="status"]:empty { display: none; }
+:is(.settings-builder, .bibcheck) [role="status"] { margin: 1rem 0 0; font-weight: 600; }
+.explain-result:not(:empty), .bibcheck [data-results]:not(:empty) {
+  margin: 1.5rem 0 0;
+  padding: 6px 22px 16px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  overflow-wrap: anywhere;
+}
+:is(.explain-result, .bibcheck [data-results]) h3 { margin: 1.1rem 0 0.4rem; font-size: 1.1rem; }
+:is(.explain-result, .bibcheck [data-results]) h3:focus { outline: none; }
+.bibcheck [data-results] h4 { margin: 1.2rem 0 0.3rem; font-size: 1rem; }
+.bibcheck [data-results] li { margin: 0 0 0.45rem; }
+.guide-content .explain-result pre { margin: 0.4rem 0 0.6rem; }
 
-/* Optional reference checker: native inputs, readable results, no saved data. */
+/* Settings builder (docs/settings-builder.md, site/settings/ui.js) */
+.settings-builder[hidden], [data-settings-nojs][hidden] { display: none; }
+.settings-builder { margin: 1.8rem 0; }
+.settings-builder fieldset {
+  min-width: 0; margin: 0 0 1.2rem; padding: 6px 20px 20px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+}
+.settings-builder legend { padding: 0 6px; margin-left: -6px; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
+/* Short fields side by side on wider screens; long text fields keep the full width. */
+@media (min-width: 700px) {
+  .settings-builder [data-settings-fields] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 18px; }
+  .settings-builder [data-settings-fields] > div:has(> :is(#setting-title, #setting-author, #setting-department)) { grid-column: 1 / -1; }
+}
+.settings-builder fieldset > p { margin: 0.6rem 0 0; color: var(--muted); }
+.settings-builder fieldset fieldset { margin: 1rem 0 0; background: var(--paper); }
+.settings-builder fieldset fieldset legend { font-family: var(--font-body); font-weight: 700; font-size: 1rem; }
+.settings-builder fieldset .button { margin-top: 1rem; }
+.settings-builder #settings-output { background: var(--paper-2); border-color: var(--line-strong); }
+.settings-builder #settings-paste { margin: 6px 0 0; font-size: 0.92rem; color: var(--muted); }
+.settings-builder [data-settings-copy] { margin-top: 1rem; }
+.guide-content .settings-errors { margin: 0.6rem 0 0; padding: 10px 16px 10px 2.2rem; background: var(--paper-2); border-radius: 10px; color: var(--muted); overflow-wrap: anywhere; }
+.guide-content .settings-errors:empty { display: none; }
+.guide-content .settings-errors li { margin: 0.15rem 0; }
+
+/* Check your references (docs/check-references.md, site/bibcheck/ui.js) */
 .bibcheck[hidden], [data-bibcheck-nojs][hidden] { display: none; }
 .bibcheck { margin: 1.8rem 0; }
-.bibcheck label { display: block; font-weight: 600; margin: 0.8rem 0 0.4rem; }
-.bibcheck textarea {
-  display: block; box-sizing: border-box; width: 100%; min-width: 0;
-  padding: 12px; border: 2px solid var(--line-strong); border-radius: 4px;
-  background: var(--card); color: var(--ink); font: 0.9rem/1.5 monospace;
-  resize: vertical;
+.bibcheck-drop {
+  padding: 4px 20px 20px;
+  background: var(--card);
+  border: 2px dashed var(--control-edge);
+  border-radius: var(--radius);
 }
-.bibcheck input[type="file"] { width: 100%; max-width: 100%; color: var(--ink); }
-.bibcheck-drop { padding: 12px 16px 20px; border: 2px dashed var(--line-strong); border-radius: 4px; }
+.bibcheck-drop label { margin-top: 0.9rem; }
 .bibcheck-drop.is-over { border-color: var(--blue); background: var(--blue-wash); }
-.bibcheck textarea:focus-visible, .bibcheck input:focus-visible {
-  outline: 3px solid var(--focus); outline-offset: 4px;
+.bibcheck input[type="file"] { width: 100%; max-width: 100%; color: var(--muted); font: inherit; }
+.bibcheck input[type="file"]::file-selector-button {
+  margin-right: 12px; padding: 8px 16px; min-height: 40px;
+  font: inherit; font-weight: 700; color: var(--ink);
+  background: var(--card);
+  border: 2px solid var(--btn-edge-2); border-radius: var(--sketch);
+  box-shadow: 3px 3px 0 var(--btn-shadow);
+  cursor: pointer;
 }
-.bibcheck .hero-actions { margin-top: 1rem; }
-.bibcheck [data-results] { overflow-wrap: anywhere; }
-.bibcheck [data-results] h3:focus { outline: none; }
-/* Explain my error (docs/explain-my-error.md) */
-.explain textarea { display: block; width: 100%; box-sizing: border-box; min-height: 12rem; font: inherit; font-family: var(--font-mono, monospace); font-size: 0.9rem; padding: 0.75rem; border: 1.5px dashed var(--control-edge); border-radius: var(--radius, 8px); background: var(--card, transparent); color: inherit; }
+.bibcheck input[type="file"]:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+.guide-content .bibcheck details { margin: 1.2rem 0 0; }
+.bibcheck details label:has(input[type="checkbox"]) { display: block; margin: 1rem 0 0.4rem; font-weight: 600; cursor: pointer; }
+.bibcheck .hero-actions { margin-top: 1.2rem; }
+
+/* Explain my error (docs/explain-my-error.md, site/explain/ui.js) */
 .explain[hidden], .explain-nojs[hidden] { display: none; }
+.explain { margin: 1.8rem 0; }
+.explain label { margin-top: 0; }
+.guide-content .explain-actions { margin: 1rem 0 0; }

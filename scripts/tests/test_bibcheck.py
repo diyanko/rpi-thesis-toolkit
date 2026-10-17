@@ -236,7 +236,7 @@ class PageControls(unittest.TestCase):
     def setUpClass(cls):
         source = (ROOT / 'docs/check-references.md').read_text()
         widget = re.search(r'<div class="bibcheck"[\s\S]*?<div data-results></div>\s*</div>', source).group()
-        fallback = re.search(r'<p data-bibcheck-nojs>[\s\S]*?</p>', source).group()
+        fallback = re.search(r'<p [^>]*data-bibcheck-nojs>[\s\S]*?</p>', source).group()
         def dynamic(path, query):
             if path == '/test.html':
                 # Same classic deferred script as the real guide template.

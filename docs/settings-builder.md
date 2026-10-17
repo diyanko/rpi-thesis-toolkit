@@ -1,8 +1,9 @@
 # Settings builder
 
-Fill in your title page details to make the settings for `metadata.tex`.
-Everything stays in this browser page. Nothing is uploaded or saved; leaving
-or reloading the page clears what you entered.
+Fill in your title page details, and this page writes the settings block
+for `metadata.tex`.
+
+<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The form runs in your browser and saves nothing; leaving or reloading the page clears it.</p>
 
 1. Enter your details and add each committee member. Use full names. The
    block puts the chair and any co-chairs first.
@@ -23,14 +24,14 @@ Choose the month you graduate, rather than the month you submit.
 <fieldset><legend>Committee</legend><p>Keep Chair or Co-Chair spelled exactly this way. Other roles may be left empty.</p><div data-settings-members></div><button class="button button-secondary" type="button" data-settings-add>Add a committee member</button></fieldset>
 </form>
 <p role="status" aria-live="polite" data-settings-status></p>
-<ul data-settings-errors></ul>
+<ul class="settings-errors" data-settings-errors></ul>
 <label for="settings-output">Block for metadata.tex</label>
 <textarea id="settings-output" rows="16" readonly spellcheck="false" aria-describedby="settings-paste"></textarea>
 <p id="settings-paste">Replace your existing settings and committee lines with this whole block.</p>
 <button class="button" type="button" data-settings-copy disabled>Copy settings</button>
 </div>
 
-<p data-settings-nojs>The form needs JavaScript, which is off or unavailable.
+<p class="tool-nojs" data-settings-nojs>The form needs JavaScript, which is off or not available in this browser.
 You can still edit <code>metadata.tex</code> using the settings table below.
 Keep text inside braces, for example <code>title = {Your thesis title},</code>.</p>
 

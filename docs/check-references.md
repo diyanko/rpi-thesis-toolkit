@@ -4,10 +4,10 @@ description: Check references.bib for citation keys, missing fields, names, date
 
 # Check your references
 
-Optional. If you have a `references.bib` file for a thesis or dissertation,
-use this page to look for common reference problems before you compile
-(make the PDF). Your files stay in your browser. Nothing is uploaded or saved
-by this checker.
+If you have a `references.bib` file for a thesis or dissertation, use this
+page to look for common reference problems before you compile (make the PDF).
+
+<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page reads your files in your browser and saves nothing.</p>
 
 <!-- bibcheck-interactive-start -->
 
@@ -37,7 +37,7 @@ by this checker.
 <div data-results></div>
 </div>
 
-<p data-bibcheck-nojs>The interactive check needs JavaScript, which is off or unavailable. Use the checklist below with your .bib file and PDF.</p>
+<p class="tool-nojs" data-bibcheck-nojs>The check needs JavaScript, which is off or not available in this browser. Use the checklist below with your .bib file and PDF.</p>
 
 <!-- bibcheck-interactive-end -->
 
