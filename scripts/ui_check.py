@@ -3,19 +3,20 @@
 
 Usage:
     python3 scripts/ui_check.py [--site dist/site] [--shots] [--pages PAT ...] [--quick]
+    python3 scripts/ui_check.py --pdf-result [PDF]
 
 What it does:
   * Finds Chrome or Chromium (or $CHROME). If none is found it prints
     "SKIP ui_check: no Chrome found" and exits 0.
   * Serves the site folder on a free localhost port with the standard library.
     A synthetic test page (/__ui_check__.html) is generated in memory, so the
-    site folder is never modified.
-  * Loads every page in iframes at several widths (headless Chrome cannot make
-    windows narrower than about 500 px) and measures layout problems:
-    horizontal overflow, elements past the viewport outside intentional scroll
-    boxes, images that failed to load, tables that scroll on wide screens,
-    clipped code at phone widths, duplicate ids, and a 200% root font size pass
-    at 390 px. Image loading is checked in light and dark mode.
+    site folder is never modified. Chrome is driven through its DevTools
+    protocol (scripts/chrome.py).
+  * Loads every page in iframes at several widths and measures layout
+    problems: horizontal overflow, elements past the viewport outside
+    intentional scroll boxes, images that failed to load, tables that scroll on
+    wide screens, clipped code at phone widths, duplicate ids, and a 200% root
+    font size pass at 390 px. Image loading is checked in light and dark mode.
   * With --shots, saves PNG screenshots (390 and 1280 px, light and dark) to
     _local/shots/<timestamp>/ (ignored by git). Each shot is the first screen,
     except the component gallery (project/components.html), shot at full length.
@@ -24,6 +25,10 @@ What it does:
     themes whose image differs from the baseline (informational; exit status
     is not affected). Images are compared by inflated PNG data, so a changed
     compression level does not count as a change.
+  * --pdf-result runs no sweep: it drops a PDF (default build/main.pdf) on
+    the built "Check your PDF" page (guide/check-pdf.html) and saves the
+    result at 390 and 1280 px in light and dark, the end of the result, and
+    the printout as a PDF, to _local/shots/pdf-check-<timestamp>/.
 
 Output: one "FAIL page width: issue" line per problem, a summary line, and
 JSON details in build/verify/ui_check.json. Exit status is 1 on any problem.
@@ -33,34 +38,21 @@ Python standard library only; requires Chrome, not installed by this project.
 from __future__ import annotations
 
 import argparse
+import base64
 import fnmatch
-import html
-import http.server
 import json
-import os
-import re
 import shutil
-import socket
-import subprocess
 import sys
-import tempfile
-import threading
 import time
 import zlib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+from chrome import Chrome, LocalServer
+from common import ROOT, find_chrome, site_config
+
 FULL_WIDTHS = [320, 390, 768, 1280, 1920]
 QUICK_WIDTHS = [390, 1280]
-CHROME_CANDIDATES = [
-    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    "/Applications/Chromium.app/Contents/MacOS/Chromium",
-    "google-chrome",
-    "google-chrome-stable",
-    "chromium",
-    "chromium-browser",
-]
 
 # The in-page script. CONFIG is substituted by the server per request.
 TEST_PAGE = r"""<!doctype html>
@@ -199,25 +191,6 @@ main().catch((e) => { document.getElementById("out").textContent = JSON.stringif
 </script></body></html>
 """
 
-SHOT_PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8"><title>shot</title>
-<style>html,body{margin:0;background:#888}iframe{border:0;display:block;margin:0 auto;
-width:__W__px;height:__H__px;background:#fff}</style></head>
-<body><iframe src="__SRC__"></iframe></body></html>"""
-
-
-def find_chrome() -> str | None:
-    env = os.environ.get("CHROME")
-    if env and (shutil.which(env) or Path(env).exists()):
-        return env
-    for cand in CHROME_CANDIDATES:
-        if Path(cand).is_absolute():
-            if Path(cand).exists():
-                return cand
-        elif shutil.which(cand):
-            return cand
-    return None
-
-
 def discover_pages(site: Path, patterns: list[str] | None) -> list[str]:
     pages = []
     for front in ("index.html", "404.html"):
@@ -231,71 +204,45 @@ def discover_pages(site: Path, patterns: list[str] | None) -> list[str]:
     return pages
 
 
-def make_handler(site: Path, config: dict):
-    class Handler(http.server.SimpleHTTPRequestHandler):
-        def __init__(self, *a, **kw):
-            super().__init__(*a, directory=str(site), **kw)
-
-        def log_message(self, *args):  # keep output quiet
-            pass
-
-        def _send(self, body: str):
-            data = body.encode("utf-8")
-            self.send_response(200)
-            self.send_header("Content-Type", "text/html; charset=utf-8")
-            self.send_header("Content-Length", str(len(data)))
-            self.end_headers()
-            self.wfile.write(data)
-
-        def do_GET(self):
-            from urllib.parse import urlparse, parse_qs
-            u = urlparse(self.path)
-            q = parse_qs(u.query)
-            if u.path == "/__ui_check__.html":
-                cfg = dict(config, mode=q.get("mode", ["full"])[0])
-                self._send(TEST_PAGE.replace("__CONFIG__", json.dumps(cfg)))
-            elif u.path == "/__ui_shot__.html":
-                body = (SHOT_PAGE.replace("__W__", q["w"][0]).replace("__H__", q["h"][0])
-                        .replace("__SRC__", html.escape(q["src"][0])))
-                self._send(body)
-            elif u.path == "/404.html":
-                # GitHub Pages serves this document at arbitrary missing URLs,
-                # so its production links are absolute. Test the current build's
-                # assets locally instead of silently loading the live website.
-                site_url = json.loads((ROOT / "site/site.json").read_text(encoding="utf-8"))["site_url"]
-                self._send((site / "404.html").read_text(encoding="utf-8")
-                           .replace(site_url.rstrip("/") + "/", "/"))
-            else:
-                super().do_GET()
-
-    return Handler
+def routes(site: Path, config: dict, pdf: Path | None = None):
+    """The pages the server makes up: the test page, the local 404 page, and
+    the PDF for --pdf-result."""
+    def dynamic(path: str, query: dict):
+        if path == "/__ui_check__.html":
+            cfg = dict(config, mode=query.get("mode", ["full"])[0])
+            return TEST_PAGE.replace("__CONFIG__", json.dumps(cfg)).encode("utf-8"), "text/html; charset=utf-8"
+        if path == "/404.html":
+            # GitHub Pages serves this document at arbitrary missing URLs,
+            # so its production links are absolute. Test the current build's
+            # assets locally instead of silently loading the live website.
+            site_url = site_config(ROOT)["site_url"]
+            text = (site / "404.html").read_text(encoding="utf-8").replace(site_url.rstrip("/") + "/", "/")
+            return text.encode("utf-8"), "text/html; charset=utf-8"
+        if pdf and path == "/__pdf__/0":
+            return pdf.read_bytes(), "application/pdf"
+        return None
+    return dynamic
 
 
-def chrome_args(chrome: str, profile: str, dark: bool) -> list[str]:
-    return [chrome, "--headless=new", "--disable-gpu", "--no-sandbox", "--hide-scrollbars",
-            "--no-first-run", "--no-default-browser-check", "--disable-extensions",
-            f"--user-data-dir={profile}",
-            f"--blink-settings=preferredColorScheme={0 if dark else 1}"]
-
-
-def run_dump(chrome: str, port: int, mode: str, dark: bool, budget_ms: int) -> dict:
-    with tempfile.TemporaryDirectory(prefix="ui_check_") as profile:
-        cmd = chrome_args(chrome, profile, dark) + [
-            f"--virtual-time-budget={budget_ms}", "--dump-dom", "--window-size=1400,900",
-            f"http://127.0.0.1:{port}/__ui_check__.html?mode={mode}"]
-        try:
-            res = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
-        except subprocess.TimeoutExpired:
-            return {"error": "Chrome timed out"}
-    m = re.search(r'<pre id="out">(.*?)</pre>', res.stdout, re.S)
-    if not m:
-        return {"error": "no output from Chrome (exit %s)" % res.returncode}
+def run_sweep(chrome: str, url: str, mode: str, dark: bool, timeout: int = 300) -> dict:
+    """Open the test page in a fresh browser and wait for its JSON result."""
     try:
-        data = json.loads(html.unescape(m.group(1)))
-    except ValueError:
-        return {"error": "unreadable output from Chrome"}
+        with Chrome(chrome, dark=dark) as browser:
+            browser.viewport(1400, 900)
+            browser.open(f"{url}/__ui_check__.html?mode={mode}")
+            text = browser.evaluate("""(async () => {
+              const out = document.getElementById("out");
+              for (let i = 0; i < %d && out.textContent === "pending"; i++) await new Promise(r => setTimeout(r, 100));
+              return out.textContent;
+            })()""" % (timeout * 10))
+    except (OSError, RuntimeError) as error:
+        return {"error": f"Chrome failed: {error}"}
+    try:
+        data = json.loads(text)
+    except (TypeError, ValueError):
+        return {"error": "the test page did not finish within %d s" % timeout}
     if not data.get("done") and "error" not in data:
-        data["error"] = "test page did not finish within the virtual time budget"
+        data["error"] = "the test page did not finish"
     return data
 
 
@@ -304,41 +251,80 @@ def run_dump(chrome: str, port: int, mode: str, dark: bool, budget_ms: int) -> d
 # their first screen only.
 GALLERY = "project/components.html"
 GALLERY_HEIGHT = 7600   # the page is about 7000 px long at 390 px wide
+# Wait for web fonts and for the images already on screen (at most 5 s).
+SETTLE = """Promise.race([new Promise(r => setTimeout(r, 5000)), Promise.all([document.fonts.ready,
+  ...Array.from(document.images).filter(i => !i.complete && i.loading !== "lazy")
+     .map(i => new Promise(r => { i.addEventListener("load", r); i.addEventListener("error", r); }))])
+]).then(() => new Promise(r => requestAnimationFrame(() => setTimeout(r, 100)))).then(() => true)"""
 
 
-def take_shot(chrome: str, port: int, page: str, width: int, dark: bool, dest: Path) -> str | None:
-    with tempfile.TemporaryDirectory(prefix="ui_shot_") as profile:
-        if width <= 600:
-            win_w = 600
-            h = GALLERY_HEIGHT if page == GALLERY else 1000
-            src = f"http://127.0.0.1:{port}/__ui_shot__.html?w={width}&h={h}&src=/{page}"
-            win = f"{win_w},{h}"
-        else:
-            h = GALLERY_HEIGHT if page == GALLERY else 1000
-            src = f"http://127.0.0.1:{port}/{page}"
-            win = f"{width},{h}"
-        tmp = dest.with_suffix(".tmp.png")
-        cmd = chrome_args(chrome, profile, dark) + [
-            "--virtual-time-budget=4000", f"--window-size={win}", f"--screenshot={tmp}", src]
-        try:
-            result = subprocess.run(cmd, capture_output=True, timeout=90)
-        except subprocess.TimeoutExpired:
-            return f"{page} {width}: screenshot timed out"
-        if result.returncode:
-            tmp.unlink(missing_ok=True)
-            return f"{page} {width}: Chrome screenshot failed (exit {result.returncode})"
-    if not tmp.exists():
+def take_shot(browser, url: str, page: str, width: int, dest: Path) -> str | None:
+    """Save one screenshot of page at this width; return an error or None."""
+    height = GALLERY_HEIGHT if page == GALLERY else 1000
+    try:
+        browser.viewport(width, height)
+        browser.open(f"{url}/{page}")
+        browser.evaluate(SETTLE)
+        data = browser.screenshot()
+    except (OSError, RuntimeError) as error:
+        return f"{page} {width}: Chrome screenshot failed ({error})"
+    if not data.startswith(b"\x89PNG"):
         return f"{page} {width}: no screenshot produced"
-    if width <= 600 and shutil.which("sips"):
-        result = subprocess.run(["sips", "-c", str(h), str(width), str(tmp), "--out", str(dest)],
-                       capture_output=True)
-        tmp.unlink(missing_ok=True)
-        if result.returncode or not dest.is_file() or not dest.stat().st_size:
-            dest.unlink(missing_ok=True)
-            return f"{page} {width}: screenshot crop failed (exit {result.returncode})"
-    else:
-        tmp.replace(dest)
+    dest.write_bytes(data)
     return None
+
+
+def shoot(chrome: str, url: str, jobs: list, dark: bool) -> list[str]:
+    """Take the shots for one color scheme in one browser; return errors."""
+    try:
+        with Chrome(chrome, dark=dark) as browser:
+            browser.scheme(dark)
+            return [error for page, width, dest in jobs
+                    if (error := take_shot(browser, url, page, width, dest))]
+    except (OSError, RuntimeError) as error:
+        return [f"{'dark' if dark else 'light'} shots: Chrome failed ({error})"]
+
+
+# The result of a dropped PDF, for --pdf-result.
+DROP = """(async function () {
+  const bytes = await (await fetch("/__pdf__/0")).blob();
+  const transfer = new DataTransfer();
+  transfer.items.add(new File([bytes], %s, { type: "application/pdf" }));
+  const zone = document.querySelector(".pdf-check-drop");
+  zone.dispatchEvent(new DragEvent("drop", { dataTransfer: transfer, bubbles: true, cancelable: true }));
+  for (let i = 0; i < 600 && !document.querySelector(".pdf-check-results h3"); i++) await new Promise(r => setTimeout(r, 100));
+  const heading = document.querySelector(".pdf-check-results h3");
+  if (!heading) throw new Error(document.querySelector(".pdf-check-status").textContent || "no result");
+  window.scrollTo({ top: heading.getBoundingClientRect().top + scrollY - 16, behavior: "instant" });
+  return document.querySelectorAll(".pdf-check-item").length;
+})()"""
+
+
+def pdf_result_shots(chrome: str, site: Path, pdf: Path) -> Path:
+    """Screenshots of the Check your PDF page with a result, and its printout."""
+    if not (site / "guide" / "check-pdf.html").is_file():
+        raise SystemExit("ui_check.py --pdf-result: guide/check-pdf.html not found; run build_site.py first.")
+    dest = ROOT / "_local" / "shots" / ("pdf-check-" + time.strftime("%Y%m%d-%H%M%S"))
+    dest.mkdir(parents=True, exist_ok=True)
+    with LocalServer(site, routes(site, {}, pdf)) as server, Chrome(chrome) as browser:
+        for width in (390, 1280):
+            for dark in (False, True):
+                browser.viewport(width, 1000, mobile=width < 600)
+                browser.scheme(dark)
+                browser.open(server.url + "/guide/check-pdf.html")
+                browser.evaluate(DROP % json.dumps(pdf.name))
+                time.sleep(0.3)
+                name = f"check-pdf-result-{width}-{'dark' if dark else 'light'}"
+                (dest / f"{name}.png").write_bytes(browser.screenshot())
+                browser.evaluate("window.scrollTo({behavior: \"instant\", top: document.querySelector('.pdf-check-results button')"
+                                 ".getBoundingClientRect().bottom + scrollY - 980}); true")
+                time.sleep(0.2)
+                (dest / f"{name}-end.png").write_bytes(browser.screenshot())
+        # The printout: press the button with printing stubbed, then print to PDF.
+        browser.evaluate("window.print = function () {}; document.querySelector('.pdf-check-results button').click(); true")
+        printed = browser.call("Page.printToPDF", printBackground=False, paperWidth=8.5, paperHeight=11)
+        (dest / "check-pdf-printout.pdf").write_bytes(base64.b64decode(printed["data"]))
+    return dest
 
 
 def png_data(path: Path) -> bytes:
@@ -396,6 +382,9 @@ def main() -> int:
     ap.add_argument("--pages", nargs="+", metavar="PAT",
                     help="only pages whose path matches (glob or substring)")
     ap.add_argument("--quick", action="store_true", help="only widths 390 and 1280")
+    ap.add_argument("--pdf-result", nargs="?", const="build/main.pdf", metavar="PDF",
+                    help="only screenshots of the Check your PDF page with this PDF's result "
+                         "(default build/main.pdf)")
     args = ap.parse_args()
     if args.baseline:
         args.shots = True
@@ -414,6 +403,15 @@ def main() -> int:
     if not (site / "index.html").is_file():
         print(f"ui_check: {site} not found or empty; run build_site.py first", file=sys.stderr)
         return 1
+    if args.pdf_result:
+        pdf = Path(args.pdf_result)
+        pdf = (pdf if pdf.is_absolute() else Path.cwd() / pdf).resolve()
+        if not pdf.is_file():
+            print(f"ui_check.py --pdf-result: {pdf} not found; compile the starter first (scripts/build.py).",
+                  file=sys.stderr)
+            return 1
+        print(f"screenshots: {pdf_result_shots(chrome, site, pdf).relative_to(ROOT)}")
+        return 0
     pages = discover_pages(site, args.pages)
     if not pages:
         print("ui_check: no pages matched", file=sys.stderr)
@@ -421,50 +419,31 @@ def main() -> int:
     widths = QUICK_WIDTHS if args.quick else FULL_WIDTHS
 
     start = time.time()
-    config = {"pages": pages, "widths": widths}
-    with socket.socket() as s:
-        s.bind(("127.0.0.1", 0))
-        port = s.getsockname()[1]
-    class Server(http.server.ThreadingHTTPServer):
-        request_queue_size = 128
-        daemon_threads = True
-
-        def handle_error(self, request, client_address):  # Chrome drops connections
-            pass
-
-    server = Server(("127.0.0.1", port), make_handler(site, config))
-    threading.Thread(target=server.serve_forever, daemon=True).start()
-
     problems: list[dict] = []
     errors: list[str] = []
-    try:
-        budget = 120000
+    shot_dir = None
+    with LocalServer(site, routes(site, {"pages": pages, "widths": widths})) as server:
         with ThreadPoolExecutor(max_workers=2) as pool:
-            f_light = pool.submit(run_dump, chrome, port, "full", False, budget)
-            f_dark = pool.submit(run_dump, chrome, port, "img", True, budget)
+            f_light = pool.submit(run_sweep, chrome, server.url, "full", False)
+            f_dark = pool.submit(run_sweep, chrome, server.url, "img", True)
             for label, fut in (("light", f_light), ("dark", f_dark)):
                 data = fut.result()
                 if "error" in data:
                     errors.append(f"{label} run: {data['error']}")
                 problems += data.get("problems", [])
 
-        shot_dir = None
         if args.shots:
             shot_dir = ROOT / "_local" / "shots" / time.strftime("%Y%m%d-%H%M%S")
             shot_dir.mkdir(parents=True, exist_ok=True)
-            jobs = []
+            jobs = {False: [], True: []}
             for page in pages:
                 stem = page.replace("/", "_").removesuffix(".html")
                 for w in (390, 1280):
                     for dark in (False, True):
-                        dest = shot_dir / f"{stem}-{w}-{'dark' if dark else 'light'}.png"
-                        jobs.append((page, w, dark, dest))
+                        jobs[dark].append((page, w, shot_dir / f"{stem}-{w}-{'dark' if dark else 'light'}.png"))
             with ThreadPoolExecutor(max_workers=2) as pool:
-                for err in pool.map(lambda j: take_shot(chrome, port, *j), jobs):
-                    if err:
-                        errors.append(err)
-    finally:
-        server.shutdown()
+                for found in pool.map(lambda dark: shoot(chrome, server.url, jobs[dark], dark), (False, True)):
+                    errors += found
 
     seen = set()
     unique = []

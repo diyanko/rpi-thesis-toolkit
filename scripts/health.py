@@ -25,6 +25,7 @@ A check with no recorded baseline for a watched page fails rather than passes.
 Prints a Markdown report; exits 1 when something needs a person.
 """
 
+import argparse
 import hashlib
 from html.parser import HTMLParser
 import json
@@ -38,7 +39,8 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.parse import urljoin, urlsplit
 
-ROOT = Path(__file__).resolve().parent.parent
+from common import ROOT, site_config
+
 WATCH_FILE = ROOT / "scripts" / "oge-watch.json"
 WATCHED = ["https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation"]
 SOURCES = ["docs/*.md", "README.md", "CONTRIBUTING.md", "site/index.html"]
@@ -51,7 +53,7 @@ ACT = ("To act on an RPI page change: read the page and the manual again, update
 
 def skip_prefixes():
     """Our own addresses (site/site.json) and the page-count script are not checked."""
-    config = json.loads((ROOT / "site/site.json").read_text(encoding="utf-8"))
+    config = site_config()
     own = [config.get(key, "").strip().rstrip("/") for key in ("site_url", "repository_url")]
     return tuple(url for url in own if url) + ("https://static.cloudflareinsights.com",)
 
@@ -205,7 +207,10 @@ def watch(update):
 
 
 def main(argv=None):
-    update = "--update" in (sys.argv[1:] if argv is None else argv)
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("--update", action="store_true",
+                        help="after re-reading RPI's pages, record what they say now")
+    update = parser.parse_args(argv).update
     report, problems = watch(update)
     if update:
         print("\n".join(report))

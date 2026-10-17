@@ -29,17 +29,18 @@ offline guide reuses the pictures of an earlier website build that way.
 It never pictures the title page, which carries the RPI seal. Needs pdflatex
 and biber, plus either poppler (pdftoppm and pdftotext) or Ghostscript (gs).
 """
+import argparse
 from html import unescape
 from pathlib import Path
 import json
 import re
 import shutil
 import subprocess
-import sys
 import tempfile
 import zlib
 
-ROOT = Path(__file__).resolve().parents[1]
+from common import ROOT
+
 # Files an earlier editor or build.py run leaves behind. They are not copied,
 # so the first pass starts clean: unresolved citations and an empty contents page.
 GENERATED = (".aux", ".bbl", ".bcf", ".blg", ".toc", ".lof", ".lot", ".out", ".run.xml",
@@ -524,5 +525,12 @@ def make(folder):
     return made
 
 
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    parser.add_argument("folder", nargs="?", default=ROOT / "build/previews",
+                        help="where the pictures go (default build/previews)")
+    make(parser.parse_args().folder)
+
+
 if __name__ == "__main__":
-    make(sys.argv[1] if len(sys.argv) > 1 else ROOT / "build/previews")
+    main()

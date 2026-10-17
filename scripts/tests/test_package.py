@@ -2,15 +2,16 @@
 """Tests for how package.py rewrites and checks links in shipped Markdown.
 Needs Pandoc, as package.py does.
 
-    python3 scripts/test_package.py
+    python3 scripts/tests/test_package.py
 """
 import io
 from pathlib import Path
+import shutil
 import sys
 import unittest
 import zipfile
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # scripts/
 import package
 
 SHIPPED = {"README.md", "docs/a.md"}
@@ -35,6 +36,7 @@ def broken_in(text):
     return ""
 
 
+@unittest.skipUnless(shutil.which("pandoc"), "Pandoc not installed")
 class Rewrite(unittest.TestCase):
     def test_outside_files_become_repository_links(self):
         self.assertEqual(ship("[c](CREDITS.md)"), f"[c]({REPO})")
@@ -98,6 +100,7 @@ class Rewrite(unittest.TestCase):
             ship("[x](no-such-file.md)")
 
 
+@unittest.skipUnless(shutil.which("pandoc"), "Pandoc not installed")
 class Check(unittest.TestCase):
     def test_good_links_pass(self):
         text = "[a](docs/a.md) [b](https://example.org) [c](#x)\n\n[id]: docs/a.md\n"

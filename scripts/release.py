@@ -59,9 +59,8 @@ import zipfile
 import zlib
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(ROOT / "scripts"))
-from build_site import OFFLINE_CHEATSHEET, RELEASE_VERSION  # noqa: E402
+from build_site import OFFLINE_CHEATSHEET, RELEASE_VERSION
+from common import ROOT, site_config
 
 # Starter ZIP members the website may change without a release: the offline
 # guide and the cheat sheet. Every other member (thesis files, class, build
@@ -97,7 +96,7 @@ class Config:
 
     @classmethod
     def load(cls, root=ROOT):
-        data = json.loads((root / "site/site.json").read_text(encoding="utf-8"))
+        data = site_config(root)
         return cls(data.get("repository_url"), data.get("site_url"))
 
     def asset_url(self, tag, name):
