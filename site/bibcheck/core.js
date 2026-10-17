@@ -42,7 +42,7 @@ export const RULES = {
   mathPairs: [['$$', '$$'], ['$', '$'], ['\\(', '\\)'], ['\\[', '\\]']],
   visibilityFields: ['doi', 'url', 'isbn'],
   titleFields: ['title', 'subtitle', 'booktitle'],
-  verbatimFields: ['url', 'doi', 'file', 'eprint'],
+  verbatimFields: ['url', 'doi', 'file', 'eprint', 'crossref', 'xref', 'xdata', 'related', 'entryset', 'ids'],
   ignoredFields: ['abstract', 'keywords', 'file', 'annote'],
   checks: {
     syntax: {severity: 'break', section: 'if-you-cant-use-zotero-paste-an-entry-by-hand', fix: 'Check commas, quotes, and balanced braces in references.bib. Details: {detail}.'},
@@ -134,8 +134,25 @@ export function parseBib(text) {
   };
   const value = (raw, key, field) => splitTop(raw, '#').map(part => {
     const s = part.trim();
-    if ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('"') && s.endsWith('"'))) return s.slice(1, -1);
+    if (s.startsWith('{') || s.startsWith('"')) {
+      const braced = s[0] === '{';
+      let depth = braced ? 1 : 0, end = -1;
+      for (let j = 1; j < s.length; j++) {
+        if (escaped(s, j)) continue;
+        if (!braced && s[j] === '"' && depth === 0) { end = j; break; }
+        if (s[j] === '{') depth++;
+        if (s[j] === '}') depth--;
+        if (braced && depth === 0) { end = j; break; }
+      }
+      if (end === s.length - 1) return s.slice(1, -1);
+      errors.push({id: 'syntax', key, field, detail: 'a value component must be one balanced braced or quoted value; join components with #'});
+      return s;
+    }
     if (/^\d+$/.test(s)) return s;
+    if (!/^[^\s{}"#=,()]+$/.test(s)) {
+      errors.push({id: 'syntax', key, field, detail: 'expected a braced value, quoted value, number, or string macro'});
+      return s;
+    }
     if (Object.hasOwn(macros, s.toLowerCase())) return macros[s.toLowerCase()];
     errors.push({id: 'unsupported', key, field, detail: 'the string macro ' + s});
     return s;
