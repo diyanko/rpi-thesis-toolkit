@@ -4,9 +4,9 @@ name: Build thesis, website, and starter ZIP
 # - Pull requests and pushes to main: verify. A push to main also deploys the
 #   website when scripts/release.py gate allows it: the commit is still the tip
 #   of main, its RELEASE_VERSION is the newest published release (by version
-#   number), and its starter interface (rpi-thesis.cls, main.tex, metadata.tex,
-#   preamble.tex, latexmkrc, scripts/build.py) equals that release's starter
-#   ZIP. Guide fixes go live at once; starter changes wait for a release.
+#   number), and the starter ZIP built in this run equals that release's
+#   starter ZIP in every file except the offline guide and cheat sheet. Guide
+#   fixes go live at once; starter changes wait for a release.
 # - A pushed tag vX.Y.Z (made after scripts/bump.py): verify in release mode,
 #   create or resume the GitHub pre-release with both ZIPs and rpi-thesis.cls
 #   (scripts/release.py publish), deploy unless a newer release is published,
@@ -14,7 +14,9 @@ name: Build thesis, website, and starter ZIP
 #   a release").
 # - Run workflow (workflow_dispatch) on an older vX.Y.Z tag with rollback: true
 #   puts that release's website back on purpose; the next deploy from main
-#   replaces it again.
+#   replaces it again. Only tags from v0.6.0 on have this input.
+# Every deploy (main or tag) also refuses when the live site's build.txt names
+# a newer commit than this one (GitHub compare API), unless rollback is set.
 # The deploy job checks the gate again inside the Pages lock, just before
 # publishing, so a delayed or re-run old build never replaces a newer website.
 # No thesis PDFs are uploaded; the only PDF in the artifacts is the one-page
@@ -165,8 +167,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v8
-        if: github.ref_type == 'tag'
+      - uses: actions/download-artifact@v8  # the gate compares this run's starter ZIP
         with:
           name: starter-zip
           path: dist
