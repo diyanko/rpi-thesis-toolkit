@@ -116,8 +116,9 @@ What to run is in [AGENTS.md](../../AGENTS.md#development-cycle). How it works:
   settings, class version) and `scripts/chrome.py` (the headless browser).
 - **`tidy.py`** removes local branches and worktrees already merged into
   `origin/main`, including rebase merges when every unique commit's patch is
-  in `main` and all changed paths still match it, and branches whose merged
-  pull request (from `gh`) has the branch tip as its head ("PR #N merged";
+  in `main` and all changed paths still match it, and branches whose pull
+  request into `main` (from `gh`) has the branch tip as its head and its merge
+  commit in `origin/main` ("PR #N merged";
   without `gh`, or offline, only the git checks apply). A branch that changed again,
   moved after the check, or cannot be proven merged stays. It never touches
   `main`, the current worktree, locked worktrees, or uncommitted changes. It
