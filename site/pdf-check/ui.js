@@ -34,7 +34,9 @@
   var updating = pageLink("going-further");
 
   // Without these the checker stays hidden and the page's explanation stays.
-  if (!window.Promise || !("noModule" in HTMLScriptElement.prototype) || !window.DOMMatrix) return;
+  // pdf.js needs Promise.withResolvers (Safari 17.4, Firefox 121, Chrome 119).
+  if (!window.Promise || typeof Promise.withResolvers !== "function" ||
+      !("noModule" in HTMLScriptElement.prototype) || !window.DOMMatrix) return;
   var oge;
   try {
     oge = JSON.parse(document.getElementById("oge-rules").textContent);
