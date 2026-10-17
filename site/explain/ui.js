@@ -87,7 +87,16 @@
   function ready() {
     form.addEventListener("submit", function (event) {
       event.preventDefault();
-      show(window.ExplainCore.explain(input.value, problems));
+      // Edge cases first: nothing pasted, or far more than a log.
+      var text = input.value;
+      if (!/\S/.test(text) || text.length > 5000000) {
+        result.textContent = "";
+        result.appendChild(el("p", /\S/.test(text) ? "That is more than a log. Paste the part from the first line that starts with ! instead."
+          : "Paste the error or the whole log first."));
+        input.focus();
+        return;
+      }
+      show(window.ExplainCore.explain(text, problems));
     });
     root.hidden = false;
     var note = document.querySelector("[data-explain-nojs]");

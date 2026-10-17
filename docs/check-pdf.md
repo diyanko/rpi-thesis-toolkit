@@ -1,16 +1,13 @@
 # Check your PDF
 
-This page reads a thesis or dissertation PDF and measures a few
-formatting points: paper size, page numbers, heading position, side margins,
-the contents, and fonts. It works on a PDF from any program, not only this
-toolkit, so you can also use it on a PDF someone sent you. Each result names
-the part of the OGE *Dissertation and Thesis Manual* it comes from. It is not
-an OGE review, and a clean result does not mean OGE will accept the PDF; use
-the [final PDF checklist](submission.md#final-pdf-checklist) as well.
+Choose a thesis or dissertation PDF, from any program; the page measures
+paper size, page numbers, headings, side margins, the contents, and fonts
+against the OGE *Dissertation and Thesis Manual*. It is not an OGE review:
+use the [final PDF checklist](submission.md#final-pdf-checklist) as well.
 
 <p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page reads your PDF in your browser. Its PDF reader, Mozilla's free pdf.js, is part of this website, so nothing is downloaded from another website.</p>
 
-<div class="pdf-check" data-pdf-check data-version="" hidden><label class="pdf-check-drop" for="pdf-check-file"><span class="pdf-check-button">Choose your PDF</span> <span class="pdf-check-or">or drop it here</span></label><input class="visually-hidden" id="pdf-check-file" type="file" accept="application/pdf,.pdf"><p class="pdf-check-status" role="status" aria-live="polite"></p><button type="button" class="button button-secondary pdf-check-cancel" hidden>Cancel the check</button><div class="pdf-check-results"></div></div>
+<div class="tool pdf-check" data-pdf-check data-version="" hidden><label class="pdf-check-drop tool-drop tool-file" for="pdf-check-file"><span class="tool-file-button is-primary">Choose your PDF</span> <span class="tool-file-or">or drop it here</span></label><input class="visually-hidden" id="pdf-check-file" type="file" accept="application/pdf,.pdf"><p class="tool-file-names" data-file-names></p><p class="pdf-check-status tool-status" role="status" aria-live="polite"></p><button type="button" class="button button-secondary pdf-check-cancel" hidden>Cancel the check</button><div class="pdf-check-results tool-results"></div></div>
 
 <p class="pdf-check-nojs tool-nojs" data-pdf-check-nojs>The checker needs JavaScript, which is off or not available in this browser. Everything it looks at is listed below; check those points by eye, then use the <a href="submission.md#final-pdf-checklist">final PDF checklist</a>.</p>
 

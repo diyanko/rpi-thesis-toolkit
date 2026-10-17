@@ -101,7 +101,7 @@
       for (const error of result.errors) element("li", error, errors);
       output.value = result.text;
       copy.disabled = Boolean(result.errors.length);
-      status.textContent = result.errors.length ? "Fill in the settings below to make your block." : "Your block is ready to copy.";
+      status.textContent = result.errors.length ? "Still to fill in:" : "Looks fine: your block is ready to copy.";
     }
     root.querySelector("[data-settings-add]").addEventListener("click", () => addMember().focus());
     form.addEventListener("submit", event => event.preventDefault());

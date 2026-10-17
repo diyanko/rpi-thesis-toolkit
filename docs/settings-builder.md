@@ -1,34 +1,32 @@
 # Settings builder
 
-Fill in your title page details, and this page writes the settings block
-for `metadata.tex`.
+Fill in your title page details; the page writes the settings block for
+`metadata.tex`.
 
 <p class="tool-privacy"><strong>Nothing is uploaded.</strong> The form runs in your browser and saves nothing; leaving or reloading the page clears it.</p>
 
-1. Enter your details and add each committee member. Use full names. The
-   block puts the chair and any co-chairs first.
-2. Copy the block below. In `metadata.tex`, replace the existing
-   `\thesissetup{...}` block and all `\committeemember` lines with it.
-3. Save and compile `main.tex` (turn it into a PDF). Check your title page.
-   The form checks settings, not whether your department or committee details
-   are correct. Use the [final PDF checklist](submission.md#final-pdf-checklist).
+1. Enter your details and each committee member, with full names. Type
+   plain text; `&` and `%` are handled for you.
+2. Copy the block. In `metadata.tex`, replace the `\thesissetup{...}` block
+   and all `\committeemember` lines with it.
+3. Compile and check your title page. The form checks the settings, not
+   whether the names are right; use the
+   [final PDF checklist](submission.md#final-pdf-checklist).
 
-Enter plain text. Characters such as `&` and `%` are handled for you. To put
-math in your title, edit the copied block using the
-[math in the title example](going-further.md#all-thesis-settings).
-Choose the month you graduate, rather than the month you submit.
+Choose the month you graduate, not the month you submit. For math in a title,
+edit the copied block ([example](going-further.md#all-thesis-settings)).
 
-<div class="settings-builder" data-settings-builder hidden>
+<div class="tool settings-builder" data-settings-builder hidden>
 <form autocomplete="off" novalidate>
 <fieldset><legend>Title page settings</legend><div data-settings-fields></div></fieldset>
 <fieldset><legend>Committee</legend><p>Keep Chair or Co-Chair spelled exactly this way. Other roles may be left empty.</p><div data-settings-members></div><button class="button button-secondary" type="button" data-settings-add>Add a committee member</button></fieldset>
 </form>
-<p role="status" aria-live="polite" data-settings-status></p>
+<p class="tool-status" role="status" aria-live="polite" data-settings-status></p>
 <ul class="settings-errors" data-settings-errors></ul>
 <label for="settings-output">Block for metadata.tex</label>
-<textarea id="settings-output" rows="16" readonly spellcheck="false" aria-describedby="settings-paste"></textarea>
-<p id="settings-paste">Replace your existing settings and committee lines with this whole block.</p>
-<button class="button" type="button" data-settings-copy disabled>Copy settings</button>
+<textarea class="tool-output" id="settings-output" rows="16" readonly spellcheck="false" aria-describedby="settings-paste"></textarea>
+<p class="tool-hint" id="settings-paste">Replace your existing settings and committee lines with this whole block.</p>
+<p class="tool-actions"><button class="button" type="button" data-settings-copy disabled>Copy settings</button></p>
 </div>
 
 <p class="tool-nojs" data-settings-nojs>The form needs JavaScript, which is off or not available in this browser.

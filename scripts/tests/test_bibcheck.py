@@ -235,7 +235,7 @@ class PageControls(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         source = (ROOT / 'docs/check-references.md').read_text()
-        widget = re.search(r'<div class="bibcheck"[\s\S]*?<div data-results></div>\s*</div>', source).group()
+        widget = re.search(r'<div class="[^"]*\bbibcheck"[\s\S]*?<div [^>]*data-results></div>\s*</div>', source).group()
         fallback = re.search(r'<p [^>]*data-bibcheck-nojs>[\s\S]*?</p>', source).group()
         def dynamic(path, query):
             if path == '/test.html':
@@ -305,7 +305,7 @@ class PageControls(unittest.TestCase):
         self.run_check()
         self.assertIn('style: numeric', self.text())
         self.assertIn('coverage was not checked', self.text())
-        self.assertIn('No problems found', self.text())
+        self.assertIn('Looks fine', self.text())
 
     def test_new_input_removes_stale_results(self):
         self.choose([('references.bib', BOOK)])

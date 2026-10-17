@@ -1,13 +1,11 @@
 # Explain my error
 
-For anyone whose compile stopped with a message they do not understand, on
-Overleaf or on your computer. Paste the error, or the whole log, and this page
-finds the first real error, says what it means in plain words, and shows the
-fix and the guide section with the details.
+Paste the error, or the whole log, from Overleaf or your editor; the page
+finds the first real error and says what it means and how to fix it.
 
 <p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page reads the text in your browser. Still, remove anything confidential before you paste it anywhere.</p>
 
-<div class="explain" data-explain hidden><form><label for="explain-text">Paste the error or the whole log</label><textarea id="explain-text" rows="10" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea><p class="explain-actions"><button type="submit" class="button">Explain the error</button></p></form><div class="explain-result" role="status" aria-live="polite"></div></div>
+<div class="tool explain" data-explain hidden><form><label for="explain-text">Paste the error or the whole log</label><textarea class="explain-input tool-drop" id="explain-text" rows="10" spellcheck="false" autocapitalize="off" autocomplete="off"></textarea><p class="tool-actions"><button type="submit" class="button">Explain the error</button></p></form><div class="explain-result tool-results tool-card" role="status" aria-live="polite"></div></div>
 
 <p class="explain-nojs tool-nojs" data-explain-nojs>The explainer needs JavaScript, which is off or not available in this browser. Look for your message in the table below, or read the error yourself with <a href="troubleshooting.md#read-an-error-message">Read an error message</a>.</p>
 

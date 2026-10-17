@@ -24,6 +24,7 @@
   var status = root.querySelector(".pdf-check-status");
   var results = root.querySelector(".pdf-check-results");
   var cancel = root.querySelector(".pdf-check-cancel");
+  var names = root.querySelector("[data-file-names]");
   var current = root.getAttribute("data-version") || "";
   // Links from the page text, so they work on the website and offline.
   function pageLink(part) {
@@ -248,6 +249,7 @@
     stop();
     removePrintout();
     results.textContent = "";
+    if (names) names.textContent = "Chosen: " + file.name;
     if (!/\.pdf$/i.test(file.name) && file.type !== "application/pdf") {
       say("That is not a PDF. Choose the PDF your editor made (often main.pdf).");
       input.value = "";

@@ -52,7 +52,7 @@ window.Worker = class extends Worker {
 
 def checker_markup():
     """The checker's markup from docs/check-pdf.md (one line starting <div class="pdf-check")."""
-    found = re.search(r'(?m)^<div class="pdf-check" .*$', (ROOT / "docs/check-pdf.md").read_text(encoding="utf-8"))
+    found = re.search(r'(?m)^<div class="[^"]*\bpdf-check\b[^"]*" .*$', (ROOT / "docs/check-pdf.md").read_text(encoding="utf-8"))
     if not found:
         raise RuntimeError("docs/check-pdf.md has no <div class=\"pdf-check\" ...> line")
     return found[0].replace('data-version=""', f'data-version="{class_version()[0]}"', 1)

@@ -12,6 +12,7 @@ if (root) {
   const files = root.querySelector('input[type=file]');
   const status = root.querySelector('[role=status]');
   const results = root.querySelector('[data-results]');
+  const names = root.querySelector('[data-file-names]');
   let chapters = [], revision = 0;
   const maxBytes = 5 * 1024 * 1024;
   function node(tag, text, parent) {
@@ -25,6 +26,7 @@ if (root) {
     revision++;
     bib.value = ''; preamble.value = ''; tex.value = '';
     files.value = ''; chapters = [];
+    if (names) names.textContent = '';
     root.querySelector('[data-unused]').checked = false;
     status.textContent = 'Cleared. No files or text are saved by this checker.';
     clearResults();
@@ -35,6 +37,7 @@ if (root) {
     clearResults();
     const list = Array.from(chosen);
     if (!list.length) return;
+    if (names) names.textContent = 'Chosen: ' + list.map(file => file.name).join(', ');
     if (list.reduce((sum, file) => sum + file.size, 0) > maxBytes) {
       status.textContent = 'Choose files totaling less than 5 MB, or paste a smaller set of references.';
       return;
@@ -81,7 +84,7 @@ if (root) {
     heading.tabIndex = -1;
     node('p', report.entries + ' entries; style: ' + report.style + '. ' + report.coverage, results);
     if (!preamble.value.trim()) node('p', 'No preamble.tex supplied. Using the starter’s numeric style for field advice.', results);
-    if (!report.findings.length) node('p', 'No problems found by these checks. Compare the references in your PDF with your style guide.', results);
+    if (!report.findings.length) node('p', 'Looks fine: these checks found no problems. Still compare the references in your PDF with your style guide.', results);
     for (const [severity, label] of Object.entries(RULES.severities)) {
       const findings = report.findings.filter(item => item.severity === severity);
       if (!findings.length) continue;
@@ -95,7 +98,8 @@ if (root) {
         link.href = item.href;
       }
     }
-    status.textContent = report.findings.length + ' points to review. Nothing was uploaded.';
+    const count = report.findings.length;
+    status.textContent = (count ? count + (count === 1 ? ' point' : ' points') + ' to review.' : 'Looks fine.') + ' Nothing was uploaded.';
     heading.focus();
   }
   files.addEventListener('change', () => read(files.files));
