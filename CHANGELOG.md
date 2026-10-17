@@ -10,7 +10,9 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
 
-## Unreleased
+## 0.9.0 (beta), 17 Oct 2026
+
+Published as the pre-release `v0.9.0`.
 
 **Changes your PDF?** No.
 
@@ -18,6 +20,9 @@ read [update the formatting safely](docs/going-further.md#update-the-formatting-
 
 - **Five tools, one design:** every tool page has the same layout, a clear
   "Nothing is uploaded" line, and short results; the home page lists them all.
+  On a laptop or desktop the tool pages use the full width, LaTeX in the
+  guide and in tool output is colored for easier reading, and form fields,
+  checkboxes, and yes/no switches match the site's hand-drawn style.
 
 - **Settings builder:** fill in a form and copy a checked `\thesissetup` block
   for `metadata.tex`; it rejects the same values the class rejects.
