@@ -61,6 +61,15 @@ class SaveBaseline(unittest.TestCase):
         self.assertEqual(browser.size, (390, ui_check.GALLERY_HEIGHT))
         self.assertEqual(browser.opened, "http://127.0.0.1:1/" + ui_check.GALLERY)
 
+    def test_full_shot_grows_to_the_page_length(self):
+        for length, expected in ((3200, 3200), (99999, ui_check.FULL_MAX), (600, 1000)):
+            with self.subTest(length=length):
+                browser = FakeBrowser(b"\x89PNG fake")
+                browser.evaluate = lambda expression: length if "scrollHeight" in expression else True
+                self.assertIsNone(ui_check.take_shot(browser, "http://127.0.0.1:1", "index.html", 1280,
+                                                     self.shots / "page.png", full=True))
+                self.assertEqual(browser.size, (1280, expected))
+
 
 class FakeBrowser:
     """Stands in for chrome.Chrome: screenshot() returns or raises `reply`."""
