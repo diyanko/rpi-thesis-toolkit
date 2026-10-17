@@ -76,5 +76,33 @@ class Bump(unittest.TestCase):
                             for name in self.files))
 
 
+    def test_version_is_chosen_from_the_unreleased_section(self):
+        cases = [("**Changes your PDF?** No.\n\n- Guide fix.", "0.7.1"),
+                 ("**Changes your PDF?** **Yes**, spacing.", "0.8.0"),
+                 ("**Changes your PDF?** Only if you use LuaLaTeX.", "0.8.0"),
+                 ("**Changes your PDF?** No.\n\n- A new setting, `foo`.", "0.8.0")]
+        for body, expected in cases:
+            with self.subTest(body=body):
+                log = f"# Changes\n\n## Unreleased\n\n{body}\n\n## 0.7.0\n\n**Changes your PDF?** Yes.\n"
+                self.assertEqual(bump.choose("0.7.0", log)[0], expected)
+
+    def test_no_argument_uses_the_chosen_version(self):
+        with patch.object(bump, "ROOT", self.root), patch.object(sys, "argv", ["bump.py"]), \
+                redirect_stdout(io.StringIO()) as out:
+            bump.main()
+        self.assertIn("version 0.7.1 (patch", out.getvalue())
+        self.assertIn("v0.7.1", (self.root / "rpi-thesis.cls").read_text(encoding="utf-8"))
+
+    def test_no_argument_refuses_without_unreleased_or_pdf_line(self):
+        for log in ("# Changes\n\n## 0.7.0\n", "# Changes\n\n## Unreleased\n\n- Fix.\n"):
+            with self.subTest(log=log):
+                (self.root / "CHANGELOG.md").write_text(log, encoding="utf-8")
+                before = self.snapshot()
+                with patch.object(bump, "ROOT", self.root), patch.object(sys, "argv", ["bump.py"]), \
+                        self.assertRaisesRegex(SystemExit, "CHANGELOG.md"):
+                    bump.main()
+                self.assertEqual(self.snapshot(), before)
+
+
 if __name__ == "__main__":
     unittest.main()
