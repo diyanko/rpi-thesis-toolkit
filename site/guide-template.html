@@ -34,6 +34,9 @@ $endif$
 <script src="${root}viewer.js" defer></script>
 <script src="${root}search-index.js" defer></script>
 <script src="${root}search.js" defer></script>
+$if(tool)$
+<script src="${root}tools-highlight.js" defer></script>
+$endif$
 $if(page_script)$
 <script src="${root}$page_script$" defer></script>
 $endif$
@@ -44,7 +47,7 @@ $if(analytics_token)$
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "$analytics_token$"}'></script>
 $endif$
 </head>
-<body class="page-$kind$" id="top">
+<body class="page-$kind$$if(tool)$ page-tool$endif$" id="top">
 <a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="brand">
