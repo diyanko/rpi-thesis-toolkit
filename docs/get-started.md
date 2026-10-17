@@ -37,7 +37,7 @@ the Overleaf link in Step 3b to the new tag, and build_site.py stops if they
 do not match the release (maintenance.md, "Make a release"). The landing
 page's computer card opens this step. -->
 
-1. **[Download the starter (ZIP)](https://github.com/diyanko/rpi-thesis-toolkit/releases/download/v0.7.1/rpi-thesis-starter-v0.7.1.zip)**:
+1. **[Download the starter (ZIP)](https://github.com/diyanko/rpi-thesis-toolkit/releases/download/v0.8.0/rpi-thesis-starter-v0.8.0.zip)**:
    the thesis files, this guide for offline reading (open `START-HERE.html`),
    and a cheat sheet. A ZIP is one compressed file that holds a folder. No
    account needed. (Opened `START-HERE.html` from the starter ZIP? You
@@ -206,7 +206,7 @@ Then go to [Step 4](#step-4-check-your-first-pdf).
 
 1. Sign in to [Overleaf](https://www.overleaf.com/); the free plan is enough
    to start.
-2. **[Open the starter in Overleaf](https://www.overleaf.com/docs?snip_uri=https%3A%2F%2Fgithub.com%2Fdiyanko%2Frpi-thesis-toolkit%2Freleases%2Fdownload%2Fv0.7.1%2Frpi-thesis-overleaf-v0.7.1.zip)**.
+2. **[Open the starter in Overleaf](https://www.overleaf.com/docs?snip_uri=https%3A%2F%2Fgithub.com%2Fdiyanko%2Frpi-thesis-toolkit%2Freleases%2Fdownload%2Fv0.8.0%2Frpi-thesis-overleaf-v0.8.0.zip)**.
    - Or upload the ZIP from [Step 2](#step-2-get-the-files) yourself:
      **New project → Upload project**
      ([Overleaf's steps](https://docs.overleaf.com/managing-projects-and-files/uploading-a-project)).
