@@ -23,8 +23,8 @@ edit the copied block ([example](going-further.md#all-thesis-settings)).
 </form>
 <p class="tool-status" role="status" aria-live="polite" data-settings-status></p>
 <ul class="settings-errors" data-settings-errors></ul>
-<label for="settings-output">Block for metadata.tex</label>
-<textarea class="tool-output" id="settings-output" rows="16" readonly spellcheck="false" aria-describedby="settings-paste"></textarea>
+<p class="tool-label" id="settings-output-label">Block for metadata.tex</p>
+<pre class="tool-output settings-output" data-settings-output data-empty="The block appears here." aria-labelledby="settings-output-label" aria-describedby="settings-paste"></pre>
 <p class="tool-hint" id="settings-paste">Replace your existing settings and committee lines with this whole block.</p>
 <p class="tool-actions"><button class="button" type="button" data-settings-copy disabled>Copy settings</button></p>
 </div>

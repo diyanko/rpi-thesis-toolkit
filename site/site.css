@@ -112,6 +112,15 @@
   --table-head: var(--paper-2);
   --control-edge: var(--muted);
   --checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%2346684b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 5.8 C 5 7.4, 6.6 9.2, 8.1 10.6 C 9.6 9, 11.2 7.3, 12.7 5.6' fill='none' stroke='%232b2723' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");   /* the arrow on select menus */
+
+  /* LaTeX highlighting, shared by guide code blocks (built by scripts/build_site.py)
+     and tool output (site/tools-highlight.js). Each is AA on --paper-2 in both themes. */
+  --code-cmd:   var(--blue);    /* \commands */
+  --code-brace: var(--terra);   /* { } */
+  --code-opt:   var(--plum);    /* [options] */
+  --code-math:  var(--sage);    /* $math$ */
+  --code-com:   var(--muted);   /* % comments, also italic */
 
   /* The dark palette is defined once; both System and Dark use it. */
   --dark-paper: #1c1a17;
@@ -144,6 +153,7 @@
   --dark-table-head: #353027;
   --dark-control-edge: #8a7f70;
   --dark-checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%23a9c9a1' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --dark-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 5.8 C 5 7.4, 6.6 9.2, 8.1 10.6 C 9.6 9, 11.2 7.3, 12.7 5.6' fill='none' stroke='%23efe8dc' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 
   --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --font-body: "Plain Zero", "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -195,6 +205,7 @@
     --table-head: var(--dark-table-head);
     --control-edge: var(--dark-control-edge);
     --checkmark: var(--dark-checkmark);
+    --chevron: var(--dark-chevron);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
@@ -229,6 +240,7 @@
     --table-head: var(--dark-table-head);
     --control-edge: var(--dark-control-edge);
     --checkmark: var(--dark-checkmark);
+    --chevron: var(--dark-chevron);
   }
 }
 
@@ -966,6 +978,17 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   .page-toc-wide a:hover { color: var(--link); text-decoration: underline; }
 }
 
+/* Tool pages (the build marks them .page-tool): a wider frame, header and
+   footer included, and no right-hand rail ("On this page" stays as the box in
+   the text), so forms, the converter's two panes and results have room.
+   Prose keeps its 68ch measure; the tool itself uses the whole column. */
+.page-tool { --page-max: 1440px; }
+@media (min-width: 1180px) {
+  .page-tool .guide-frame { grid-template-columns: 210px minmax(0, 1fr); gap: 56px; }
+}
+.tool-mark { display: inline-block; width: 1.1em; height: 1.1em; margin-right: 0.3em; vertical-align: -0.18em; }   /* the tool's doodle from the home page */
+@media (max-width: 600px) { .tool-mark { width: 0.85em; height: 0.85em; margin-right: 0.2em; vertical-align: -0.1em; } }
+
 /* Previous / next */
 .guide-end {   /* the dashed rule, then "Back to top" at the end of the column, then previous / next */
   margin: 3.4rem 0 0;
@@ -1280,6 +1303,13 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   tab-size: 2;
 }
 
+/* LaTeX colors (tok-* spans from scripts/build_site.py and site/tools-highlight.js) */
+.tok-cmd   { color: var(--code-cmd); }
+.tok-brace { color: var(--code-brace); font-weight: 700; }
+.tok-opt   { color: var(--code-opt); }
+.tok-math  { color: var(--code-math); }
+.tok-com   { color: var(--code-com); font-style: italic; }
+
 /* Prose prompts wrap; LaTeX, commands and diagnostic logs keep their spacing. */
 .guide-content pre.prompt, .guide-content pre.prompt code {
   font-family: var(--font-body);
@@ -1564,12 +1594,14 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   html { scroll-behavior: smooth; }
 }
 
-/* ===== Optional motion: three small touches, each under 1 s, none looping.
+/* ===== Optional motion: five small touches, each under 1 s, none looping.
    Delete this whole block for a fully still site; nothing else depends on it.
    Off for anyone who asks for reduced motion.
      1. the home page message's underline draws itself once on load
      2. cards lift a little on hover or keyboard focus
-     3. Optional details boxes ease open */
+     3. Optional details boxes ease open
+     4. a tool's results fade in when they first appear
+     5. a switch's knob slides */
 @media (prefers-reduced-motion: no-preference) {
   .home-top .squiggle::after { animation: draw-in .8s .35s ease-out both; }
 
@@ -1587,8 +1619,12 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
     }
     .guide-content details[open]::details-content { block-size: auto; }
   }
+
+  .tool-results:not(:empty) { animation: rise-in .3s ease-out both; }
+  .tool-switch input::before { transition: left .15s ease, border-color .15s ease; }
 }
 @keyframes draw-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 -2px 0 0); } }
+@keyframes rise-in { from { opacity: 0; transform: translateY(6px); } }
 /* ===== End of optional motion ===== */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1772,24 +1808,104 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   border: 1.5px dashed var(--line-strong);
   border-radius: 12px;
 }
-.tool :where(label:not(:has(input))) { display: block; margin: 1rem 0 6px; font-weight: 700; }
-.tool :where(input[type="text"], select, textarea) {
-  display: block; box-sizing: border-box; width: 100%; min-width: 0; margin: 0;
+/* Controls, drawn like the buttons: a sketchy edge, a small offset shadow
+   that grows on hover, and the blue focus ring. All are native controls, so
+   keyboard use, forms and screen readers work as usual. */
+.tool :where(label:not(:has(input)), .tool-label) { display: block; margin: 1rem 0 6px; font-weight: 700; }
+.tool :where(input[type="text"], input:not([type]), select, textarea) {
+  display: block; box-sizing: border-box; width: 100%; min-width: 0; min-height: 48px; margin: 0;
   padding: 10px 14px;
   font: inherit; color: var(--ink);
   background: var(--card);
-  border: 1.5px solid var(--control-edge);
-  border-radius: 10px;
+  border: 2px solid var(--control-edge);
+  border-radius: var(--sketch);
+  box-shadow: 3px 3px 0 var(--line-strong);
+  transition: border-color .12s ease, box-shadow .12s ease;
+}
+.tool :where(input[type="text"], input:not([type]), select, textarea):hover { border-color: var(--ink); }
+.tool :where(input[type="text"], input:not([type]), select, textarea):focus-visible {
+  border-color: var(--ink); box-shadow: 4px 4px 0 var(--line-strong);
+}
+.tool :where(select) {
+  -webkit-appearance: none; appearance: none; cursor: pointer;
+  padding-right: 44px;
+  background: var(--card) var(--chevron) no-repeat right 14px center / 16px 16px;
 }
 .tool :where(textarea) { padding: 14px 16px; font: 0.88rem/1.6 var(--font-mono); tab-size: 2; resize: vertical; }
 .tool ::placeholder { color: var(--muted); opacity: 1; font-family: var(--font-body); }
-.tool :where(input, select, textarea):focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-.tool :where(input[type="checkbox"], input[type="radio"]) { accent-color: var(--rpi-red); }
+.tool :where(input, select, textarea):focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+/* Checkboxes and radio buttons: a hand-drawn box with the guide's tick, and a
+   wobbly circle with a dot. The label is the click target; it sits beside the
+   box and wraps under itself. */
+.tool label:has(> input:is([type="checkbox"], [type="radio"])) {
+  display: flex; align-items: flex-start; gap: 10px; cursor: pointer;
+}
+.tool input:is([type="checkbox"], [type="radio"]):not(.tool-switch input) {
+  -webkit-appearance: none; appearance: none;
+  flex: none; font: inherit;
+  width: 1.25em; height: 1.25em;
+  margin: 0.2em 0 0; margin-top: calc(0.5lh - 0.625em);
+  background: var(--card) no-repeat center / 100%;
+  border: 2px solid var(--control-edge);
+  border-radius: 5px 4px 6px 4px / 4px 6px 4px 5px;
+  box-shadow: 2px 2px 0 var(--line-strong);
+  cursor: pointer;
+  transition: border-color .12s ease, background-color .12s ease;
+}
+.tool input[type="radio"]:not(.tool-switch input) { border-radius: var(--wobble); }
+.tool label:hover > input:is([type="checkbox"], [type="radio"]) { border-color: var(--ink); }
+.tool input[type="checkbox"]:checked:not(.tool-switch input) { background-color: var(--sage-wash); border-color: var(--sage); background-image: var(--checkmark); }
+.tool input[type="radio"]:checked:not(.tool-switch input) { border-color: var(--sage); background: radial-gradient(circle, var(--sage) 0 34%, var(--sage-wash) 40%); }
+.tool input:is([type="checkbox"], [type="radio"]):focus-visible { outline-offset: 2px; }
+
+/* A yes/no setting: a native checkbox (role="switch") drawn as a switch. */
+.tool .tool-switch { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin: 0; font-weight: 700; cursor: pointer; }
+.tool-switch input {
+  -webkit-appearance: none; appearance: none;
+  flex: none; position: relative; font: inherit;
+  width: 2.7em; height: 1.5em; margin: 0;
+  background: var(--paper-2);
+  border: 2px solid var(--control-edge);
+  border-radius: 12px 14px 11px 13px / 13px 11px 14px 12px;
+  box-shadow: 2px 2px 0 var(--line-strong);
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+.tool-switch input::before {   /* the knob */
+  content: ""; position: absolute; top: 50%; left: 0.15em;
+  width: 1.05em; height: 1.05em; transform: translateY(-50%);
+  background: var(--card);
+  border: 2px solid var(--control-edge);
+  border-radius: var(--wobble);
+  transition: border-color .15s ease;
+}
+.tool-switch:hover input, .tool-switch:hover input::before { border-color: var(--ink); }
+.tool-switch input:checked { background: var(--sage); border-color: var(--sage); }
+.tool-switch input:checked::before { left: calc(100% - 1.2em); border-color: var(--sage); }
+.tool-switch input:focus-visible { outline-offset: 3px; }
+
+/* Fieldsets: card paper with a misregistered wash, as in the diagrams. */
+.tool fieldset:not(.convert-options) {
+  min-width: 0; margin: 0 0 1.4rem; padding: 6px 20px 20px;
+  background: var(--card);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--sketch);
+  box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--blue-wash);
+}
+.tool legend { padding: 0 6px; margin-left: -6px; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
+.tool fieldset fieldset:not(.convert-options) { margin: 1rem 0 0; background: var(--paper); border-style: dashed; box-shadow: none; }
+.tool fieldset fieldset legend { font-family: var(--font-body); font-weight: 700; font-size: 1rem; }
+
+/* Drop zones: dashed, because something lands here. Blue while a file is over it. */
 .tool .tool-drop {
   background: var(--card);
   border: 2px dashed var(--control-edge);
-  border-radius: 12px;
+  border-radius: var(--sketch);
+  box-shadow: none;
+  transition: border-color .12s ease, background-color .12s ease;
 }
+.tool .tool-drop:hover { border-color: var(--ink); }
 .tool > :first-child, .tool > form > :first-child { margin-top: 0; }
 /* File drop zone: the whole zone is the label of a visually hidden native
    input, so a click, Enter or Space opens the file picker; the button look
@@ -1809,6 +1925,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 }
 .tool-file-button.is-primary { background: var(--rpi-red); color: var(--on-red); border-color: var(--btn-edge); }
 .tool-file:hover .tool-file-button { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--btn-shadow); }
+.tool .tool-file:hover { background: var(--paper-2); }
 .tool-file:has(+ input:focus-visible) .tool-file-button { outline: 3px solid var(--focus); outline-offset: 4px; }
 .tool-file-or { color: var(--muted); }
 .tool-file-names { margin: 8px 0 0; font-size: 0.92rem; color: var(--muted); overflow-wrap: anywhere; }
@@ -1819,9 +1936,12 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   font: 0.88rem/1.6 var(--font-mono); color: var(--ink);
   background: var(--paper-2);
   border: 1.5px solid var(--line-strong);
-  border-radius: 12px;
+  border-radius: var(--sketch);
   white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; resize: vertical;
+  transition: border-color .2s ease, box-shadow .2s ease;
 }
+/* Output that is ready to copy gets the sage edge and wash of a finished step. */
+.guide-content .tool .tool-output:not(:empty) { border-color: var(--sage); box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--sage-wash); }
 .guide-content .tool-actions { display: flex; flex-wrap: wrap; gap: 10px 14px; margin: 1rem 0 0; }
 .tool-hint { margin: 6px 0 0; font-size: 0.92rem; color: var(--muted); }
 .tool-status { margin: 1rem 0 0; font-weight: 600; }
@@ -1830,8 +1950,9 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .tool-results.tool-card, .tool-card {
   padding: 6px 22px 16px;
   background: var(--card);
-  border: 1.5px solid var(--line);
-  border-radius: 12px;
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--sketch);
+  box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--butter-wash);
 }
 .tool-results h3 { margin: 1.1rem 0 0.4rem; font-size: 1.1rem; }
 .tool-results h3:focus { outline: none; }
@@ -1840,17 +1961,9 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .guide-content .tool-results pre { margin: 0.4rem 0 0.6rem; }
 
 /* Settings builder: two fieldsets; short fields side by side on wide screens. */
-.settings-builder fieldset {
-  min-width: 0; margin: 0 0 1.2rem; padding: 6px 20px 20px;
-  background: var(--card);
-  border: 1.5px solid var(--line);
-  border-radius: 12px;
-}
-.settings-builder legend { padding: 0 6px; margin-left: -6px; font-family: var(--font-display); font-weight: 600; font-size: 1.15rem; }
 .settings-builder fieldset > p { margin: 0.6rem 0 0; color: var(--muted); }
-.settings-builder fieldset fieldset { margin: 1rem 0 0; background: var(--paper); }
-.settings-builder fieldset fieldset legend { font-family: var(--font-body); font-weight: 700; font-size: 1rem; }
 .settings-builder fieldset .button { margin-top: 1rem; }
+.settings-switches { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 36px; margin-top: 1rem; }
 @media (min-width: 700px) {
   .settings-builder [data-settings-fields] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 18px; }
   .settings-builder [data-settings-fields] > div:has(> :is(#setting-title, #setting-author, #setting-department)) { grid-column: 1 / -1; }
@@ -1862,16 +1975,15 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 /* Bring your work in: the pasted text on the left, the LaTeX on the right;
    stacked on narrow screens. */
 .convert-options { margin: 0 0 1rem; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; }
-.convert-options legend { padding: 0; margin: 0 0 6px; font-weight: 700; }
-.convert-options label { display: flex; align-items: baseline; gap: 8px; cursor: pointer; }
+.convert-options legend { padding: 0; margin: 0 0 6px; font-family: var(--font-body); font-size: 1rem; font-weight: 700; }
 .convert-panes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
 .convert-pane { min-width: 0; display: flex; flex-direction: column; }
 .tool .convert-label { display: block; margin: 0 0 6px; font-weight: 700; line-height: 1.5; }
 .convert-source { font-weight: 400; color: var(--muted); }
 .tool .convert-input, .guide-content .tool .convert-output { height: 22rem; }
-.guide-content .convert-output:empty::before { content: "The LaTeX appears here."; font-family: var(--font-body); color: var(--muted); }
+.guide-content .tool-output:empty::before { content: attr(data-empty); font-family: var(--font-body); color: var(--muted); }
 .convert-results { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
-.convert-results section { padding: 12px 18px; background: var(--card); border: 1.5px solid var(--line); border-radius: 12px; }
+.convert-results section { padding: 12px 18px; background: var(--card); border: 1.5px solid var(--line-strong); border-radius: var(--sketch); box-shadow: var(--offset-sm) var(--offset-sm) 0 var(--butter-wash); }
 .convert-results h3 { margin-top: 0.2rem; font-size: 1.05rem; }
 .convert-results ol, .convert-results ul { margin: 0 0 0.4rem; padding-left: 1.3rem; }
 @media (max-width: 860px) {
@@ -1891,7 +2003,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 }
 .tool input[type="file"]:not(.visually-hidden):focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
 .guide-content .bibcheck details { margin: 1.2rem 0 0; }
-.bibcheck details label:has(input) { display: block; margin: 1rem 0 0.4rem; font-weight: 600; cursor: pointer; }
+.bibcheck details label:has(input) { margin: 1rem 0 0.4rem; font-weight: 600; }
 
 /* Explain my error: one big paste area. */
 .tool .explain-input { min-height: 14rem; }
