@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Set a new version everywhere it appears, for a release.
 
-    python3 scripts/bump.py 0.3.0
+    python3 scripts/bump.py X.Y.Z
 
 Edits the class line (version and today's date), main.tex's requested date,
 the release the website links, the README and Get started download links,

@@ -14,7 +14,7 @@ name: Build thesis, website, and starter ZIP
 #   a release").
 # - Run workflow (workflow_dispatch) on an older vX.Y.Z tag with rollback: true
 #   puts that release's website back on purpose; the next deploy from main
-#   replaces it again. Only tags from v0.6.0 on have this input.
+#   replaces it again. Tags whose workflow lacks this input cannot roll back.
 # Every deploy (main or tag) also refuses when the live site's build.txt names
 # a newer commit than this one (GitHub compare API), unless rollback is set.
 # The deploy job checks the gate again inside the Pages lock, just before

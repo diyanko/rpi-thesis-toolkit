@@ -29,7 +29,7 @@ MIN_TEXLIVE = 2022
 
 def student_files(root, pattern):
     """The student's own sources, skipping generated output and archived copies."""
-    skip = {"build", "dist", "output", "tmp", "reference", "_local", ".git"}
+    skip = {"build", "dist", "output", "tmp", "_local", ".git"}
     for path in sorted(root.rglob(pattern)):
         if not skip.intersection(path.relative_to(root).parts):
             yield path
@@ -458,8 +458,8 @@ KNOWN_PROBLEMS = [
     ),
     (
         "biblatex control file version",
-        "This is most often a stale control file left by an earlier build. Clean"
-        " compile first: python3 scripts/build.py --fresh (or your editor's clean"
+        "This is most often a stale control file left by an earlier build. Do a clean"
+        " recompile first: python3 scripts/build.py --fresh (or your editor's clean"
         " command), then build again. If it still fails, Biber and biblatex come"
         " from different TeX installations or years: use one TeX distribution,"
         " update it completely, and make sure 'biber' is the one it installed.",

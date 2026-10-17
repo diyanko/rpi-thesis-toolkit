@@ -386,8 +386,8 @@ Before version 1.0, anything may change, and the changelog says what to do.
 4. **Recompile and look** at your PDF, especially the title page, contents,
    and page numbers.
 
-Which version do you have? Your compile log starts with a line such as
-`rpi-thesis 2026/10/15 v0.3.0`, and your PDF shows it under **Creator** in its
+Which version do you have? Your compile log has a line of the form
+`rpi-thesis YYYY/MM/DD vX.Y.Z`, and your PDF shows it under **Creator** in its
 document properties; the website's footer shows the newest. The
 [online changelog](https://github.com/diyanko/rpi-thesis-toolkit/blob/main/CHANGELOG.md)
 lists what each version changed, starting with **Changes your PDF?** (the copy
@@ -582,8 +582,8 @@ python3 scripts/build.py --fresh
 ```
 
 After a successful build, the helper prints non-fatal **pre-submission
-hints**: `.bib` entries with a `url` but no `urldate`, and `\caption[...]`
-short captions.
+hints**, such as `.bib` entries with a `url` but no `urldate`, `\caption[...]`
+short captions, a missing seal, and figures or tables too large for a page.
 
 The helper ignores personal `latexmkrc` files, disables shell escape, and
 creates the output subfolders (`build/chapters/`, …) a first pass needs. If you

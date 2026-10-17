@@ -66,7 +66,7 @@ The toolkit follows the manual edition recorded in the
 
 ## Final PDF checklist
 
-Check [what OGE commonly flags](#what-oge-commonly-flags), then complete this list. The ticks are not saved: they reset when you leave the page, so copy the list somewhere if you want to keep your progress.
+Check [what OGE commonly flags](#what-oge-commonly-flags), then complete this list; the optional [Check your PDF](check-pdf.md) page measures a few of these points for you. The ticks are not saved: they reset when you leave the page, so copy the list somewhere if you want to keep your progress.
 
 - [ ] Every sample paragraph, placeholder, and invented example is gone.
 - [ ] Built with a [clean recompile](troubleshooting.md#clean-recompile), with any `\includeonly` line commented out again.
