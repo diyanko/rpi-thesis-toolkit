@@ -19,6 +19,14 @@ except ImportError:
     sys.exit("check.py needs pypdf. Run python3 scripts/verify.py (it finds .venv), or install it:"
              " python3 -m venv .venv && .venv/bin/pip install pypdf")
 from build import ROOT, build
+from rules import load as load_rules
+
+# The same measurements as the browser checker: the requirements map's Measurements table.
+MEASURES = {key: row["pt"] for key, row in load_rules()[1].items()}
+PAPER_WIDTH, PAPER_HEIGHT = MEASURES["paper-width"], MEASURES["paper-height"]
+MARGIN, NUMBER_EDGE = MEASURES["margin"], MEASURES["page-number-edge"]
+HEADING_BASELINE, HEADING_TOLERANCE = MEASURES["heading-baseline"], MEASURES["heading-tolerance"]
+BODY_LOW, BODY_HIGH = MARGIN - 2, PAPER_HEIGHT - MARGIN + 2  # the text block, with a little tolerance
 
 
 def require(condition, message):
@@ -220,8 +228,8 @@ def check_pdf(folder, degree, copyright=False, minimal=False):
     level_one = re.compile(r"(?:[0-9]+|[A-Z])\. [A-Z]|[A-Z]{4,}")
     for i, page in enumerate(reader.pages):
         require(
-            abs(float(page.mediabox.width) - 612) < 0.1
-            and abs(float(page.mediabox.height) - 792) < 0.1,
+            abs(float(page.mediabox.width) - PAPER_WIDTH) < 0.1
+            and abs(float(page.mediabox.height) - PAPER_HEIGHT) < 0.1,
             "Paper must be US letter",
         )
         if i == 0:
@@ -229,8 +237,8 @@ def check_pdf(folder, degree, copyright=False, minimal=False):
         # Text outside the 1 in margins (with a little tolerance) is the page
         # number; everything else sits inside the text block.
         origins = text_origins(page)
-        margin = [(x, y) for x, y in origins if y < 70 or y > 722]
-        lines = [y for x, y in origins if 70 <= y <= 722]
+        margin = [(x, y) for x, y in origins if y < BODY_LOW or y > BODY_HIGH]
+        lines = [y for x, y in origins if BODY_LOW <= y <= BODY_HIGH]
         label = roman(i + 1) if i < body else str(i - body + 1)
 
         def number_at(height, columns):
@@ -248,19 +256,20 @@ def check_pdf(folder, degree, copyright=False, minimal=False):
             # Bottom center, 0.75 in from the bottom edge; heading at the top
             # margin, the same height on every such page.
             require(
-                number_at(54, lambda x: 250 < x < 340)
+                number_at(NUMBER_EDGE, lambda x: PAPER_WIDTH / 2 - 56 < x < PAPER_WIDTH / 2 + 34)
                 and texts[i].endswith(" " + label),
                 f"Bottom-center page number {label} on PDF page {i+1}",
             )
             if heading:
                 require(
-                    lines and abs(792 - max(lines) - 84) < 1.5,
+                    lines and abs(PAPER_HEIGHT - max(lines) - HEADING_BASELINE) < HEADING_TOLERANCE,
                     f"Level-1 heading not at the top margin on PDF page {i+1}",
                 )
         else:
             # Other body pages: top right, 0.75 in from the top edge.
             require(
-                number_at(738, lambda x: x > 500) and texts[i].startswith(label + " "),
+                number_at(PAPER_HEIGHT - NUMBER_EDGE, lambda x: x > PAPER_WIDTH - MARGIN - 40)
+                and texts[i].startswith(label + " "),
                 f"Top-right page number {label} on PDF page {i+1}",
             )
     # Contents links and top-level PDF bookmarks (level-1 entries) open at
@@ -269,7 +278,7 @@ def check_pdf(folder, degree, copyright=False, minimal=False):
         if isinstance(item, list):
             continue  # entries nested under a level-1 entry
         i = reader.get_destination_page_number(item)
-        lines = [y for x, y in text_origins(reader.pages[i]) if 70 <= y <= 722]
+        lines = [y for x, y in text_origins(reader.pages[i]) if BODY_LOW <= y <= BODY_HIGH]
         require(
             level_one.match(texts[i])
             and item.top is not None
