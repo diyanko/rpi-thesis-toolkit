@@ -133,6 +133,8 @@ def finish(args):
     if remote and remote != ours and git("merge-base", "--is-ancestor", remote, "HEAD", cwd=top).returncode:
         stop("fetch", f"origin/{branch} has commits this worktree lacks; "
              f"run git pull --rebase origin {branch}, then finish again.")
+    if remote:   # accepted: a retry after this run's rebase recognizes it
+        pushed_mark.write_text(remote, encoding="utf-8")
     rebased = git("rebase", "origin/main", cwd=top)
     if rebased.returncode:
         stop("rebase", "conflict with origin/main; fix the files, git add them, "
