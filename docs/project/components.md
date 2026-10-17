@@ -159,7 +159,9 @@ Text after a horizontal rule.
 
 Every tool (Settings builder, Bring your work in, Check your references,
 Explain my error, Check your PDF) follows one pattern, so a new tool reuses
-it instead of adding styles. The classes live in section 12 of `site/site.css`.
+it instead of adding styles. Tool pages (`PAGE_SCRIPTS` in
+`scripts/build_site.py`) get a wider frame, no right-hand rail, and the
+tool's doodle from the home page before the title. The classes live in section 12 of `site/site.css`.
 
 1. **Purpose:** one or two short sentences under the title.
 2. **Privacy:** `<p class="tool-privacy"><strong>Nothing is uploaded.</strong> ...</p>`,
@@ -169,7 +171,9 @@ it instead of adding styles. The classes live in section 12 of `site/site.css`.
    `hidden`. Inside: labels above fields; `.tool-drop` on the main paste area
    or drop zone; `.tool-file` for a file drop zone (a label around a
    `.tool-file-button`, with a visually hidden native input after it and a
-   `.tool-file-names` line); `.tool-output` on read-only output; `.tool-actions` around
+   `.tool-file-names` line); `.tool-output` on read-only output (a `<pre>`
+   with `data-empty` for its placeholder, colored by `site/tools-highlight.js`,
+   labelled by a `.tool-label`); `.tool-actions` around
    the buttons (one `.button`, the rest `.button-secondary`); `.tool-status`
    for the one-line status; `.tool-results` (plus `.tool-card` for a single
    panel) for results.
@@ -195,10 +199,44 @@ the settings schema), so a change is usually one row.
 <p class="tool-actions"><button type="button" class="button">Check</button> <button type="button" class="button button-secondary">Clear</button></p>
 <p class="tool-status">1 point to review. Nothing was uploaded.</p>
 <div class="tool-results tool-card"><h3>Results</h3><h4>May print wrong (1)</h4><ul><li><strong>example — date or year:</strong> Check the source and add its publication date if available. <a href="../citations.md#check-the-output-yourself">Citations guide</a></li></ul></div>
-<label for="gallery-tool-output">Output to copy</label>
-<pre class="tool-output" id="gallery-tool-output">\thesissetup{
-  title = {Your thesis title},
-}</pre>
+<p class="tool-label" id="gallery-tool-output">Output to copy</p>
+<pre class="tool-output" aria-labelledby="gallery-tool-output"><span class="tok-cmd">\thesissetup</span><span class="tok-brace">{</span>
+  title = <span class="tok-brace">{</span>Your thesis title<span class="tok-brace">}</span>, <span class="tok-com">% a comment</span>
+  committee = <span class="tok-brace">{</span><span class="tok-cmd">\member</span><span class="tok-opt">[</span><span class="tok-opt">Chair</span><span class="tok-opt">]</span><span class="tok-brace">{</span>Name<span class="tok-brace">}</span><span class="tok-brace">}</span>, <span class="tok-math">$x^2$</span>
+<span class="tok-brace">}</span></pre>
 </div>
 
 <p class="tool-nojs">The tool needs JavaScript, which is off or not available in this browser. Use the checklist below instead.</p>
+
+## Form controls
+
+Native controls drawn like the buttons: a sketchy edge, a small offset
+shadow, the blue focus ring (press Tab to see it), and sage when chosen. They
+live in section 12 of `site/site.css` and apply inside `.tool`. A yes/no
+setting is a checkbox with `role="switch"` inside `<label class="tool-switch">`.
+Tool output colors LaTeX with `site/tools-highlight.js`; guide code blocks
+are colored when the site is built. Both use the `--code-*` tokens.
+
+<div class="tool">
+<fieldset><legend>A group of fields</legend>
+<label for="gallery-text">A text field</label>
+<input type="text" id="gallery-text" value="Department of Physics">
+<label for="gallery-empty">An empty field</label>
+<input type="text" id="gallery-empty" placeholder="A placeholder in muted text">
+<label for="gallery-select">A menu</label>
+<select id="gallery-select"><option>doctoral</option><option>masters</option></select>
+<fieldset><legend>A nested group</legend>
+<label for="gallery-nested">Full name</label>
+<input type="text" id="gallery-nested">
+</fieldset>
+</fieldset>
+<fieldset class="convert-options"><legend>Radio buttons</legend><label><input type="radio" name="gallery-radio" checked> <span>A chosen option</span></label><label><input type="radio" name="gallery-radio"> <span>Another option</span></label></fieldset>
+<p><label><input type="checkbox" checked> A ticked checkbox</label></p>
+<p><label><input type="checkbox"> An unticked checkbox with a longer label that wraps onto a second line on phones</label></p>
+<p><label class="tool-switch"><input type="checkbox" role="switch" checked> <span>A switch that is on</span></label> <label class="tool-switch"><input type="checkbox" role="switch"> <span>A switch that is off</span></label></p>
+<label for="gallery-area">A paste area</label>
+<textarea class="tool-drop" id="gallery-area" rows="3" placeholder="Paste or drop text here."></textarea>
+<label class="tool-drop tool-file" for="gallery-pdf"><span class="tool-file-button is-primary">Choose your PDF</span> <span class="tool-file-or">or drop it here</span></label><input class="visually-hidden" id="gallery-pdf" type="file">
+<p class="tool-label" id="gallery-empty-output">Empty output</p>
+<pre class="tool-output" data-empty="The LaTeX appears here." aria-labelledby="gallery-empty-output"></pre>
+</div>
