@@ -127,7 +127,7 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 
 | What you see | What to try |
 | --- | --- |
-| A citation key in **bold** | Compile again; your editor and Overleaf run the bibliography step for you. Still bold? Check that the key is spelled the same in your citation command and in `references.bib`. |
+| A citation key in **bold** | Compile again. VS Code with the starter's settings and Overleaf run the bibliography step for you; in other editors run it yourself ([other editors](get-started.md#other-editors)). Still bold? Check that the key is spelled the same in your citation command and in `references.bib`. |
 | **??** instead of a number | Compile again. Check the `\label` and `\ref` spelling. |
 | The reference list is empty | Cite at least one entry, for example with `\parencite{key}`, then compile again. |
 | A new Zotero source doesn't appear | Re-export, compile again, and check that the key in your citation command matches the key in the `.bib` file exactly. |
