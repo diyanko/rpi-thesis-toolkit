@@ -143,7 +143,7 @@ def finish(args):
              "git rebase --continue, then run finish again.")
     say("rebase", "on origin/main")
 
-    verify = subprocess.run([sys.executable, "scripts/verify.py"], cwd=top, text=True,
+    verify = subprocess.run([sys.executable, "scripts/verify.py", "quick"], cwd=top, text=True,   # CI runs the full suite
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     summary = ([line for line in verify.stdout.splitlines() if line.startswith("verify ")] or ["verify: no summary"])[-1]
     say("verify", summary)

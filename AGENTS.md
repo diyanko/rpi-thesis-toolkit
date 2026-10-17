@@ -89,6 +89,10 @@ the smallest useful correction.
 
 ## Development cycle
 
+Keep it fast: CI runs the full checks on every pull request, so work locally
+with the quick check; one review pass, and only P0 or P1 findings block;
+after two fix rounds, ship what is solid and file the rest as an issue.
+
 One issue, one branch, one pull request. Push only with the maintainer's OK
 (running `finish` pushes).
 
@@ -97,7 +101,7 @@ One issue, one branch, one pull request. Push only with the maintainer's OK
 | Issue | `gh issue create`, or pick one | GitHub Issues is the to-do list; label it `class`, `guide`, `site`, `checker`, `tooling`, or `health` |
 | Start | `python3 scripts/task.py start N` | branch `issue-N-<title>` and a worktree in `_local/wt/issue-N`, from fresh `origin/main` |
 | Change | edit, then `python3 scripts/verify.py` | quick or full from what changed; missing tools are skipped, CI runs them |
-| Finish | `python3 scripts/task.py finish -m "type(scope): summary"` | rebase, verify, screenshot compare, one Codex review (only P0 and P1 stop it), commit, push, pull request, auto-merge |
+| Finish | `python3 scripts/task.py finish -m "type(scope): summary"` | rebase, quick verify (CI runs the full suite before merge), screenshot compare, one Codex review (only P0 and P1 stop it), push, pull request, auto-merge |
 | Ship | none | merges when CI passes; guide and website fixes deploy by themselves |
 | Release | `python3 scripts/bump.py`, `python3 scripts/verify.py release`, commit `build: release vX.Y.Z`, `git tag vX.Y.Z`, `git push --atomic origin main vX.Y.Z` | bump picks the version from `## Unreleased`; CI publishes the pre-release and checks the live site ([release internals](docs/project/maintenance.md#release-internals)) |
 | Clean | `python3 scripts/tidy.py --apply` | removes merged branches and worktrees, and old `_local/design/` and `_local/shots/` folders |
