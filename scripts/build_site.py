@@ -119,7 +119,7 @@ ANATOMY = [
     ("figure-table", "Tables and figures",
      "`chapters/02-research.tex`; images go in `figures/`; put table captions above and figure captions below",
      "caption styling (numbering, bold label) and the lists of tables and figures"),
-    ("references", "References", "`references.bib`, and `\\cite{key}` in your text",
+    ("references", "References", "`references.bib`, and `\\parencite{key}` in your text",
      "the order and format of every entry, by Biber"),
     ("appendix", "An appendix", "`appendices/additional-material.tex`",
      "the letters A, B, C and the contents entry"),

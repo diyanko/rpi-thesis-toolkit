@@ -126,6 +126,20 @@ or anything with uncommitted changes.
 One writer per checkout. A second agent or person works in its own git
 worktree and branch, or owns separate files.
 
+## Day-to-day changes
+
+GitHub Issues are the to-do list, labelled by area (`class`, `guide`, `site`,
+`checker`, `tooling`, `health`). One issue becomes one branch and one pull
+request that says `Closes #N`. Small guide, website, or doc changes may go
+straight to `main` after `verify.py`; class, starter, script, and CI changes
+go through a pull request with auto-merge (`gh pr merge --auto --rebase`),
+which merges once CI passes. Then `python3 scripts/tidy.py --apply` removes the
+merged branch and worktree. Class and starter changes collect under
+`## Unreleased` in `CHANGELOG.md` and reach students with the next
+[release](#make-a-release). The exact steps, including the optional external
+review and the screenshot baseline, are in
+[AGENTS.md](../../AGENTS.md#maintainer-flow).
+
 ## Versions and compatibility
 
 One version number everywhere. **The class is the version:** the
@@ -280,29 +294,27 @@ something breaks:
   Mathcha's TikZ export is not verified with this class; verify before
   expanding. Lagrida was evaluated and omitted as a second similar editor.
 
-## Public-release readiness
+## Release readiness
 
-The repository and website can be public before the first downloadable
-release.
-
-**Before the repository goes public:**
+**Keep true at all times:**
 
 - [ ] `git ls-files` lists no seal, original template, manual, checklist, or
       slides, and neither does the starter ZIP. The published Git history must
       not contain them either; local backup branches made before a cleanup
       are never pushed.
 - [ ] Every public page presents the project as unofficial and community-made.
-- [ ] CI passes on `main`, and the maintainer has authorized publication.
+- [ ] CI passes on `main`, and the maintainer authorizes each publication.
 - [ ] GitHub settings: description ("Unofficial, community-made LaTeX thesis
       and dissertation starter and guide for RPI graduate students"); topics
       (latex, thesis, dissertation, rpi, rensselaer, latex-template,
       thesis-template, overleaf, zotero, biblatex); Pages source **GitHub
-      Actions**; Issues on, Discussions off; labels `question`,
-      `enhancement`, `bug`, `documentation`; default read-only Actions token;
+      Actions**; Issues on, Discussions off; type labels `question`,
+      `enhancement`, `bug`, `documentation` and area labels `class`, `guide`,
+      `site`, `checker`, `tooling`, `health`; default read-only Actions token;
       a social preview image without RPI artwork; `site_url` and
       `repository_url` in `site/site.json` and `CITATION.cff`.
 
-**Before the first release (v0.1.0):**
+**Before 1.0.0** (open; releases until then are pre-releases):
 
 - [ ] A novice completes the first-PDF and first-edit workflows unaided.
 - [ ] Fresh installs and editors (VS Code with LaTeX Workshop, TeXShop,
@@ -344,12 +356,9 @@ release instead. A tag older than the newest release never deploys.
 **Rollback:** Actions, **Build thesis, website, and starter ZIP**, Run
 workflow on the older tag with **rollback** ticked; the next deploy from
 `main` replaces it. A run on a tag uses that tag's own `build.yml` and
-`release.py`, so rollback works only on tags v0.6.0 and later. Tags before
-v0.6.0 have no rollback input and an unsafe deploy rule: never re-run or
-dispatch their runs. To undo a change from such a release, revert it on
-`main` and make a new patch release. Re-running a tag run without rollback is
-safe from the first release after v0.6.0 on (the live-site check); a v0.6.0
-re-run can still replace a newer guide fix from `main`. The `github-pages`
+`release.py`: never re-run or dispatch a tag whose `build.yml` has no
+**rollback** input or no live-site check. To undo a change from such a
+release, revert it on `main` and make a new patch release. The `github-pages`
 environment allows `main` and `v*` tags to deploy.
 
 ## Roadmap and not yet covered

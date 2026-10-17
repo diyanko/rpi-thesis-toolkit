@@ -45,7 +45,7 @@ FILES = [
     "LICENSE.md",
 ]
 NOT_FOR_STUDENTS = (
-    "AGENTS.md", "CLAUDE.md", "docs/", "site/", "reference/", "_local/", "build/", "dist/",
+    "AGENTS.md", "CLAUDE.md", "docs/", "site/", "_local/", "build/", "dist/",
     "assets/rpi-seal",
 )
 # The printable cheat sheet, once build_site.py --previews or --cheatsheet has

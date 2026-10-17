@@ -4,15 +4,15 @@
 
 % ---- Citations (biblatex with Biber) ----
 % This numeric style is an example, not an official one. Use the style your
-% advisor or field expects (docs/citations.md); change it here, never in
-% rpi-thesis.cls.
+% advisor or field expects (guide: Citations, "Change the citation style");
+% change it here, never in rpi-thesis.cls.
 \usepackage{csquotes}
 \usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
 \addbibresource{references.bib}
 % OGE requires an access date for every URL; this style prints urldate.
 % After changing the style, check that access dates still appear.
 % With style=mla, \fullcite prints nothing, and with Chicago author-date it
-% can print "id."; docs/citations.md has a tested setup for each.
+% can print "id."; the guide's Citations page has a tested setup for each.
 % To change the reference-list title (default REFERENCES):
 % \renewcommand{\referencesname}{References}
 
@@ -21,8 +21,8 @@
 
 
 % ---- Optional extras, tested with this class ----
-% Remove the % from the lines of a group to use it; docs/going-further.md
-% ("Recipes for common extras") shows how to use each one.
+% Remove the % from the lines of a group to use it; the guide (Going further,
+% "Recipes for common extras") shows how to use each one.
 %
 % Figures with parts (a), (b):
 % \usepackage{subcaption}

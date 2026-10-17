@@ -236,7 +236,6 @@ from RPI ITS; files dated 2018); it is not part of this project.
   "Nomenclature" (§1.6 p. 13) and asks for it to be formatted like the
   lists; the recipe's entries have no page numbers, and other titles
   (LIST OF SYMBOLS, LIST OF ABBREVIATIONS) are unconfirmed.
-
 - **Sole-authored papers not yet published**: §2.8.1 p. 28 exempts sole
   authors from the Declaration of Co-Contribution, then says submitted,
   in-review, or to-be-submitted articles still go on it "since you are not

@@ -94,12 +94,14 @@ the full explanation in one bounded place
 - **Tools by task:** keep the practical helper picker visible in
   [writing basics](../writing.md#helpers-for-common-tasks), with direct links
   from [How do I…?](../how-do-i.md) and the relevant writing steps. Drafting
-  choices stay in How it works; review and conversion help stay in Workflows.
+  choices stay in How it works; review and sharing help stay in
+  [Going further](../going-further.md#common-situations), and conversion help
+  in [Bring your draft](../bring-your-draft.md).
   Each tool has one canonical explanation; link to it rather than repeating
   a catalog across pages.
 - **Citations:** a formatted citation typed as text, a citation-manager field,
   and a portable citation key are different things; only the key in
-  `references.bib` works with `\cite`.
+  `references.bib` works with `\parencite` and the other citation commands.
 
 ## Terminology
 

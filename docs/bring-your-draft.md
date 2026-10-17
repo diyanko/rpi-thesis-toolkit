@@ -1,4 +1,4 @@
-# Bring your existing draft
+# Bring your draft
 
 For anyone with a draft in Word, Google Docs, Markdown, or LaTeX: you do not
 have to start over. Get the sample compiling first
@@ -233,7 +233,7 @@ Keep your own project and take only the formatting. Put
 [`rpi-thesis.cls`](https://diyanko.github.io/rpi-thesis-toolkit/downloads/rpi-thesis.cls)
 next to your main file, then make the top of that file follow this shape
 (your packages go after the `\documentclass` line; drop any margin, spacing,
-or title-page code of your own, since the class now handles it):
+or title-page code of your own, since the class handles it):
 
 ```latex
 \documentclass{rpi-thesis}

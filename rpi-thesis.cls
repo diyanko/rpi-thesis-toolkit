@@ -234,7 +234,7 @@
 
 % ---------------------------------------------------------------------------
 % 10. Your thesis settings: \thesissetup{...} and \committeemember in
-%     metadata.tex. Every key is in docs/going-further.md.
+%     metadata.tex. Every key is in the guide: Going further, "All thesis settings".
 % ---------------------------------------------------------------------------
 \ExplSyntaxOn
 \tl_new:N \g_rpi_title_tl

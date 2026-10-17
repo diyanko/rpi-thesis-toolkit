@@ -25,22 +25,23 @@ still produces a PDF, but review warnings before you submit.
 ## Read an error message
 
 LaTeX errors look long, but the useful part is short. This is the real error
-from the sample thesis after one typo, `\cit` instead of `\cite` in chapter 1:
+from the sample thesis after one typo, `\parencit` instead of `\parencite` in
+chapter 1:
 
 ```text
-./chapters/01-introduction.tex:10: Undefined control sequence.
-l.10 example~\cit
-                 {lamport1994}. Replace it with literature relevant to your ...
+./chapters/01-introduction.tex:13: Undefined control sequence.
+l.13 example~\parencit
+                      {lamport1994}. Replace it with literature relevant to ...
 ```
 
 1. **The file:** `chapters/01-introduction.tex`. Open this file, not `main.tex`.
-2. **The line:** `10`, the number after the file name.
+2. **The line:** `13`, the number after the file name.
 3. **The message:** "Undefined control sequence" means LaTeX does not know a
    command, usually because of a typo after a backslash.
-4. **Where it stopped:** the line starting `l.10` ends where LaTeX stopped
-   reading, so the last thing on it, `\cit`, is the problem.
+4. **Where it stopped:** the line starting `l.13` ends where LaTeX stopped
+   reading, so the last thing on it, `\parencit`, is the problem.
 
-Fix: write `\cite{lamport1994}` and compile again. With several errors, fix
+Fix: write `\parencite{lamport1994}` and compile again. With several errors, fix
 only the first; the later ones are often side effects.
 
 ### Ask an AI chat to explain it
