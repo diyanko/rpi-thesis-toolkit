@@ -19,6 +19,9 @@ read [update the formatting safely](docs/going-further.md#update-the-formatting-
   get LaTeX ready for a chapter: headings, emphasis, lists, links, special
   characters, and tables with a caption. It runs in your browser; nothing is
   uploaded.
+- **Explain my error:** paste an error or a whole log from your editor or
+  Overleaf; it finds the first real error, says what it means, and shows the
+  fix and the guide section. Same knowledge as the build helper.
 
 ## 0.8.1 (beta), 17 Oct 2026
 

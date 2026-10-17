@@ -1868,3 +1868,6 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .bibcheck .hero-actions { margin-top: 1rem; }
 .bibcheck [data-results] { overflow-wrap: anywhere; }
 .bibcheck [data-results] h3:focus { outline: none; }
+/* Explain my error (docs/explain-my-error.md) */
+.explain textarea { display: block; width: 100%; box-sizing: border-box; min-height: 12rem; font: inherit; font-family: var(--font-mono, monospace); font-size: 0.9rem; padding: 0.75rem; border: 1.5px dashed var(--control-edge); border-radius: var(--radius, 8px); background: var(--card, transparent); color: inherit; }
+.explain[hidden], .explain-nojs[hidden] { display: none; }
