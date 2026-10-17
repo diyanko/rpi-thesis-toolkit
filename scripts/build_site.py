@@ -39,7 +39,7 @@ import settings
 import rules  # scripts/rules.py: the OGE rules in docs/project/requirements.md
 
 from common import ROOT, class_version, site_config
-from site_checks import (BUILD_FILE, CHEATSHEET_PDF, CLASS_DOWNLOAD, CONVERT, PDF_CHECK, SearchSections,
+from site_checks import (BUILD_FILE, CHEATSHEET_PDF, CLASS_DOWNLOAD, CONVERT, PDF_CHECK, BIB_CHECK, SearchSections,
                          checker_ids, search_route_problems, validate)
 
 SITE = ROOT / "site"
@@ -71,6 +71,7 @@ NAV = [
     ("Tools", [
         ("bring-your-work-in", "Bring your work in", False),
         ("check-pdf", "Check your PDF", False),
+        ("check-references", "Check your references", False),
         ("settings-builder", "Settings builder", False),
     ]),
 ]
@@ -92,7 +93,7 @@ TAGS = {
     "If you have a draft": ("draft", ["bring-your-draft", "bring-your-work-in"]),
     "When stuck": ("stuck", ["troubleshooting", "how-do-i"]),
     "Need later": ("later", ["submission"]),
-    "Optional": ("optional", ["settings-builder", "how-it-works", "going-further", "check-pdf", "reviewer-checklist"]),
+    "Optional": ("optional", ["settings-builder", "how-it-works", "going-further", "check-pdf", "check-references", "reviewer-checklist"]),
 }
 PAGE_TAGS = {page: (tag, css) for tag, (css, pages) in TAGS.items() for page in pages}
 SIDEBAR_TAGS = set()
@@ -116,7 +117,7 @@ PROJECT = {
 FEEDBACK = ("docs/troubleshooting.md", "Ask for help")
 # Scripts that only one guide page loads: page -> script.
 PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js", "bring-your-work-in": "convert/ui.js",
-                "settings-builder": "settings/ui.js"}
+                "settings-builder": "settings/ui.js", "check-references": "bibcheck/ui.js"}
 # Page scripts that also run in the offline guide (file: pages).
 OFFLINE_SCRIPTS = {"bring-your-work-in"}
 # The release the website links: its version, tag (always "v" + version; beta status is
@@ -443,6 +444,7 @@ class Site:
                        "site/share.js": "share.js"}     # optional: the home page's "Share this guide" button
         if not offline:  # optional: "Check your PDF" page; online only (see PDF_CHECK)
             self.assets.update({f"site/{name}": name for name in PDF_CHECK})
+            self.assets.update({f"site/{name}": name for name in BIB_CHECK})
             self.assets.update({f"site/settings/{name}.js": f"settings/{name}.js" for name in ("core", "ui")})
         self.assets.update({f"site/{name}": name for name in CONVERT})  # "Bring your work in", online and offline
         self.starter_zip = self.overleaf = ""
@@ -849,7 +851,7 @@ class Site:
             # Footer "Tools" column: the optional tools, after the guide's main pages.
             "tools": [entry for entry in (guide_item(name, label) for name, label in
                       (("bring-your-draft", "Bring your draft"), ("bring-your-work-in", "Bring your work in"),
-                       ("check-pdf", "Check your PDF"),
+                       ("check-pdf", "Check your PDF"), ("check-references", "Check your references"),
                        ("reviewer-checklist", "Reviewer checklist"))) if entry],
             "edition": escape(self.edition),
             "feedback_url": self.relative(here, self.feedback),
