@@ -36,6 +36,16 @@ adding it.
 | Scripts and CI | `scripts/`, `.github/workflows/` |
 | Student editor settings | `.vscode/settings.json`, `.vscode/extensions.json` (shipped in the ZIP) |
 
+**How the class is organized.** `rpi-thesis.cls` has numbered sections, one
+per group of rules. Each opens with a banner naming its rule ids
+(`% Rules: ...`) from `docs/project/requirements.md`, whose "cls §N" column
+points back, so a rule can be traced in both directions. Every fixed size says
+whether it comes from RPI's template or is this project's choice. Student
+input enters only through `\thesissetup` and `\committeemember` (section 10)
+and is checked before anything prints. `check.py` covers page structure;
+`regressions.py` covers bibliography styles, AMS symbols, the class-only
+recipe, the contents stress test, and the build helper's messages.
+
 **Generated (never tracked):** every `.html` page, all PDFs, `build/`,
 `dist/site/`, and `dist/*.zip`. Delete stray `.html` files next to Markdown,
 and PDFs or LaTeX working files outside `build/`.
