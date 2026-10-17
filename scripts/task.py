@@ -33,9 +33,12 @@ REVIEW_PROMPT = (
     "Review this branch's changes against origin/main (git diff origin/main, plus untracked "
     "files in git status) in this repo; read AGENTS.md. Report concrete defects with file:line "
     "and a failure scenario, most severe first. Label each P0 (breaks students or a release), "
-    "P1 (wrong behavior), P2 (should fix before merge), or P3 (minor); say 'No findings' if none."
+    "P1 (wrong behavior), P2 (should fix before merge), or P3 (minor); say 'No findings' if none. "
+    "End with exactly one last line: 'REVIEW-RESULT: BLOCK' if there is any P0, P1, or P2 "
+    "finding, otherwise 'REVIEW-RESULT: PASS'."
 )
-SERIOUS = re.compile(r"(?m)^\s*(?:[-*]\s*)?\**\s*\[?P[0-2]\b")   # a finding line, not a mention
+# The review's own verdict line decides; a missing verdict blocks (fail closed).
+VERDICT = re.compile(r"(?m)^\s*REVIEW-RESULT:\s*(PASS|BLOCK)\s*$")
 
 
 def say(step, note):
@@ -107,7 +110,7 @@ def finish(args):
     branch = git("branch", "--show-current", cwd=top).stdout.strip()
     if branch in ("", "main", "master"):
         stop("branch", "you are on main or a detached HEAD; start a branch with task.py start N.")
-    dirty = bool(git("status", "--porcelain", cwd=top).stdout.strip())
+    dirty = bool(git("status", "--porcelain", "--untracked-files=all", cwd=top).stdout.strip())
     if dirty and not args.message:
         stop("commit", 'there are uncommitted changes; pass --message "type(scope): summary" or commit them.')
     say("branch", branch)
@@ -167,7 +170,8 @@ def finish(args):
         if review.returncode:
             stop("review", "codex failed; rerun, or pass --no-review and review the diff yourself.")
         print(findings(review.stdout))
-        serious = SERIOUS.search(review.stdout)
+        verdicts = VERDICT.findall(review.stdout)
+        serious = not verdicts or verdicts[-1] != "PASS"
         accepted = args.accept_review or os.environ.get("TASK_ACCEPT_REVIEW") == "1"
         say("review", ("P0-P2 findings accepted" if accepted else "P0-P2 findings") if serious
             else "no P0-P2 findings")
@@ -175,7 +179,7 @@ def finish(args):
             stop("review", "fix the findings in build/review.md and run finish again "
                  "(or --accept-review if each is noted).")
 
-    if git("status", "--porcelain", cwd=top).stdout.strip():
+    if git("status", "--porcelain", "--untracked-files=all", cwd=top).stdout.strip():
         git("add", "-A", cwd=top)
         made = git("commit", "-q", "-m", args.message, cwd=top)
         if made.returncode:

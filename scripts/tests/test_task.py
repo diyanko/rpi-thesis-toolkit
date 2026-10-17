@@ -56,7 +56,7 @@ class Task(unittest.TestCase):
         git("push", "-q", "origin", "main", cwd=self.main)
         (self.main / ".venv").mkdir()
         self.env = dict(os.environ, PATH=f"{self.bin}{os.pathsep}{os.environ['PATH']}",
-                        FAKE_LOG=str(self.log), CHROME="/nonexistent", FAKE_REVIEW="No findings.",
+                        FAKE_LOG=str(self.log), CHROME="/nonexistent", FAKE_REVIEW="No findings.\nREVIEW-RESULT: PASS",
                         GIT_AUTHOR_NAME="t", GIT_AUTHOR_EMAIL="t@example.com",
                         GIT_COMMITTER_NAME="t", GIT_COMMITTER_EMAIL="t@example.com")
         self.env.pop("TASK_ACCEPT_REVIEW", None)
@@ -108,7 +108,7 @@ class Task(unittest.TestCase):
         tree = self.started()
         (tree / "new.md").write_text("x\n", encoding="utf-8")
         result = self.task("finish", "-m", "docs(guide): add a page", cwd=tree,
-                           FAKE_REVIEW="Findings:\n[P1] new.md:1 breaks the build")
+                           FAKE_REVIEW="Findings:\n[P1] new.md:1 breaks the build\nREVIEW-RESULT: BLOCK")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("[P1] new.md:1", result.stdout)
         self.assertIn("P1", (tree / "build/review.md").read_text(encoding="utf-8"))
@@ -162,7 +162,7 @@ class Severity(unittest.TestCase):
     def test_mentions_are_not_findings(self):
         sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
         import task
-        self.assertIsNone(task.SERIOUS.search("No P0, P1, or P2 findings."))
-        self.assertTrue(task.SERIOUS.search("- **P1 - broken** a.py:1"))
-        self.assertTrue(task.SERIOUS.search("[P2] a.md:1 typo"))
+        self.assertEqual(task.VERDICT.findall("No P0, P1, or P2 findings.\nREVIEW-RESULT: PASS"), ["PASS"])
+        self.assertEqual(task.VERDICT.findall("1. **P1** broken\nREVIEW-RESULT: BLOCK"), ["BLOCK"])
+        self.assertEqual(task.VERDICT.findall("[P2] a.md:1 typo"), [])   # no verdict: finish blocks
 
