@@ -464,10 +464,8 @@ class Site:
         }
         source, heading = FEEDBACK
         self.feedback = self.pages[source]
-        found = re.search(rf"(?m)^#+ {re.escape(heading)}(?:\s+\{{#([\w-]+)\}})?\s*$",
-                          (ROOT / source).read_text(encoding="utf-8"))
-        if found:
-            self.feedback += "#" + (found[1] or slug(heading))
+        if re.search(rf"(?m)^#+ {re.escape(heading)}\s*$", (ROOT / source).read_text(encoding="utf-8")):
+            self.feedback += "#" + slug(heading)
         else:
             self.warnings.append(
                 f"{source} has no '## {heading}' section; "
@@ -768,9 +766,7 @@ class Site:
             # {{rule:id}} and {{cite:id}} name a row of the requirements map (scripts/rules.py).
             text, problems, _ = rules.expand(text, source)
             self.errors.extend(problems)
-            # +attributes: a heading may carry a fixed id, "## Heading {#id}", so
-            # links to it survive a change of wording.
-            body = pandoc(["--from=gfm+attributes", "--to=html5", "--wrap=none", "--syntax-highlighting=none"], text)
+            body = pandoc(["--from=gfm", "--to=html5", "--wrap=none", "--syntax-highlighting=none"], text)
             body = self.rewrite(body, source, here, posixpath.dirname(source))
             if source == "docs/troubleshooting.md":
                 body = self.search_messages(body, here, title)
