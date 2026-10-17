@@ -240,7 +240,7 @@ class PageControls(unittest.TestCase):
         def dynamic(path, query):
             if path == '/test.html':
                 # Same classic deferred script as the real guide template.
-                html = '<!doctype html><meta charset="utf-8">' + widget + fallback + '<script src="/bibcheck/ui.js" defer></script>'
+                html = '<!doctype html><meta charset="utf-8">' + widget + fallback + '<script src="/tools-highlight.js" defer></script><script src="/bibcheck/ui.js" defer></script>'
                 return html.encode(), 'text/html'
         cls.server = LocalServer(ROOT / 'site', dynamic)
         cls.browser = Chrome(find_chrome())
@@ -273,6 +273,8 @@ class PageControls(unittest.TestCase):
 
     def run_check(self):
         self.js("document.querySelector('[data-run]').click(); true")
+        # A check shows the working state first, then its results.
+        self.wait("document.querySelector('[role=status]').getAttribute('data-state') !== 'working'")
 
     def text(self):
         return self.js("document.querySelector('[data-results]').textContent")
@@ -316,7 +318,7 @@ class PageControls(unittest.TestCase):
 
     def test_wrong_file_type_and_empty_input(self):
         self.choose([('draft.pdf', 'not a bib file')])
-        self.assertIn('Other file types', self.js("document.querySelector('[role=status]').textContent"))
+        self.assertIn('Choose .bib and .tex files', self.js("document.querySelector('[role=status]').textContent"))
         self.run_check()
         self.assertIn('Paste references.bib', self.js("document.querySelector('[role=status]').textContent"))
 
