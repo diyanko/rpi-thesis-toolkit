@@ -1858,6 +1858,14 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .tool input[type="checkbox"]:checked:not(.tool-switch input) { background-color: var(--sage-wash); border-color: var(--sage); background-image: var(--checkmark); }
 .tool input[type="radio"]:checked:not(.tool-switch input) { border-color: var(--sage); background: radial-gradient(circle, var(--sage) 0 34%, var(--sage-wash) 40%); }
 .tool input:is([type="checkbox"], [type="radio"]):focus-visible { outline-offset: 2px; }
+/* High-contrast modes drop gradients and custom colors: use native controls. */
+@media (forced-colors: active) {
+  .tool input:is([type="checkbox"], [type="radio"]) {
+    -webkit-appearance: auto; appearance: auto;
+    width: auto; height: auto; background: none; border: 0; box-shadow: none;
+  }
+  .tool-switch input::before { content: none; }
+}
 
 /* A yes/no setting: a native checkbox (role="switch") drawn as a switch. */
 .tool .tool-switch { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin: 0; font-weight: 700; cursor: pointer; }
