@@ -457,7 +457,7 @@ I am using the RPI Thesis Toolkit, an unofficial LaTeX starter for RPI theses. C
 see [CONTRIBUTING.md](../CONTRIBUTING.md)):
 
 ```prompt
-Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its "Contributing as an agent" steps. What I'd like changed: [describe it].
+Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its "Contributing as an agent" steps. If you cannot fork or push, stop and show me the diff. Do not push or open the pull request until I approve. What I'd like changed: [describe it].
 ```
 
 ### Ask for a file conversion
@@ -537,6 +537,12 @@ Other class commands:
 - `\chapterattribution{...}`: an unnumbered note at the foot of the page; place
   it right after `\chapter` (see
   [writing basics](writing.md#chapters-based-on-published-papers)).
+- `\thesisreferences`: the reference list, single-spaced, titled REFERENCES,
+  and listed in the contents (needs biblatex, which `preamble.tex` loads).
+- `\referencesname`: the reference list's title; change it with
+  `\renewcommand{\referencesname}{...}` in `preamble.tex`.
+- `\appendicesname`: the APPENDICES line the contents shows before the first
+  appendix.
 
 `degree-name` does not make the toolkit suitable for undergraduate theses or
 other document types; those need their own requirements check.

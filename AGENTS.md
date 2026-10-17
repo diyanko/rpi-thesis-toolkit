@@ -4,11 +4,13 @@ The RPI Thesis Toolkit is an unofficial, community-made LaTeX starter and guide
 for RPI graduate theses and dissertations. It is not affiliated with or
 endorsed by RPI or its Office of Graduate Education (OGE). Most changes are
 drafted by AI agents and reviewed by one human maintainer, so a mistake here
-can reach students. Be careful, small, and explicit. Every core workflow must stay finishable by a
-student without AI, Git, a terminal, paid services, or programming knowledge.
+can reach students. Be careful, small, and explicit. Every core workflow must
+stay finishable by a student without AI, Git, a terminal, paid services, or
+programming knowledge.
 
-Read before changing anything: [maintenance](docs/project/maintenance.md)
-(where things live, verification, releases), the
+This file is the only process document: every step lives here.
+[Maintenance](docs/project/maintenance.md) is reference (where things live,
+versions, website and release internals). Also read the
 [style guide](docs/project/style-guide.md), the
 [requirements map](docs/project/requirements.md), and the
 [attribution record](docs/project/attribution.md).
@@ -89,16 +91,25 @@ the smallest useful correction.
 Run `python3 scripts/verify.py` and report its summary line (logs land in
 `build/verify/`). It picks the size from the files changed since `main`:
 **quick** (seconds) when only guide or website text changed, **full** (several
-minutes) otherwise. Force one with `quick`, `full`, or `release`. For a
-visible change, also look at it: `python3 scripts/ui_check.py --shots` saves
-phone and laptop screenshots in light and dark.
+minutes) otherwise. Force one with `quick`, `full`, or `release`. A step whose
+tool is missing (TeX Live, Pandoc, `pypdf`, Chrome) is skipped, and the
+summary says so ("hygiene passed; X skipped: tools not installed; CI runs
+them"); it fails only for real problems. `python3 scripts/build.py --doctor`
+shows what a computer has.
 
-Class or formatting changes also need a look at every affected PDF page, a row
-in `docs/project/requirements.md` citing the manual (section and printed page)
-or the official-template comparison, and a `CHANGELOG.md` line with **Changes
-your PDF?** Title-page changes: also run `check.py` with `assets/rpi-seal.jpg`
-present (CI has no seal). A bug worth fixing twice gets a case in
-`scripts/regressions.py`; do not add tests that merely restate prose.
+- **Visible change:** look at it. `python3 scripts/ui_check.py --shots` saves
+  phone and laptop screenshots in light and dark. Run
+  `python3 scripts/ui_check.py --baseline compare` before you finish, and
+  `--baseline save` once the change is accepted. A new component also goes in
+  the [component gallery](docs/project/components.md).
+- **Class or formatting change:** look at every affected PDF page (parsed text
+  cannot judge layout); add a row in `docs/project/requirements.md` citing the
+  manual (section and printed page) or the official-template comparison; add
+  a `CHANGELOG.md` line with **Changes your PDF?**
+- **Title-page change:** also run `python3 scripts/check.py` with
+  `assets/rpi-seal.jpg` present and again with it moved aside (CI has no seal).
+- **A bug worth fixing twice** gets a case in `scripts/regressions.py`; do not
+  add tests that merely restate prose.
 
 Parallel work: one writer per checkout. A second session or agent works in its
 own git worktree and branch, and agents sharing a task own separate files. Keep
@@ -111,19 +122,20 @@ proposed lines in their report instead of editing them.
 
 With the maintainer's OK for each push:
 
-- **The to-do list is GitHub Issues**, labelled by area (`class`, `guide`,
-  `site`, `checker`, `tooling`, `health`). One issue becomes one branch and
-  one pull request that says `Closes #N`; anyone, person or agent, can pick
-  one up without the history of a chat.
+- **The to-do list is GitHub Issues.** Area labels: `class`, `guide`, `site`,
+  `checker`, `tooling`, `health`; plus `good first issue` and `help wanted`
+  for work an outside contributor can pick up. One issue becomes one branch
+  and one pull request that says `Closes #N`; anyone, person or agent, can
+  pick one up without the history of a chat.
 - **Small guide, website, or doc change:** verify, commit, push to `main`.
   CI deploys the website by itself when the starter files are unchanged since
   the last release.
-- **Class, starter, script, or CI change:** a branch and pull request; merge
-  when CI passes. Class changes reach students only with a release.
-- **Pull requests use auto-merge:** after opening one, run
-  `gh pr merge --auto --rebase`; it merges when CI passes. After it merges,
-  run `python3 scripts/tidy.py --apply` (dry run without `--apply`) to remove
-  merged branches and worktrees.
+- **Class, starter, script, or CI change:** a branch and pull request. After
+  opening it, run `gh pr merge --auto --rebase`; it merges when CI passes.
+  Pull requests from forks merge by hand
+  ([pull requests from forks](docs/project/maintenance.md#pull-requests-from-forks)).
+- **After a merge:** `python3 scripts/tidy.py --apply` (dry run without
+  `--apply`) removes merged branches and worktrees.
 - **Releases are batched:** guide fixes deploy on push; class and starter
   changes collect under `## Unreleased` and ship together when they matter to
   students.
@@ -135,15 +147,28 @@ Short, repeatable tasks. Follow them as written; each ends with verify.
 - **Release:** add the change-log lines under `## Unreleased`, run
   `python3 scripts/bump.py X.Y.Z` (patch for fixes, minor for anything that
   changes a PDF or a setting), `python3 scripts/verify.py release`, commit
-  `build: release vX.Y.Z`, then `git push --atomic origin main vX.Y.Z` after
-  `git tag vX.Y.Z`. CI creates the pre-release, deploys, and checks the live
-  links; the fresh-machine test runs after it. Report the run's link.
+  `build: release vX.Y.Z`, `git tag vX.Y.Z`, then
+  `git push --atomic origin main vX.Y.Z`. CI creates the pre-release, deploys,
+  and checks the live site; the fresh-machine test runs after it. Report the
+  run's link. If it fails, see
+  [release internals](docs/project/maintenance.md#release-internals).
 - **Answer a student's issue:** reproduce it with the starter; fix the guide
-  or class if it is ours, else answer with the guide section that helps. A bug
-  worth fixing twice gets a case in `scripts/regressions.py`.
+  or class if it is ours, else answer with the guide section that helps. When
+  a question could come up again, add a row to "Common messages" in
+  `docs/troubleshooting.md`.
 - **Add a recipe to the guide:** a short section in `docs/going-further.md`
   ("Recipes for common extras") with a snippet that compiles with this class;
   name the package in `preamble.tex`'s optional extras if it needs one.
+- **Review a requirement change** (yearly, when OGE publishes new guidance, or
+  when a student reports a concrete mismatch): read the latest document from
+  the OGE submission page linked in the requirements map (working copy in
+  `_local/oge/`); record its title, edition or date, link, review date, and
+  sections in `docs/project/sources.json` and the requirements map. Change
+  code only for formatting, never from a scrape or search result; link out for
+  dates, contacts, and forms. Make a small change, look at every affected PDF
+  page, add the change-log entry, and bump the version. Ask OGE to clarify
+  only when the maintainer authorizes it; record who confirmed what. Silence
+  is not approval.
 - **Act on a health issue:** fix broken links; for an RPI page change, read
   the page and the manual again, update `docs/project/requirements.md` if a
   rule moved, run `python3 scripts/health.py --update`, and commit
@@ -154,31 +179,32 @@ Short, repeatable tasks. Follow them as written; each ends with verify.
   uncommitted changes (git diff HEAD) in this repo; read AGENTS.md; report
   concrete defects with file:line and a failure scenario, most severe first"
   < /dev/null`. Fix or note each finding.
-- **Visual change:** run `python3 scripts/ui_check.py --baseline compare`
-  before you finish, look at what changed, and after the changes are
-  accepted run `--baseline save`.
-- **Update pinned tools:** follow "Updating pinned tools" in
-  [maintenance](docs/project/maintenance.md#updating-pinned-tools).
+- **Update pinned tools:** yearly or when something breaks, follow
+  [updating pinned tools](docs/project/maintenance.md#updating-pinned-tools).
 
 ## Contributing as an agent
 
 Most outside contributions arrive through an agent working for a student. When
 the person you work for is not the maintainer:
 
-1. Fork and clone the repository; make one focused change on a new branch.
-2. Run `python3 scripts/verify.py`. If it fails, fix it
-   or explain the failure plainly.
-3. For a visible change, build the site and run `python3 scripts/ui_check.py
-   --shots` on `main` and on your branch, then pick one or two before/after
-   pairs.
-4. Show your person the diff, the verify summary line, and the screenshots.
-   Push and open the pull request only after their OK, using
-   `.github/pull_request_template.md`; tell them which screenshots to drag
-   into it.
+1. Fork and clone, then make a branch for one focused change:
+   `gh repo fork --clone diyanko/rpi-thesis-toolkit`, then, inside the clone,
+   `git switch -c <topic>`. If you cannot fork or push, stop and show your
+   person the diff.
+2. Run `python3 scripts/verify.py`. Missing TeX Live, Pandoc, `pypdf`, or
+   Chrome is fine: those steps are skipped and CI runs them. Fix a real
+   failure or explain it plainly.
+3. For a visible change, and only if Chrome and Pandoc are available, run
+   `python3 scripts/build_site.py` and `python3 scripts/ui_check.py --shots`
+   on `main` and on your branch, then pick one or two before/after pairs.
+4. Show your person the diff, the verify summary line, and any screenshots.
+   Do not push or open the pull request until they approve. Then
+   `git push -u origin <topic>` and `gh pr create` using
+   `.github/pull_request_template.md`; tell them which screenshots to drag in.
 5. Never include their thesis text, data, or personal details; never touch
    `main` of this repository directly.
 
-Review AI-assisted and first-time contributions with the same command; help
+Review AI-assisted and first-time contributions with the same steps; help
 finish them, and keep feedback kind and specific.
 
 ## Recording uncertainty
