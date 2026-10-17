@@ -153,3 +153,18 @@ A tertiary text link, used for a secondary route:
 ---
 
 Text after a horizontal rule.
+
+
+## Settings form
+
+The [Settings builder](../settings-builder.md) uses labelled full-width fields,
+committee fieldsets, and a read-only block to copy. The reference table is
+visible with JavaScript off. A static example of the form controls:
+
+<div class="settings-builder">
+<fieldset><legend>Title page settings</legend><label for="component-setting-title">Thesis or dissertation title</label><input id="component-setting-title" type="text" value="Your thesis title" readonly></fieldset>
+<label for="component-settings-output">Block for metadata.tex</label>
+<textarea id="component-settings-output" rows="3" readonly>\thesissetup{
+  title = {Your thesis title},
+}</textarea>
+</div>
