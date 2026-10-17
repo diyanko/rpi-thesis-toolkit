@@ -32,9 +32,10 @@ requirement, and you can
 
 ## Step 2: Get the files
 
-<!-- Maintainer: at each release, update the two download links in this
-step and the Overleaf link in Step 3b to the new tag (maintenance.md, "Make a
-release"). The landing page's computer card opens this step. -->
+<!-- Maintainer: scripts/bump.py moves the download link in this step and
+the Overleaf link in Step 3b to the new tag, and build_site.py stops if they
+do not match the release (maintenance.md, "Make a release"). The landing
+page's computer card opens this step. -->
 
 1. **[Download the starter (ZIP)](https://github.com/diyanko/rpi-thesis-toolkit/releases/download/v0.7.0/rpi-thesis-starter-v0.7.0.zip)**:
    the thesis files, this guide for offline reading (open `START-HERE.html`),

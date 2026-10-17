@@ -16,7 +16,8 @@ try:
     from pypdf import PdfReader
     from pypdf.generic import ContentStream
 except ImportError:
-    sys.exit("Maintainer checks require pypdf in your chosen Python environment.")
+    sys.exit("check.py needs pypdf. Run python3 scripts/verify.py (it finds .venv), or install it:"
+             " python3 -m venv .venv && .venv/bin/pip install pypdf")
 from build import ROOT, build
 
 
