@@ -218,12 +218,14 @@ read from `docs/project/sources.json` and the `\ProvidesClass` line.
 
 The website works without JavaScript. The optional scripts in `site/`
 (`copy.js`, `viewer.js`, `theme.js`, `search.js` and its generated index,
-`pdf-check.js`) are enhancements; search runs in the browser and sends nothing
-anywhere. `pdf-check.js` (the "Check your PDF" page) reads a student's PDF in
-the browser with pdf.js, downloaded from cdnjs at a pinned version and checked
-against its SHA-384 hash; to update it, follow the comment at the top of the
-script. Its checks mirror `check.py`; when a measurement there changes, change
-the script too. Light and
+`site/pdf-check/`) are enhancements; search runs in the browser and sends nothing
+anywhere. `site/pdf-check/` (the "Check your PDF" page) reads a student's PDF in
+the browser with pdf.js, vendored unchanged in `site/pdf-check/pdfjs/` with its
+license; to update it, follow the comment at the top of `core.js`. The checks
+name rules and measurements by id from `docs/project/requirements.md`
+(`build_site.py` stops on an unknown id), and the offline guide leaves the
+checker out and links to the website's page. Its checks mirror `check.py`; when
+a measurement there changes, change its row in the Measurements table. Light and
 dark colors live in section 2 of `site/site.css`; check both themes when
 changing them. `--previews` compiles the sample thesis and saves PNG pages
 (never the title page) and needs TeX Live and poppler. The site may contain
