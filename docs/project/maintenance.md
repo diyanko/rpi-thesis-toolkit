@@ -3,7 +3,7 @@
 Reference for the person who looks after the RPI Thesis Toolkit (an
 unofficial, community-made project) and the AI agents that draft most changes.
 Students never need this page and it is not in the student ZIP. Every step to
-follow (verification, maintainer flow, releases, recipes) is in
+follow (the development cycle, releases, recipes) is in
 [AGENTS.md](../../AGENTS.md), the only process document; this page explains
 how things work and never repeats a step. `CLAUDE.md` only points to
 `AGENTS.md`. The current version and its validation record are in
@@ -88,7 +88,7 @@ redistribute RPI artwork.
 
 ## Verification internals
 
-What to run is in [AGENTS.md](../../AGENTS.md#verification). How it works:
+What to run is in [AGENTS.md](../../AGENTS.md#development-cycle). How it works:
 
 - **Auto mode** runs full whenever Git cannot tell what changed, on a clean
   tree, or when any staged, unstaged, or untracked file is outside guide and
@@ -118,7 +118,15 @@ What to run is in [AGENTS.md](../../AGENTS.md#verification). How it works:
   `origin/main`, including rebase merges when every unique commit's patch is
   in `main` and all changed paths still match it. A branch that changed again,
   moved after the check, or cannot be proven merged stays. It never touches
-  `main`, the current worktree, locked worktrees, or uncommitted changes.
+  `main`, the current worktree, locked worktrees, or uncommitted changes. It
+  also deletes entries of `_local/design/` and `_local/shots/` untouched for
+  14 days, never the screenshot baseline or the rest of `_local/`.
+- **`task.py`** runs the cycle. Worktrees live in the main checkout's
+  `_local/wt/`, and every worktree writes screenshots to the main checkout's
+  `_local/shots/`, so one baseline serves them all. The branch has no
+  upstream until `finish` pushes it, so a plain push never targets `main`.
+  The Codex review prompt lives only in `REVIEW_PROMPT` in `task.py`; its
+  output is saved to `build/review.md`.
 
 ## Pull requests from forks
 
@@ -257,10 +265,13 @@ CI pins its tools so a build does not change by itself.
 
 ## Release internals
 
-The steps are the "Release" recipe in [AGENTS.md](../../AGENTS.md#recipes).
+The steps are the Release row of the
+[development cycle](../../AGENTS.md#development-cycle).
 
 - **`bump.py`** sets the version everywhere (class line and date, `main.tex`,
-  download links, `CITATION.cff`, the change-log heading). The version must
+  download links, `CITATION.cff`, the change-log heading). Without a version
+  it picks minor when the Unreleased "Changes your PDF?" line says anything
+  but No or the section names a new setting, else patch. The version must
   increase, and it checks every source before writing, so a missing heading
   or link changes no files.
 - **On the tag**, `build.yml` verifies in release mode, creates or resumes the

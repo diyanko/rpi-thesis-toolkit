@@ -8,10 +8,10 @@ can reach students. Be careful, small, and explicit. Every core workflow must
 stay finishable by a student without AI, Git, a terminal, paid services, or
 programming knowledge.
 
-This file is the only process document: every step lives here.
+This file is the only process document.
 [Maintenance](docs/project/maintenance.md) is reference (where things live,
 versions, website and release internals). Start with the
-[vision](docs/project/vision.md) (who it is for, principles, roadmap), then the
+[vision](docs/project/vision.md), then the
 [style guide](docs/project/style-guide.md), the
 [requirements map](docs/project/requirements.md), and the
 [attribution record](docs/project/attribution.md).
@@ -87,72 +87,54 @@ the smallest useful correction.
 - Never hard-code deadlines, staff names, or tool versions in student pages.
 - Never imply the toolkit is only for master's or only for doctoral students.
 
-## Verification
+## Development cycle
 
-Run `python3 scripts/verify.py` and report its summary line (logs land in
-`build/verify/`). It picks the size from the files changed since `main`:
-**quick** (seconds) when only guide or website text changed, **full** (several
-minutes) otherwise. Force one with `quick`, `full`, or `release`. A step whose
-tool is missing (TeX Live, Pandoc, `pypdf`, Chrome) is skipped, and the
-summary says so ("hygiene passed; X skipped: tools not installed; CI runs
-them"); it fails only for real problems. `python3 scripts/build.py --doctor`
-shows what a computer has.
+One issue, one branch, one pull request. Push only with the maintainer's OK
+(running `finish` pushes).
 
-- **Visible change:** look at it. `python3 scripts/ui_check.py --shots` saves
-  phone and laptop screenshots in light and dark. Run
-  `python3 scripts/ui_check.py --baseline compare` before you finish, and
-  `--baseline save` once the change is accepted. A new component also goes in
-  the [component gallery](docs/project/components.md).
-- **Class or formatting change:** look at every affected PDF page (parsed text
-  cannot judge layout); add a row in `docs/project/requirements.md` citing the
-  manual (section and printed page) or the official-template comparison; add
-  a `CHANGELOG.md` line with **Changes your PDF?**
-- **Title-page change:** also run `python3 scripts/check.py` with
-  `assets/rpi-seal.jpg` present and again with it moved aside (CI has no seal).
-- **A bug worth fixing twice** gets a case in `scripts/regressions.py`; do not
-  add tests that merely restate prose.
+| Step | Command | What happens |
+| --- | --- | --- |
+| Issue | `gh issue create`, or pick one | GitHub Issues is the to-do list; label it `class`, `guide`, `site`, `checker`, `tooling`, or `health` |
+| Start | `python3 scripts/task.py start N` | branch `issue-N-<title>` and a worktree in `_local/wt/issue-N`, from fresh `origin/main` |
+| Change | edit, then `python3 scripts/verify.py` | quick or full from what changed; missing tools are skipped, CI runs them |
+| Finish | `python3 scripts/task.py finish -m "type(scope): summary"` | rebase, verify, screenshot compare, Codex review (P0 to P2 stop it), commit, push, pull request, auto-merge |
+| Ship | none | merges when CI passes; guide and website fixes deploy by themselves |
+| Release | `python3 scripts/bump.py`, `python3 scripts/verify.py release`, commit `build: release vX.Y.Z`, `git tag vX.Y.Z`, `git push --atomic origin main vX.Y.Z` | bump picks the version from `## Unreleased`; CI publishes the pre-release and checks the live site ([release internals](docs/project/maintenance.md#release-internals)) |
+| Clean | `python3 scripts/tidy.py --apply` | removes merged branches and worktrees, and old `_local/design/` and `_local/shots/` folders |
 
-Parallel work: one writer per checkout. A second session or agent works in its
-own git worktree and branch, and agents sharing a task own separate files. Keep
-it to about three at once. The shared files (`CHANGELOG.md`, `README.md`, `NAV`
-and `TAGS` in `scripts/build_site.py`, and the tokens in section 2 of
-`site/site.css`) belong to whoever merges the work: other agents put their
-proposed lines in their report instead of editing them.
+While changing:
 
-## Maintainer flow
+- **Visible change:** `python3 scripts/ui_check.py --shots` (add `--full` for
+  whole pages) saves phone and laptop shots in light and dark; after the
+  change is accepted, `--baseline save`. New components go in the
+  [component gallery](docs/project/components.md).
+- **Class or formatting change:** look at every affected PDF page; add a row
+  in `docs/project/requirements.md` citing the manual (section and printed
+  page) or the official-template comparison, and a `CHANGELOG.md` line under
+  `## Unreleased` with **Changes your PDF?** Title page: also run
+  `python3 scripts/check.py` with `assets/rpi-seal.jpg` present and moved
+  aside (CI has no seal). Class and starter changes reach students only with
+  a release.
+- **A bug worth fixing twice** gets a case in `scripts/regressions.py`; no
+  tests that merely restate prose.
+- **Parallel work:** one writer per worktree, about three at once. The shared
+  files (`CHANGELOG.md`, `README.md`, `NAV` and `TAGS` in
+  `scripts/build_site.py`, the tokens in section 2 of `site/site.css`) belong
+  to whoever merges; others put proposed lines in their report.
 
-With the maintainer's OK for each push:
+### Briefing an agent
 
-- **The to-do list is GitHub Issues.** Area labels: `class`, `guide`, `site`,
-  `checker`, `tooling`, `health`; plus `good first issue` and `help wanted`
-  for work an outside contributor can pick up. One issue becomes one branch
-  and one pull request that says `Closes #N`; anyone, person or agent, can
-  pick one up without the history of a chat.
-- **Small guide, website, or doc change:** verify, commit, push to `main`.
-  CI deploys the website by itself when the starter files are unchanged since
-  the last release.
-- **Class, starter, script, or CI change:** a branch and pull request. After
-  opening it, run `gh pr merge --auto --rebase`; it merges when CI passes.
-  Pull requests from forks merge by hand
-  ([pull requests from forks](docs/project/maintenance.md#pull-requests-from-forks)).
-- **After a merge:** `python3 scripts/tidy.py --apply` (dry run without
-  `--apply`) removes merged branches and worktrees.
-- **Releases are batched:** guide fixes deploy on push; class and starter
-  changes collect under `## Unreleased` and ship together when they matter to
-  students.
+```text
+Issue #N: <one sentence>. Work in <worktree>, from task.py start N.
+Own only: <files>. Do not touch: <files>, and the shared files.
+Commit on your branch in small conventional commits; never push.
+Before reporting: python3 scripts/task.py finish if told to, else scripts/verify.py.
+Report in under 200 words: files changed, verify summary line, commit hashes,
+anything not done or marked TODO(verify).
+```
 
 ## Recipes
 
-Short, repeatable tasks. Follow them as written; each ends with verify.
-
-- **Release:** add the change-log lines under `## Unreleased`, run
-  `python3 scripts/bump.py X.Y.Z` (patch for fixes, minor for anything that
-  changes a PDF or a setting), `python3 scripts/verify.py release`, commit
-  `build: release vX.Y.Z`, `git tag vX.Y.Z`, then
-  `git push --atomic origin main vX.Y.Z`. CI creates the pre-release, deploys,
-  and checks the live site; the fresh-machine test runs after it. Report the
-  run's link. If it fails, see
-  [release internals](docs/project/maintenance.md#release-internals).
 - **Answer a student's issue:** reproduce it with the starter; fix the guide
   or class if it is ours, else answer with the guide section that helps. When
   a question could come up again, add a row to "Common messages" in
@@ -166,47 +148,35 @@ Short, repeatable tasks. Follow them as written; each ends with verify.
   `_local/oge/`); record its title, edition or date, link, review date, and
   sections in `docs/project/sources.json` and the requirements map. Change
   code only for formatting, never from a scrape or search result; link out for
-  dates, contacts, and forms. Make a small change, look at every affected PDF
-  page, add the change-log entry, and bump the version. Ask OGE to clarify
-  only when the maintainer authorizes it; record who confirmed what. Silence
-  is not approval.
+  dates, contacts, and forms. Ask OGE to clarify only when the maintainer
+  authorizes it; record who confirmed what. Silence is not approval.
 - **Act on a health issue:** fix broken links; for an RPI page change, read
   the page and the manual again, update `docs/project/requirements.md` if a
   rule moved, run `python3 scripts/health.py --update`, and commit
   `scripts/oge-watch.json`; for a TeX Live failure, fix the class or starter
   before students meet it.
-- **External review:** before opening a PR, if the Codex CLI is installed
-  (optional for contributors), run `codex exec -s read-only "Review the
-  uncommitted changes (git diff HEAD) in this repo; read AGENTS.md; report
-  concrete defects with file:line and a failure scenario, most severe first"
-  < /dev/null`. Fix or note each finding.
 - **Update pinned tools:** yearly or when something breaks, follow
   [updating pinned tools](docs/project/maintenance.md#updating-pinned-tools).
 
 ## Contributing as an agent
 
-Most outside contributions arrive through an agent working for a student. When
-the person you work for is not the maintainer:
+When the person you work for is not the maintainer:
 
-1. Fork and clone, then make a branch for one focused change:
-   `gh repo fork --clone diyanko/rpi-thesis-toolkit`, then, inside the clone,
-   `git switch -c <topic>`. If you cannot fork or push, stop and show your
-   person the diff.
-2. Run `python3 scripts/verify.py`. Missing TeX Live, Pandoc, `pypdf`, or
-   Chrome is fine: those steps are skipped and CI runs them. Fix a real
-   failure or explain it plainly.
-3. For a visible change, and only if Chrome and Pandoc are available, run
-   `python3 scripts/build_site.py` and `python3 scripts/ui_check.py --shots`
-   on `main` and on your branch, then pick one or two before/after pairs.
-4. Show your person the diff, the verify summary line, and any screenshots.
-   Do not push or open the pull request until they approve. Then
-   `git push -u origin <topic>` and `gh pr create` using
-   `.github/pull_request_template.md`; tell them which screenshots to drag in.
-5. Never include their thesis text, data, or personal details; never touch
-   `main` of this repository directly.
+1. `gh repo fork --clone diyanko/rpi-thesis-toolkit`, then, inside the clone,
+   `git switch -c <topic>` for one focused change. If you cannot fork or
+   push, stop and show your person the diff.
+2. Run `python3 scripts/verify.py`; skipped tools are fine. For a visible
+   change, take `ui_check.py --shots` on `main` and on your branch.
+3. Show your person the diff, the verify summary line, and one or two
+   screenshot pairs. Only after their OK: `git push -u origin <topic>` and
+   `gh pr create` with `.github/pull_request_template.md`. Pull requests from
+   forks merge by hand
+   ([pull requests from forks](docs/project/maintenance.md#pull-requests-from-forks)).
+4. Never include their thesis text, data, or personal details; never touch
+   `main` of this repository.
 
-Review AI-assisted and first-time contributions with the same steps; help
-finish them, and keep feedback kind and specific.
+Review AI-assisted and first-time contributions the same way; keep feedback
+kind and specific.
 
 ## Recording uncertainty
 
@@ -225,7 +195,7 @@ finish them, and keep feedback kind and specific.
   `test`, `build`, `ci`, `chore`. Scopes: `class`, `starter`, `guide`, `site`,
   `scripts`, `ci`, `project`.
 - Inspect `git diff --staged` before each commit. Separate content, guide,
-  script, and class changes. Commit only when the maintainer asks.
+  script, and class changes.
 
 ## Before you say "done"
 
