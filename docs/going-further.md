@@ -18,7 +18,7 @@ up? [Get started](get-started.md). For the bigger picture, see
 [chapter-title case](#use-another-case-for-chapter-titles) ·
 [recipes for common extras](#recipes-for-common-extras)
 
-## Common situations {#common-situations}
+## Common situations
 
 - [Move from Overleaf to your computer](#overleaf-to-your-computer), or [the other way](#your-computer-to-overleaf)
 - [Use both](#use-your-computer-and-overleaf) (keep one source of truth)
@@ -57,7 +57,7 @@ put `main.pdf` beside `main.tex`.
    compiler as in [the Overleaf route](get-started.md#step-3b-overleaf-route).
 3. Recompile. Overleaf runs the bibliography step for you.
 
-### Use your computer and Overleaf {#use-your-computer-and-overleaf}
+### Use your computer and Overleaf
 
 The one rule: **only one copy is the source of truth at a time.** Edit there;
 treat the other as a backup.
@@ -76,7 +76,7 @@ Overleaf, and edit in only one place.
 On some plans, Overleaf's [Git and GitHub sync](https://docs.overleaf.com/integrations-and-add-ons/git-integration-and-github-synchronization)
 can skip the ZIPs.
 
-### An advisor reviews a PDF {#an-advisor-reviews-a-pdf}
+### An advisor reviews a PDF
 
 ![Review loop. You send a dated PDF to your advisor, who marks it up and sends it back. You make each change in your .tex files, recompile, and send the next dated PDF, until the draft is ready.](diagrams/review-loop.svg)
 
@@ -90,7 +90,7 @@ recompile → repeat.
 4. Recompile and send the next dated PDF. After big revisions, add a
    [changes PDF](#show-what-changed-between-drafts).
 
-### An advisor wants Word with track changes {#an-advisor-wants-word-with-track-changes}
+### An advisor wants Word with track changes
 
 A Word copy is for review only: it loses the title page, margins, numbering,
 cross-references, and reference formatting.
@@ -134,7 +134,7 @@ chapters/01-introduction.tex with Pandoc, and tell me what to check."
 
 </details>
 
-### Show what changed between drafts {#show-what-changed-between-drafts}
+### Show what changed between drafts
 
 `latexdiff`, included in full TeX Live, makes a PDF with additions and
 deletions marked, handy when your committee rereads a revision.
@@ -194,7 +194,7 @@ folder names, and the goal, and ask for the exact commands and what to check.
 
 </details>
 
-### Co-authors and lab-mates {#co-authors-and-lab-mates}
+### Co-authors and lab-mates
 
 1. Share **one** project: invite them to your Overleaf project (check
    [Overleaf's plans](https://docs.overleaf.com/getting-started/free-and-premium-plans)
@@ -204,7 +204,7 @@ folder names, and the goal, and ask for the exact commands and what to check.
 3. Prefer comments for suggestions; it is your thesis. Word-using colleagues
    can still [share sources](citations.md#if-co-authors-use-word).
 
-### Turn a chapter into a paper {#turn-a-chapter-into-a-paper}
+### Turn a chapter into a paper
 
 1. Start from the venue's own template (for example `IEEEtran` or `acmart`,
    from Overleaf's gallery or the publisher's author page).
@@ -238,7 +238,7 @@ Optional: to turn Markdown slides into PowerPoint, run
 each top-level heading (`# Slide title`); lower-level headings stay on that
 slide.
 
-## Back up your work {#back-up-your-work}
+## Back up your work
 
 Keep your thesis in two places, one off your computer, so a lost laptop costs
 you an afternoon, not a thesis. Pick what suits you:
@@ -367,7 +367,7 @@ for your system ([AI help](#use-ai-for-technical-help)).
 
 </details>
 
-## Update the formatting safely {#update-the-formatting-safely}
+## Update the formatting safely
 
 Formatting fixes arrive in one file, `rpi-thesis.cls`. Updating usually means
 replacing that file; your chapters, `metadata.tex`, and `references.bib` stay
@@ -396,7 +396,7 @@ Close to a deadline, update only if a change fixes something that affects
 you. To hear about updates, use **Watch → Custom → Releases** on the toolkit's
 GitHub page (needs an account).
 
-## Use AI for technical help {#use-ai-for-technical-help}
+## Use AI for technical help
 
 An AI chat (a tool that explains problems and suggests changes) can make LaTeX
 and terminal steps much easier. It is optional, one route beside web search,
@@ -428,7 +428,7 @@ To stay in control:
 An **AI assistant that can edit files** can apply fixes for you: work on a
 backup, keep the task small, and review every change.
 
-### Prompts to copy {#prompts-to-copy}
+### Prompts to copy
 
 Use the setup, error, and conversion prompts in an AI chat or an assistant
 that can edit files. The contribution prompt needs an assistant with file
@@ -460,7 +460,7 @@ see [CONTRIBUTING.md](../CONTRIBUTING.md)):
 Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its "Contributing as an agent" steps. If you cannot fork or push, stop and show me the diff. Do not push or open the pull request until I approve. What I'd like changed: [describe it].
 ```
 
-### Ask for a file conversion {#ask-for-a-file-conversion}
+### Ask for a file conversion
 
 Describe the result in ordinary words: a LaTeX chapter as a Word review copy, a
 Word draft as Markdown, or an image in a format LaTeX accepts. A conversion
@@ -500,7 +500,7 @@ silently break a requirement; prefer the documented settings. Also:
   load it again; use `\hypersetup{...}` in `preamble.tex`. Packages that must
   load *before* hyperref need a class change.
 
-## All thesis settings {#all-thesis-settings}
+## All thesis settings
 
 Settings go inside `\thesissetup{...}` in `metadata.tex`. Names and
 values are case-sensitive: `degree = doctoral` and `graduation-month = May`
@@ -554,7 +554,7 @@ Other class commands:
 `degree-name` does not make the toolkit suitable for undergraduate theses or
 other document types; those need their own requirements check.
 
-## Build commands {#build-commands}
+## Build commands
 
 Optional: no step in this guide needs a terminal (a text window for
 commands). Your editor or Overleaf compiles when you save or click
@@ -614,7 +614,7 @@ creates the output subfolders (`build/chapters/`, …) a first pass needs. If yo
 type `latexmk -outdir=...` yourself, create those subfolders first, or let
 `latexmk` retry after "I can't write on file".
 
-### Choose a compile engine {#choose-a-compile-engine}
+### Choose a compile engine
 
 pdfLaTeX uses New TX fonts; LuaLaTeX and XeLaTeX use TeX Gyre Termes via
 `fontspec`/`unicode-math`. Switch for characters pdfLaTeX can't handle, then
@@ -636,7 +636,7 @@ python3 scripts/build.py --engine lualatex
 
 For XeLaTeX, replace `lualatex` with `xelatex`.
 
-### Compile selected chapters {#compile-selected-chapters}
+### Compile selected chapters
 
 After one full compile, uncomment the `\includeonly` line in `preamble.tex`.
 Inside its braces, list the chapter files you want, without `.tex`; the
@@ -659,7 +659,7 @@ Pick a task: [parts (a), (b)](#show-a-figure-in-parts-a-b) ·
 [code in an appendix](#add-code-to-an-appendix) ·
 [a list of symbols](#add-a-list-of-symbols-or-abbreviations)
 
-### Show a figure in parts (a), (b) {#show-a-figure-in-parts-a-b}
+### Show a figure in parts (a), (b)
 
 For one figure with several panels. Uncomment the `subcaption` line in
 `preamble.tex` and use your own image names. The manual asks for only the
@@ -686,7 +686,7 @@ Each empty `\caption{}` prints only its letter, and `\ref{fig:sample-side}`
 prints a number such as "2.1b". Only the main caption appears in the list of
 figures.
 
-### Add theorems and proofs {#add-theorems-and-proofs}
+### Add theorems and proofs
 
 *Caveat:* the manual does not specify theorem formatting; see the
 [requirements map](project/requirements.md#needs-oge-confirmation).
@@ -708,7 +708,7 @@ Use induction on $n$. \ldots
 \end{proof}
 ```
 
-### Add an algorithm {#add-an-algorithm}
+### Add an algorithm
 
 *Caveat:* the manual does not mention algorithm format; see the
 [requirements map](project/requirements.md#needs-oge-confirmation).
@@ -735,7 +735,7 @@ Put this in your chapter file:
 \end{algorithm}
 ```
 
-### Add code to an appendix {#add-code-to-an-appendix}
+### Add code to an appendix
 
 *Caveat:* the manual does not mention code listings and the typewriter font
 is unconfirmed; see the
@@ -762,7 +762,7 @@ checklist asks for one font throughout. If OGE asks you to avoid the
 typewriter font, change `\ttfamily` to `\rmfamily` in `preamble.tex` and add
 `columns=fullflexible,keepspaces=true` to the second `\lstset` line.
 
-### Add a list of symbols or abbreviations {#add-a-list-of-symbols-or-abbreviations}
+### Add a list of symbols or abbreviations
 
 The manual calls this optional section a nomenclature (§1.6). It goes after the
 list of figures and before any preface or acknowledgment, appears in the
@@ -788,7 +788,7 @@ FEM   & Finite element method \\
 Packages that sort entries for you, such as `nomencl` or `glossaries`, need an
 extra program run that the build helper does not do.
 
-## Use another case for chapter titles {#use-another-case-for-chapter-titles}
+## Use another case for chapter titles
 
 The starter writes chapter, appendix, and built-in titles (CONTENTS,
 REFERENCES) in capitals. To use another consistent case (OGE manual §2.3),

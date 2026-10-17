@@ -8,7 +8,7 @@ so you always know what broke. Prefer paper? Print the
 [one-page cheat sheet](../cheatsheet/). Need a table, equation, figure, or
 code listing? Jump to [helpers for common tasks](#helpers-for-common-tasks).
 
-## The 10 commands you'll actually use {#the-10-commands-youll-actually-use}
+## The 10 commands you'll actually use
 
 | Command | What it does | Example |
 | --- | --- | --- |
@@ -34,7 +34,7 @@ writing.
 `\end` wrap a block (an *environment*), `%` starts a note, and a blank line
 starts a paragraph.
 
-## Paragraphs and headings {#paragraphs-and-headings}
+## Paragraphs and headings
 
 Separate paragraphs with one blank line, not `\\` or extra blank lines.
 
@@ -63,7 +63,7 @@ case ("Results of the field study") or title case ("Results of the Field
 Study") and never mix them. To change the reference-list title, add
 `\renewcommand{\referencesname}{References}` to `preamble.tex`.
 
-## Chapters {#chapters}
+## Chapters
 
 1. Create a new file, e.g. `chapters/04-discussion.tex`, containing only this:
 
@@ -81,7 +81,7 @@ Study") and never mix them. To change the reference-list title, add
 
 To hide a chapter, put `%` at the start of its `\include` line.
 
-## Cross-references {#cross-references}
+## Cross-references
 
 Give anything you point at a `\label{...}` and refer to it with `\ref{...}`;
 never type a figure, table, chapter, or page number by hand. Put the label
@@ -98,7 +98,7 @@ again; if it stays, check that the names match exactly. More in
 [bold keys and question marks](how-it-works.md#bold-citation-keys-and-question-marks)
 and [fixing problems](troubleshooting.md#common-messages).
 
-## Cite a source {#cite-a-source}
+## Cite a source
 
 1. Add the source to `references.bib`, by exporting from Zotero or pasting an
    entry ([citations and references](citations.md)).
@@ -118,7 +118,7 @@ Only sources you cite appear in the reference list. Agree on a citation style
 with your advisor first ([agree on a style](citations.md#step-1-agree-on-a-style-with-your-advisor)),
 because the style decides what each command prints.
 
-## Quote a source {#quote-a-source}
+## Quote a source
 
 For a short quotation inside a sentence, use `\enquote{...}`; it prints
 curly quotation marks that face the right way, and typed `"` marks do not. Set
@@ -150,7 +150,7 @@ numbers on the same line; the lists repeat each full caption.
 Mention every figure and table in your text. `[htbp]` lets LaTeX place each
 one where it fits, so it may move to the next page. That is normal.
 
-### Add a figure {#add-a-figure}
+### Add a figure
 
 1. Put the image (PNG, JPG, or PDF) in the `figures/` folder, for example
    `figures/my-plot.png`.
@@ -183,7 +183,7 @@ from data or another image format, see
 [export a chart or convert an image](#export-a-chart-or-convert-an-image).
 Credit material that is not yours ([permissions](#reproduced-figures-and-permissions)).
 
-### Edit a table {#edit-a-table}
+### Edit a table
 
 Start from the sample table in `chapters/02-research.tex`. The caption goes
 **above** the table, and `\label` comes after `\caption`:
@@ -250,14 +250,14 @@ As a last resort, add `\usepackage{rotating}` to `preamble.tex` and use
 than a page, uncomment the `longtable` line in `preamble.tex` and put
 `\caption` in its first row. Check the page numbers and captions afterwards.
 
-### Use one full caption, not a short one {#use-one-full-caption-not-a-short-one}
+### Use one full caption, not a short one
 
 Write `\caption{Your full caption.}`, never `\caption[Short]{Long}`: OGE
 expects the lists to match the captions word for word. A long caption is
 fine. Sentence-case captions end with a period. The optional
 [build helper](going-further.md#build-commands) flags short captions.
 
-### Reproduced figures and permissions {#reproduced-figures-and-permissions}
+### Reproduced figures and permissions
 
 A figure or table from someone else's work (or your own published paper)
 needs the **full citation** and a **permission or license statement** in its
@@ -278,7 +278,7 @@ permissions appendix ([submitting](submission.md)). With a numbered citation
 style, also check
 [delayed figures and tables](citations.md#numbered-styles-check-delayed-figures-and-tables).
 
-## Equations {#equations}
+## Equations
 
 Inline math goes between dollar signs: `$x = 2$`. For displayed equations, OGE
 expects:
@@ -318,7 +318,7 @@ For a matrix, use `pmatrix` or `bmatrix`; for a definition by cases, use
 provides them. Prefer clicking an equation together? See
 [write an equation](#write-an-equation).
 
-## Chapters based on published papers {#chapters-based-on-published-papers}
+## Chapters based on published papers
 
 If a chapter reuses your own published, accepted, or submitted article, OGE
 expects an attribution statement on its first page, even if you wrote the
@@ -351,7 +351,7 @@ article alone.
   `list-of-tables` (or `list-of-figures`) to `false` in `metadata.tex`.
 - Keep the abstract and the contents.
 
-## Helpers for common tasks {#helpers-for-common-tasks}
+## Helpers for common tasks
 
 Free web tools and AI assistants can do the fiddly parts, such as turning a
 table, an equation, or a sketch into code, so you spend your time on the
@@ -445,7 +445,7 @@ Want a mathematical drawing as TikZ code?
 [Mathcha](https://www.mathcha.io/) can export it: add `\usepackage{tikz}` to
 `preamble.tex` and check that it compiles.
 
-### Export a chart or convert an image {#export-a-chart-or-convert-an-image}
+### Export a chart or convert an image
 
 For a chart, keep the spreadsheet or plotting code and the original data, and
 export a PDF where possible, or a PNG, for the [figure example](#add-a-figure).
@@ -457,7 +457,7 @@ it; renaming the file does not convert it. Keep photos and scans sharp enough
 for print, and inspect labels and cropping afterwards. Need the steps?
 [Describe the conversion you want](going-further.md#ask-for-a-file-conversion).
 
-### Ask an AI assistant {#ask-an-ai-assistant}
+### Ask an AI assistant
 
 For the tricky technical bits, an AI assistant that accepts images can turn a
 table screenshot, a photo of a handwritten equation, or a rough sketch into

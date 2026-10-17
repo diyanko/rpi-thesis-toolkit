@@ -188,9 +188,7 @@ writes the ZIPs to `dist/`.
 - **Links:** the build checks every local link and heading anchor and refuses
   linked source files and folders. Links between Markdown files become links
   between pages; a link to another repository file becomes a GitHub link. Page
-  lists (`NAV`, `PROJECT`) are in `scripts/build_site.py`. A guide heading
-  that another page links to carries a fixed id (`## Heading {#heading}`), so
-  rewording it keeps the links; keep the id when you edit the text.
+  lists (`NAV`, `PROJECT`) are in `scripts/build_site.py`.
 - **Build stamp:** every online page carries
   `<meta name="rpi-thesis-build" content="SHA">`, and the site root has
   `build.txt` (`commit=<SHA>` and `release=v<RELEASE_VERSION>`), so a live
