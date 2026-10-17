@@ -65,11 +65,15 @@
   % TeX Gyre Termes Math lacks 24 AMS symbols (\bigstar, \Finv, \Game,
   % \digamma, \pitchfork, \precneqq, \subseteqq, ...); take exactly those
   % from STIX Two Math, also Times-style. Without this they print blank.
-  % A TeX install without STIX Two still compiles; only these stay blank.
+  % A TeX install without STIX Two still compiles, with a warning to check
+  % these symbols and install the missing font before submitting.
   \IfFontExistsTF{STIXTwoMath-Regular.otf}{%
     \setmathfont{STIXTwoMath-Regular.otf}[range={"03DD,"03F6,"2132,"2141,
       "22D4,"25B4,"25B5,"25BE,"25BF,"2605,"27CB,"27CD,"2A1D,"2A5E,
-      "2AB5-"2ABA,"2AC5,"2AC6,"2ACB,"2ACC}]}{}
+      "2AB5-"2ABA,"2AC5,"2AC6,"2ACB,"2ACC}]}{%
+    \ClassWarningNoLine{rpi-thesis}{STIX Two Math font not found. Some math
+      symbols may be blank. Update your full TeX Live installation and
+      recompile, then check your equations. See Fixing problems in the guide}}
 \fi
 
 % ---------------------------------------------------------------------------
