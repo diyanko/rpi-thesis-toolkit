@@ -10,6 +10,28 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
 
+## Unreleased
+
+**Changes your PDF?** Yes, in two places: the space around displayed
+equations, and the contents if your sections go four levels deep. Recompile
+and look at pages with displayed equations and at the contents.
+
+- **Displayed equations** no longer get double space around them: about
+  20 pt above instead of 33, as RPI's template sets it.
+- **Deep section numbers** such as 12.10.10.10 no longer touch their titles
+  in the contents.
+- **Clearer errors:** a misspelled setting names the setting and
+  `metadata.tex`; a wrong degree, month, or chair value echoes what you wrote
+  and notes that values are case-sensitive; a seal file name with `_` no longer
+  stops the compile.
+- **The build helper** shows the first real error and its line, and explains
+  missing figures and undefined citations or references.
+- **Website:**
+  - the appearance menu works in Safari and on iPhone;
+  - Check your PDF falls back to its written checklist on older browsers;
+  - controls have clearer borders in light mode;
+  - guide pages print more cleanly.
+
 ## 0.7.1 (beta), 16 Oct 2026
 
 Published as the pre-release `v0.7.1`.
