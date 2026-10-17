@@ -392,9 +392,10 @@ upharpoonleft upharpoonright upuparrows urcorner vDash varkappa varnothing
 varpropto varsubsetneq varsubsetneqq varsupsetneq varsupsetneqq vartriangle
 vartriangleleft vartriangleright veebar yen
 """.split()
-# A math font each engine must use for these symbols (the class's font choice).
-AMS_FONTS = {"pdflatex": ("NewTXMI", "txsy"), "xelatex": ("TeXGyreTermesMath",),
-             "lualatex": ("TeXGyreTermesMath",)}
+# Math fonts each engine must use for these symbols (the class font choice;
+# STIX Two Math supplies the AMS symbols TeX Gyre Termes Math lacks).
+AMS_FONTS = {"pdflatex": ("NewTXMI", "txsy"), "xelatex": ("TeXGyreTermesMath", "STIXTwoMath"),
+             "lualatex": ("TeXGyreTermesMath", "STIXTwoMath")}
 AMS_DOC = r"""\documentclass{rpi-thesis}
 %s
 \thesissetup{title={T}, author={A}, degree=doctoral, department={Department of X},
@@ -411,6 +412,31 @@ $a\nleqslant b$, $\square$, $\blacktriangleright$.
 """
 
 
+def _ams_latex(proj, work, engine, name):
+    """latex() with unwrapped log lines, so one message is never split across lines."""
+    command = [engine, "-no-shell-escape", "-interaction=nonstopmode", "-halt-on-error",
+               "-file-line-error", name]
+    try:
+        done = subprocess.run(
+            command, cwd=proj, env=dict(child_env(work), max_print_line="100000"),
+            stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            timeout=TIMEOUT)
+    except subprocess.TimeoutExpired:
+        raise Fail("timed out after %d s: %s" % (TIMEOUT, engine))
+    return done.returncode, done.stdout.decode("utf-8", errors="replace")
+
+
+def _missing_chars(log):
+    """Code points TeX reported as missing, even when a message wraps across lines;
+    a message without a code point (pdfLaTeX) is reported as its text."""
+    messages = re.findall(r"Missing character: There is no ([^!]*)!", log)
+    lost = set()
+    for message in messages:
+        code = re.search(r"\(\s*(U\+[0-9A-F]+)\s*\)", message)
+        lost.add(code.group(1) if code else " ".join(message.split()))
+    return sorted(lost)
+
+
 def make_ams(engine):
     def case(proj, work):
         """Audit: AMS commands such as \\square and \\nleqslant were undefined on
@@ -422,14 +448,15 @@ def make_ams(engine):
                                   ("bare", "")):
             name = "ams-%s.tex" % variant
             (proj / name).write_text(AMS_DOC % (packages, body), encoding="utf-8")
-            code, out = latex(proj, work, engine, name=name)
+            code, out = _ams_latex(proj, work, engine, name)
             log = read(proj / name.replace(".tex", ".log"))
             check(code == 0, "%s (%s) exited %d: %s" % (engine, variant, code, tail(out)))
             undefined = set(re.findall(r"AMSUNDEF:(\w+)", log))
             check(not undefined, "%s (%s): undefined AMS commands: %s"
                   % (engine, variant, " ".join(sorted(undefined))))
-            lost = re.findall(r"Missing character: There is no (.*?)!", log)
-            check(not lost, "%s (%s): glyphs missing from the font: %s" % (engine, variant, lost[:5]))
+            lost = _missing_chars(log)
+            check(not lost, "%s (%s): glyphs missing from the font: %s"
+                  % (engine, variant, " ".join(lost)))
             pdf = proj / name.replace(".tex", ".pdf")
             if PdfReader is None:
                 raise Skip("font check needs pypdf (commands and glyphs were checked)")
