@@ -34,6 +34,9 @@ $endif$
 <script src="${root}viewer.js" defer></script>
 <script src="${root}search-index.js" defer></script>
 <script src="${root}search.js" defer></script>
+$if(page_script)$
+<script src="${root}$page_script$" defer></script>
+$endif$
 $if(analytics_token)$
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "$analytics_token$"}'></script>
 $endif$
@@ -43,13 +46,13 @@ $endif$
 <header class="site-header">
   <div class="brand">
     <a class="wordmark" href="${root}index.html">
-      <img class="wordmark-logo" src="${root}logo.svg" alt="" width="28" height="28">
+      <svg class="wordmark-logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true" focusable="false"><path class="brace" d="M12 4.5 C8 4.3 8.3 7.5 8.4 10.5 C8.5 13.5 7.7 15.4 4.5 16 C7.8 16.7 8.6 18.6 8.4 21.5 C8.2 24.6 8.1 27.8 12 27.6"/><path class="brace" d="M20 4.5 C24 4.3 23.7 7.5 23.6 10.5 C23.5 13.5 24.3 15.4 27.5 16 C24.2 16.7 23.4 18.6 23.6 21.5 C23.8 24.6 23.9 27.8 20 27.6"/><circle class="dot" cx="16" cy="16.2" r="4"/></svg>
       RPI Thesis Toolkit
     </a>
     <span class="unofficial-tag">Unofficial<span class="unofficial-more"> · community-made</span></span>
   </div>
   <div class="header-tools">
-  <button class="search-open search-header" type="button" data-search-open aria-label="Search the guide" title="Search the guide (Ctrl+K or Cmd+K)" aria-haspopup="dialog" aria-controls="guide-search-dialog" hidden><svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><span>Search</span></button>
+  <button class="search-open search-header" type="button" data-search-open aria-label="Search the guide" title="Search the guide (/, Ctrl+K or Cmd+K)" aria-haspopup="dialog" aria-controls="guide-search-dialog" hidden><svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><span>Search</span></button>
   <div class="appearance" data-mode="system" hidden>
     <button class="appearance-toggle" type="button" aria-label="Appearance: System" title="Change appearance (System)" aria-expanded="false" aria-controls="appearance-options">
       <svg class="theme-icon theme-icon-system" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor" stroke="none"/></svg>

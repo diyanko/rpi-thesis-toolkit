@@ -76,6 +76,7 @@
   --scroll-hint: rgba(43, 39, 35, 0.22);   /* edge shadow on scrollable code and tables */
   --focus:   var(--blue);
   --squiggle: var(--rpi-red);   /* the hero's hand-drawn underline */
+  --logo-dot: #c8102e;          /* the dot in the header mark (site/logo.svg) */
   --select:  #f3dc8c;           /* highlighter yellow for selected text */
 
   --table-head: var(--paper-2);
@@ -105,6 +106,7 @@
   --dark-butter-wash: #3a3320;
   --dark-rpi-red: #d6223f;
   --dark-squiggle: #ff8d98;
+  --dark-logo-dot: #ff5a6e;
   --dark-select: #5c4b1d;
   --dark-scroll-hint: rgba(0, 0, 0, 0.6);
   --dark-table-head: #353027;
@@ -153,6 +155,7 @@
     --butter-wash: var(--dark-butter-wash);
     --rpi-red: var(--dark-rpi-red);
     --squiggle: var(--dark-squiggle);
+    --logo-dot: var(--dark-logo-dot);
     --select: var(--dark-select);
     --scroll-hint: var(--dark-scroll-hint);
     --table-head: var(--dark-table-head);
@@ -184,6 +187,7 @@
     --butter-wash: var(--dark-butter-wash);
     --rpi-red: var(--dark-rpi-red);
     --squiggle: var(--dark-squiggle);
+    --logo-dot: var(--dark-logo-dot);
     --select: var(--dark-select);
     --scroll-hint: var(--dark-scroll-hint);
     --table-head: var(--dark-table-head);
@@ -331,7 +335,11 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   font-size: 1.3rem;
   font-variation-settings: "SOFT" 100;
 }
-.wordmark-logo { width: 28px; height: 28px; flex: none; }   /* site/logo.svg */
+/* The mark is inline (a copy of site/logo.svg) so it follows the chosen theme
+   with or without JavaScript: braces in the text color, the dot in --logo-dot. */
+.wordmark-logo { width: 28px; height: 28px; flex: none; overflow: visible; }
+.wordmark-logo .brace { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.wordmark-logo .dot { fill: var(--logo-dot); }
 .brand { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
 .header-tools { display: flex; align-items: center; gap: 10px; }
 .appearance {
@@ -1130,13 +1138,15 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
    sits on the first line and wrapped lines align with the text. */
 .guide-content ul.task-list { list-style: none; padding-left: 0; }
 .guide-content .task-list li { margin: 0.55em 0; }
-.task-list label { display: block; position: relative; padding-left: 2.1em; cursor: pointer; }
+.task-list label { display: block; position: relative; padding-left: 1.9em; cursor: pointer; }
 .task-list input[type="checkbox"] {
   -webkit-appearance: none;
           appearance: none;
+  font: inherit;   /* form controls default to 13.33px; size the box to the text instead */
   position: absolute;
-  left: 0.1em; top: 0.25em;   /* centred on the first line: (1.65em line - 1.15em box) / 2 */
-  width: 1.15em; height: 1.15em;
+  left: 0; top: 0.225em;   /* centred on the first line: (1.65em line - 1.2em box) / 2 */
+  top: calc(0.5lh - 0.6em);
+  width: 1.2em; height: 1.2em;
   margin: 0;
   background: var(--card) no-repeat center / 100%;
   border: 2px solid var(--muted);
@@ -1453,6 +1463,54 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content td code, .guide-content td:first-child code:not(.phrase, .long) { white-space: normal; overflow-wrap: anywhere; }
 }
 
+/* "Check your PDF" (docs/check-pdf.md, site/pdf-check.js). Without JavaScript
+   the checker stays hidden and .pdf-check-nojs explains why. */
+.pdf-check[hidden], .pdf-check-nojs[hidden] { display: none; }
+.pdf-check { margin: 1.8rem 0; }
+.pdf-check-drop {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px;
+  padding: 22px 20px;
+  background: var(--card);
+  border: 2px dashed var(--line-strong);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.pdf-check-drop.is-over { border-color: var(--blue); background: var(--blue-wash); }
+.pdf-check-button {
+  display: inline-flex; align-items: center; min-height: 48px; padding: 12px 22px;
+  font-weight: 700; font-size: 1.05rem; line-height: 1.25;
+  background: var(--rpi-red); color: var(--on-red);
+  border: 2px solid var(--btn-edge); border-radius: var(--sketch);
+  box-shadow: 3px 3px 0 var(--btn-shadow);
+}
+.pdf-check-drop:hover .pdf-check-button { box-shadow: 5px 5px 0 var(--btn-shadow); }
+.pdf-check:has(input:focus-visible) .pdf-check-button { outline: 3px solid var(--focus); outline-offset: 4px; }
+.pdf-check-or { color: var(--muted); }
+.pdf-check-status:empty { display: none; }
+.pdf-check-status { margin: 1rem 0 0; font-weight: 600; }
+.pdf-check-results h3:focus { outline: none; }
+.guide-content .pdf-check-list { list-style: none; padding: 0; margin: 1rem 0 0; }
+.guide-content .pdf-check-list > li { margin: 0 0 14px; }
+.pdf-check-item {
+  --c: var(--muted);
+  padding: 12px 16px 12px 18px;
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-left: 5px solid var(--c);
+  border-radius: 8px;
+}
+.pdf-check-item.is-ok { --c: var(--sage); }
+.pdf-check-item.is-check { --c: var(--terra); }
+.pdf-check-item p { margin: 0 0 0.4em; }
+.pdf-check-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.pdf-check-state {
+  font-size: 0.85rem; font-weight: 700; color: var(--c);
+  padding: 1px 8px; border: 1.5px solid var(--c); border-radius: 999px;
+}
+.pdf-check-source { font-size: 0.92rem; color: var(--muted); }
+.guide-content .pdf-check-item details { margin: 0.5rem 0; padding: 0 14px; }
+.pdf-check-item details li { overflow-wrap: anywhere; }
+
 /* ---------- 9. Footer ---------------------------------------------------- */
 .site-footer { background: var(--paper-2); border-top: 1px solid var(--line); }
 .footer-inner {
@@ -1765,7 +1823,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 }
 
 @media print {
-  .site-header, .guide-sidebar, .guide-topics, .pager, .skip-link, .site-footer,
+  .site-header, .guide-sidebar, .guide-topics, .pager, .guide-end, .skip-link, .site-footer,
   .hero-actions, .hero-next, .diagram-open, .viewer, .page-toc, .page-toc-wide, .code-toolbar { display: none !important; }
   .code-block { border: 0; background: none; }
   .guide-content .code-block > pre { padding-top: 16px; }
@@ -1812,6 +1870,9 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .card, .steps li, .anatomy-pages li {
     break-inside: avoid;
   }
+  /* A table of six or more rows may break between rows (each row stays whole)
+     rather than leave a blank half page before it. */
+  .table-wrap:has(tbody tr:nth-child(6)) { break-inside: auto; }
   h1, h2, h3, h4, summary, .eyebrow { break-after: avoid; }
   /* Diagrams and pictures: always shown, never recolored */
   img { filter: none !important; }

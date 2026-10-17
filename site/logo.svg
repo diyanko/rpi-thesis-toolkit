@@ -1,6 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <!-- Site mark: braces hugging a red dot. Used by the header wordmark and as the
-       browser-tab icon; site/og-card.svg carries a copy. Replace this file to change it. -->
+  <!-- Site mark: braces hugging a red dot. Used as the browser-tab icon. The header
+       wordmark (site/guide-template.html) and site/og-card.svg carry copies, so a
+       new mark goes in all three places. -->
   <style>
     .brace { fill: none; stroke: #2b2723; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
     .dot { fill: #c8102e; }
