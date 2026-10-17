@@ -30,10 +30,12 @@ this project.
    task works without Git, a terminal, or AI.
 5. **Honest.** Unofficial and community-made; never claim approval. Show real
    facts and real feedback only.
-6. **Two plug-and-play paths.** Overleaf for most students; VS Code with
-   LaTeX Workshop on your own computer. Both: edit, save, see the PDF. No
-   student step needs terminal commands or knowing what Biber is; describe
-   every fix as it looks in Overleaf and in VS Code.
+6. **Plug-and-play setup.** We suggest a local editor with a LaTeX extension
+   that builds on save and shows the PDF (VS Code with LaTeX Workshop is the
+   worked example; any editor with a LaTeX extension works). Overleaf is the
+   easy alternative. Either way: edit, save, see the PDF. No student step
+   needs terminal commands or knowing what Biber is. These are suggestions,
+   not the only way.
 7. **Pictures where they explain.** Hand-drawn diagrams where a picture is
    faster than words; plain, clean text everywhere else.
 8. **Simple to maintain.** Small files, standard library tools, one process doc
