@@ -60,6 +60,7 @@
   // error mentioning the same word. These routes boost existing guide text;
   // they never supply answers or manufacture destinations.
   var routes = [
+    [/^(paste|convert|converter|word to latex|docs to latex|google docs to latex|markdown to latex|excel to latex|table to latex|bring (my|your) work in)$/, ["What it converts", "Put it in your thesis"]],
     [/^(apa|ieee|mla|chicago)( style)?$/, ["Change the citation style", "Print a full reference in the text"]],
     [/^(title page|committee|committee chair|graduation( month| year| date)?|masters( degree)?|doctoral( degree)?|engineering doctorate)$/, ["Put your name on it", "All thesis settings"]],
     [/^(copyright( page)?|metadata( tex)?)$/, ["All thesis settings", "Put your name on it"]],
