@@ -60,6 +60,8 @@ NAV = [
         ("how-it-works", "How it works", False),
         ("bring-your-draft", "Bring your draft", False),
         ("going-further", "Going further", False),
+        ("check-pdf", "Check your PDF", False),
+        ("reviewer-checklist", "Reviewer checklist", False),
     ]),
 ]
 # The first stage is the numbered road most visitors follow; the sidebar numbers
@@ -80,7 +82,7 @@ TAGS = {
     "If you have a draft": ("draft", ["bring-your-draft"]),
     "When stuck": ("stuck", ["troubleshooting", "how-do-i"]),
     "Need later": ("later", ["submission"]),
-    "Optional": ("optional", ["how-it-works", "going-further"]),
+    "Optional": ("optional", ["how-it-works", "going-further", "check-pdf", "reviewer-checklist"]),
 }
 PAGE_TAGS = {page: (tag, css) for tag, (css, pages) in TAGS.items() for page in pages}
 SIDEBAR_TAGS = set()
@@ -124,7 +126,11 @@ ALLOWED = {".html", ".css", ".svg", ".woff2"}  # plus fonts/*.txt, previews/*.pn
 # Online only: "commit=<SHA>" and "release=<RELEASE_TAG>", one per line. Every online
 # page also carries <meta name="rpi-thesis-build" content="SHA">; release.py reads both.
 BUILD_FILE = "build.txt"
-SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js"}
+SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js", "pdf-check.js"}
+# Scripts that only one guide page loads: page -> script. pdf-check.js reads a
+# student's PDF in the browser (docs/check-pdf.md); every `cite: "..."` in it
+# must appear word for word in docs/project/requirements.md.
+PAGE_SCRIPTS = {"check-pdf": "pdf-check.js"}
 # The release the website links: its version, tag (always "v" + version; beta status is
 # GitHub's pre-release flag, never part of the name), and ZIP names
 # (rpi-thesis-starter-v<version>.zip). The home page's "Get the starter" button downloads
@@ -409,6 +415,27 @@ def search_disclosures(body):
     return re.sub(r"<details\b([^>]*)>(\s*<summary\b[^>]*>)(.*?)</summary>", identify, body, flags=re.S)
 
 
+SEARCH_STRING = r"\"(?:[^\"\\\n]|\\.)*\"|'(?:[^'\\\n]|\\.)*'"
+
+
+def search_route_problems(search):
+    """Section titles that site/search.js names (routes, answers for pasted
+    log lines, fallbacks) must still exist, or those searches quietly degrade."""
+    script = (ROOT / "site/search.js").read_text(encoding="utf-8")
+    named = []
+    for block in re.findall(r"var (?:routes|logRoutes) = \[(.*?)\n  \];", script, flags=re.S):
+        for array in re.findall(rf"\[\s*((?:{SEARCH_STRING})(?:\s*,\s*(?:{SEARCH_STRING}))*)\s*\]", block):
+            named += re.findall(SEARCH_STRING, array)
+    named += re.findall(rf"\btitle === ({SEARCH_STRING})", script)
+    for array in re.findall(rf"\[((?:{SEARCH_STRING})(?:\s*,\s*(?:{SEARCH_STRING}))*)\]"
+                            r"\.(?:includes\(entry\.source\.title\)|map\(function \(page\))", script):
+        named += re.findall(SEARCH_STRING, array)
+    titles = {entry["title"] for entry in search}
+    return [f"site/search.js names the section {title!r}, which no guide page has; "
+            "update the title there to match the renamed heading"
+            for title in sorted({re.sub(r"\\(.)", r"\1", literal[1:-1]) for literal in named} - titles)]
+
+
 class SearchSections(HTMLParser):
     """Read guide sections before navigation is added; Pandoc owns heading IDs.
 
@@ -522,7 +549,8 @@ class Site:
                        "site/copy.js": "copy.js",       # optional "Copy" buttons on code blocks
                        "site/viewer.js": "viewer.js",   # optional: full-size pictures open as a dialog
                        "site/theme.js": "theme.js",     # optional: saved System/Light/Dark appearance
-                       "site/search.js": "search.js"}   # optional: offline section search
+                       "site/search.js": "search.js",   # optional: offline section search
+                       "site/pdf-check.js": "pdf-check.js"}  # optional: "Check your PDF" page
         self.starter_zip = ""
         if not offline and self.repo:
             version = RELEASE_VERSION
@@ -896,6 +924,8 @@ class Site:
             body = self.pictures(body, source, here)
             body = responsive_tables(body)
             body = keep_short_code(body)
+            # The PDF checker compares a PDF's class version with the release the website links.
+            body = body.replace('data-pdf-check data-version=""', f'data-pdf-check data-version="{RELEASE_VERSION}"')
             # Keyboard users must also be able to pan long code lines without
             # JavaScript, including Safari's non-focusable scroll containers.
             body = re.sub(r"<pre\b", '<pre tabindex="0"', body)
@@ -977,6 +1007,8 @@ class Site:
             values["updated"] = last_updated(source)
             if toc:
                 values["toc"] = toc
+            if Path(source).stem in PAGE_SCRIPTS:
+                values["page_script"] = PAGE_SCRIPTS[Path(source).stem]
         if kind == "notfound":
             values["notfound"] = True
         else:  # every indexed page needs its own title and description
@@ -1332,6 +1364,12 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
     """Write and check the site in `destination` (the staging folder); `final` is
     where it will end up."""
     site = Site(offline)
+    requirements = (ROOT / "docs/project/requirements.md").read_text(encoding="utf-8")
+    for script in set(PAGE_SCRIPTS.values()):
+        for cite in re.findall(r'\bcite2?: "([^"]+)"', (SITE / script).read_text(encoding="utf-8")):
+            if cite not in requirements:
+                site.errors.append(f"site/{script}: the citation {cite!r} is not in docs/project/requirements.md; "
+                                   "cite a manual section and page exactly as a row there gives it.")
     if publish:
         version = class_version()[0]
         if version != RELEASE_VERSION:
@@ -1383,6 +1421,7 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
             (entry for entry in site.search if entry["href"].split("#")[0] == page), None)
         if target is not None:
             target["tasks"] = (target.get("tasks", "") + " " + task).strip()
+    site.warnings.extend(search_route_problems(site.search))
     # A classic script also loads from file: URLs, with no fetch or server.
     index = json.dumps(site.search, ensure_ascii=True, separators=(",", ":"))
     (destination / "search-index.js").write_text("window.GUIDE_SEARCH = " + index + ";\n", encoding="utf-8")
