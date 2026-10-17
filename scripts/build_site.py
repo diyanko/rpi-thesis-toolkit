@@ -39,8 +39,9 @@ import settings
 import rules  # scripts/rules.py: the OGE rules in docs/project/requirements.md
 
 from common import ROOT, class_version, site_config
-from site_checks import (BUILD_FILE, CHEATSHEET_PDF, CLASS_DOWNLOAD, CONVERT, PDF_CHECK, BIB_CHECK, SearchSections,
+from site_checks import (BUILD_FILE, CHEATSHEET_PDF, CLASS_DOWNLOAD, CONVERT, EXPLAIN, PDF_CHECK, BIB_CHECK, SearchSections,
                          checker_ids, search_route_problems, validate)
+import build as build_helper  # scripts/build.py: KNOWN_PROBLEMS, shared with "Explain my error"
 
 SITE = ROOT / "site"
 NAME = "RPI Thesis Toolkit"
@@ -70,6 +71,7 @@ NAV = [
     # Only tools that exist; each is also linked from the page where it helps most.
     ("Tools", [
         ("bring-your-work-in", "Bring your work in", False),
+        ("explain-my-error", "Explain my error", False),
         ("check-pdf", "Check your PDF", False),
         ("check-references", "Check your references", False),
         ("settings-builder", "Settings builder", False),
@@ -91,7 +93,7 @@ TAGS = {
     "Start here": ("start", ["get-started"]),
     "Need now": ("now", ["writing", "citations"]),
     "If you have a draft": ("draft", ["bring-your-draft", "bring-your-work-in"]),
-    "When stuck": ("stuck", ["troubleshooting", "how-do-i"]),
+    "When stuck": ("stuck", ["troubleshooting", "how-do-i", "explain-my-error"]),
     "Need later": ("later", ["submission"]),
     "Optional": ("optional", ["settings-builder", "how-it-works", "going-further", "check-pdf", "check-references", "reviewer-checklist"]),
 }
@@ -117,9 +119,10 @@ PROJECT = {
 FEEDBACK = ("docs/troubleshooting.md", "Ask for help")
 # Scripts that only one guide page loads: page -> script.
 PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js", "bring-your-work-in": "convert/ui.js",
-                "settings-builder": "settings/ui.js", "check-references": "bibcheck/ui.js"}
+                 "settings-builder": "settings/ui.js", "check-references": "bibcheck/ui.js",
+                 "explain-my-error": "explain/ui.js"}
 # Page scripts that also run in the offline guide (file: pages).
-OFFLINE_SCRIPTS = {"bring-your-work-in"}
+OFFLINE_SCRIPTS = {"bring-your-work-in", "explain-my-error"}
 # The release the website links: its version, tag (always "v" + version; beta status is
 # GitHub's pre-release flag, never part of the name), and ZIP names
 # (rpi-thesis-starter-v<version>.zip). The home page's "Get the starter" button downloads
@@ -442,6 +445,7 @@ class Site:
                        "site/theme.js": "theme.js",     # optional: saved System/Light/Dark appearance
                        "site/search.js": "search.js",   # optional: offline section search
                        "site/share.js": "share.js"}     # optional: the home page's "Share this guide" button
+        self.assets.update({f"site/{name}": name for name in EXPLAIN})  # optional: "Explain my error" page
         if not offline:  # optional: "Check your PDF" page; online only (see PDF_CHECK)
             self.assets.update({f"site/{name}": name for name in PDF_CHECK})
             self.assets.update({f"site/{name}": name for name in BIB_CHECK})
@@ -749,6 +753,28 @@ class Site:
 
         return re.sub(r"<h[1-6]\b[^>]*>.*?</h[1-6]>|<tr\b[^>]*>.*?</tr>", row, body, flags=re.S)
 
+    def explain_page(self, body, source):
+        """Put the known problems (KNOWN_PROBLEMS in scripts/build.py) into the
+        "Explain my error" page twice: as the table everyone sees, with or
+        without JavaScript, and as JSON for site/explain/ui.js."""
+        marker = '<div class="explain-known" data-explain-known></div>'
+        if marker not in body:
+            self.errors.append(f"{source}: keep the line {marker}; the table of known messages goes there.")
+            return body
+        rows = []
+        for entry in build_helper.KNOWN_PROBLEMS:
+            page, anchor, section = entry["guide"]
+            rows.append(f"<tr><td><code>{escape(entry['message'])}</code></td><td>{escape(entry['means'])}</td>"
+                        f"<td>{escape(entry['fix'])} More: <a href=\"{page}.html#{anchor}\">{escape(section)}</a>.</td></tr>")
+        table = ("<table>\n<thead>\n<tr><th>What you see</th><th>What it means</th><th>What to try</th></tr>\n"
+                 "</thead>\n<tbody>\n" + "\n".join(rows) + "\n</tbody>\n</table>")
+        fields = ("id", "pattern", "means", "fix", "editor", "overleaf", "guide")
+        payload = json.dumps([{key: entry[key] for key in fields if key in entry}
+                              for entry in build_helper.KNOWN_PROBLEMS],
+                             ensure_ascii=True, separators=(",", ":"))
+        return (body.replace(marker, table, 1) + '\n<script type="application/json" id="explain-problems">'
+                + payload.replace("<", "\\u003c") + "</script>\n")
+
     def offline_checker(self, body, source):
         """The offline guide has no PDF checker (see PDF_CHECK): drop its form and
         say where it runs, keeping the paragraph that points to the checklist."""
@@ -796,6 +822,8 @@ class Site:
             self.errors.extend(problems)
             body = pandoc(["--from=gfm", "--to=html5", "--wrap=none", "--syntax-highlighting=none"], text)
             body = self.rewrite(body, source, here, posixpath.dirname(source))
+            if source == "docs/explain-my-error.md":
+                body = self.explain_page(body, source)
             if source == "docs/troubleshooting.md":
                 body = self.search_messages(body, here, title)
             if source == f"docs/{QUICK[0]}.md":
