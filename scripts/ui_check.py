@@ -61,7 +61,7 @@ TEST_PAGE = r"""<!doctype html>
 <body><pre id="out">pending</pre><div id="host"></div>
 <script>
 const CONFIG = __CONFIG__;
-const EXEMPT = ".table-wrap, figure.shot, pre, dialog, .anatomy-lens, .visually-hidden, .skip-link, .class-demo";
+const EXEMPT = ".table-wrap, figure.shot, pre, dialog, .visually-hidden, .skip-link, .class-demo";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 function describe(el) {
   let s = el.tagName.toLowerCase();

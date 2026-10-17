@@ -51,8 +51,7 @@ HOME_DESCRIPTION = (
 
 # The guide, in reading order, grouped into stages: (stage, [(file in docs/,
 # label, also in the header?), ...]). The sidebar, header, previous/next links
-# and every page list come from here; the landing page's "Help at your level"
-# cards (site/index.html) list each stage's pages from here too.
+# and every page list come from here.
 NAV = [
     ("Core path", [
         ("get-started", "Get started", True),
@@ -74,7 +73,7 @@ NAV = [
 GUIDE = [page for _, pages in NAV for page in pages]  # the same pages, in one list
 # Quick answers: a guide page outside the stages and the previous/next chain.
 # It sits above the stages in the sidebar, last in the header, and in the
-# "Stuck, or nearly done" card on the landing page.
+# Help card on the landing page.
 QUICK = ("how-do-i", "How do I…?", True)
 # When a student needs each page, shown as a small tag under the page title.
 # The sidebar lists pages without tags (SIDEBAR_TAGS is empty): its numbers and
@@ -109,24 +108,6 @@ PROJECT = {
 }
 # Footer "Help & feedback" link: the one place the help/feedback form URL lives.
 FEEDBACK = ("docs/troubleshooting.md", "Ask for help")
-# "Anatomy of your thesis" on the landing page: (picture name in previews.py,
-# label, what you edit, what is automatic). `code` becomes <code>. With
-# --previews each row shows the whole page, a close-up you can read, and a
-# link to the page at full size; without, the same rows show as a small table.
-# The title page, which carries the RPI seal, is never pictured.
-ANATOMY = [
-    ("contents", "Contents", "nothing; your `\\chapter` and `\\section` headings fill it in",
-     "titles, dot leaders and page numbers"),
-    ("chapter", "A chapter opening", "`chapters/01-introduction.tex`",
-     "the chapter number, heading style and spacing"),
-    ("figure-table", "Tables and figures",
-     "`chapters/02-research.tex`; images go in `figures/`; put table captions above and figure captions below",
-     "caption styling (numbering, bold label) and the lists of tables and figures"),
-    ("references", "References", "`references.bib`, and `\\parencite{key}` in your text",
-     "the order and format of every entry, by Biber"),
-    ("appendix", "An appendix", "`appendices/additional-material.tex`",
-     "the letters A, B, C and the contents entry"),
-]
 # Scripts that only one guide page loads: page -> script.
 PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js"}
 # The release the website links: its version, tag (always "v" + version; beta status is
@@ -137,11 +118,8 @@ PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js"}
 # never describes files the download does not contain (docs/project/maintenance.md).
 RELEASE_VERSION = "0.8.0"
 RELEASE_TAG = "v" + RELEASE_VERSION
-# Pictures the guide pages and landing page ask for; --publish fails without them.
-REQUIRED_PREVIEWS = (
-    ["compile-pass-1-chapter", "compile-pass-2-chapter", "class-demo-ams", "class-demo-ieee"]
-    + [f"anatomy-{name}{suffix}" for name, *_ in ANATOMY for suffix in ("", "-lens", "-full")]
-)
+# Pictures the guide pages ask for; --publish fails without them.
+REQUIRED_PREVIEWS = ["compile-pass-1-chapter", "compile-pass-2-chapter", "class-demo-ams", "class-demo-ieee"]
 OFFLINE_CHEATSHEET = "rpi-thesis-cheatsheet.pdf"
 CHEATSHEET_SOURCES = {"cheatsheet", "cheatsheet/cheatsheet.tex", "cheatsheet/README.md"}
 OG_ALT = ("RPI Thesis Toolkit, an unofficial community starter: write your RPI thesis or "
@@ -256,6 +234,24 @@ def build_id():
         except (OSError, subprocess.SubprocessError):
             sha = ""
     return sha if re.fullmatch(r"[0-9a-f]{40}", sha) else ""
+
+
+def whats_new():
+    """The home page's "What's new" line: the release the website links, its date,
+    and the start of its first change-log item, read from CHANGELOG.md."""
+    text = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    section = re.search(rf"(?ms)^## {re.escape(RELEASE_VERSION)}\b[^\n]*?,\s*([^\n]+)\n(.*?)(?=^## |\Z)", text)
+    if not section:
+        return None
+    item = re.search(r"(?ms)^- (.*?)(?=^- |^\S|\Z)", section[2])
+    if not item:
+        return None
+    plain = re.sub(r"[*`]", "", " ".join(item[1].split()))
+    plain = re.sub(r"^[^:]{1,40}:\s*", lambda m: m[0] if len(plain) < 30 else "", plain)
+    cut = re.search(r"[,;.](\s|$)", plain[20:])
+    plain = plain[: 20 + cut.start()] if cut else plain
+    return {"version": RELEASE_VERSION, "date": escape(section[1].strip()),
+            "highlight": escape(plain[0].upper() + plain[1:])}
 
 
 def last_updated(source):
@@ -659,40 +655,6 @@ class Site:
                 + ''.join(controls) + '<div class="class-demo-panels">' + ''.join(panels)
                 + '</div></fieldset>')
 
-    def anatomy(self, here):
-        """Rows for "Anatomy of your thesis" on the landing page, with pictures
-        of each page when previews.py made them."""
-        def code(text):
-            # A long path may break only after a slash, never at its hyphen
-            def path(match):
-                parts = match[1].split("/")
-                return "<code>" + "/<wbr>".join(f'<span class="nowrap">{p}</span>' if p else ""
-                                               for p in parts) + "</code>"
-
-            return re.sub(r"`([^`]+)`", path, escape(text))
-
-        def picture(name):
-            size = self.previews[name]
-            return {"src": self.relative(here, f"previews/{name}.png"),
-                    "width": size["width"], "height": size["height"]}
-
-        rows = []
-        for name, label, edit, auto in ANATOMY:
-            row = {"label": escape(label), "edit": code(edit), "auto": code(auto)}
-            names = [f"anatomy-{name}", f"anatomy-{name}-lens", f"anatomy-{name}-full"]
-            if all(n in self.previews for n in names):
-                whole, lens, full = (picture(n) for n in names)
-                details = self.previews[names[1]]
-                whole["alt"] = escape(f"Whole page {details['printed']} of the sample thesis, "
-                                      "with the close-up area outlined")
-                lens["alt"] = escape(details["alt"])
-                x, y, w, h = details["spot"]
-                full["alt"] = escape(f"Page {details['printed']} of the sample thesis, full size")
-                row["img"] = {"page": whole, "lens": lens, "full": full,
-                              "name": name, "spot": f"left: {x}%; top: {y}%; width: {w}%; height: {h}%"}
-            rows.append(row)
-        return rows
-
     @staticmethod
     def page_top(body, name):
         """Put the page's tag under its title and, on a page with TOC_MIN or more
@@ -717,23 +679,6 @@ class Site:
         if opening:
             body = body[: opening.end()] + "\n" + box + body[opening.end() :]
         return body, toc
-
-    def timeline(self, here):
-        """The "Your thesis, start to finish" drawing on the landing page, with
-        the taller -narrow version for phones when it exists."""
-        name = "docs/diagrams/thesis-timeline"
-        entry = {"src": self.relative(here, "diagrams/thesis-timeline.svg")}
-        size = svg_size(ROOT / f"{name}.svg")
-        if size:
-            entry.update(width=size[0], height=size[1])
-        else:
-            self.warnings.append(f"{name}.svg is not drawn yet; the landing page links to it anyway.")
-        if (ROOT / f"{name}-narrow.svg").is_file():
-            entry["narrow"] = self.relative(here, "diagrams/thesis-timeline-narrow.svg")
-            narrow = svg_size(ROOT / f"{name}-narrow.svg")
-            if narrow:
-                entry.update(narrow_width=narrow[0], narrow_height=narrow[1])
-        return entry
 
     def external_links(self, html):
         """Keep the guide available when students visit a tool or official resource.
@@ -863,11 +808,10 @@ class Site:
         chain = [(name, label, top) for name, label, top in GUIDE if f"docs/{name}.md" in self.pages]
         nav = [guide_item(name, label) for name, label, _ in chain]
         quick = guide_item(*QUICK[:2])
-        groups, stages = [], {}
+        groups = []
         for stage, pages in NAV:
             entries = [entry for entry in (guide_item(name, label) for name, label, _ in pages) if entry]
             groups.append({"label": escape(stage), "pages": entries})
-            stages[re.sub(r"\W+", "_", stage.lower())] = entries  # Go further -> go_further
         header = [entry for entry, (_, _, top) in zip(nav, chain) if top]
         if quick and QUICK[2]:
             header.append(quick)
@@ -895,13 +839,15 @@ class Site:
             values["quick"] = quick
         if kind == "home":
             values["home"] = True
-            values["stages"] = stages
-            values["anatomy"] = self.anatomy(here)
-            values["timeline"] = self.timeline(here)
+            news = whats_new()
+            if news:
+                values["whats_new"] = news
+            if self.site_url:  # "Share this guide": a plain e-mail link, no scripts or trackers
+                values["share_url"] = escape("mailto:?subject=" + quote("RPI Thesis Toolkit")
+                                             + "&body=" + quote("A free, unofficial LaTeX starter and guide for "
+                                                                "RPI theses and dissertations: " + self.site_url + "/"))
             if self.starter_zip:
                 values["starter_zip"] = self.starter_zip
-            if all("img" in row for row in values["anatomy"]):
-                values["pictures"] = True
         if kind == "guide":
             names = [name for name, _, _ in chain]
             if Path(source).stem in names:
