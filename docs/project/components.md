@@ -155,31 +155,50 @@ A tertiary text link, used for a secondary route:
 Text after a horizontal rule.
 
 
-## Settings form
+## Tool pages
 
-The [Settings builder](../settings-builder.md) uses labelled full-width fields,
-committee fieldsets, and a read-only block to copy. The reference table is
-visible with JavaScript off. A static example of the form controls:
+Every tool (Settings builder, Bring your work in, Check your references,
+Explain my error, Check your PDF) follows one pattern, so a new tool reuses
+it instead of adding styles. The classes live in section 12 of `site/site.css`.
 
-<div class="settings-builder">
-<fieldset><legend>Title page settings</legend><label for="component-setting-title">Thesis or dissertation title</label><input id="component-setting-title" type="text" value="Your thesis title" readonly></fieldset>
-<label for="component-settings-output">Block for metadata.tex</label>
-<textarea id="component-settings-output" rows="3" readonly>\thesissetup{
+1. **Purpose:** one or two short sentences under the title.
+2. **Privacy:** `<p class="tool-privacy"><strong>Nothing is uploaded.</strong> ...</p>`,
+   one sentence on what stays in the browser.
+3. **Steps** (optional): three short numbered steps.
+4. **Tool:** `<div class="tool NAME" data-NAME hidden>`; the script removes
+   `hidden`. Inside: labels above fields; `.tool-drop` on the main paste area
+   or drop zone; `.tool-file` for a file drop zone (a label around a
+   `.tool-file-button`, with a visually hidden native input after it and a
+   `.tool-file-names` line); `.tool-output` on read-only output; `.tool-actions` around
+   the buttons (one `.button`, the rest `.button-secondary`); `.tool-status`
+   for the one-line status; `.tool-results` (plus `.tool-card` for a single
+   panel) for results.
+5. **No JavaScript:** `<p class="tool-nojs" data-NAME-nojs>`: "The X needs
+   JavaScript, which is off or not available in this browser", then what to
+   use instead (a table or checklist further down the page).
+
+Wording: each result says what is wrong, why it matters in one clause, and
+the fix, with a guide link. Every tool has a short message for empty input,
+input that is too large, a wrong file type, nothing found, a clean result
+("Looks fine"), and a failed copy or download. Rules and messages live in
+data (the tool's `core.js` tables, `KNOWN_PROBLEMS` in `scripts/build.py`,
+the settings schema), so a change is usually one row.
+
+<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page reads your text in your browser and saves nothing.</p>
+
+<div class="tool">
+<label class="tool-drop tool-file" for="gallery-tool-file"><span class="tool-file-button">Choose files</span> <span class="tool-file-or">or drop them here</span></label><input class="visually-hidden" id="gallery-tool-file" type="file" multiple>
+<p class="tool-file-names">Chosen: references.bib, preamble.tex</p>
+<label for="gallery-tool-text">Your text</label>
+<textarea id="gallery-tool-text" rows="3" spellcheck="false">@book{example, title = {An example}}</textarea>
+<label><input type="checkbox"> An optional choice</label>
+<p class="tool-actions"><button type="button" class="button">Check</button> <button type="button" class="button button-secondary">Clear</button></p>
+<p class="tool-status">1 point to review. Nothing was uploaded.</p>
+<div class="tool-results tool-card"><h3>Results</h3><h4>May print wrong (1)</h4><ul><li><strong>example — date or year:</strong> Check the source and add its publication date if available. <a href="../citations.md#check-the-output-yourself">Citations guide</a></li></ul></div>
+<label for="gallery-tool-output">Output to copy</label>
+<pre class="tool-output" id="gallery-tool-output">\thesissetup{
   title = {Your thesis title},
-}</textarea>
+}</pre>
 </div>
 
-## Reference checker inputs
-
-The [reference checker](../check-references.md) uses native file controls,
-text areas, a checkbox, and the shared buttons. Results are ordinary lists
-with links, grouped under headings.
-
-<div class="bibcheck">
-<div class="bibcheck-drop"><label for="gallery-bib-file">Choose .bib and .tex files, or drop them here</label><input id="gallery-bib-file" type="file" accept=".bib,.tex" multiple></div>
-<label for="gallery-bib-text">Contents of references.bib</label>
-<textarea id="gallery-bib-text" rows="3" spellcheck="false">@book{example, title = {An example}}</textarea>
-<label><input type="checkbox"> Also list entries not cited in the supplied files</label>
-<p class="hero-actions"><button type="button" class="button">Check references</button> <button type="button" class="button button-secondary">Clear files and text</button></p>
-<div data-results><h3>Reference check results</h3><h4>May print wrong (1)</h4><ul><li><strong>example — date or year:</strong> Check the source and add its publication date if available. <a href="../citations.md#check-the-output-yourself">Citations guide</a></li></ul></div>
-</div>
+<p class="tool-nojs">The tool needs JavaScript, which is off or not available in this browser. Use the checklist below instead.</p>

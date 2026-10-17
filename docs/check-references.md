@@ -4,24 +4,22 @@ description: Check references.bib for citation keys, missing fields, names, date
 
 # Check your references
 
-If you have a `references.bib` file for a thesis or dissertation, use this
-page to look for common reference problems before you compile (make the PDF).
+Paste or drop your `references.bib`; the page lists common problems
+(repeated keys, missing fields, names, dates) and the fix for each.
 
 <p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page reads your files in your browser and saves nothing.</p>
 
 <!-- bibcheck-interactive-start -->
 
-1. Paste the contents of `references.bib`, or choose or drop the file below.
-2. Optionally add `preamble.tex`, the file that selects your citation style,
-   and your chapter `.tex` files to check the citation keys they use.
-3. Choose **Check references**. Compare suggested changes with the published
-   sources, then compile and check the reference list in your PDF.
+1. Paste `references.bib`, or choose or drop the file.
+2. Optional: add `preamble.tex` (your citation style) and chapter `.tex`
+   files to check the keys you cite.
+3. Choose **Check references**, fix what it lists, then compile and look at
+   the reference list in your PDF.
 
-<div class="bibcheck" data-bibcheck hidden>
-<div class="bibcheck-drop" data-drop>
-<label for="bibcheck-files">Choose references.bib and optional .tex files, or drop them here</label>
-<input id="bibcheck-files" type="file" accept=".bib,.tex" multiple>
-</div>
+<div class="tool bibcheck" data-bibcheck hidden>
+<label class="tool-drop tool-file" for="bibcheck-files" data-drop><span class="tool-file-button">Choose files</span> <span class="tool-file-or">or drop references.bib and .tex files here</span></label><input class="visually-hidden" id="bibcheck-files" type="file" accept=".bib,.tex" multiple>
+<p class="tool-file-names" data-file-names></p>
 <label for="bibcheck-bib">Contents of references.bib</label>
 <textarea id="bibcheck-bib" data-bib rows="10" spellcheck="false"></textarea>
 <details><summary>Optional: add your style and citations</summary>
@@ -32,9 +30,9 @@ page to look for common reference problems before you compile (make the PDF).
 <textarea id="bibcheck-tex" data-tex rows="5" spellcheck="false"></textarea>
 <label><input type="checkbox" data-unused> Also list entries not cited in the supplied .tex files</label>
 </details>
-<p class="hero-actions"><button type="button" class="button" data-run>Check references</button> <button type="button" class="button button-secondary" data-clear>Clear files and text</button></p>
-<p role="status" aria-live="polite"></p>
-<div data-results></div>
+<p class="tool-actions"><button type="button" class="button" data-run>Check references</button> <button type="button" class="button button-secondary" data-clear>Clear files and text</button></p>
+<p class="tool-status" role="status" aria-live="polite"></p>
+<div class="tool-results tool-card" data-results></div>
 </div>
 
 <p class="tool-nojs" data-bibcheck-nojs>The check needs JavaScript, which is off or not available in this browser. Use the checklist below with your .bib file and PDF.</p>

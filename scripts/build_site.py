@@ -778,15 +778,15 @@ class Site:
     def offline_checker(self, body, source):
         """The offline guide has no PDF checker (see PDF_CHECK): drop its form and
         say where it runs, keeping the paragraph that points to the checklist."""
-        widget = re.compile(r'<div class="pdf-check" data-pdf-check\b.*?<div class="pdf-check-results"></div></div>\s*', re.S)
-        intro = re.compile(r'<p class="pdf-check-nojs" data-pdf-check-nojs>The checker needs JavaScript[^.]*\.')
+        widget = re.compile(r'<div class="[^"]*\bpdf-check\b[^"]*" data-pdf-check\b.*?<div class="pdf-check-results[^"]*"></div></div>\s*', re.S)
+        intro = re.compile(r'<p class="pdf-check-nojs[^"]*" data-pdf-check-nojs>The checker needs JavaScript[^.]*\.')
         if not self.site_url or not widget.search(body) or not intro.search(body):
             self.errors.append(f"{source}: the offline guide replaces the checker form and the paragraph starting "
                                "\"The checker needs JavaScript\" with a link to the website (site_url in "
                                "site/site.json); keep both, or update offline_checker in scripts/build_site.py.")
             return body
         link = escape(self.site_url + "/guide/check-pdf.html", quote=True)
-        note = ('<p class="pdf-check-nojs">The checker runs on the toolkit\'s website, not in this offline copy '
+        note = ('<p class="pdf-check-nojs tool-nojs">The checker runs on the toolkit\'s website, not in this offline copy '
                 f'of the guide: open <a href="{link}">Check your PDF</a> there. Your PDF still stays on your '
                 'computer.')
         return intro.sub(lambda _: note, widget.sub("", body, count=1), count=1)

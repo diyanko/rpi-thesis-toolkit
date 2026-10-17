@@ -102,7 +102,7 @@ class Browser(unittest.TestCase):
             html = build_site.Site(offline=False).render("docs/settings-builder.md")
         else:
             doc = (ROOT / "docs/settings-builder.md").read_text(encoding="utf-8")
-            form = doc[doc.index('<div class="settings-builder"'):doc.index("## Settings reference")]
+            form = doc[doc.index('<div class="tool settings-builder"'):doc.index("## Settings reference")]
             html = '<!doctype html><meta charset="utf-8">' + form + '<script src="../settings/ui.js" defer></script>'
         (cls.folder / "guide/settings-builder.html").write_text(html, encoding="utf-8")
         cls.server = LocalServer(cls.folder)
