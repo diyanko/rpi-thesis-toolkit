@@ -364,6 +364,86 @@ def keep_short_code(body):
     return re.sub(r"(<pre\b[^>]*>)?<code>([^<\s]{1,28})</code>", keep, body)
 
 
+# LaTeX highlighting for ```tex, ```latex and ```bibtex blocks, done here so it
+# needs no JavaScript. site/tools-highlight.js uses the same pattern and class
+# names for tool output; the colors are the --code-* tokens in site/site.css.
+LATEX_TOKENS = re.compile(
+    r"(\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]|\$\$[\s\S]*?\$\$|\$(?:[^$\\\n]|\\.)+\$)"  # math
+    r"|(\\(?:[A-Za-z@]+\*?|[^A-Za-z@\n]))"   # a command, or an escaped character such as \%
+    r"|(%[^\n]*)"                             # a comment
+    r"|([{}])|(\[)|(\])"                      # braces; brackets around options
+    r"|(@[A-Za-z]+)")                          # a BibTeX entry type
+BIBTEX_FIELD = re.compile(r"([A-Za-z][\w-]*)(?=\s*=)")
+
+
+def highlight_latex(text, bibtex=False):
+    """Plain LaTeX -> HTML with tok-* spans. Text inside [ ] on one line is an option."""
+    out, depth, pos = [], 0, 0
+
+    def span(name, piece):
+        out.append(f'<span class="tok-{name}">{escape(piece, quote=False)}</span>')
+
+    def plain(piece):
+        nonlocal depth
+        for index, line in enumerate(piece.split("\n")):
+            if index:
+                out.append("\n")
+                depth = 0
+            if not line:
+                continue
+            if depth:
+                span("opt", line)
+            elif bibtex:
+                last = 0
+                for match in BIBTEX_FIELD.finditer(line):
+                    out.append(escape(line[last:match.start()], quote=False))
+                    span("opt", match[1])
+                    last = match.end()
+                out.append(escape(line[last:], quote=False))
+            else:
+                out.append(escape(line, quote=False))
+
+    for match in LATEX_TOKENS.finditer(text):
+        plain(text[pos:match.start()])
+        pos = match.end()
+        math, command, comment, brace, opening, closing, entry = match.groups()
+        if opening:
+            depth += 1
+            span("opt", opening)
+        elif closing:
+            span("opt", closing)
+            depth = max(0, depth - 1)
+        elif math:
+            span("math", math)
+        elif command or entry:
+            span("cmd", command or entry)
+        elif comment:
+            span("com", comment)
+        else:
+            span("brace", brace)
+    plain(text[pos:])
+    return "".join(out)
+
+
+def tool_mark(body, name):
+    """Put the tool's doodle from the home page's toolkit list (site/index.html)
+    before its title, so each tool is drawn the same way in both places."""
+    home = (ROOT / "site/index.html").read_text(encoding="utf-8")
+    found = re.search(r'<li>(<svg class="doodle tk-icon"(?:(?!</svg>).)*</svg>)<p><a href="docs/'
+                      + re.escape(name) + r'\.md">', home, flags=re.S)
+    if not found:
+        return body
+    mark = found[1].replace('class="doodle tk-icon"', 'class="doodle tool-mark"', 1)
+    return re.sub(r"(<h1\b[^>]*>)", lambda m: m[1] + mark, body, count=1)
+
+
+def highlight_code(body):
+    """Color the LaTeX and BibTeX examples Pandoc left as plain code."""
+    def paint(match):
+        return f'{match[1]}<code>{highlight_latex(unescape(match[3]), match[2] == "bibtex")}</code></pre>'
+    return re.sub(r'(<pre class="(tex|latex|bibtex)">)<code>(.*?)</code></pre>', paint, body, flags=re.S)
+
+
 class SearchText(HTMLParser):
     """Visible text from a small rendered fragment (never interpret markup)."""
     def __init__(self, html):
@@ -444,7 +524,8 @@ class Site:
                        "site/viewer.js": "viewer.js",   # optional: full-size pictures open as a dialog
                        "site/theme.js": "theme.js",     # optional: saved System/Light/Dark appearance
                        "site/search.js": "search.js",   # optional: offline section search
-                       "site/share.js": "share.js"}     # optional: the home page's "Share this guide" button
+                       "site/share.js": "share.js",     # optional: the home page's "Share this guide" button
+                       "site/tools-highlight.js": "tools-highlight.js"}   # optional: colored LaTeX in tool output
         self.assets.update({f"site/{name}": name for name in EXPLAIN})  # optional: "Explain my error" page
         if not offline:  # optional: "Check your PDF" page; online only (see PDF_CHECK)
             self.assets.update({f"site/{name}": name for name in PDF_CHECK})
@@ -836,6 +917,9 @@ class Site:
             body = self.pictures(body, source, here)
             body = responsive_tables(body)
             body = keep_short_code(body)
+            body = highlight_code(body)
+            if Path(source).stem in PAGE_SCRIPTS:
+                body = tool_mark(body, Path(source).stem)
             if Path(source).stem == "check-pdf" and not self.offline:  # the page script reads rules and measurements
                 body += rules.embed()
             if Path(source).stem == "check-pdf" and self.offline:
@@ -932,7 +1016,11 @@ class Site:
             # Quick answers are a task index, not a step in the linear guide.
             values["pager"] = bool(values.get("prev") or values.get("next"))
             values["updated"] = last_updated(source)
-            if toc:
+            # Tool pages use a wider column and no "On this page" rail (the box
+            # in the text stays), so forms, the converter and results have room.
+            if Path(source).stem in PAGE_SCRIPTS:
+                values["tool"] = True
+            elif toc:
                 values["toc"] = toc
             if Path(source).stem in PAGE_SCRIPTS and (not self.offline or Path(source).stem in OFFLINE_SCRIPTS):
                 values["page_script"] = PAGE_SCRIPTS[Path(source).stem]

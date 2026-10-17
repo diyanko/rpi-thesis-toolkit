@@ -44,7 +44,9 @@
     result.appendChild(head);
     if (error) {
       var pre = el("pre", null, { tabindex: "0" });
-      pre.appendChild(el("code", error.block));
+      var code = pre.appendChild(el("code"));
+      if (window.ToolsHighlight) window.ToolsHighlight.render(code, error.block);
+      else code.textContent = error.block;
       result.appendChild(pre);
       var place = [];
       if (error.file) place.push("File: ", el("code", error.file), ". ");

@@ -4,7 +4,7 @@
 // What is pasted or dropped is read in this browser tab and never sent
 // anywhere. The paste is intercepted: its rich text (text/html) is handed to
 // core.js as a string, never put into the page, and the plain text goes into
-// the box. The LaTeX is shown with textContent. Nothing is stored.
+// the box. The LaTeX is shown as text (colored by tools-highlight.js). Nothing is stored.
 // Works from the website and from the offline guide (file: pages).
 (function () {
   "use strict";
@@ -60,7 +60,8 @@
       copy.disabled = download.disabled = true;
       return;
     }
-    output.textContent = result.latex;
+    if (window.ToolsHighlight) window.ToolsHighlight.render(output, result.latex);  // colored; Copy uses result.latex
+    else output.textContent = result.latex;
     source.textContent = "(read as " + result.sourceName + ")";
     copy.disabled = download.disabled = false;
     var next = element("section", "convert-next");

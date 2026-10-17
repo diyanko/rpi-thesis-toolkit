@@ -30,11 +30,11 @@ from common import ROOT, find_chrome  # noqa: E402
 
 FIXTURES = Path(__file__).resolve().parent / "convert_fixtures"
 HARNESS = """<!doctype html><html lang="en"><head><meta charset="utf-8"><title>convert</title>
-<script src="/convert/core.js"></script></head><body></body></html>"""
+<script src="/convert/core.js"></script><script src="/tools-highlight.js"></script></head><body></body></html>"""
 # The page part with the guide page's own markup and the links it reads.
 UI_HARNESS = """<!doctype html><html lang="en"><head><meta charset="utf-8"><title>convert ui</title></head>
 <body><main class="guide-content"><a href="writing.html">w</a> <a href="bring-your-draft.html">b</a>
-%s</main><script src="/convert/ui.js"></script></body></html>"""
+%s</main><script src="/tools-highlight.js"></script><script src="/convert/ui.js"></script></body></html>"""
 STARTER = ["main.tex", "metadata.tex", "preamble.tex", "rpi-thesis.cls", "references.bib", "latexmkrc"]
 STARTER_FOLDERS = ["chapters", "frontmatter", "appendices", "assets", "figures"]
 
@@ -91,6 +91,21 @@ class Convert(unittest.TestCase):
 
     def notes(self, result):
         return {note["id"]: note["text"] for note in result["notes"]}
+
+    def test_highlighter_matches_build(self):
+        # Tool output (site/tools-highlight.js) and guide code blocks (build_site.py)
+        # must color LaTeX the same way.
+        import build_site
+        samples = [block for path in sorted((ROOT / "docs").glob("*.md"))
+                   for block in re.findall(r"```(?:tex|latex)\n(.*?)```", path.read_text(encoding="utf-8"), flags=re.S)]
+        samples += [r"\section{A} 100\% $x$ \(y\) [opt \cmd]{b} % c", "\\begin{a}[x\ny] \\\\[1em] $$a$$ \\[b\\]"]
+        painted = self.browser.evaluate("""%s.map(text => ToolsHighlight.tokens(text).map(t => {
+          const plain = t.text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+          return t.type ? '<span class="tok-' + t.type + '">' + plain + '</span>' : plain;
+        }).join(''))""" % json.dumps(samples))
+        for text, html in zip(samples, painted):
+            with self.subTest(text=text[:40]):
+                self.assertEqual(html, build_site.highlight_latex(text))
 
     def test_escaping(self):
         cases = {
@@ -307,7 +322,10 @@ class Convert(unittest.TestCase):
         self.assertIn(r"Hello \textbf{there} x", latex)
         self.assertNotIn("javascript", latex)
         self.assertNotIn("probe", latex)
-        self.assertEqual(self.browser.evaluate("document.querySelector('.convert-output').children.length"), 0)
+        # The only elements in the output are the highlighter's own text spans.
+        self.assertTrue(self.browser.evaluate("[...document.querySelectorAll('.convert-output *')].every("
+                                              "n => n.tagName === 'SPAN' && /^tok-[a-z]+$/.test(n.className) && !n.children.length)"))
+        self.assertGreater(self.browser.evaluate("document.querySelectorAll('.convert-output .tok-cmd').length"), 0)
         self.assertEqual(self.browser.evaluate("document.querySelector('.convert-input').value"), "Hello there x")
         self.assertIn("Rich text", self.browser.evaluate("document.querySelector('.convert-status').textContent"))
         # The options re-run the conversion; editing the box reads it as typed.
