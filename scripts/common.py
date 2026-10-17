@@ -45,10 +45,11 @@ def class_version(root=None):
 
 
 def find_chrome():
-    """Path or command name of Chrome or Chromium ($CHROME first), or None."""
+    """Path or command name of Chrome or Chromium, or None. A set $CHROME
+    decides alone: one that names no program means no browser."""
     env = os.environ.get("CHROME")
-    if env and (shutil.which(env) or Path(env).exists()):
-        return env
+    if env:
+        return env if shutil.which(env) or Path(env).exists() else None
     for candidate in CHROME_CANDIDATES:
         if Path(candidate).is_absolute():
             if Path(candidate).exists():

@@ -102,8 +102,10 @@ What to run is in [AGENTS.md](../../AGENTS.md#verification). How it works:
   skip counts for tests; CI and release mode fail instead, since they have
   every tool. **Release** mode adds a strict publish build, a browser layout
   sweep, and reproducible ZIPs, and fails when the sweep cannot run. CI's
-  container has no browser and sets `VERIFY_ALLOW_NO_BROWSER=1`, so run
-  release mode locally before tagging.
+  container has no browser and sets `VERIFY_ALLOW_NO_BROWSER=1`: only the
+  sweep and the unit tests that need a browser may then skip, and the summary
+  labels them ("no browser, allowed in CI"). Run release mode locally before
+  tagging.
 - **Screenshots:** `ui_check.py --baseline save` keeps them in
   `_local/shots/baseline/`; `--baseline compare` lists which pages, widths,
   and themes changed (informational, exit status unaffected). The component

@@ -480,28 +480,41 @@ def presubmission_hints(root, output, sources=None, warnings=()):
 
 def first_error(log_text):
     """The first error in a LaTeX log, as the lines a student needs: the
-    message (./file.tex:N: ... with -file-line-error, or ! ...) up to and
-    including the l.N line that shows where TeX stopped. Empty if none."""
+    message (file:N: ... with -file-line-error, or ! ...) up to and including
+    the l.N line that shows where TeX stopped. Empty if none. The file can be
+    any path LaTeX reads (C:/..., C:\\..., ./build/main.aux, .toc, .bbl).
+    TeX's generic stop lines (Emergency stop, Fatal error) are reported only
+    when no real error comes before them."""
     lines = log_text.splitlines()
-    start = re.compile(r"^(?:\S[^:]*\.(?:tex|sty|cls|bbl|cfg|def|ltx):\d+: |! )")
-    for index, line in enumerate(lines):
-        if start.match(line):
-            block = lines[index:index + 12]
-            for offset, part in enumerate(block):
-                if re.match(r"l\.\d+", part):
-                    block = block[:offset + 2]  # l.N and the rest of that source line
-                    break
-            # Drop TeX's generic help lines; keep the message and its place.
-            noise = re.compile(r"See the .* (?:documentation|manual|Companion)|Type +H <return>"
-                               r"|\s*\.\.\.\s*$|\s*$")
-            return "\n".join(part for part in block if not noise.match(part))
+    start = re.compile(r"^(?:(?:[A-Za-z]:)?[^:\s][^:]*\.\w+:\d+: |! )")
+    generic = re.compile(r"Emergency stop|==> Fatal error occurred|job aborted")
+    found = [index for index, line in enumerate(lines) if start.match(line)]
+    real = [index for index in found if not generic.search(lines[index])]
+    for index in (real or found)[:1]:
+        block = lines[index:index + 12]
+        for offset, part in enumerate(block):
+            if re.match(r"l\.\d+", part):
+                block = block[:offset + 2]  # l.N and the rest of that source line
+                break
+        # Drop TeX's generic help lines; keep the message and its place.
+        noise = re.compile(r"See the .* (?:documentation|manual|Companion)|Type +H <return>"
+                           r"|\s*\.\.\.\s*$|\s*$")
+        return "\n".join(part for part in block if not noise.match(part))
     return ""
 
 
-def biber_errors(output, since):
-    """ERROR lines from main.blg when Biber ran in this build and failed."""
+# latexmk's note that Biber failed in an earlier build and was not rerun.
+BIBER_CACHED = re.compile(r"(?m)^\s*biber\b[^\n]*gave an error in previous invocation")
+
+
+def biber_errors(output, since, latexmk_text=""):
+    """ERROR lines from main.blg when Biber failed in this build, or when
+    latexmk reports (in latexmk_text) that the failure from an earlier build
+    still stands, so the older main.blg still applies."""
     blg = output / "main.blg"
-    if not blg.is_file() or blg.stat().st_mtime < since:
+    if not blg.is_file():
+        return []
+    if blg.stat().st_mtime < since and not BIBER_CACHED.search(latexmk_text):
         return []
     return [line for line in blg.read_text(encoding="utf-8", errors="replace").splitlines()
             if "ERROR - " in line][:10]
@@ -631,7 +644,7 @@ def build(root=ROOT, engine="pdflatex", fresh=False, output=None):
         error = first_error(unwrapped_log(output)) if fresh_log else ""
         if error:
             print("\nFirst error (from build/main.log):\n" + error, file=sys.stderr)
-        biber = biber_errors(output, started)
+        biber = biber_errors(output, started, text)
         if biber:
             print("\nBiber failed (from build/main.blg):\n" + "\n".join(biber), file=sys.stderr)
         if not error and not biber:

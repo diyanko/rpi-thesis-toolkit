@@ -19,11 +19,13 @@ not), and whenever a git command fails. Name a mode to choose it yourself.
 A step whose tools are missing here (TeX Live, Pandoc, pypdf) is reported as
 SKIP with the reason, not as a failure, so a new contributor without them can
 still check guide and script changes; CI has every tool and runs them all.
-Release mode, and any run on GitHub Actions, instead fails when a needed tool
-is missing. Release mode also fails when no Chrome or Chromium is found,
-because the layout sweep cannot run. Where no browser can run (the CI
-container), set VERIFY_ALLOW_NO_BROWSER=1: the sweep is then reported as SKIP,
-never as passed.
+Release mode, and any run on CI (GITHUB_ACTIONS or CI set to true), instead
+fails when a needed tool is missing or a unit test skips itself. The unit-test
+line counts tests run and skipped apart in every mode. Release mode also fails
+when no Chrome or Chromium is found, because the layout sweep cannot run.
+Where no browser can run (the CI container), set VERIFY_ALLOW_NO_BROWSER=1:
+the sweep is then reported as SKIP, never as passed, and unit tests that need
+a browser may skip, labelled "no browser, allowed in CI".
 
 Each step's full output goes to build/verify/<step>.log; the screen shows one
 line per step, and the summary line names what passed, what was skipped and
@@ -59,7 +61,7 @@ EDITOR = ["latexmk", "-pdf", "-no-shell-escape", "-synctex=1", "-interaction=non
           "-halt-on-error", "-file-line-error", "-outdir=build", "main.tex"]
 MISSING_INPUT = re.compile(r"No file .+\.(tex|bib)|File .[^ ]+. not found|Package biblatex Warning: File")
 TEX = ("latexmk", "pdflatex", "lualatex", "xelatex", "biber")
-# Release mode and GitHub Actions fail on a missing tool instead of skipping (main sets it).
+# Release mode and CI fail on a missing tool instead of skipping (main sets it).
 STRICT = {"on": False}
 
 
@@ -300,17 +302,46 @@ def ui():
     return run("ui", [PY, "scripts/ui_check.py"])
 
 
+# The skip reason of tests that need Chrome (scripts/tests/test_pdf_check.py).
+BROWSER_SKIP = re.compile(r"no Chrome or Chromium")
+
+
+def unit_test_result(text, exit_ok, strict, allow_no_browser):
+    """(ok, note) for a `unittest -v` log: executed and skipped tests counted
+    apart. In strict mode any skip fails, except tests that need a browser
+    when allow_no_browser (VERIFY_ALLOW_NO_BROWSER=1) says none can run here."""
+    ran = re.search(r"^Ran (\d+) tests? in", text, re.M)
+    if not exit_ok or not ran or not int(ran[1]):
+        return False, (f"{ran[1]} test(s) ran: " if ran else "") + (
+            "failures, see build/verify/unit_tests.log" if ran and int(ran[1]) else "no tests ran")
+    reasons = re.findall(r" \.\.\. skipped '(.*)'$", text, re.M)
+    total = re.search(r"\bskipped=(\d+)", text)
+    skipped = max(int(total[1]) if total else 0, len(reasons))
+    browser = sum(1 for why in reasons if BROWSER_SKIP.search(why))
+    other = skipped - browser
+    counts = f"{int(ran[1]) - skipped} run, {skipped} skipped"
+    whys = sorted({why for why in reasons if not BROWSER_SKIP.search(why)})
+    if strict and other:
+        return False, f"{counts}: this mode runs every test ({'; '.join(whys) or 'see the log'})"
+    if strict and browser and not allow_no_browser:
+        return False, (f"{counts}: no Chrome or Chromium; install one or set CHROME=/path/to/chrome"
+                       " (VERIFY_ALLOW_NO_BROWSER=1 allows this where no browser can run)")
+    if strict and browser:
+        return True, f"{counts} (no browser, allowed in CI)"
+    if skipped:
+        whys = sorted(set(reasons)) or ["see the log"]
+        return True, f"{counts} ({'; '.join(whys)})"
+    return True, counts
+
+
 def unit_tests():
     """Standard-library unit tests in scripts/tests/. Tests that need TeX Live
-    or Chrome skip themselves when it is missing; the count is reported."""
-    ok, note = run("unit_tests", [pypdf_python() or PY, "-B", "-m", "unittest", "discover",
-                                  "-s", "scripts/tests", "-p", "test_*.py"])
+    or Chrome skip themselves when it is missing; strict mode fails on a skip."""
+    ok, _ = run("unit_tests", [pypdf_python() or PY, "-B", "-m", "unittest", "discover", "-v",
+                               "-s", "scripts/tests", "-p", "test_*.py"])
     text = (LOGS / "unit_tests.log").read_text(encoding="utf-8")
-    ran = re.search(r"Ran (\d+) tests? in", text)
-    if ok and ran and int(ran[1]):
-        skipped = re.search(r"\bskipped=(\d+)", text)
-        return True, f"{ran[1]} unit test(s) passed, {skipped[1] if skipped else 0} skipped"
-    return False, (f"{ran[1]} test(s) ran: " if ran else "") + note
+    return unit_test_result(text, ok, STRICT["on"],
+                            os.environ.get("VERIFY_ALLOW_NO_BROWSER") == "1")
 
 
 # A list inside a mode runs its steps at the same time (they use separate folders).
@@ -363,6 +394,12 @@ def auto_mode(root=ROOT):
     return "quick", f"{len(changed)} changed file(s), all guide or website text"
 
 
+def strict_mode(mode):
+    """Release mode and CI (GitHub Actions sets both variables) fail on a
+    missing tool or a skipped test instead of skipping."""
+    return mode == "release" or "true" in (os.environ.get("GITHUB_ACTIONS"), os.environ.get("CI"))
+
+
 def timed(step):
     began = time.time()
     ok, note = step()
@@ -379,7 +416,7 @@ def main():
     if args.mode == "auto":
         args.mode, why = auto_mode()
         print(f"verify {args.mode}: {why}", flush=True)
-    STRICT["on"] = args.mode == "release" or os.environ.get("GITHUB_ACTIONS") == "true"
+    STRICT["on"] = strict_mode(args.mode)
     passed, failed, skipped, start = [], [], {}, time.time()
     steps = [entry if isinstance(entry, list) else [entry] for entry in MODES[args.mode]]
     done = 0
