@@ -182,7 +182,7 @@
   }
   function hasContent(nodes) {
     return nodes.some(function (n) {
-      return n.type === "picture" || n.type === "math" || n.type === "code" ||
+      return n.type === "picture" || n.type === "equation" || n.type === "math" || n.type === "code" ||
         (n.type === "text" ? /[^\s\u00a0]/.test(n.text) : n.children ? hasContent(n.children) : false);
     });
   }
@@ -446,6 +446,7 @@
     var out = [], run = [];
     function end() { if (run.length) Array.prototype.push.apply(out, nestItems(run, notes)); run = []; }
     blocks.forEach(function (b) {
+      if (b.type === "quote") b.blocks = groupItems(b.blocks, notes);
       if (b.type !== "item") { end(); out.push(b); return; }
       if (run.length && ((b.group && b.group !== run[0].group) || (b.level <= run[0].level && b.ordered !== run[0].ordered))) end();
       run.push(b);
@@ -512,7 +513,7 @@
     if (quoted) return null;
     row.push(cell); rows.push(row);
     var cols = rows[0].length;
-    if (rows.length < 2 || cols < 2 || rows.some(function (r) { return r.length !== cols; })) return null;
+    if (cols < 2 || rows.some(function (r) { return r.length !== cols; })) return null;
     return rows;
   }
 
@@ -583,6 +584,13 @@
       }
       para = [];
     }
+    function startsBlock(index) {
+      var line = lines[index];
+      return /^ {0,3}#{1,6}\s+/.test(line) || /^ {0,3}(```+|~~~+)/.test(line) ||
+        /^\s*\$\$/.test(line) || /^ {0,3}([-*_])(\s*\1){2,}\s*$/.test(line) || /^ {0,3}>/.test(line) ||
+        (/^\s*\|/.test(line) && index + 1 < lines.length &&
+         /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/.test(lines[index + 1]));
+    }
     while (i < lines.length) {
       var line = lines[i], m;
       if (!/\S/.test(line)) { flush(); i++; continue; }
@@ -639,6 +647,7 @@
         flush();
         var flat = [], indents = [];
         while (i < lines.length) {
+          if (startsBlock(i)) break;
           var item = /^(\s*)([-*+]|\d{1,9}[.)])\s+(.*)$/.exec(lines[i]);
           if (item) {
             var indent = item[1].replace(/\t/g, "    ").length;
