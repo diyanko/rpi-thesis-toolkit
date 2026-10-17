@@ -43,6 +43,7 @@ import argparse
 import base64
 import fnmatch
 import json
+import os
 import shutil
 import sys
 import time
@@ -446,8 +447,8 @@ def main() -> int:
                 problems += data.get("problems", [])
 
         if args.shots:
-            shot_dir = SHOTS / time.strftime("%Y%m%d-%H%M%S")
-            shot_dir.mkdir(parents=True, exist_ok=True)
+            shot_dir = SHOTS / f"{time.strftime('%Y%m%d-%H%M%S')}-{os.getpid()}"   # unique per run
+            shot_dir.mkdir(parents=True)
             jobs = {False: [], True: []}
             for page in pages:
                 stem = page.replace("/", "_").removesuffix(".html")
