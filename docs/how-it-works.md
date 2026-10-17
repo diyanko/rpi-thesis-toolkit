@@ -322,7 +322,7 @@ Switched methods? Open the PDF from the method you just used, not an old copy.
 
 ## Your computer or Overleaf?
 
-![Your computer compared with Overleaf. Both start from the same project files and run the same compile steps (pdfLaTeX, Biber, then pdfLaTeX twice, repeated as needed), so they produce matching PDFs when both use the same files, engine, packages, and fonts. On your computer the files live in a folder you control, LaTeX is installed locally, and you work offline in an editor. On Overleaf the files and the LaTeX installation live on Overleaf's servers and you work in a browser.](diagrams/overleaf-vs-local.svg)
+![Your computer compared with Overleaf. Both start from the same project files and run the same compile steps (pdfLaTeX, Biber, then pdfLaTeX again as often as needed), so they produce matching PDFs when both use the same files, engine, packages, and fonts. On your computer the files live in a folder you control, LaTeX is installed locally, and you work offline in an editor. On Overleaf the files and the LaTeX installation live on Overleaf's servers and you work in a browser.](diagrams/overleaf-vs-local.svg)
 
 Same files, same programs; only *where* things live differs. The PDFs match when
 both use matching files, engine, packages, and fonts. Overleaf lets you choose
