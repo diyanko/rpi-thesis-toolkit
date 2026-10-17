@@ -1,5 +1,8 @@
 # Help the next student
 
+Just stuck or have an idea? Use the [form](docs/troubleshooting.md#ask-for-help):
+about a minute, no account.
+
 Every contribution helps the next student finish. A confusing sentence you
 noticed, a fix you found the hard way, or a test on a new computer is as
 welcome as a change to the class file. You do not need to know LaTeX or
@@ -20,21 +23,24 @@ screenshots welcome, and leave out private research and personal details. The
 maintainer replies on the issue and may turn it into a change.
 
 **3. Open a pull request, ideally with your own AI assistant.** A pull request
-is a proposed change the maintainer reviews. You do not have to know the
-steps: give an assistant that can edit files and use GitHub this prompt:
+is a proposed change the maintainer reviews before it goes in. You do not have
+to know the steps: give an assistant that can edit files and use GitHub this
+prompt:
 
-```text
-Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its
-"Contributing as an agent" steps. What I'd like changed: [describe it].
+```prompt
+Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its "Contributing as an agent" steps. If you cannot fork or push, stop and show me the diff. Do not push or open the pull request until I approve. What I'd like changed: [describe it].
 ```
 
-It forks the repository, makes one focused change, runs the checks, and shows
-you the result; you read it before anything is posted. Prefer to do it by
-hand? Fork, branch, make one focused change, and fill in the short template.
-If you use a terminal, `python3 scripts/verify.py` (`py` instead of `python3`
-on Windows) gives a last line to paste into the pull request. Automated checks
-run on every pull request anyway, and a failure is fine: the maintainer helps
-finish. The guide is Markdown in `docs/`; edit the `.md` file only.
+It makes a fork (your own copy of the project on GitHub), makes one focused
+change on a branch (a named set of changes kept apart from the main version),
+runs the checks, and shows you the result; nothing is posted until you
+approve. Prefer to do it by hand? Fork, branch, make one focused change, and
+fill in the short template. If you use a terminal,
+`python3 scripts/verify.py` (`py` instead of `python3` on Windows) gives a
+last line to paste into the pull request; checks it cannot run on your
+computer are skipped. Automated checks run on every pull request anyway, and
+a failure is fine: the maintainer helps finish. The guide is Markdown in
+`docs/`; edit the `.md` file only.
 
 Not sure how an issue should read? Ask any AI chat to help you write it, and
 leave out anything private from your thesis. Never include your own thesis
