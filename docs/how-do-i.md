@@ -5,6 +5,7 @@ on a Mac) and type a word.
 
 ## Fix a problem
 
+- [Paste an error and see what it means](explain-my-error.md)
 - [Look up a common error](troubleshooting.md#common-messages)
 - [Read an error message](troubleshooting.md#read-an-error-message)
 - [Ask an AI chat to explain an error](troubleshooting.md#ask-an-ai-chat-to-explain-it)
@@ -23,6 +24,7 @@ on a Mac) and type a word.
 - [Compile with typed commands, or check my setup (optional, in a terminal)](going-further.md#build-commands)
 - [Add the RPI seal](get-started.md#add-the-rpi-seal-one-minute)
 - [Change the title, my name, degree, or committee](get-started.md#put-your-name-on-it)
+- [Fill in my title page settings with a form](settings-builder.md)
 - [Find my PDF](how-it-works.md#where-the-pdf-ends-up)
 
 ## Write
@@ -60,6 +62,7 @@ on a Mac) and type a word.
 - [Add a source without Zotero](citations.md#if-you-cant-use-zotero-paste-an-entry-by-hand)
 - [Add a web source with an access date](citations.md#web-sources-need-an-access-date)
 - [Change the citation style](citations.md#change-the-citation-style)
+- [Check my references.bib for common problems](check-references.md)
 
 ## Share and review
 
@@ -75,5 +78,6 @@ on a Mac) and type a word.
 - [Update the formatting file](going-further.md#update-the-formatting-safely)
 - [See the steps to graduation](submission.md#the-path-to-graduation)
 - [Run a final check of my PDF](submission.md#final-pdf-checklist)
+- [Check my PDF's page size, margins, page numbers, and contents](check-pdf.md)
 - [Find OGE's manual, checklists, and forms](submission.md#official-resources)
 - [Give my advisor or committee a checklist for reviewing my PDF](reviewer-checklist.md)
