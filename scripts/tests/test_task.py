@@ -156,3 +156,13 @@ class Task(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Severity(unittest.TestCase):
+    def test_mentions_are_not_findings(self):
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        import task
+        self.assertIsNone(task.SERIOUS.search("No P0, P1, or P2 findings."))
+        self.assertTrue(task.SERIOUS.search("- **P1 - broken** a.py:1"))
+        self.assertTrue(task.SERIOUS.search("[P2] a.md:1 typo"))
+

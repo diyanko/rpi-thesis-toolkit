@@ -35,8 +35,7 @@ REVIEW_PROMPT = (
     "and a failure scenario, most severe first. Label each P0 (breaks students or a release), "
     "P1 (wrong behavior), P2 (should fix before merge), or P3 (minor); say 'No findings' if none."
 )
-SERIOUS = re.compile(r"\bP[0-2]\b")
-GENERATED = "Generated with [Claude Code](https://claude.com/claude-code)"
+SERIOUS = re.compile(r"(?m)^\s*(?:[-*]\s*)?\**\s*\[?P[0-2]\b")   # a finding line, not a mention
 
 
 def say(step, note):
@@ -118,7 +117,11 @@ def finish(args):
     # Never overwrite commits someone else pushed to this branch: the remote
     # branch, if any, must already be part of this one before we rebase.
     remote = git("rev-parse", "--verify", "-q", f"origin/{branch}", cwd=top).stdout.strip()
-    if remote and git("merge-base", "--is-ancestor", remote, "HEAD", cwd=top).returncode:
+    pushed_mark = Path(git("rev-parse", "--git-dir", cwd=top).stdout.strip(), "task-last-push")
+    if not pushed_mark.is_absolute():
+        pushed_mark = Path(top) / pushed_mark
+    ours = pushed_mark.read_text(encoding="utf-8").strip() if pushed_mark.exists() else ""
+    if remote and remote != ours and git("merge-base", "--is-ancestor", remote, "HEAD", cwd=top).returncode:
         stop("fetch", f"origin/{branch} has commits this worktree lacks; "
              f"run git pull --rebase origin {branch}, then finish again.")
     rebased = git("rebase", "--autostash", "origin/main", cwd=top)
@@ -136,7 +139,9 @@ def finish(args):
 
     files = changed_files(top)
     if any(name.startswith(("site/", "docs/")) for name in files):
-        if find_chrome():
+        if not (Path(top) / "dist/site/index.html").exists():
+            say("shots", "skipped: the site was not built (Pandoc not installed?)")
+        elif find_chrome():
             sweep = run(sys.executable, "scripts/ui_check.py", cwd=top)   # layout problems stop finish
             if sweep.returncode:
                 print(sweep.stdout.strip())
@@ -184,6 +189,7 @@ def finish(args):
     pushed = git("push", lease, "-u", "origin", "HEAD", cwd=top)
     if pushed.returncode:
         stop("push", "git push failed; check your access to origin and try again.")
+    pushed_mark.write_text(git("rev-parse", "HEAD", cwd=top).stdout.strip(), encoding="utf-8")
     say("push", f"origin/{branch}")
 
     if not shutil.which("gh"):
@@ -198,7 +204,6 @@ def finish(args):
         body += f"\n\n## Checks\n\n{summary}\n"
         if issue:
             body += f"\nCloses #{issue[1]}\n"
-        body += f"\n{GENERATED}\n"
         made = run("gh", "pr", "create", "--title", subjects[0], "--body", body, "--base", "main", cwd=top)
         if made.returncode:
             stop("pr", "gh pr create failed; run gh auth status, then finish again.")
