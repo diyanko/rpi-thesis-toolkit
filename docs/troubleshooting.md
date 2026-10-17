@@ -4,8 +4,9 @@ For anyone whose compile stops with an error or whose PDF looks wrong, on
 your computer or Overleaf. Errors are normal. Most take a minute to fix once
 you know where to look.
 
-Know the message? Jump to [common messages](#common-messages). Not in the
-list? Paste the first error into an [AI chat](#ask-an-ai-chat-to-explain-it)
+Know the message? Jump to [common messages](#common-messages), or paste it
+into [Explain my error](explain-my-error.md) to find the first real error and
+its fix. Not in the list? Paste the first error into an [AI chat](#ask-an-ai-chat-to-explain-it)
 or [ask for help](#ask-for-help). Want to know *why* something happens? See
 [how it works](how-it-works.md).
 
