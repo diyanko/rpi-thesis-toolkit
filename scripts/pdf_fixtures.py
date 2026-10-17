@@ -50,6 +50,56 @@ FIXTURES = {
         "chapters/03-conclusion.tex": "\\chapter*{AN UNLISTED CHAPTER}\n" + FILLER + "\n"}, {}),
     "blank-page": ("pdf", True, {
         "chapters/01-introduction.tex": "\\clearpage\\thispagestyle{empty}\\null\\clearpage\n" + FILLER + "\n"}, {}),
+    # A chapter title with an accented letter, a superscript, and a year at
+    # the end, long enough to wrap in the contents.
+    "heading-details": ("pdf", True, {}, {
+        "chapters/02-research.tex": [("\\chapter{RESEARCH AND FINDINGS}",
+                                      "\\chapter{RÉSULTATS: HOW $R^2$ CHANGED ACROSS THE FIELD SEASONS OF 2026 WITHIN STUDY 2}")]}),
+    # Layouts the checker once misread, and small differences from the
+    # manual's wording that it reports as such (docs/check-pdf.md).
+    # "CHAPTER 1" over the title in the body, "1. TITLE" in the contents.
+    "chapter-label": ("pdf", True, {"preamble.tex": r"""\titleformat{\chapter}[display]
+  {\vskip-\baselinestretch\dimexpr18pt\relax\centering\normalfont\large\bfseries}
+  {\MakeUppercase{\chaptertitlename}\ \thechapter}{0pt}{}
+"""}, {}),
+    # A title of four lines in the body that wraps at other words in the contents.
+    "wrapped-heading": ("pdf", True, {}, {
+        "chapters/02-research.tex": [("\\chapter{RESEARCH AND FINDINGS}",
+                                      "\\chapter{" + " ".join(["RESEARCH AND FINDINGS ON A LONG SUBJECT"] * 6) + "}")]}),
+    # A contents page that begins with the first line of an entry that wraps.
+    "contents-continuation": ("pdf", True, {}, {
+        "chapters/02-research.tex": [("\\chapter{RESEARCH AND FINDINGS}",
+                                      "\\addtocontents{toc}{\\protect\\clearpage}\n\\chapter{RESEARCH AND FINDINGS "
+                                      "WITH A TITLE LONG ENOUGH TO WRAP ONTO A SECOND LINE OF THE CONTENTS}")]}),
+    # Capitals in tiny type inside a figure at the top of a body page.
+    "figure-caps": ("pdf", True, {
+        "chapters/01-introduction.tex": "\\clearpage\n\\begin{figure}[t]\n\\centering\n"
+                                        "{\\tiny AXIS LABELS IN CAPITALS INSIDE A FIGURE}\n"
+                                        "\\caption{A figure whose labels are tiny capitals}\n\\end{figure}\n" + FILLER + "\n"}, {}),
+    # An unnumbered notice page after the thesis, as ProQuest adds.
+    "extra-last-page": ("pdf", True, {}, {
+        "main.tex": [("\\end{document}", "\\clearpage\\thispagestyle{empty}\n"
+                      "A notice page added to the end of a distributed copy.\n\\end{document}")]}),
+    # Page numbers 0.58 in from the edge.
+    "number-distance": ("pdf", True, {"preamble.tex": "\\geometry{footskip=0.42in,headsep=0.42in}\n"}, {}),
+    # Bottom page numbers 0.2 in from the edge: far off, still flagged.
+    "number-far": ("pdf", True, {"preamble.tex": "\\geometry{footskip=0.8in}\n"}, {}),
+    # One line 0.05 in into the right margin.
+    "margin-overrun-small": ("pdf", True, {
+        "chapters/01-introduction.tex": "\n\\noindent\\hbox to \\dimexpr\\textwidth+0.05in\\relax"
+                                        "{A line set a little wider than the text block\\hfil and ending past the margin.}\\par\n"}, {}),
+    # Long enough to cancel while it is read.
+    "many-pages": ("pdf", None, "\\documentclass[letterpaper,12pt]{article}\n\\begin{document}\n"
+                   + "\n\n".join([FILLER] * 1500) + "\n\\end{document}\n"),
+    # Half-size pages with /UserUnit 2: US letter in physical size.
+    "user-unit": ("pdf", None, r"""\documentclass{article}
+\pdfpagewidth=4.25in \pdfpageheight=5.5in
+\pdfpageattr{/UserUnit 2}
+\pagestyle{empty}
+\begin{document}
+Text on a page whose user unit is two points.
+\end{document}
+"""),
     "font-not-embedded": ("pdf", None, r"""\documentclass[letterpaper,12pt]{article}
 \usepackage{times}
 \pdfmapline{=ptmr8r Times-Roman "TeXBase1Encoding ReEncodeFont" <8r.enc}

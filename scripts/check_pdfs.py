@@ -11,8 +11,9 @@ the browser exactly as the page reads it (site/pdf-check/core.js and the
 vendored pdf.js, served from site/ on a localhost port); nothing leaves this
 computer.
 
-Output: one row per PDF with a letter per check (. looks right, X look at
-this, ? could not tell, i information), then a key. --details also prints
+Output: one row per PDF with a letter per check (. looks right, ~ differs
+from the manual's wording, X look at this, ? could not tell, i information),
+then a key. --details also prints
 every flagged point. --json saves the full results.
 
 --shots builds nothing: it loads dist/site/guide/check-pdf.html (run
@@ -45,14 +46,33 @@ import rules  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 SAMPLES = ROOT / "_local" / "pdf-samples"
-ORDER = ["paper", "same-size", "numbering", "position", "headings", "margins", "contents", "listed",
+ORDER = ["paper", "same-size", "numbering", "position", "distance", "headings", "margins", "contents", "listed",
          "fonts", "blank", "size", "version"]
-MARK = {"ok": ".", "check": "X", "unknown": "?", "info": "i"}
+MARK = {"ok": ".", "differs": "~", "check": "X", "unknown": "?", "info": "i"}
 # The harness page carries the same rules block as the guide page (scripts/rules.py);
 # RULES is the expression that reads it, as ui.js does.
 HARNESS = """<!doctype html><html lang="en"><head><meta charset="utf-8"><title>check_pdfs</title>
 <script src="/pdf-check/core.js"></script></head><body>%s</body></html>"""
 RULES = 'JSON.parse(document.getElementById("oge-rules").textContent)'
+# The page part (ui.js) with the guide page's own checker markup, for
+# scripts/test_pdf_check.py. It counts the pdf.js workers that are running.
+UI_HARNESS = """<!doctype html><html lang="en"><head><meta charset="utf-8"><title>check_pdfs ui</title>
+<script>
+window.liveWorkers = 0;
+window.Worker = class extends Worker {
+  constructor(...args) { super(...args); this.counted = true; window.liveWorkers++; }
+  terminate() { if (this.counted) { this.counted = false; window.liveWorkers--; } super.terminate(); }
+};
+</script></head><body><main class="guide-content">%s</main>%s<script src="/pdf-check/ui.js"></script></body></html>"""
+
+
+def checker_markup():
+    """The checker's markup from docs/check-pdf.md (one line starting <div class="pdf-check")."""
+    found = re.search(r'(?m)^<div class="pdf-check" .*$', (ROOT / "docs/check-pdf.md").read_text(encoding="utf-8"))
+    if not found:
+        raise RuntimeError("docs/check-pdf.md has no <div class=\"pdf-check\" ...> line")
+    return found[0].replace('data-version=""', f'data-version="{class_version()}"', 1)
+
 RUN = """(async function () {
   const pdfjs = await import("/pdf-check/pdfjs/pdf.min.mjs");
   pdfjs.GlobalWorkerOptions.workerSrc = "/pdf-check/pdfjs/pdf.worker.min.mjs";
@@ -218,6 +238,8 @@ class Server:
                 path = urlsplit(self.path).path
                 if path == "/__pdf_check__.html":
                     self.reply((HARNESS % rules.embed()).encode(), "text/html; charset=utf-8")
+                elif path == "/__pdf_ui__.html":
+                    self.reply((UI_HARNESS % (checker_markup(), rules.embed())).encode(), "text/html; charset=utf-8")
                 elif path.startswith("/__pdf__/"):
                     self.reply(Path(pdfs[int(path.rsplit("/", 1)[1])]).read_bytes(), "application/pdf")
                 else:
@@ -280,11 +302,11 @@ def table(results, details=False):
         lines.append(name + "  " + " ".join(f"{MARK.get(by[k]['state'], '-') if k in by else '-':>2}" for k in ORDER))
         if details:
             for f in found:
-                if f["state"] in ("check", "unknown"):
+                if f["state"] in ("check", "differs", "unknown"):
                     lines.append(f"    {MARK[f['state']]} {f['title']}: {f['summary']}")
                     lines += [f"        {text}" for text in f["pages"][:20]]
     lines.append("Checks: " + ", ".join(f"{k + 1} {name}" for k, name in enumerate(ORDER)))
-    lines.append("Key: . looks right, X look at this, ? could not tell, i information")
+    lines.append("Key: . looks right, ~ differs from the manual's wording, X look at this, ? could not tell, i information")
     return "\n".join(lines)
 
 

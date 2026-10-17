@@ -9,6 +9,10 @@
 // <script type="application/json" id="oge-rules"> block (scripts/rules.py):
 // this file passes them to core.js and shows each rule's citation from them.
 // The offline guide has no checker: build_site.py leaves these files out.
+//
+// One check runs at a time. Choosing another PDF replaces a running check,
+// and Cancel stops it; either way core.js releases the PDF reader and its
+// worker, and a stopped check never shows its results.
 (function () {
   "use strict";
   var root = document.querySelector("[data-pdf-check]");
@@ -19,6 +23,7 @@
   var drop = root.querySelector(".pdf-check-drop");
   var status = root.querySelector(".pdf-check-status");
   var results = root.querySelector(".pdf-check-results");
+  var cancel = root.querySelector(".pdf-check-cancel");
   var current = root.getAttribute("data-version") || "";
   // Links from the page text, so they work on the website and offline.
   function pageLink(part) {
@@ -45,31 +50,44 @@
   function say(text) { status.textContent = text; }
 
   // ---------- Loading the checks and the PDF reader -----------------------
+  // Loaded once; a load that fails or takes longer than LOAD_LIMIT is given
+  // up (its script tag removed), and the next PDF tries again.
+  var LOAD_LIMIT = 60000;
   var loading = null;
   function load() {
     if (!loading) {
+      var tag = null;
       var core = new Promise(function (resolve, reject) {
         if (window.PdfCheckCore) return resolve(window.PdfCheckCore);
-        var tag = document.createElement("script");
+        tag = document.createElement("script");
         tag.src = base + "core.js";
         tag.onload = function () { window.PdfCheckCore ? resolve(window.PdfCheckCore) : reject(new Error("reader")); };
         tag.onerror = function () { reject(new Error("reader")); };
         document.head.appendChild(tag);
       });
-      loading = core.then(function (checks) {
+      var both = core.then(function (checks) {
         return import(base + "pdfjs/pdf.min.mjs").then(function (pdfjs) {
           if (pdfjs.version !== checks.PDFJS_VERSION) throw new Error("reader");
           pdfjs.GlobalWorkerOptions.workerSrc = base + "pdfjs/pdf.worker.min.mjs";
           return { checks: checks, pdfjs: pdfjs };
         });
-      }).catch(function () { throw new Error("reader"); });
-      loading.catch(function () { loading = null; });
+      });
+      loading = new Promise(function (resolve, reject) {
+        var timer = setTimeout(function () { reject(new Error("reader")); }, LOAD_LIMIT);
+        both.then(function (tools) { clearTimeout(timer); resolve(tools); },
+                  function () { clearTimeout(timer); reject(new Error("reader")); });
+      });
+      loading.catch(function () {
+        loading = null;
+        if (tag && !window.PdfCheckCore) tag.remove();
+      });
     }
     return loading;
   }
 
   // ---------- Showing results ---------------------------------------------
-  var STATES = { ok: "Looks right", check: "Look at this", unknown: "Could not tell", info: "Information" };
+  var STATES = { ok: "Looks right", differs: "Differs from the manual's wording", check: "Look at this",
+                 unknown: "Could not tell", info: "Information" };
   function element(tag, className, text) {
     var node = document.createElement(tag);
     if (className) node.className = className;
@@ -79,7 +97,9 @@
   function counts(found) {
     var looks = found.filter(function (f) { return f.state === "check"; }).length;
     var unsure = found.filter(function (f) { return f.state === "unknown"; }).length;
+    var differ = found.filter(function (f) { return f.state === "differs"; }).length;
     return (looks ? looks + " point" + (looks > 1 ? "s" : "") + " to look at" : "Nothing to look at among these points") +
+      (differ ? "; " + differ + (differ > 1 ? " differ" : " differs") + " from the manual's wording" : "") +
       (unsure ? "; " + unsure + " could not be told" : "") + ".";
   }
   var NOT_REVIEW = "These checks cover only what is listed here; they are not an OGE review, and a clean result does not mean OGE will accept the PDF.";
@@ -172,10 +192,14 @@
       "}\n";
     document.head.appendChild(style);
   }
-  function printReport(found, name) {
-    printStyle();
+  function removePrintout() {
     var old = document.querySelector(".pdf-check-print");
     if (old) old.remove();
+    document.documentElement.classList.remove("pdf-check-printing");
+  }
+  function printReport(found, name) {
+    printStyle();
+    removePrintout();
     var sheet = element("div", "pdf-check-print");
     var today = new Date();
     sheet.appendChild(element("h1", "", "PDF check: " + name));
@@ -198,8 +222,10 @@
     if (/^https?:$/.test(location.protocol)) sheet.appendChild(element("p", "", "Page: " + location.href.split("#")[0]));
     document.body.appendChild(sheet);
     document.documentElement.classList.add("pdf-check-printing");
+    // Gone after printing, so a later ordinary print of the page has no old result.
     var done = function () {
-      document.documentElement.classList.remove("pdf-check-printing");
+      if (sheet.parentNode) sheet.remove();
+      if (!document.querySelector(".pdf-check-print")) document.documentElement.classList.remove("pdf-check-printing");
       window.removeEventListener("afterprint", done);
     };
     window.addEventListener("afterprint", done);
@@ -207,31 +233,52 @@
   }
 
   // ---------- Reading a file --------------------------------------------------
-  var busy = false;
+  // `run` numbers the checks: only the latest one may change the page.
+  var run = 0, job = null;
+  function stop() {
+    if (job && job.cancel) job.cancel().catch(function () {});
+    job = null;
+    run++;
+    cancel.hidden = true;
+  }
   function check(file) {
-    if (!file || busy) return;
+    if (!file) return;
+    stop();
+    removePrintout();
+    results.textContent = "";
     if (!/\.pdf$/i.test(file.name) && file.type !== "application/pdf") {
       say("That is not a PDF. Choose the PDF your editor made (often main.pdf).");
+      input.value = "";
       return;
     }
-    busy = true;
-    results.textContent = "";
+    var mine = ++run, myJob = job = {};
+    function latest() {
+      if (mine === run) return;
+      var error = new Error("cancelled");
+      error.name = "AbortError";
+      throw error;
+    }
+    cancel.hidden = false;
     say("Loading the PDF reader…");
     var name = file.name;
     var tools;
     load().then(function (loaded) {
+      latest();
       tools = loaded;
       say("Reading " + name + "…");
       return file.arrayBuffer();
     }).then(function (bytes) {
+      latest();
       return tools.checks.read(tools.pdfjs, new Uint8Array(bytes), function (page, total) {
-        say("Reading page " + page + " of " + total + "…");
-      });
+        if (mine === run) say("Reading page " + page + " of " + total + "…");
+      }, myJob);
     }).then(function (data) {
+      latest();
       var found = tools.checks.analyse(data, { current: current, rules: oge });
       say("");
       show(found, name);
     }).catch(function (error) {
+      if (mine !== run) return;  // replaced or cancelled: the newer state stays
       say(error && error.message === "reader"
         ? (location.protocol === "file:"
           ? "This browser does not let a page opened from a file start the PDF reader. Open \"Check your PDF\" on the toolkit's website instead (your PDF still stays on your computer), or use the checklist on the Submitting page."
@@ -240,10 +287,20 @@
         ? "This PDF is protected with a password. Check a copy without the password."
         : "This file could not be read as a PDF.");
     }).then(function () {
-      busy = false;
+      if (mine !== run) return;
+      job = null;
+      cancel.hidden = true;
       input.value = "";
     });
   }
+
+  cancel.addEventListener("click", function () {
+    stop();
+    input.value = "";
+    results.textContent = "";
+    say("Check cancelled. Choose a PDF to start again.");
+    input.focus();
+  });
 
   input.addEventListener("change", function () { check(input.files[0]); });
   ["dragenter", "dragover"].forEach(function (type) {
