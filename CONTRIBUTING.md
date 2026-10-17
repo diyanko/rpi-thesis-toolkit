@@ -21,8 +21,7 @@ maintainer replies on the issue and may turn it into a change.
 
 **3. Open a pull request, ideally with your own AI assistant.** A pull request
 is a proposed change the maintainer reviews. You do not have to know the
-steps: give an assistant that can edit files and use GitHub (such as Claude
-Code or Codex) this prompt:
+steps: give an assistant that can edit files and use GitHub this prompt:
 
 ```text
 Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its

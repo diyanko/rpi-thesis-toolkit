@@ -282,8 +282,10 @@ the fixed wording and the seal.
 | `department` | Your full department name, e.g. `Department of Physics, Applied Physics and Astronomy` |
 | `graduation-month` | `May`, `August`, or `December`: when you graduate, not when you submit |
 | `graduation-year` | Four digits, e.g. `2027` |
-| `copyright-page` | `true` only if you will file for copyright (OGE manual §1.2) |
+| `copyright-page` | `true` adds the optional copyright page (page ii; {{cite:copyright-page}}); read that part of the current OGE manual before choosing |
 | `list-of-tables`, `list-of-figures` | `true` unless you have no tables (or figures) |
+
+<!-- TODO(verify): re-read the current manual §1.2, printed p. 3, before describing any connection between the optional copyright page and copyright registration. -->
 
 Then list **every** approved committee member, one per line, with `[Chair]`
 (or `[Co-Chair]`) on your chair's line:

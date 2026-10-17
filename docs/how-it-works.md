@@ -335,10 +335,11 @@ A thesis is not just a document you format at the end. This is one way to
 connect drafting, advisor feedback, sources, and figures. It is a suggestion,
 not a rule; you and your advisor decide how you work.
 
-![Research-writing workflow. Drafting and advisor review, in a drafting app or directly in the thesis files, feed three kinds of thesis material: chapter files, figures with the files they were made from, and references collected in a citation manager and exported to references.bib. These come together when you compile, into one thesis PDF formatted by rpi-thesis.cls. Arrows loop back from the thesis to drafting and review for the next round of revision.](diagrams/research-workflow.svg)
+![Research-writing workflow. Drafting and advisor review feed chapter files, figures, and references collected in a citation manager and exported to references.bib. These come together when you compile into one thesis PDF. After moving a section into LaTeX, revise its .tex file; changes do not flow back to the drafting app.](diagrams/research-workflow.svg)
 
-*In words:* draft and discuss, then chapter files, figures, and references,
-then compile into one thesis, then review and loop back.
+*In words:* draft and discuss, move stable sections into chapter files, then
+compile and review the thesis. After a section moves, revise its `.tex` file;
+changes do not flow back to the drafting app.
 
 **Required versus suggested.** OGE's manual and your degree checklist, on the
 [OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation),

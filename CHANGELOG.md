@@ -10,6 +10,37 @@ your thesis looks, including page breaks: recompile and compare every page.
 **No** means only the guide, scripts, or examples changed. Before updating,
 read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
 
+## Unreleased
+
+**Changes your PDF?** No.
+
+- **Check your PDF** works without contacting any other site, says "Could
+  not tell" instead of passing anything it could not measure, adds checks for
+  page size, headings missing from the contents, embedded fonts, blank pages,
+  and file size, and can print its result. In the offline guide it points to
+  the website, because browsers block it on local files.
+- **One wording per rule:** guide pages quote and cite OGE rules from the
+  requirements map, so a rule and its manual page are written once.
+- **Pictures:** the timeline shows Check your PDF and the reviewer
+  checklist, diagrams use `\parencite` and "compile" throughout, sample-PDF
+  close-ups have captions, and an unused diagram is gone.
+- **Sidebar and layout:** optional pages have their own marker in the same
+  column as the numbers; list numbers, focus rings, footer links, and search
+  highlights are tidier.
+- **Starter comments** name guide pages instead of files the download does
+  not include; the appendix example uses `\parencite`.
+- **Build helper:** a missing chapter whose name has accents or non-Latin
+  letters is reported with its full name; local classes and packages in
+  subfolders, and the files they load, are followed; missing characters and a
+  missing STIX Two Math font are named.
+- **Check your PDF** reads chapter headings with a "CHAPTER 1" line above the
+  title, headings that wrap differently in the contents, contents pages that
+  start mid-entry, superscripts in headings, and PDFs with an unusual page
+  unit. Small differences from the manual's numbers (page-number distance,
+  slight margin overruns, a heading a little low) get their own result,
+  "Differs from the manual's wording", separate from "Look at this". A check
+  can be cancelled, and choosing another PDF replaces the old result.
+
 ## 0.7.0 (beta), 16 Oct 2026
 
 Published as the pre-release `v0.7.0`.

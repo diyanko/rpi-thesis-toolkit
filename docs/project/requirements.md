@@ -163,14 +163,31 @@ citation.
 | `margin` Side margins (1 in) | 72 | `page-size` |
 | `page-number-edge` Page-number baseline from the page edge (0.75 in) | 54 | `page-number-position` |
 | `heading-baseline` Level-1 heading first baseline below the top edge (the class's setting) | 84 | `heading-top` |
-| `heading-limit` Lowest level-1 heading baseline the browser checker accepts (1.33 in; this project's choice) | 96 | `heading-top` |
+| `heading-tolerance` Level-1 heading baseline accepted either way of `heading-baseline` on a PDF this class made (this project's choice) | 1.5 | `heading-top` |
+| `heading-limit` Lowest level-1 heading baseline the browser checker accepts on a PDF from another program or class (1.33 in; this project's choice) | 96 | `heading-top` |
 | `paper-tolerance` Paper width and height accepted either way of the size above (this project's choice) | 0.5 | `page-size` |
 | `margin-tolerance` How far text may reach into a side margin before the browser checker flags it (this project's choice) | 1.5 | `page-size` |
 | `margin-band` Text this close to the top or bottom edge counts as a page number or running header (this project's choice) | 70 | `page-number-position` |
 | `page-number-tolerance` Page-number distance accepted either way of 0.75 in (0.05 in; this project's choice) | 3.6 | `page-number-position` |
 | `page-number-center` Page-number center accepted either way of the page center (half a digit; this project's choice) | 6 | `page-number-position` |
+| `contents-column` A contents line ending in a number is an entry, without dot leaders, if it ends this close to the right end of the page-number column (this project's choice) | 6 | `contents-match` |
+| `heading-size-tolerance` A line at the top of a page counts as a level-1 heading only if its type is at least the body text size less this much (headings are never smaller than text; this project's choice) | 0.5 | `headings` |
 
-<!-- TODO(verify): the 96 pt limit and the tolerances (paper-tolerance, margin-tolerance, margin-band, page-number-tolerance, page-number-center) are this project's choices for the browser PDF checker (site/pdf-check/core.js), not numbers from the manual. -->
+The browser checker reports a small measured difference on a point listed
+under [Needs OGE confirmation](#needs-oge-confirmation) as **Differs from the
+manual's wording** instead of **Look at this**. The manual stays the
+reference; these bounds say how far a difference may go before it is
+**Look at this** again.
+
+| Measure | pt | Rule |
+| --- | --- | --- |
+| `page-number-near` Shortest page-number distance from the edge reported as differing rather than to look at (0.3 in; tolerance for PDF measurement, OGE confirmation pending) | 21.6 | `page-number-position` |
+| `page-number-far` Longest page-number distance from the edge reported as differing rather than to look at (1.2 in; tolerance for PDF measurement, OGE confirmation pending) | 86.4 | `page-number-position` |
+| `margin-overrun` Farthest text may reach into a side margin and be reported as differing rather than to look at (0.125 in; tolerance for PDF measurement, OGE confirmation pending) | 9 | `page-size` |
+| `heading-far` Lowest level-1 heading baseline, on a PDF from another program or class, reported as differing rather than to look at (1.5 in; tolerance for PDF measurement, OGE confirmation pending) | 108 | `heading-top` |
+
+<!-- TODO(verify): the 96 pt limit and the tolerances (paper-tolerance, margin-tolerance, margin-band, page-number-tolerance, page-number-center, heading-tolerance, heading-size-tolerance, contents-column) are this project's choices for the browser PDF checker (site/pdf-check/core.js), not numbers from the manual. -->
+<!-- TODO(verify): the bounds of "Differs from the manual's wording" (page-number-near, page-number-far, margin-overrun, heading-far) are this project's choices; OGE has not said how far it accepts these differences. -->
 
 ## Differences from RPI's official LaTeX template
 
@@ -190,7 +207,7 @@ from RPI ITS; files dated 2018); it is not part of this project.
 | Copyright text | "© Copyright year / by / Name / All Rights Reserved" | "© year / By / Name / All rights reserved" | §1.2 p. 3 and FC: match the manual's example |
 | Chapter label | Samples use `[chap]`: "CHAPTER 1" above the title | "1. TITLE" (that template's class default) | Contents entry then matches the body exactly (§1.3 p. 4); manual Fig. 2.1 p. 18 |
 | Appendix heading | "APPENDIX A" above the title | "A. TITLE" | Appendices formatted like chapters (App. A p. 38); matches contents entry |
-| APPENDICES contents line | No page number | With page number | §1.3 p. 4: sections listed with page numbers; Fig. 1.4 p. 6 |
+| APPENDICES contents line | No page number | With page number | §1.3 p. 4: sections listed with page numbers; Fig. 1.4 p. 6 <!-- TODO(verify): not rechecked on 16 Oct 2026; no copy of RPI's template sample files was in _local/legacy/, and its class file does not write this line itself. --> |
 | Level-4 heading | Bold, same as level 3 | Italic | §2.3 p. 17: each level distinguished |
 | Contents/list number columns | 1.4 em / 2.3 em / 3.2 em | 1.6 / 2.8 / 3.8 / 5 em | Bug: 12.10 touches and 12.10.10 overlaps the entry text (§1.3 p. 4) |
 | Contents page-number column | 1.55 em | 3 em | Bug: roman numbers such as xviii overflow |
@@ -218,13 +235,42 @@ from RPI ITS; files dated 2018); it is not part of this project.
 ## Needs OGE confirmation
 
 - **"CONTENTS" title**: wording from RPI's official template; the manual and
-  FC call the page "Table of Contents". Kept (manual not explicit).
+  FC call the page "Table of Contents". Kept (manual not explicit). Question:
+  are "CONTENTS" and "TABLE OF CONTENTS" both acceptable?
 - **Landscape pages with bottom-center numbering**: §2.4 p. 19 says to place
   the number "in the left margin". With this class's top-right numbering the
   number stays where Fig. 2.4 shows it; confirm this is acceptable.
+- **Page-number distance**: §2.2 p. 17 asks for 0.75 in from the edge; RPI's
+  official template sets 0.58 in (bottom) and 0.65 in (top). Question: is a
+  distance other than 0.75 in acceptable, and within what range? The PDF
+  checker reports such a distance as "Differs from the manual's wording"
+  (`page-number-near`, `page-number-far`).
+- **Bottom-center numbers on every page**: §2.2 pp. 16-17 asks for top right
+  on body pages. Question: are bottom-center numbers on every page
+  acceptable? The checker still reports this as "Look at this".
+- **Small side-margin overruns**: §2.2 p. 16 asks for 1 in margins.
+  Question: is a line or equation that reaches slightly (about 0.1 in) into
+  a side margin acceptable? The checker reports up to `margin-overrun` as
+  "Differs from the manual's wording".
+- **Level-1 heading slightly below the top margin**: question: is a heading
+  that starts somewhat lower than the 1 in top margin acceptable? The checker
+  reports one up to `heading-far` (PDFs from other programs) as "Differs from
+  the manual's wording".
+- **Copyright wording**: RPI's official template prints "© Copyright year /
+  by / Name / All Rights Reserved"; §1.2 p. 3 shows "© year / By / Name /
+  All rights reserved" (this class follows the manual). Question: is the
+  template's wording acceptable?
+- **Line spacing**: RPI's official template uses a 1.4 stretch; §2.1 p. 16
+  says double spaced (this class uses double). Question: is the template's
+  spacing acceptable?
+- **Computer Modern**: RPI's official template uses Computer Modern; §2.1
+  p. 16 names Times New Roman 12 pt (this class uses a Times-like font).
+  Question: is Computer Modern acceptable?
 - **Co-chairs** printed as "Name, Co-Chair" (as in RPI's official template); the manual shows only
   "Chair".
-- **APPENDICES** contents line for a single appendix.
+- **APPENDICES** contents line: with one appendix, is the APPENDICES line
+  needed, or only the appendix's own entry? With several, does it carry a
+  page number (this class gives it one)?
 - **Copyright year**: the class prints the graduation year.
 - **Monospaced code** in appendices (FC: same font throughout). The code
   listing recipe in `docs/going-further.md` uses a typewriter font and documents

@@ -61,7 +61,7 @@ The toolkit follows the manual edition recorded in the
 | Captions | Bold, single-spaced captions, with examples that put table captions above and figure captions below | You place each `\caption` (table above, figure below); every figure and table has one, and it is mentioned in the text |
 | Attributions and co-contribution | A `\chapterattribution{...}` command that prints an unnumbered note on the chapter's first page | Exact wording from the current OGE manual ({{cite:attribution}}); the citation in your reference style (`\fullcite{key}` does this); an attribution for every reused paper, including ones you wrote alone; every co-authored one listed on the Declaration of Co-Contribution |
 | Reproduced figures and tables | A caption example and wording for material used with permission or under a Creative Commons license | Permission or license for each item; credit in the caption; permissions documents as OGE instructs |
-| Equations | Numbered `equation` examples, including a multi-line one with a single centered number | Every displayed equation numbered, number on the same line, long equations broken ({{cite:equations}}) |
+| Equations | Numbered `equation` examples, including a multi-line one with a single centered number | {{rule:equations}}. {{rule:unnumbered-displays}}. Long equations broken ({{cite:equations,unnumbered-displays}}) |
 | References | Consistent formatting from one style; references placed before appendices; printed access dates; a hint from the optional build helper for URLs without one | Style agreed with advisor; an access date printed for every URL ({{cite:access-dates}}); non-journal sources checked against the style guide |
 
 ## Final PDF checklist

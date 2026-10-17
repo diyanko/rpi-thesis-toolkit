@@ -1,9 +1,9 @@
 # Going further
 
-Optional and for later. Nothing here is needed to write your thesis or
-dissertation. Use it once the sample compiles ([get started](get-started.md))
-and you want to share drafts, back up, update the formatting file, get
-technical help, or change a setting. For the bigger picture, see
+For a thesis or dissertation that already compiles: share drafts, back up,
+update the formatting file, get technical help, or change a setting. Pick
+the task you need; Git, AI, and the extra packages are optional. Still setting
+up? [Get started](get-started.md). For the bigger picture, see
 [the suggested workflow](how-it-works.md#the-suggested-workflow-and-why).
 
 **Sharing, backups, and help:** [common situations](#common-situations) ·
@@ -28,9 +28,6 @@ technical help, or change a setting. For the bigger picture, see
 - [Bring in a draft written elsewhere](bring-your-draft.md)
 - [Write with co-authors or lab-mates](#co-authors-and-lab-mates)
 - [Turn a chapter into a paper](#turn-a-chapter-into-a-paper) or [make slides](#make-slides)
-- [Back up your work](#back-up-your-work), or [use a private GitHub repository](#use-a-private-github-repository)
-- [Update to a newer toolkit version](#update-the-formatting-safely)
-- [Get help with a technical task](#use-ai-for-technical-help), with [prompts to copy](#prompts-to-copy), or [convert a file](#ask-for-a-file-conversion)
 
 ### Overleaf to your computer
 
@@ -272,7 +269,9 @@ Watch for these:
 
 Also keep each dated PDF you send and the scripts and data behind your figures.
 At submission, archive the final source, the submitted PDF, and your permission
-documents in two places. Now and then, extract a backup and compile it to prove
+documents in two places. Git's ignore rules leave out compiled PDFs and the
+downloaded seal: keep a separate final archive that includes them. Now and
+then, extract a backup and compile it to prove
 it works. If a tool reports a missing file and your folder path has spaces or
 unusual characters, try a simple path like `~/thesis`.
 
@@ -431,10 +430,10 @@ backup, keep the task small, and review every change.
 
 ### Prompts to copy
 
-These work in any AI chat or AI assistant that can edit files. Replace the
-parts in [brackets]. Each one asks the tool to leave the formatting alone and
-not to guess at OGE's rules. Leave out unpublished data, participant details,
-and anything else confidential.
+Use the setup, error, and conversion prompts in an AI chat or an assistant
+that can edit files. The contribution prompt needs an assistant with file
+and GitHub access. Replace the parts in [brackets], and leave out unpublished
+data, participant details, and anything else confidential.
 
 **Set up:**
 

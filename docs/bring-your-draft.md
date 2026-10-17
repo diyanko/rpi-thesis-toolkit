@@ -237,6 +237,7 @@ or title-page code of your own, since the class handles it):
 
 ```latex
 \documentclass{rpi-thesis}
+\usepackage{csquotes}  % \enquote and quotation support, as in the starter
 \usepackage[backend=biber,style=numeric,sorting=none]{biblatex}  % your style
 \addbibresource{references.bib}
 \thesissetup{

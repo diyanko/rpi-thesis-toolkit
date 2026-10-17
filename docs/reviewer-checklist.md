@@ -13,21 +13,26 @@ Checklist, and **LT** its *LaTeX Formatting Tips & Tricks*.
 
 ## What the class sets
 
-The class file (`rpi-thesis.cls`) applies these by itself; each area links
-to its rows in the requirements map. Extra packages or class edits can
-override them, so a quick look still helps.
+The class file (`rpi-thesis.cls`) supplies the layout defaults below; each
+area links to its rows in the requirements map. Content choices, optional
+short titles or captions, extra packages, and class edits can change the
+result. Check the finished PDF as well.
 
 | Area | What the class does | Manual |
 | --- | --- | --- |
 | [Page](project/requirements.md#page-layout-and-spacing) and [fonts](project/requirements.md#fonts) | {{rule:page-size}}. {{rule:font}}. {{rule:black-text}}. {{rule:double-spacing}}. {{rule:single-spacing}}. | {{cite:page-size,font,black-text,double-spacing,single-spacing}} |
 | [Page numbers](project/requirements.md#page-numbers) | {{rule:front-roman}}. {{rule:body-arabic}}. {{rule:page-number-position}}. | {{cite:front-roman,body-arabic,page-number-position}} |
 | [Title and copyright](project/requirements.md#title-page-and-copyright) | Layout, degree wording, committee list, graduation month; optional copyright page ii | {{cite:title-page,degree-wording,copyright-page}} |
-| [Contents](project/requirements.md#contents-and-lists) and [appendices](project/requirements.md#appendices-and-permissions) | {{rule:contents-entries}}. {{rule:contents-match}}. Lists of tables and figures use the full captions; appendices are lettered. | {{cite:contents-entries,lists,appendices}} |
+| [Contents](project/requirements.md#contents-and-lists) and [appendices](project/requirements.md#appendices-and-permissions) | Automatic contents and object lists; aligned numbers; lettered appendices. Short title or caption arguments can make entries differ from the document. | {{cite:contents-entries,contents-match,lists,appendices}} |
 | [Order (starter)](project/requirements.md#contents-and-lists) | Set by the starter's `main.tex`, not the class: front-matter order, references before appendices | {{cite:front-matter-order,appendices}} |
 | [Headings](project/requirements.md#headings), [captions](project/requirements.md#captions-tables-and-figures), [attributions](project/requirements.md#chapter-attributions) | Four distinct heading levels; bold captions with a colon, numbered by chapter; `\chapterattribution` sets an unmarked note at the foot of a chapter's first page | {{cite:headings,captions,attribution}} |
 
 ## What still needs a human look
 
+- [ ] **Contents and lists:** {{rule:contents-match}}; the lists of tables
+  and figures use the full captions, appendix objects included. Optional
+  short arguments such as `\section[Short]{Long}` and `\caption[Short]{Long}`
+  break this ({{cite:contents-match,lists}}).
 - [ ] **Figures and tables:** {{rule:captions}}. Each is legible and stays
   inside the margins on every page, long tables included. {{rule:lettered-parts}}
   ({{cite:captions,lettered-parts,page-size}}).
