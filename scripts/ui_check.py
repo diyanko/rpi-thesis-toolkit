@@ -17,7 +17,8 @@ What it does:
     intentional scroll boxes, images that failed to load, tables that scroll on
     wide screens, clipped code at phone widths, duplicate ids, and a 200% root
     font size pass at 390 px. Image loading is checked in light and dark mode.
-  * With --shots, saves PNG screenshots (390 and 1280 px, light and dark) to
+  * With --shots, saves PNG screenshots (390 and 1280 px, light and dark; the
+    pages in WIDE_SHOTS also at 820, 2560 and 3840 px) to
     _local/shots/<timestamp>/ of the main checkout (ignored by git; worktrees
     share it). Each shot is the first screen, except the component gallery
     (project/components.html), shot at full length; --full shoots every page
@@ -54,7 +55,10 @@ from pathlib import Path
 from chrome import Chrome, LocalServer
 from common import ROOT, find_chrome, main_checkout, site_config
 
-FULL_WIDTHS = [320, 390, 768, 1280, 1920]
+# Phones, tablets in portrait and landscape (768, 820, 1024, 1180), laptops and
+# monitors (1280, 1366, 1440, 1536, 1680, 1920), and large, ultrawide and 4K
+# monitors at 1x (2560, 3440, 3840).
+FULL_WIDTHS = [320, 390, 768, 820, 1024, 1180, 1280, 1366, 1440, 1536, 1680, 1920, 2560, 3440, 3840]
 QUICK_WIDTHS = [390, 1280]
 
 # The in-page script. CONFIG is substituted by the server per request.
@@ -262,6 +266,9 @@ SETTLE = """Promise.race([new Promise(r => setTimeout(r, 5000)), Promise.all([do
 
 
 FULL_MAX = 16000  # px; longer pages are cut off at this height
+# A tablet in portrait, an ultrawide and a 4K monitor: one home page, guide page and
+# tool page, so the layouts between phone and laptop, and above, stay reviewed.
+WIDE_SHOTS = {"index.html", "guide/writing.html", "guide/bring-your-work-in.html"}
 SHOTS = main_checkout(ROOT) / "_local" / "shots"
 
 
@@ -452,7 +459,7 @@ def main() -> int:
             jobs = {False: [], True: []}
             for page in pages:
                 stem = page.replace("/", "_").removesuffix(".html")
-                for w in (390, 1280):
+                for w in (390, 1280) + ((820, 2560, 3840) if page in WIDE_SHOTS else ()):
                     for dark in (False, True):
                         jobs[dark].append((page, w, shot_dir / f"{stem}-{w}-{'dark' if dark else 'light'}.png"))
             with ThreadPoolExecutor(max_workers=2) as pool:
