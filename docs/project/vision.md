@@ -30,9 +30,13 @@ this project.
    task works without Git, a terminal, or AI.
 5. **Honest.** Unofficial and community-made; never claim approval. Show real
    facts and real feedback only.
-6. **Pictures where they explain.** Hand-drawn diagrams where a picture is
+6. **Two plug-and-play paths.** Overleaf for most students; VS Code with
+   LaTeX Workshop on your own computer. Both: edit, save, see the PDF. No
+   student step needs terminal commands or knowing what Biber is; describe
+   every fix as it looks in Overleaf and in VS Code.
+7. **Pictures where they explain.** Hand-drawn diagrams where a picture is
    faster than words; plain, clean text everywhere else.
-7. **Simple to maintain.** Small files, standard library tools, one process doc
+8. **Simple to maintain.** Small files, standard library tools, one process doc
    ([AGENTS.md](../../AGENTS.md)), tests that check real output.
 
 ## One flow for every visitor
