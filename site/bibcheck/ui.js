@@ -80,7 +80,7 @@ if (root) {
     revision++;
     clearResults();
     if (!bib.value.trim()) {
-      fail('Nothing to check yet', 'Paste references.bib in the box, or choose your .bib file above, then choose Check references.');
+      State.set(root, status, '', 'Paste references.bib in the box or choose your .bib file first.');
       bib.focus();
       return;
     }
