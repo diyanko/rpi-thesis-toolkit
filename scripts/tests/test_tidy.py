@@ -10,6 +10,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from unittest.mock import patch
 
@@ -153,6 +154,31 @@ class Keep(unittest.TestCase):
         found = subprocess.run(["git", "show-ref", "--verify", "refs/heads/feature"],
                                cwd=self.repo, capture_output=True)
         self.assertNotEqual(found.returncode, 0)
+
+
+class Scratch(unittest.TestCase):
+    def test_only_old_design_and_shots_entries_go(self):
+        with tempfile.TemporaryDirectory() as folder:
+            main = Path(folder)
+            old = time.time() - 30 * 86400
+            for name in ("design/old-mockup/a.html", "design/new.html", "shots/20260101-000000/a.png",
+                         "shots/baseline/a.png", "notes/old.md", "oge/manual.pdf",
+                         "shots/20260102-000000/a.png"):
+                path = main / "_local" / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text("x", encoding="utf-8")
+            for name in ("design/old-mockup/a.html", "design/old-mockup", "shots/20260101-000000/a.png",
+                         "shots/20260101-000000", "shots/baseline/a.png", "shots/baseline",
+                         "notes/old.md", "oge/manual.pdf", "shots/20260102-000000"):
+                os.utime(main / "_local" / name, (old, old))
+            stale = [p.relative_to(main / "_local").as_posix() for p in tidy.stale_scratch(main)]
+            # shots/20260102 keeps a recent file inside, so it stays too.
+            self.assertEqual(stale, ["design/old-mockup", "shots/20260101-000000"])
+            for path in tidy.stale_scratch(main):
+                tidy.remove(path)
+            self.assertFalse((main / "_local/design/old-mockup").exists())
+            for kept in ("design/new.html", "shots/baseline/a.png", "notes/old.md", "oge/manual.pdf"):
+                self.assertTrue((main / "_local" / kept).exists(), kept)
 
 
 if __name__ == "__main__":
