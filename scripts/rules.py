@@ -12,16 +12,19 @@ scripts/build_site.py fills the references in before Pandoc runs:
     {{cite:page-size}}           the row's Manual cell, linked to its section
     {{cite:page-size,lists}}     several rows' citations, each piece once
 
-References inside `code` or fenced code blocks are left alone. An unknown id
-stops the build. The rows of the **Measurements** table give the numbers a PDF
+References that Pandoc reads as code (inline code, fenced or indented code
+blocks) are left alone. An unknown id stops the build. The rows of the **Measurements** table give the numbers a PDF
 check compares with; embed() hands rules and measurements to a page script as
-JSON (see the docstring there). Python standard library only.
+JSON (see the docstring there). Python standard library, plus Pandoc for
+expand().
 """
 
 from functools import lru_cache
 import json
+import math
 import posixpath
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -29,9 +32,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SOURCE = "docs/project/requirements.md"
 LABELLED = re.compile(r"`([a-z][a-z0-9]*(?:-[a-z0-9]+)*)` +(\S.*)")  # `page-size` US letter, ...
 KINDS = {"Rule": "Manual", "Measure": "pt"}  # first column -> the column that marks the table
-# Code first, so a reference written inside `code` or a fence is shown as is.
-REFERENCE = re.compile(r"(?P<code>^```.*?^```[^\n]*$|`[^`\n]+`)|\{\{(?P<kind>rule|cite):(?P<ids>[^{}]*)\}\}",
-                       re.S | re.M)
+REFERENCE = re.compile(r"\{\{(?P<kind>rule|cite):(?P<ids>[^{}]*)\}\}")
+MARK = "RPIRULEREFERENCE{}X"  # stands in for a reference while Pandoc reads the page
 
 
 def slug(heading):
@@ -91,6 +93,8 @@ def parse(text, source=SOURCE):
                 points = float(values["pt"])
             except ValueError:
                 raise SystemExit(f"{where}: the pt cell of `{key}` must be a number.") from None
+            if not math.isfinite(points) or points <= 0:
+                raise SystemExit(f"{where}: the pt cell of `{key}` must be a finite positive number.")
             measures[key] = {"measure": values["Measure"], "pt": int(points) if points.is_integer() else points,
                              "rule": values["Rule"].strip("`")}
     for key, measure in measures.items():
@@ -118,15 +122,47 @@ def cite(keys, rules, link):
     return "; ".join(f"[{'; '.join(pieces)}]({link}#{section})" for section, pieces in groups)
 
 
+def in_code(text, matches):
+    """The indexes of the matches (of REFERENCE in text) that Pandoc reads as
+    code: each is replaced by a mark, and the marks found in Code and
+    CodeBlock elements of Pandoc's GFM tree are the ones in code."""
+    marked = text
+    for index, match in reversed(list(enumerate(matches))):
+        marked = marked[:match.start()] + MARK.format(index) + marked[match.end():]
+    try:
+        result = subprocess.run(["pandoc", "--from=gfm", "--to=json"], input=marked, text=True,
+                                capture_output=True, encoding="utf-8")
+    except OSError as error:
+        raise SystemExit(f"{{{{rule:...}}}} references need Pandoc: {error}") from None
+    if result.returncode:
+        raise SystemExit("Pandoc could not read the page: " + result.stderr.strip())
+    found = set()
+
+    def walk(node):
+        if isinstance(node, dict):
+            if node.get("t") in ("Code", "CodeBlock"):
+                found.update(int(n) for n in re.findall(MARK.format(r"(\d+)"), node["c"][1]))
+            else:
+                walk(node.get("c"))
+        elif isinstance(node, list):
+            for value in node:
+                walk(value)
+    walk(json.loads(result.stdout)["blocks"])
+    return found
+
+
 def expand(text, source, rules=None):
     """Fill in {{rule:...}} and {{cite:...}} in the Markdown of `source` (a path
     such as docs/reviewer-checklist.md). Returns (text, problems, ids used)."""
     rules = load()[0] if rules is None else rules
     link = posixpath.relpath(SOURCE, posixpath.dirname(source) or ".")
     problems, used = [], []
+    matches = list(REFERENCE.finditer(text))
+    code = in_code(text, matches) if matches else set()
+    order = {match.start(): index for index, match in enumerate(matches)}
 
     def replace(match):
-        if match["code"]:
+        if order[match.start()] in code:
             return match[0]
         keys = [key.strip() for key in match["ids"].split(",")]
         unknown = [key for key in keys if key not in rules]
@@ -159,7 +195,7 @@ def embed():
      "rules": {id: {"rule": plain text, "cite": "§2.2 p. 16; FC", "section": anchor}},
      "measures": {id: {"measure": label, "pt": number, "rule": rule id}}}.
     It works from file: URLs and needs no extra file in the website."""
-    payload = json.dumps(data(), ensure_ascii=True, sort_keys=True, separators=(",", ":"))
+    payload = json.dumps(data(), allow_nan=False, ensure_ascii=True, sort_keys=True, separators=(",", ":"))
     return '\n<script type="application/json" id="oge-rules">' + payload.replace("<", "\\u003c") + "</script>\n"
 
 

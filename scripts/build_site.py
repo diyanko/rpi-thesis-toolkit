@@ -131,8 +131,8 @@ ALLOWED = {".html", ".css", ".svg", ".woff2"}  # plus fonts/*.txt, previews/*.pn
 BUILD_FILE = "build.txt"
 # The "Check your PDF" page (docs/check-pdf.md) reads a student's PDF in the
 # browser: ui.js (the page), core.js (the checks), and Mozilla's pdf.js, kept
-# unchanged with its license. The checks name rules as `rules: ["page-size"]`
-# and numbers as `measure("margin")`; every such id must be a row of
+# unchanged with its license. core.js lists every rule and measurement id it
+# uses in RULE_IDS and MEASURE_IDS (checker_ids); each must be a row of
 # docs/project/requirements.md, whose rules and measurements the page carries
 # as JSON (rules.embed()). core.js says how to update pdf.js; its PDFJS_VERSION
 # must match the vendored files. The offline guide leaves all of these out
@@ -1402,24 +1402,27 @@ def build_site(destination=None, offline=False, previews=False, cheatsheet=False
     return destination
 
 
-def checker_ids(scripts=("pdf-check/core.js", "pdf-check/ui.js")):
-    """Problems with the rule and measurement ids the PDF checker names (PDF_CHECK):
-    each `rules: [...]` and `measure("...")` must be a row of the requirements map."""
+def checker_ids(script="pdf-check/core.js", text=None):
+    """Problems with the rule and measurement ids the PDF checker uses (PDF_CHECK).
+    core.js lists them all in RULE_IDS and MEASURE_IDS (one JSON list each) and
+    refuses any other id when it runs; each must be a row of the requirements map."""
     known_rules, known_measures = rules.load()
-    problems, seen = [], 0
-    for script in scripts:
-        text = (SITE / script).read_text(encoding="utf-8")
-        named = [("rule", key, known_rules) for group in re.findall(r'\brules: \[([^\]]*)\]', text)
-                 for key in re.findall(r'"([^"]+)"', group)]
-        named += [("measurement", key, known_measures) for key in re.findall(r'\bmeasure\("([^"]+)"\)', text)]
-        seen += len(named)
-        for kind, key, known in named:
+    text = (SITE / script).read_text(encoding="utf-8") if text is None else text
+    problems = []
+    for name, kind, known in (("RULE_IDS", "rule", known_rules), ("MEASURE_IDS", "measurement", known_measures)):
+        found = re.findall(rf"^\s*var {name} = (\[.*\]);\s*$", text, re.M)
+        try:
+            keys = json.loads(found[0]) if len(found) == 1 else None
+        except ValueError:
+            keys = None
+        if not isinstance(keys, list) or not keys or not all(isinstance(key, str) for key in keys):
+            problems.append(f"site/{script}: write {name} once, on one line, as a JSON list of ids in double quotes,"
+                            f' such as var {name} = ["page-size"];')
+            continue
+        for key in keys:
             if key not in known:
-                problems.append(f"site/{script}: the {kind} id {key!r} is not in {rules.SOURCE}; use an id from "
-                                f"its {'Measurements table' if kind == 'measurement' else 'rule rows'}, or add the row there.")
-    if not seen:
-        problems.append("site/pdf-check/core.js names no rule or measurement ids; checker_ids in "
-                        "scripts/build_site.py no longer matches how the checks name them.")
+                problems.append(f"site/{script}: the {kind} id {key!r} in {name} is not in {rules.SOURCE}; use an id"
+                                f" from its {'Measurements table' if kind == 'measurement' else 'rule rows'}, or add the row there.")
     return problems
 
 

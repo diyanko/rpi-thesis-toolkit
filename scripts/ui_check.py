@@ -220,8 +220,9 @@ def find_chrome() -> str | None:
 
 def discover_pages(site: Path, patterns: list[str] | None) -> list[str]:
     pages = []
-    if (site / "index.html").is_file():
-        pages.append("index.html")
+    for front in ("index.html", "404.html"):
+        if (site / front).is_file():
+            pages.append(front)
     for sub in ("guide", "project"):
         pages += sorted(p.relative_to(site).as_posix() for p in (site / sub).glob("*.html"))
     if patterns:
@@ -257,6 +258,13 @@ def make_handler(site: Path, config: dict):
                 body = (SHOT_PAGE.replace("__W__", q["w"][0]).replace("__H__", q["h"][0])
                         .replace("__SRC__", html.escape(q["src"][0])))
                 self._send(body)
+            elif u.path == "/404.html":
+                # GitHub Pages serves this document at arbitrary missing URLs,
+                # so its production links are absolute. Test the current build's
+                # assets locally instead of silently loading the live website.
+                site_url = json.loads((ROOT / "site/site.json").read_text(encoding="utf-8"))["site_url"]
+                self._send((site / "404.html").read_text(encoding="utf-8")
+                           .replace(site_url.rstrip("/") + "/", "/"))
             else:
                 super().do_GET()
 
@@ -313,15 +321,21 @@ def take_shot(chrome: str, port: int, page: str, width: int, dark: bool, dest: P
         cmd = chrome_args(chrome, profile, dark) + [
             "--virtual-time-budget=4000", f"--window-size={win}", f"--screenshot={tmp}", src]
         try:
-            subprocess.run(cmd, capture_output=True, timeout=90)
+            result = subprocess.run(cmd, capture_output=True, timeout=90)
         except subprocess.TimeoutExpired:
             return f"{page} {width}: screenshot timed out"
+        if result.returncode:
+            tmp.unlink(missing_ok=True)
+            return f"{page} {width}: Chrome screenshot failed (exit {result.returncode})"
     if not tmp.exists():
         return f"{page} {width}: no screenshot produced"
     if width <= 600 and shutil.which("sips"):
-        subprocess.run(["sips", "-c", str(h), str(width), str(tmp), "--out", str(dest)],
+        result = subprocess.run(["sips", "-c", str(h), str(width), str(tmp), "--out", str(dest)],
                        capture_output=True)
         tmp.unlink(missing_ok=True)
+        if result.returncode or not dest.is_file() or not dest.stat().st_size:
+            dest.unlink(missing_ok=True)
+            return f"{page} {width}: screenshot crop failed (exit {result.returncode})"
     else:
         tmp.replace(dest)
     return None
@@ -445,7 +459,7 @@ def main() -> int:
                     for dark in (False, True):
                         dest = shot_dir / f"{stem}-{w}-{'dark' if dark else 'light'}.png"
                         jobs.append((page, w, dark, dest))
-            with ThreadPoolExecutor(max_workers=6) as pool:
+            with ThreadPoolExecutor(max_workers=2) as pool:
                 for err in pool.map(lambda j: take_shot(chrome, port, *j), jobs):
                     if err:
                         errors.append(err)

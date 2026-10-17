@@ -252,7 +252,9 @@ def unit_tests():
     text = (LOGS / "unit_tests.log").read_text(encoding="utf-8")
     ran = re.search(r"Ran (\d+) tests? in", text)
     if ok and ran and int(ran[1]):
-        return True, f"{ran[1]} unit test(s) passed"
+        skipped = re.search(r"\bskipped=(\d+)", text)
+        return True, (f"{ran[1]} unit test(s) ran, {skipped[1]} skipped" if skipped
+                      else f"{ran[1]} unit test(s) passed")
     return False, (f"{ran[1]} test(s) ran: " if ran else "") + note
 
 
@@ -260,7 +262,8 @@ def unit_tests():
 MODES = {
     "quick": [("hygiene", hygiene), ("site", lambda: site(previews=False))],
     "full": [("hygiene", hygiene), ("thesis", thesis),
-             [("pdf checks", pdf_checks), ("regressions", regressions), ("unit tests", unit_tests)],
+             [("pdf checks", pdf_checks), ("regressions", regressions)],
+             ("unit tests", unit_tests),
              ("site", site), ("package", package), ("archives", archives)],
 }
 MODES["release"] = MODES["full"] + [("publish build", lambda: site(publish=True)),

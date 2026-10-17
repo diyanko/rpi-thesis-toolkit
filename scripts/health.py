@@ -141,6 +141,15 @@ def read_baseline():
     return data, None
 
 
+def valid_record(record):
+    """A usable snapshot has link strings and a complete text fingerprint."""
+    return (isinstance(record, dict)
+            and isinstance(record.get("links"), list)
+            and all(isinstance(link, str) for link in record["links"])
+            and isinstance(record.get("text"), str)
+            and re.fullmatch(r"[0-9a-f]{64}", record["text"]) is not None)
+
+
 def write_baseline(data):
     """Replace oge-watch.json in one step: write a temporary file beside it, then rename."""
     handle, temp = tempfile.mkstemp(dir=WATCH_FILE.parent, prefix=".oge-watch-", suffix=".json")
@@ -171,7 +180,7 @@ def watch(update):
             problems += 1
             continue
         before = watched.get(url)
-        if not isinstance(before, dict) or not {"links", "text"} <= before.keys():
+        if not valid_record(before):
             if not update:
                 report.append(f"- **No recorded baseline** for {url}"
                               + (f" ({baseline_problem})" if baseline_problem else "")
