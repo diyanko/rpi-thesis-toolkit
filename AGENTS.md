@@ -10,7 +10,8 @@ programming knowledge.
 
 This file is the only process document: every step lives here.
 [Maintenance](docs/project/maintenance.md) is reference (where things live,
-versions, website and release internals). Also read the
+versions, website and release internals). Start with the
+[vision](docs/project/vision.md) (who it is for, principles, roadmap), then the
 [style guide](docs/project/style-guide.md), the
 [requirements map](docs/project/requirements.md), and the
 [attribution record](docs/project/attribution.md).
