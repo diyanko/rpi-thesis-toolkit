@@ -2,7 +2,7 @@
 """Maintainer-only visual and layout checks for the generated static site.
 
 Usage:
-    python3 scripts/ui_check.py [--site dist/site] [--shots] [--pages PAT ...] [--quick]
+    python3 scripts/ui_check.py [--site dist/site] [--shots [--full]] [--pages PAT ...] [--quick]
     python3 scripts/ui_check.py --pdf-result [PDF]
 
 What it does:
@@ -18,8 +18,10 @@ What it does:
     wide screens, clipped code at phone widths, duplicate ids, and a 200% root
     font size pass at 390 px. Image loading is checked in light and dark mode.
   * With --shots, saves PNG screenshots (390 and 1280 px, light and dark) to
-    _local/shots/<timestamp>/ (ignored by git). Each shot is the first screen,
-    except the component gallery (project/components.html), shot at full length.
+    _local/shots/<timestamp>/ of the main checkout (ignored by git; worktrees
+    share it). Each shot is the first screen, except the component gallery
+    (project/components.html), shot at full length; --full shoots every page
+    at full length.
   * With --baseline save, also copies that set to _local/shots/baseline/.
     With --baseline compare, takes shots and lists the pages, widths and
     themes whose image differs from the baseline (informational; exit status
@@ -49,7 +51,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from chrome import Chrome, LocalServer
-from common import ROOT, find_chrome, site_config
+from common import ROOT, find_chrome, main_checkout, site_config
 
 FULL_WIDTHS = [320, 390, 768, 1280, 1920]
 QUICK_WIDTHS = [390, 1280]
@@ -258,13 +260,23 @@ SETTLE = """Promise.race([new Promise(r => setTimeout(r, 5000)), Promise.all([do
 ]).then(() => new Promise(r => requestAnimationFrame(() => setTimeout(r, 100)))).then(() => true)"""
 
 
-def take_shot(browser, url: str, page: str, width: int, dest: Path) -> str | None:
-    """Save one screenshot of page at this width; return an error or None."""
+FULL_MAX = 16000  # px; longer pages are cut off at this height
+SHOTS = main_checkout(ROOT) / "_local" / "shots"
+
+
+def take_shot(browser, url: str, page: str, width: int, dest: Path, full: bool = False) -> str | None:
+    """Save one screenshot of page at this width (full length with full);
+    return an error or None."""
     height = GALLERY_HEIGHT if page == GALLERY else 1000
     try:
         browser.viewport(width, height)
         browser.open(f"{url}/{page}")
         browser.evaluate(SETTLE)
+        if full and page != GALLERY:
+            length = browser.evaluate("document.documentElement.scrollHeight")
+            if isinstance(length, int) and length > height:
+                browser.viewport(width, min(length, FULL_MAX))
+                browser.evaluate(SETTLE)
         data = browser.screenshot()
     except (OSError, RuntimeError) as error:
         return f"{page} {width}: Chrome screenshot failed ({error})"
@@ -274,13 +286,13 @@ def take_shot(browser, url: str, page: str, width: int, dest: Path) -> str | Non
     return None
 
 
-def shoot(chrome: str, url: str, jobs: list, dark: bool) -> list[str]:
+def shoot(chrome: str, url: str, jobs: list, dark: bool, full: bool = False) -> list[str]:
     """Take the shots for one color scheme in one browser; return errors."""
     try:
         with Chrome(chrome, dark=dark) as browser:
             browser.scheme(dark)
             return [error for page, width, dest in jobs
-                    if (error := take_shot(browser, url, page, width, dest))]
+                    if (error := take_shot(browser, url, page, width, dest, full))]
     except (OSError, RuntimeError) as error:
         return [f"{'dark' if dark else 'light'} shots: Chrome failed ({error})"]
 
@@ -304,7 +316,7 @@ def pdf_result_shots(chrome: str, site: Path, pdf: Path) -> Path:
     """Screenshots of the Check your PDF page with a result, and its printout."""
     if not (site / "guide" / "check-pdf.html").is_file():
         raise SystemExit("ui_check.py --pdf-result: guide/check-pdf.html not found; run build_site.py first.")
-    dest = ROOT / "_local" / "shots" / ("pdf-check-" + time.strftime("%Y%m%d-%H%M%S"))
+    dest = SHOTS / ("pdf-check-" + time.strftime("%Y%m%d-%H%M%S"))
     dest.mkdir(parents=True, exist_ok=True)
     with LocalServer(site, routes(site, {}, pdf)) as server, Chrome(chrome) as browser:
         for width in (390, 1280):
@@ -376,6 +388,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Visual/layout checks for the generated site.")
     ap.add_argument("--site", default="dist/site", help="built site folder (default dist/site)")
     ap.add_argument("--shots", action="store_true", help="save screenshots under _local/shots/")
+    ap.add_argument("--full", action="store_true", help="with --shots, shoot whole pages, not the first screen")
     ap.add_argument("--baseline", choices=["save", "compare"],
                     help="save: keep this shots set as _local/shots/baseline/; "
                          "compare: list shots that differ from it")
@@ -388,7 +401,7 @@ def main() -> int:
     args = ap.parse_args()
     if args.baseline:
         args.shots = True
-    baseline_dir = ROOT / "_local" / "shots" / "baseline"
+    baseline_dir = SHOTS / "baseline"
     if args.baseline == "compare" and not any(baseline_dir.glob("*.png")):
         print("ui_check: no baseline; run with --baseline save first", file=sys.stderr)
         return 1
@@ -410,7 +423,7 @@ def main() -> int:
             print(f"ui_check.py --pdf-result: {pdf} not found; compile the starter first (scripts/build.py).",
                   file=sys.stderr)
             return 1
-        print(f"screenshots: {pdf_result_shots(chrome, site, pdf).relative_to(ROOT)}")
+        print(f"screenshots: {pdf_result_shots(chrome, site, pdf).relative_to(SHOTS.parent.parent)}")
         return 0
     pages = discover_pages(site, args.pages)
     if not pages:
@@ -433,7 +446,7 @@ def main() -> int:
                 problems += data.get("problems", [])
 
         if args.shots:
-            shot_dir = ROOT / "_local" / "shots" / time.strftime("%Y%m%d-%H%M%S")
+            shot_dir = SHOTS / time.strftime("%Y%m%d-%H%M%S")
             shot_dir.mkdir(parents=True, exist_ok=True)
             jobs = {False: [], True: []}
             for page in pages:
@@ -442,7 +455,7 @@ def main() -> int:
                     for dark in (False, True):
                         jobs[dark].append((page, w, shot_dir / f"{stem}-{w}-{'dark' if dark else 'light'}.png"))
             with ThreadPoolExecutor(max_workers=2) as pool:
-                for found in pool.map(lambda dark: shoot(chrome, server.url, jobs[dark], dark), (False, True)):
+                for found in pool.map(lambda dark: shoot(chrome, server.url, jobs[dark], dark, args.full), (False, True)):
                     errors += found
 
     seen = set()
@@ -461,10 +474,10 @@ def main() -> int:
     total = len(unique) + len(errors)
     print(f"ui_check: {len(pages)} pages x {len(widths)} widths, {total} problems ({secs:.0f}s)")
     if args.shots and shot_dir:
-        print(f"screenshots: {shot_dir.relative_to(ROOT)}")
+        print(f"screenshots: {shot_dir.relative_to(SHOTS.parent.parent)}")
         if args.baseline == "save":
             if save_baseline(shot_dir, baseline_dir, errors):
-                print(f"baseline saved: {baseline_dir.relative_to(ROOT)}")
+                print(f"baseline saved: {baseline_dir.relative_to(SHOTS.parent.parent)}")
             else:
                 print("baseline NOT saved: some screenshots failed; the old baseline is kept")
         elif args.baseline == "compare":
