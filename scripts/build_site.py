@@ -765,6 +765,19 @@ class Site:
                 'computer.')
         return intro.sub(lambda _: note, widget.sub("", body, count=1), count=1)
 
+    def offline_bibcheck(self, body, source):
+        """Replace online-only reference controls with the website route."""
+        interactive = re.compile(r"<!-- bibcheck-interactive-start -->.*?<!-- bibcheck-interactive-end -->", re.S)
+        if not self.site_url or not interactive.search(body):
+            self.errors.append(f"{source}: keep the bibcheck-interactive markers and site_url in site/site.json "
+                               "so the offline guide can link the online checker.")
+            return body
+        link = escape(self.site_url + "/guide/check-references.html", quote=True)
+        note = ('<p>This offline copy includes the checklist below. For the interactive check, '
+                f'open <a href="{link}">Check your references on the toolkit website</a>. '
+                'Your files stay in your browser; nothing is uploaded.</p>')
+        return interactive.sub(lambda _: note, body, count=1)
+
     def render(self, source):
         here = self.pages[source]
         if source == "site/index.html":
@@ -799,6 +812,8 @@ class Site:
                 body += rules.embed()
             if Path(source).stem == "check-pdf" and self.offline:
                 body = self.offline_checker(body, source)
+            if Path(source).stem == "check-references" and self.offline:
+                body = self.offline_bibcheck(body, source)
             # The PDF checker compares a PDF's class version with the release the website links.
             body = body.replace('data-pdf-check data-version=""', f'data-pdf-check data-version="{RELEASE_VERSION}"')
             # Keyboard users must also be able to pan long code lines without

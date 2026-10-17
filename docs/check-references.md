@@ -9,6 +9,8 @@ use this page to look for common reference problems before you compile
 (make the PDF). Your files stay in your browser. Nothing is uploaded or saved
 by this checker.
 
+<!-- bibcheck-interactive-start -->
+
 1. Paste the contents of `references.bib`, or choose or drop the file below.
 2. Optionally add `preamble.tex`, the file that selects your citation style,
    and your chapter `.tex` files to check the citation keys they use.
@@ -36,6 +38,8 @@ by this checker.
 </div>
 
 <p data-bibcheck-nojs>The interactive check needs JavaScript, which is off or unavailable. Use the checklist below with your .bib file and PDF.</p>
+
+<!-- bibcheck-interactive-end -->
 
 ## Read the results
 
