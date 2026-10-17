@@ -520,61 +520,202 @@ def biber_errors(output, since, latexmk_text=""):
             if "ERROR - " in line][:10]
 
 
-# Known problems: (regular expression to find, what to tell the student, when).
-# when is "failed" (look in a failed build's output), "built" (look in the log
-# of a build that made a PDF), or "any".
+# Known problems: the one table of LaTeX messages and their fixes. build.py
+# prints the matching ones after a build; the "Explain my error" page
+# (docs/explain-my-error.md, site/explain/) gets the same table as JSON from
+# scripts/build_site.py, so the two cannot drift. Each entry:
+#   id        a short name, used by scripts/tests/test_explain.py
+#   pattern   a regular expression that Python and JavaScript read the same
+#             way (no (?P<...>), inline flags, \A or \Z)
+#   when      where build.py looks: "failed" (a failed build's output),
+#             "built" (the log of a build that made a PDF), or "any"
+#   message   the message as a student sees it, for the page's table
+#   means     what it means, in plain words
+#   fix       what to do, wherever you write
+#   editor    optional: the same on your computer, in an editor
+#   overleaf  optional: the same on Overleaf
+#   guide     (guide page, section anchor, section name) with the details
+COMMON = "Common messages, "
 KNOWN_PROBLEMS = [
-    (
-        "lipo",
-        "Biber, the bibliography tool, could not start: older Mac builds of Biber"
-        " fail on newer macOS. Update TeX Live, then build again. On macOS"
-        " (MacTeX), use TeX Live Utility, Update all packages, or run"
-        " 'sudo tlmgr update --self --all'. On Linux with apt, update with your"
-        " package manager, for example 'sudo apt update' then 'sudo apt upgrade'.",
-    ),
-    (
-        "biblatex control file version",
-        "This is most often a stale control file left by an earlier build. Do a clean"
-        " recompile first: python3 scripts/build.py --fresh (or your editor's clean"
-        " command), then build again. If it still fails, Biber and biblatex come"
-        " from different TeX installations or years: use one TeX distribution,"
-        " update it completely, and make sure 'biber' is the one it installed.",
-    ),
-    (
-        "script engine",
-        "latexmk needs Perl, which MiKTeX does not include. Install TeX Live"
-        " instead (https://tug.org/texlive/), or install Perl and restart.",
-    ),
-    (
-        "You have requested release",
-        "Your LaTeX is older than this class needs (TeX Live " + str(MIN_TEXLIVE)
-        + " or newer). Install a current TeX Live.",
-    ),
-    (
+    {
+        "id": "biber-mac", "pattern": "lipo", "when": "any",
+        "message": "biber ... lipo (on a Mac)",
+        "means": "Biber, the bibliography tool, could not start: older Mac builds of Biber"
+                 " fail on newer macOS. Your thesis is fine.",
+        "fix": "Update TeX Live, then compile again.",
+        "editor": "On macOS (MacTeX), open TeX Live Utility and choose Update all packages,"
+                  " or run 'sudo tlmgr update --self --all'. On Linux with apt, update with"
+                  " your package manager, for example 'sudo apt update' then 'sudo apt upgrade'.",
+        "overleaf": "Overleaf installs Biber for you; this message comes from a LaTeX"
+                    " installation on a computer.",
+        "guide": ("troubleshooting", "common-messages", COMMON + "Rare messages"),
+    },
+    {
+        "id": "biblatex-version", "pattern": "biblatex control file version", "when": "any",
+        "message": "Found biblatex control file version ..., expected version ...",
+        "means": "This is most often a stale control file left by an earlier build.",
+        "fix": "Do a clean recompile, then build again. If it still fails, Biber and"
+               " biblatex come from different TeX installations or years: use one TeX"
+               " distribution, update it completely, and make sure 'biber' is the one it installed.",
+        "editor": "In VS Code, run LaTeX Workshop: Clean up auxiliary files; with the build"
+                  " helper, python3 scripts/build.py --fresh.",
+        "overleaf": "Open the Recompile menu and choose Recompile from scratch.",
+        "guide": ("troubleshooting", "clean-recompile", "Clean recompile"),
+    },
+    {
+        "id": "miktex-perl", "pattern": "script engine", "when": "any",
+        "message": "latexmk: could not find the script engine 'perl'",
+        "means": "latexmk needs Perl, which MiKTeX does not include.",
+        "fix": "Install TeX Live instead (https://tug.org/texlive/), or install Perl and restart.",
+        "guide": ("troubleshooting", "tools-and-installs", COMMON + "Tools and installs"),
+    },
+    {
+        "id": "old-latex", "pattern": "You have requested release", "when": "any",
+        "message": "You have requested release '...' of LaTeX",
+        "means": "Your LaTeX is older than this class needs (TeX Live " + str(MIN_TEXLIVE)
+                 + " or newer).",
+        "fix": "Install a current TeX Live.",
+        "overleaf": "Choose the newest TeX Live version in Overleaf's Settings, then recompile.",
+        "guide": ("troubleshooting", "common-messages", COMMON + "Rare messages"),
+    },
+    {
+        "id": "tool-missing",
+        "pattern": r"(?:latexmk|pdflatex|xelatex|lualatex|biber)['\"]?(?::| is)? (?:command )?not"
+                   r" (?:found|recognized)|command not found: (?:latexmk|pdflatex|xelatex|lualatex|biber)"
+                   r"|spawn (?:latexmk|pdflatex|xelatex|lualatex|biber) ENOENT|Can't exec \"biber\"",
+        "when": "any",
+        "message": "latexmk, pdflatex, or biber not found, or spawn latexmk ENOENT",
+        "means": "A LaTeX tool (latexmk, the engine, or Biber, the bibliography tool) is not"
+                 " installed, or your editor started before the installation finished.",
+        "fix": "Finish installing the full LaTeX distribution, then quit your editor completely"
+               " and reopen it (on Windows, restart the computer if needed).",
+        "overleaf": "Overleaf has every tool; this message comes from a LaTeX installation on a computer.",
+        "guide": ("troubleshooting", "tools-and-installs", COMMON + "Tools and installs"),
+    },
+    {
+        "id": "class-missing", "pattern": r"File `rpi-thesis\.cls' not found", "when": "failed",
+        "message": "File `rpi-thesis.cls' not found",
+        "means": "LaTeX cannot find the class file, so it is not compiling the starter's folder.",
+        "fix": "Extract the whole ZIP and open the folder that contains main.tex.",
+        "editor": "Open the folder itself (File, Open Folder in VS Code), not only main.tex.",
+        "overleaf": "main.tex and rpi-thesis.cls must be at the top of the file list, not inside a folder.",
+        "guide": ("troubleshooting", "setup-and-files", COMMON + "Setup and files"),
+    },
+    {
         # A missing graphic; a missing .sty, .cls, or .tex is another problem.
-        r"LaTeX Error: File `(?![^']*\.(?:sty|cls|tex)')[^']*' not found",
-        "A figure file named in \\includegraphics is missing. Check the file name,"
-        " capital letters, extension, and folder (figures/...); see {troubleshooting}"
-        " (Common messages, Setup and files).",
-        "failed",
-    ),
-    (
-        r"Citation [`'][^']*' (?:on page \d+ )?undefined|Reference [`'][^']*'"
-        r" (?:on page \d+ )?undefined|There were undefined (?:references|citations)",
-        "A citation or cross-reference is undefined: the PDF shows ?? or a citation key"
-        " in bold. Check that the key in \\parencite or \\ref matches references.bib or"
-        " the \\label exactly, then build again; see {troubleshooting} (Common messages,"
-        " Citations and references).",
-        "built",
-    ),
+        "id": "figure-missing",
+        "pattern": r"LaTeX Error: File `(?![^']*\.(?:sty|cls|tex)')[^']*' not found"
+                   r"|pdftex\.def Error: File `[^']*' not found",
+        "when": "failed",
+        "message": "LaTeX Error: File `figures/...' not found",
+        "means": "A figure file named in \\includegraphics is missing.",
+        "fix": "Check the file name, capital letters, extension, and folder (figures/...).",
+        "editor": "Compare the name in \\includegraphics with the file in the figures folder.",
+        "overleaf": "Upload the picture into the figures folder in the file list, then"
+                    " compare its name with the one in \\includegraphics.",
+        "guide": ("troubleshooting", "setup-and-files", COMMON + "Setup and files"),
+    },
+    {
+        "id": "package-missing", "pattern": r"LaTeX Error: File `[^']*\.sty' not found", "when": "failed",
+        "message": "LaTeX Error: File `....sty' not found",
+        "means": "A package named in \\usepackage is not installed, or its name is misspelled.",
+        "fix": "Check the spelling in \\usepackage; if it is right, install the full LaTeX"
+               " distribution or update it.",
+        "overleaf": "Overleaf has nearly every package: check the spelling in \\usepackage.",
+        "guide": ("troubleshooting", "tools-and-installs", COMMON + "Tools and installs"),
+    },
+    {
+        "id": "tex-missing", "pattern": r"LaTeX Error: File `[^']*\.tex' not found|I can't find file `",
+        "when": "failed",
+        "message": "LaTeX Error: File `chapters/....tex' not found",
+        "means": "A file named in \\include or \\input does not exist under that name.",
+        "fix": "Check the file name and folder in the \\include or \\input line in main.tex:"
+               " write it without .tex, with the same capital letters as the file.",
+        "guide": ("troubleshooting", "setup-and-files", COMMON + "Setup and files"),
+    },
+    {
+        "id": "undefined-command", "pattern": "Undefined control sequence", "when": "failed",
+        "message": "Undefined control sequence",
+        "means": "LaTeX does not know a command, usually because of a typo after a backslash,"
+                 " such as \\parencit for \\parencite.",
+        "fix": "Look at the end of the l. line: the last command there is the one LaTeX does"
+               " not know. Correct its spelling, or load the package it comes from.",
+        "guide": ("troubleshooting", "read-an-error-message", "Read an error message"),
+    },
+    {
+        "id": "missing-dollar", "pattern": r"Missing \$ inserted", "when": "failed",
+        "message": "Missing $ inserted",
+        "means": "A math-only character or command, often an underscore _ or ^, is outside $...$.",
+        "fix": "Write \\_ for an underscore in text, or put the math between $ signs.",
+        "guide": ("troubleshooting", "layout-and-the-pdf", COMMON + "Layout and the PDF"),
+    },
+    {
+        "id": "brace",
+        "pattern": r"Runaway argument|File ended while scanning use of|Paragraph ended before \\\S+ was"
+                   r" complete|Missing \} inserted|Extra \}, or forgotten",
+        "when": "failed",
+        "message": "Runaway argument, or a brace error",
+        "means": "A { has no matching }, or there is one } too many.",
+        "fix": "Check your last edit near the line shown for a missing or extra }.",
+        "guide": ("troubleshooting", "layout-and-the-pdf", COMMON + "Layout and the PDF"),
+    },
+    {
+        "id": "environment",
+        "pattern": r"Environment \S+ undefined|\\begin\{[^}]*\} on input line \d+ ended by \\end",
+        "when": "failed",
+        "message": "Environment ... undefined, or \\begin{...} ended by \\end{...}",
+        "means": "The name in \\begin{...} is misspelled, its package is not loaded, or a"
+                 " \\begin{...} and its \\end{...} do not match.",
+        "fix": "Check that each \\begin{name} has an \\end{name} with the same spelling,"
+               " in the right order.",
+        "guide": ("troubleshooting", "read-an-error-message", "Read an error message"),
+    },
+    {
+        "id": "alignment-tab", "pattern": "Misplaced alignment tab character &", "when": "failed",
+        "message": "Misplaced alignment tab character &",
+        "means": "An & is outside a table; most often a title in the .bib file contains &.",
+        "fix": "Write it as \\&.",
+        "guide": ("troubleshooting", "citations-and-references", COMMON + "Citations and references"),
+    },
+    {
+        "id": "biber-not-run", "pattern": r"Please \(re\)run Biber", "when": "built",
+        "message": "Please (re)run Biber on the file",
+        "means": "The bibliography step has not run since your last change, so citations"
+                 " show as keys in bold.",
+        "fix": "Compile again.",
+        "editor": "VS Code with the starter's settings runs Biber for you; in other editors"
+                  " run the bibliography step yourself (Get started, Other editors).",
+        "overleaf": "Recompile; Overleaf runs Biber for you.",
+        "guide": ("troubleshooting", "citations-and-references", COMMON + "Citations and references"),
+    },
+    {
+        "id": "undefined-reference",
+        "pattern": r"Citation [`'][^']*' (?:on page \d+ )?undefined|Reference [`'][^']*'"
+                   r" (?:on page \d+ )?undefined|There were undefined (?:references|citations)",
+        "when": "built",
+        "message": "Citation `...' undefined, or Reference `...' undefined",
+        "means": "A citation or cross-reference is undefined: the PDF shows ?? or a citation"
+                 " key in bold.",
+        "fix": "Check that the key in \\parencite or \\ref matches references.bib or the"
+               " \\label exactly, then build again.",
+        "guide": ("troubleshooting", "citations-and-references", COMMON + "Citations and references"),
+    },
 ]
+
+
+def matching_problems(text, when="failed"):
+    """The KNOWN_PROBLEMS entries whose pattern is in text, for one build stage."""
+    return [entry for entry in KNOWN_PROBLEMS
+            if entry["when"] in (when, "any") and re.search(entry["pattern"], text)]
 
 
 def known_problem(text, when="failed", root=ROOT):
     found = []
-    for pattern, advice, *rest in KNOWN_PROBLEMS:
-        if (rest[0] if rest else "any") in (when, "any") and re.search(pattern, text):
-            found.append(advice.replace("{troubleshooting}", guide(root, "troubleshooting")))
+    for entry in matching_problems(text, when):
+        page, _, section = entry["guide"]
+        parts = [entry["means"], entry["fix"], entry.get("editor", "")]
+        found.append(" ".join(part for part in parts if part)
+                     + f" See {guide(root, page)} ({section}).")
     return found
 
 
