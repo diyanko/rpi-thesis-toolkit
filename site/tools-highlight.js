@@ -6,6 +6,8 @@
 // scripts/build_site.py, which colors the guide's code blocks at build time;
 // the colors are the --code-* tokens in site/site.css. Text is added with
 // text nodes only, never as HTML.
+//
+// Also the shared tool states (ToolState, at the end), used by every tool.
 (function () {
   "use strict";
   var TOKENS = new RegExp(
@@ -56,4 +58,67 @@
   }
 
   window.ToolsHighlight = { tokens: tokens, render: render };
+
+  // The shared tool states (docs/project/components.md, "Tool states"): one
+  // status line per tool, a live region (role="status") that is
+  //   ""         empty (first load, or after Clear)
+  //   "working"  a calm indicator before the text; the tool is aria-busy and
+  //              the busy button cannot be pressed again
+  //   "done"     a one-line summary; results follow under it
+  //   "error"    a .tool-error box: a short title, what happened and the fix,
+  //              and a guide link. Announced by the live region.
+  // Each tool's ui.js falls back to plain status text without this file.
+  function setState(root, status, state, content, button) {
+    status.textContent = "";
+    status.setAttribute("data-state", state || "");
+    if (state === "working") root.setAttribute("aria-busy", "true");
+    else root.removeAttribute("aria-busy");
+    Array.prototype.forEach.call(root.querySelectorAll("[data-busy]"), function (node) {
+      node.removeAttribute("data-busy");
+      node.removeAttribute("aria-disabled");
+    });
+    if (state === "working" && button) {
+      button.setAttribute("data-busy", "");
+      button.setAttribute("aria-disabled", "true");
+    }
+    if (!content) return;
+    if (typeof content === "string") { status.textContent = content; return; }
+    var box = document.createElement("div");
+    box.className = "tool-error";
+    var title = document.createElement("p");
+    title.className = "tool-error-title";
+    title.textContent = content.title;
+    box.appendChild(title);
+    var text = document.createElement("p");
+    text.textContent = content.text;
+    if (content.href) {
+      text.appendChild(document.createTextNode(" "));
+      var link = document.createElement("a");
+      link.href = content.href;
+      link.textContent = content.link;
+      text.appendChild(link);
+      text.appendChild(document.createTextNode("."));
+    }
+    box.appendChild(text);
+    status.appendChild(box);
+  }
+  // True while a button is busy: its click does nothing.
+  function busy(button) { return button.hasAttribute("data-busy"); }
+
+  // A drop zone: the same blue look on every tool while something is over it.
+  // Children fire their own enter and leave events, so they are counted.
+  function dropZone(zone, onDrop) {
+    var depth = 0;
+    zone.addEventListener("dragenter", function (event) { event.preventDefault(); depth++; zone.classList.add("is-over"); });
+    zone.addEventListener("dragover", function (event) { event.preventDefault(); });
+    zone.addEventListener("dragleave", function () { if (--depth <= 0) { depth = 0; zone.classList.remove("is-over"); } });
+    zone.addEventListener("drop", function (event) {
+      event.preventDefault();
+      depth = 0;
+      zone.classList.remove("is-over");
+      onDrop(event);
+    });
+  }
+
+  window.ToolState = { set: setState, busy: busy, dropZone: dropZone };
 })();
