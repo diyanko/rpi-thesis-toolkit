@@ -213,6 +213,44 @@ the settings schema), so a change is usually one row.
 
 <p class="tool-nojs">The tool needs JavaScript, which is off or not available in this browser. Use the checklist below instead.</p>
 
+## Tool states
+
+Every tool moves through the same four states, set by `ToolState.set` in
+`site/tools-highlight.js` (each `ui.js` falls back to plain status text
+without it). The status line is a `<div class="tool-status" role="status"
+aria-live="polite">` under the actions; it keeps one line of room when empty,
+so nothing jumps.
+
+1. **Empty:** placeholders say what to paste in one short line ("Paste
+   references.bib here."); output shows its `data-empty` line; buttons that
+   need complete input are disabled (flat paper), and the others say what is
+   missing when pressed.
+2. **Working:** `data-state="working"` puts a small ring before the text
+   (it turns only when motion is allowed); the tool gets `aria-busy="true"`,
+   old results fade back, and the busy button gets `aria-disabled` and
+   `data-busy`, so a second press does nothing.
+3. **Error:** `data-state="error"` holds one `.tool-error` box: a short title,
+   what happened and the fix, and a guide link. The live region announces it;
+   focus stays where the student is, or moves to the field to fix.
+4. **Done:** a one-line summary with counts in the status line, then the
+   results; buttons that work on results move focus to the results heading.
+   A clean result says what was checked, never that OGE will accept it.
+
+Start over is always the last button in the tool's actions row: "Clear" on
+the text tools, "Check another PDF" on Check your PDF. A drop zone turns blue
+and dashed while a file is over it (`ToolState.dropZone`), on every tool.
+
+<div class="tool">
+<p class="tool-actions"><button type="button" class="button" data-busy aria-disabled="true">Check references</button> <button type="button" class="button button-secondary">Clear</button></p>
+<div class="tool-status" data-state="working">Reading page 12 of 140…</div>
+<div class="tool-status" data-state="error"><div class="tool-error"><p class="tool-error-title">That is not a PDF</p><p>draft.docx is not a PDF file. Choose the PDF your editor made, often main.pdf. <a href="../submission.md#final-pdf-checklist">Final PDF checklist</a>.</p></div></div>
+<div class="tool-status" data-state="done">3 points to review in 42 entries. Nothing was uploaded.</div>
+<p class="tool-actions"><button type="button" class="button" disabled>Copy settings</button> <button type="button" class="button button-secondary">Clear</button></p>
+<label class="tool-drop tool-file is-over" for="gallery-over"><span class="tool-file-button">Choose files</span> <span class="tool-file-or">or drop them here (a file is over this zone)</span></label><input class="visually-hidden" id="gallery-over" type="file">
+<label for="gallery-year">A field with a value to fix</label>
+<input type="text" id="gallery-year" value="20255" aria-invalid="true">
+</div>
+
 ## Form controls
 
 Native controls drawn like the buttons: a sketchy edge, a small offset
