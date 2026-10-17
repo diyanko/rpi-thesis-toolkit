@@ -14,6 +14,11 @@ read [update the formatting safely](docs/going-further.md#update-the-formatting-
 
 **Changes your PDF?** No.
 
+**Version:** minor
+
+- **Five tools, one design:** every tool page has the same layout, a clear
+  "Nothing is uploaded" line, and short results; the home page lists them all.
+
 - **Settings builder:** fill in a form and copy a checked `\thesissetup` block
   for `metadata.tex`; it rejects the same values the class rejects.
 - **Bring your work in:** a new tool in the guide's Tools group. Paste text
