@@ -96,6 +96,7 @@
     head.focus();
   }
 
+  var pending = 0;   // the explanation waiting to be shown, cancelled by new text or Clear
   function ready() {
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -115,17 +116,22 @@
         return;
       }
       say("Reading the text…", "working");
-      setTimeout(function () {
+      clearTimeout(pending);
+      pending = setTimeout(function () {
+        pending = 0;
         show(window.ExplainCore.explain(text, problems));
       }, 30);
     });
     // New text makes the old answer stale: remove it.
     input.addEventListener("input", function () {
+      if (pending) { clearTimeout(pending); pending = 0; say(""); }
       if (!result.textContent && status.getAttribute("data-state") !== "done") return;
       result.textContent = "";
       say("The text changed. Choose Explain the error to read it again.");
     });
     root.querySelector(".explain-clear").addEventListener("click", function () {
+      clearTimeout(pending);
+      pending = 0;
       input.value = "";
       result.textContent = "";
       say("");

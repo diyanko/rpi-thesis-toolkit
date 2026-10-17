@@ -97,7 +97,9 @@ if (root) {
     const report = checkReferences({bib: bib.value, preamble: preamble.value,
       tex: [...chapters, ...(tex.value.trim() ? [{name: 'pasted .tex', text: tex.value}] : [])],
       unused: root.querySelector('[data-unused]').checked});
-    if (!report.entries) {
+    // No entries and nothing else to say: explain the format. Syntax or
+    // citation findings still show below when there are any.
+    if (!report.entries && report.findings.every(f => f.id === 'empty')) {
       fail('No entries found', 'The text has no entries that start with @, such as @book{key, ...}. Paste the whole references.bib file. How an entry looks:',
            BY_HAND, 'Paste an entry by hand');
       bib.focus();
