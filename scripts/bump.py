@@ -6,7 +6,8 @@
 
 Without a version it reads "## Unreleased" in CHANGELOG.md: minor when its
 "Changes your PDF?" line says anything but No (Yes, "Only if ...") or it
-mentions a new setting, else patch
+mentions a new setting, else patch. A line "**Version:** minor" (or patch) in
+the section overrides the choice, for example for a new setting.
 (docs/project/maintenance.md, "Versions and compatibility").
 Edits the class line (version and today's date), main.tex's requested date,
 the release the website links, the README and Get started download links,
@@ -60,6 +61,10 @@ def choose(old, changelog):
     major, minor, patch = map(int, old.split("."))
     if not pdf:
         raise ValueError("CHANGELOG.md: the Unreleased section needs a '**Changes your PDF?**' line.")
+    forced = re.search(r"(?im)^\*\*Version:\*\*\s*(minor|patch)\b", text)   # an explicit override
+    if forced:
+        bumped = f"{major}.{minor + 1}.0" if forced[1].lower() == "minor" else f"{major}.{minor}.{patch + 1}"
+        return bumped, f"{forced[1].lower()}: **Version:** line in the change log"
     if pdf[1].lower() != "no":  # Yes, or "Only if ...": some PDFs change
         return f"{major}.{minor + 1}.0", f"minor: Changes your PDF? {pdf[1]}"
     if re.search(r"(?i)\bnew settings?\b", text):
