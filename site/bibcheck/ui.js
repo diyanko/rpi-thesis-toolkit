@@ -21,6 +21,14 @@ if (root) {
     if (parent) parent.append(element);
     return element;
   }
+  const run_button = root.querySelector('[data-run]');
+  // The shared states (ToolState in tools-highlight.js); plain text without it.
+  const State = window.ToolState || {set: (r, s, state, c) => {
+    s.textContent = typeof c === 'string' ? c : c ? c.title + '. ' + c.text : ''; }};
+  const say = (text, state = '') => State.set(root, status, state, text, run_button);
+  const fail = (title, text, href, link) => State.set(root, status, 'error', {title, text, href, link});
+  const ZOTERO = 'citations.html#step-2-collect-and-cite-sources-with-zotero';
+  const BY_HAND = 'citations.html#if-you-cant-use-zotero-paste-an-entry-by-hand';
   function clearResults() { results.replaceChildren(); }
   function clear() {
     revision++;
@@ -28,7 +36,7 @@ if (root) {
     files.value = ''; chapters = [];
     if (names) names.textContent = '';
     root.querySelector('[data-unused]').checked = false;
-    status.textContent = 'Cleared. No files or text are saved by this checker.';
+    say('Cleared. Nothing was saved.');
     clearResults();
     bib.focus();
   }
@@ -39,18 +47,20 @@ if (root) {
     if (!list.length) return;
     if (names) names.textContent = 'Chosen: ' + list.map(file => file.name).join(', ');
     if (list.reduce((sum, file) => sum + file.size, 0) > maxBytes) {
-      status.textContent = 'Choose files totaling less than 5 MB, or paste a smaller set of references.';
+      fail('Too much to check at once', 'These files total more than 5 MB. Choose references.bib on its own, or fewer chapter files.');
       return;
     }
-    if (list.some(file => !/\.(bib|tex)$/i.test(file.name))) {
-      status.textContent = 'Choose .bib and .tex files. Other file types cannot be read here.';
+    const other = list.find(file => !/\.(bib|tex)$/i.test(file.name));
+    if (other) {
+      fail('Choose .bib and .tex files', other.name + ' cannot be read here; other file types are not checked. Export your references as a .bib file from your reference manager:',
+           ZOTERO, 'Collect and cite sources with Zotero');
       return;
     }
     if (list.filter(file => /^preamble\.tex$/i.test(file.name)).length > 1) {
-      status.textContent = 'Choose one preamble.tex so the citation style is unambiguous.';
+      fail('Two preamble.tex files', 'The citation style is set in one preamble.tex. Choose just one, from the thesis you are checking.');
       return;
     }
-    status.textContent = 'Reading files on your computer…';
+    say('Reading files on your computer…', 'working');
     try {
       const loaded = await Promise.all(list.map(async file => ({name: file.name, text: await file.text()})));
       if (version !== revision) return;
@@ -60,29 +70,42 @@ if (root) {
       if (bibs.length) bib.value = bibs.map(file => file.text).join('\n');
       if (setup) preamble.value = setup.text;
       if (sources.length) chapters = sources;
-      status.textContent = 'Read ' + loaded.map(file => file.name).join(', ') + '. Choose Check references when ready.';
+      say('Read ' + loaded.map(file => file.name).join(', ') + '. Choose Check references when ready.');
     } catch {
-      if (version === revision) status.textContent = 'A file could not be read. Open it in your editor and paste the text below.';
+      if (version === revision) fail('A file could not be read', 'Open it in your editor, copy all of its text, and paste it in the box below.');
     }
   }
   function run() {
+    if (State.busy && State.busy(run_button)) return;
     revision++;
     clearResults();
     if (!bib.value.trim()) {
-      status.textContent = 'Paste references.bib or choose a .bib file first.';
+      fail('Nothing to check yet', 'Paste references.bib in the box, or choose your .bib file above, then choose Check references.');
       bib.focus();
       return;
     }
     if (bib.value.length + preamble.value.length + tex.value.length > maxBytes) {
-      status.textContent = 'Paste less than 5 MB of text for one check.';
+      fail('Too much to check at once', 'Paste less than 5 MB of text for one check: references.bib on its own, or fewer chapters.');
       return;
     }
+    // A large file can take a moment: show the working state, then check.
+    say('Checking references…', 'working');
+    const version = revision;
+    setTimeout(() => { if (version === revision) check(); }, 30);
+  }
+  function check() {
     const report = checkReferences({bib: bib.value, preamble: preamble.value,
       tex: [...chapters, ...(tex.value.trim() ? [{name: 'pasted .tex', text: tex.value}] : [])],
       unused: root.querySelector('[data-unused]').checked});
+    if (!report.entries) {
+      fail('No entries found', 'The text has no entries that start with @, such as @book{key, ...}. Paste the whole references.bib file. How an entry looks:',
+           BY_HAND, 'Paste an entry by hand');
+      bib.focus();
+      return;
+    }
     const heading = node('h3', 'Reference check results', results);
     heading.tabIndex = -1;
-    node('p', report.entries + ' entries; style: ' + report.style + '. ' + report.coverage, results);
+    node('p', report.entries + (report.entries === 1 ? ' entry' : ' entries') + '; style: ' + report.style + '. ' + report.coverage, results);
     if (!preamble.value.trim()) node('p', 'No preamble.tex supplied. Using the starter’s numeric style for field advice.', results);
     if (!report.findings.length) node('p', 'Looks fine: these checks found no problems. Still compare the references in your PDF with your style guide.', results);
     for (const [severity, label] of Object.entries(RULES.severities)) {
@@ -99,20 +122,18 @@ if (root) {
       }
     }
     const count = report.findings.length;
-    status.textContent = (count ? count + (count === 1 ? ' point' : ' points') + ' to review.' : 'Looks fine.') + ' Nothing was uploaded.';
+    say((count ? count + (count === 1 ? ' point' : ' points') + ' to review' : 'No problems found') +
+        ' in ' + report.entries + (report.entries === 1 ? ' entry.' : ' entries.') + ' Nothing was uploaded.', 'done');
     heading.focus();
   }
   files.addEventListener('change', () => read(files.files));
   const drop = root.querySelector('[data-drop]');
-  drop.addEventListener('dragover', event => { event.preventDefault(); drop.classList.add('is-over'); });
-  drop.addEventListener('dragleave', () => drop.classList.remove('is-over'));
-  drop.addEventListener('drop', event => {
-    event.preventDefault(); drop.classList.remove('is-over'); read(event.dataTransfer.files);
-  });
-  root.querySelector('[data-run]').addEventListener('click', run);
+  if (State.dropZone) State.dropZone(drop, event => read(event.dataTransfer.files));
+  else drop.addEventListener('drop', event => { event.preventDefault(); read(event.dataTransfer.files); });
+  run_button.addEventListener('click', run);
   root.querySelector('[data-clear]').addEventListener('click', clear);
   for (const input of [bib, preamble, tex, root.querySelector('[data-unused]')]) {
-    input.addEventListener('input', () => { revision++; clearResults(); status.textContent = 'Input changed. Check references again to update results.'; });
+    input.addEventListener('input', () => { revision++; clearResults(); say('Input changed. Choose Check references again to update the results.'); });
   }
   root.hidden = false;
   const nojs = document.querySelector('[data-bibcheck-nojs]');

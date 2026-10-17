@@ -21,17 +21,17 @@ Paste or drop your `references.bib`; the page lists common problems
 <label class="tool-drop tool-file" for="bibcheck-files" data-drop><span class="tool-file-button">Choose files</span> <span class="tool-file-or">or drop references.bib and .tex files here</span></label><input class="visually-hidden" id="bibcheck-files" type="file" accept=".bib,.tex" multiple>
 <p class="tool-file-names" data-file-names></p>
 <label for="bibcheck-bib">Contents of references.bib</label>
-<textarea id="bibcheck-bib" data-bib rows="10" spellcheck="false"></textarea>
+<textarea id="bibcheck-bib" data-bib rows="10" spellcheck="false" placeholder="Paste references.bib here."></textarea>
 <details><summary>Optional: add your style and citations</summary>
 <p>Choose these files above or paste them here. File names other than preamble.tex are treated as chapters. A new chapter file selection replaces the previous chapter selection; pasted chapter text is checked as well.</p>
 <label for="bibcheck-preamble">Contents of preamble.tex</label>
-<textarea id="bibcheck-preamble" data-preamble rows="4" spellcheck="false"></textarea>
+<textarea id="bibcheck-preamble" data-preamble rows="4" spellcheck="false" placeholder="Paste preamble.tex here."></textarea>
 <label for="bibcheck-tex">Chapter .tex text (optional)</label>
-<textarea id="bibcheck-tex" data-tex rows="5" spellcheck="false"></textarea>
+<textarea id="bibcheck-tex" data-tex rows="5" spellcheck="false" placeholder="Paste chapter text here."></textarea>
 <label><input type="checkbox" data-unused> Also list entries not cited in the supplied .tex files</label>
 </details>
-<p class="tool-actions"><button type="button" class="button" data-run>Check references</button> <button type="button" class="button button-secondary" data-clear>Clear files and text</button></p>
-<p class="tool-status" role="status" aria-live="polite"></p>
+<p class="tool-actions"><button type="button" class="button" data-run>Check references</button> <button type="button" class="button button-secondary" data-clear>Clear</button></p>
+<div class="tool-status" role="status" aria-live="polite"></div>
 <div class="tool-results tool-card" data-results></div>
 </div>
 

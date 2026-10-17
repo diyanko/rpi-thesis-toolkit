@@ -21,10 +21,10 @@ edit the copied block ([example](going-further.md#all-thesis-settings)).
 <fieldset><legend>Title page settings</legend><div data-settings-fields></div></fieldset>
 <fieldset><legend>Committee</legend><p>Keep Chair or Co-Chair spelled exactly this way. Other roles may be left empty.</p><div data-settings-members></div><button class="button button-secondary" type="button" data-settings-add>Add a committee member</button></fieldset>
 </form>
-<p class="tool-status" role="status" aria-live="polite" data-settings-status></p>
+<div class="tool-status" role="status" aria-live="polite" data-settings-status></div>
 <ul class="settings-errors" data-settings-errors></ul>
 <p class="tool-label" id="settings-output-label">Block for metadata.tex</p>
-<pre class="tool-output settings-output" data-settings-output data-empty="The block appears here." aria-labelledby="settings-output-label" aria-describedby="settings-paste"></pre>
+<pre class="tool-output settings-output" data-settings-output data-empty="The block appears here when the form is complete." aria-labelledby="settings-output-label" aria-describedby="settings-paste"></pre>
 <p class="tool-hint" id="settings-paste">Replace your existing settings and committee lines with this whole block.</p>
 <p class="tool-actions"><button class="button" type="button" data-settings-copy disabled>Copy settings</button></p>
 </div>

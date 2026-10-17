@@ -40,7 +40,12 @@
   };
   document.head.appendChild(tag);
 
-  function say(text) { status.textContent = text; }
+  // The shared states (ToolState in tools-highlight.js); plain text without it.
+  var State = window.ToolState || { set: function (r, s, state, c) {
+    s.textContent = typeof c === "string" ? c : c ? c.title + ". " + c.text : ""; } };
+  function say(text, state) { State.set(root, status, state || "", text); }
+  function fail(title, text, href, link) { State.set(root, status, "error", { title: title, text: text, href: href, link: link }); }
+  var CONVERTS = "#what-it-converts";
   function element(name, className, text) {
     var node = document.createElement(name);
     if (className) node.className = className;
@@ -101,19 +106,28 @@
       say("");
       return;
     }
+    if (text.length > LIMIT) {
+      result = null;
+      show();
+      fail("Too much text at once", "Convert one chapter or section at a time, so the result stays easy to check.", CONVERTS, "What it converts");
+      return;
+    }
     try {
       result = core.convert(pasted || { html: "", text: text }, { chapter: chapter() });
     } catch (error) {
       result = null;
       show();
-      say("This text could not be converted. Try a smaller part of it.");
+      fail("This text could not be converted", "Try a smaller part of it, or do it by hand:", "#without-the-converter", "Without the converter");
       return;
     }
     show();
-    say(result.latex
-      ? "Converted, read as " + result.sourceName + "." +
-        (result.escaped ? " " + result.escaped + " special character" + (result.escaped > 1 ? "s were" : " was") + " given a backslash." : "")
-      : "Nothing to convert was found in what was pasted.");
+    if (!result.latex) {
+      fail("Nothing to convert", "No text was found in what was pasted. Paste the words themselves; pictures go in figures/.", CONVERTS, "What it converts");
+      return;
+    }
+    say("Converted, read as " + result.sourceName + "." +
+        (result.escaped ? " " + result.escaped + " special character" + (result.escaped > 1 ? "s were" : " was") + " given a backslash." : "") +
+        (result.notes.length ? " " + result.notes.length + (result.notes.length > 1 ? " points" : " point") + " to look at below." : ""), "done");
   }
   function later() {
     clearTimeout(timer);
@@ -149,7 +163,7 @@
   input.addEventListener("paste", function (event) {
     if (!event.clipboardData) return;  // the browser pastes plain text itself
     event.preventDefault();
-    if (!take(event.clipboardData)) say("Only text can be converted. Pictures go in figures/; the guide's \"Add a figure\" section shows how.");
+    if (!take(event.clipboardData)) fail("Only text can be converted", "Pictures go in figures/ and are added with a line of LaTeX.", "writing.html#add-a-figure", "Add a figure");
   });
   input.addEventListener("input", function () {
     if (pasted && input.value !== pasted.shown) pasted = null;  // edited: read the box as it is now
@@ -158,34 +172,26 @@
 
   // Dropping text works like pasting it; a dropped file is read only if it is
   // plain text (Markdown, text, or tab-separated cells).
-  ["dragenter", "dragover"].forEach(function (type) {
-    input.addEventListener(type, function (event) {
-      event.preventDefault();
-      root.classList.add("is-over");
-    });
-  });
-  ["dragleave", "drop"].forEach(function (type) {
-    input.addEventListener(type, function () { root.classList.remove("is-over"); });
-  });
-  input.addEventListener("drop", function (event) {
-    event.preventDefault();
+  function dropped(event) {
     var data = event.dataTransfer;
     if (!data) return;
     var file = data.files && data.files[0];
     if (file) {
       if (!/\.(md|markdown|txt|text|tsv|tab)$/i.test(file.name) || file.size > LIMIT || typeof file.text !== "function") {
-        say(file.name + " cannot be read here. Open it, select the text, copy it, and paste it here. Files from Word, Excel, or PowerPoint are not read yet.");
+        fail(file.name + " cannot be read here", "Only Markdown, text, and tab-separated files are read. Open it, select the text, copy it, and paste it here.", CONVERTS, "What it converts");
         return;
       }
       file.text().then(function (text) {
         pasted = null;
         input.value = text;
         run();
-      }, function () { say(file.name + " could not be read."); });
+      }, function () { fail(file.name + " could not be read", "Open it, select the text, copy it, and paste it here.", CONVERTS, "What it converts"); });
       return;
     }
-    if (!take(data)) say("Only text can be converted.");
-  });
+    if (!take(data)) fail("Only text can be converted", "Pictures go in figures/ and are added with a line of LaTeX.", "writing.html#add-a-figure", "Add a figure");
+  }
+  if (State.dropZone) State.dropZone(input, dropped);
+  else input.addEventListener("drop", function (event) { event.preventDefault(); dropped(event); });
 
   Array.prototype.forEach.call(root.querySelectorAll("input[name=convert-start]"), function (radio) {
     radio.addEventListener("change", run);
@@ -221,7 +227,7 @@
   });
   download.addEventListener("click", function () {
     if (!result || !result.latex || !window.Blob || !window.URL || !URL.createObjectURL) {
-      say("This browser cannot save the file. Use Copy instead, and paste into a new file.");
+      fail("This browser cannot save the file", "Use Copy instead, and paste into a new .tex file in chapters/.");
       return;
     }
     var url = URL.createObjectURL(new Blob([result.latex], { type: "application/x-tex" }));

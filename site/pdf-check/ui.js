@@ -24,6 +24,8 @@
   var status = root.querySelector(".pdf-check-status");
   var results = root.querySelector(".pdf-check-results");
   var cancel = root.querySelector(".pdf-check-cancel");
+  var again = root.querySelector(".pdf-check-again");
+  var button = root.querySelector(".tool-file-button");
   var names = root.querySelector("[data-file-names]");
   var current = root.getAttribute("data-version") || "";
   // Links from the page text, so they work on the website and offline.
@@ -50,7 +52,13 @@
   });
   root.hidden = false;
 
-  function say(text) { status.textContent = text; }
+  // The shared states (ToolState in tools-highlight.js); plain text without it.
+  var State = window.ToolState || { set: function (r, s, state, c) {
+    s.textContent = typeof c === "string" ? c : c ? c.title + ". " + c.text : ""; } };
+  function say(text, state) { State.set(root, status, state || "", text, button); }
+  function fail(title, text, href, link) { State.set(root, status, "error", { title: title, text: text, href: href, link: link }); }
+  var submission = pageLink("submission");
+  var checklist = submission ? submission + "#final-pdf-checklist" : "";
 
   // ---------- Loading the checks and the PDF reader -----------------------
   // Loaded once; a load that fails or takes longer than LOAD_LIMIT is given
@@ -140,7 +148,7 @@
     var heading = element("h3", "", "Results for " + name);
     heading.tabIndex = -1;
     results.appendChild(heading);
-    results.appendChild(element("p", "pdf-check-summary", counts(found) + " " + NOT_REVIEW));
+    results.appendChild(element("p", "pdf-check-summary", NOT_REVIEW));
     var list = element("ul", "pdf-check-list");
     list.setAttribute("role", "list");
     found.forEach(function (f) {
@@ -244,6 +252,10 @@
     run++;
     cancel.hidden = true;
   }
+  function finished() {
+    cancel.hidden = true;
+    again.hidden = false;
+  }
   function check(file) {
     if (!file) return;
     stop();
@@ -251,8 +263,10 @@
     results.textContent = "";
     if (names) names.textContent = "Chosen: " + file.name;
     if (!/\.pdf$/i.test(file.name) && file.type !== "application/pdf") {
-      say("That is not a PDF. Choose the PDF your editor made (often main.pdf).");
+      fail("That is not a PDF", file.name + " is not a PDF file. Choose the PDF your editor made, often main.pdf, next to main.tex or under Download PDF on Overleaf.",
+           checklist, "Final PDF checklist");
       input.value = "";
+      finished();
       return;
     }
     var mine = ++run, myJob = job = {};
@@ -263,37 +277,44 @@
       throw error;
     }
     cancel.hidden = false;
-    say("Loading the PDF reader…");
+    again.hidden = true;
+    say("Loading the PDF reader…", "working");
     var name = file.name;
     var tools;
     load().then(function (loaded) {
       latest();
       tools = loaded;
-      say("Reading " + name + "…");
+      say("Reading " + name + "…", "working");
       return file.arrayBuffer();
     }).then(function (bytes) {
       latest();
       return tools.checks.read(tools.pdfjs, new Uint8Array(bytes), function (page, total) {
-        if (mine === run) say("Reading page " + page + " of " + total + "…");
+        if (mine === run) say("Reading page " + page + " of " + total + "…", "working");
       }, myJob);
     }).then(function (data) {
       latest();
       var found = tools.checks.analyse(data, { current: current, rules: oge });
-      say("");
+      say("Checked " + name + ": " + counts(found), "done");
       show(found, name);
     }).catch(function (error) {
       if (mine !== run) return;  // replaced or cancelled: the newer state stays
-      say(error && error.message === "reader"
-        ? (location.protocol === "file:"
-          ? "This browser does not let a page opened from a file start the PDF reader. Open \"Check your PDF\" on the toolkit's website instead (your PDF still stays on your computer), or use the checklist on the Submitting page."
-          : "The PDF reader could not be loaded. Reload the page and try again, or use the checklist on the Submitting page.")
-        : error && error.name === "PasswordException"
-        ? "This PDF is protected with a password. Check a copy without the password."
-        : "This file could not be read as a PDF.");
+      results.textContent = "";
+      if (error && error.message === "reader") {
+        fail("The PDF reader did not start", location.protocol === "file:"
+          ? "This browser does not let a page opened from a file start the PDF reader. Open \"Check your PDF\" on the toolkit's website instead; your PDF still stays on your computer. Or check by eye with the"
+          : "It could not be loaded, perhaps because the connection dropped. Reload the page and try again, or check by eye with the",
+          checklist, "Final PDF checklist");
+      } else if (error && error.name === "PasswordException") {
+        fail("This PDF has a password", name + " is protected, so the checker cannot open it. Check a copy saved without the password, as your editor makes it. More in the",
+             checklist, "Final PDF checklist");
+      } else {
+        fail("This file could not be read as a PDF", name + " may be damaged or only partly saved. Compile again, then choose the new PDF. If it happens again, see",
+             pageLink("troubleshooting") ? pageLink("troubleshooting") + "#clean-recompile" : "", "Clean recompile");
+      }
     }).then(function () {
       if (mine !== run) return;
       job = null;
-      cancel.hidden = true;
+      finished();
       input.value = "";
     });
   }
@@ -305,19 +326,23 @@
     say("Check cancelled. Choose a PDF to start again.");
     input.focus();
   });
+  again.addEventListener("click", function () {
+    stop();
+    removePrintout();
+    results.textContent = "";
+    if (names) names.textContent = "";
+    say("");
+    again.hidden = true;
+    input.focus();
+    input.click();
+  });
+  // While a check runs, the button cannot be pressed again; a dropped PDF still replaces it.
+  drop.addEventListener("click", function (event) {
+    if (button && button.hasAttribute("data-busy")) event.preventDefault();
+  });
 
   input.addEventListener("change", function () { check(input.files[0]); });
-  ["dragenter", "dragover"].forEach(function (type) {
-    drop.addEventListener(type, function (event) {
-      event.preventDefault();
-      drop.classList.add("is-over");
-    });
-  });
-  ["dragleave", "drop"].forEach(function (type) {
-    drop.addEventListener(type, function () { drop.classList.remove("is-over"); });
-  });
-  drop.addEventListener("drop", function (event) {
-    event.preventDefault();
-    check(event.dataTransfer.files[0]);
-  });
+  var onDrop = function (event) { check(event.dataTransfer.files[0]); };
+  if (State.dropZone) State.dropZone(drop, onDrop);
+  else drop.addEventListener("drop", function (event) { event.preventDefault(); onDrop(event); });
 })();

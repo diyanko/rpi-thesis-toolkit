@@ -129,7 +129,14 @@
       if (window.ToolsHighlight) window.ToolsHighlight.render(output, block);  // colored; Copy uses the plain text
       else output.textContent = block;
       copy.disabled = Boolean(result.errors.length);
-      status.textContent = result.errors.length ? "Still to fill in:" : "Looks fine: your block is ready to copy.";
+      // A year that is typed but not four digits is marked on its field, in words in the list too.
+      const year = controls.get("graduation-year");
+      if (year.value && !/^[0-9]{4}$/.test(year.value)) year.setAttribute("aria-invalid", "true");
+      else year.removeAttribute("aria-invalid");
+      status.setAttribute("data-state", result.errors.length ? "" : "done");
+      status.textContent = result.errors.length
+        ? "Still to fill in or fix (" + result.errors.length + "):"
+        : "Looks fine: your block is ready to copy.";
     }
     root.querySelector("[data-settings-add]").addEventListener("click", () => addMember().focus());
     form.addEventListener("submit", event => event.preventDefault());
