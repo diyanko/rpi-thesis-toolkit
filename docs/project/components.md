@@ -87,7 +87,7 @@ A checklist (the boxes can be ticked; nothing is saved):
 
 A quotation:
 
-> A quoted passage, shown with a rule at its left edge and softer text.
+> A quoted passage, indented and in softer italic text, with no rule at its edge.
 
 ## Table
 
@@ -146,6 +146,10 @@ Text inside an open disclosure.
 
 <p class="hero-actions"><a class="button" href="#buttons-and-links">Primary action</a> <a class="button button-secondary" href="#buttons-and-links">Secondary action</a> <a class="button" aria-disabled="true">Disabled</a></p>
 
+Navigation links in the header, the sidebar and the footer share one set of
+states: hover underlines the text, and the current page is the one sage pill.
+No box anywhere carries a colored bar on one edge; status is said in words.
+
 A tertiary text link, used for a secondary route:
 
 <p><a class="text-link" href="#buttons-and-links">A text link<span class="arrow" aria-hidden="true">→</span></a></p>
@@ -160,12 +164,13 @@ Text after a horizontal rule.
 Every tool (Settings builder, Bring your work in, Check your references,
 Explain my error, Check your PDF) follows one pattern, so a new tool reuses
 it instead of adding styles. Tool pages (`PAGE_SCRIPTS` in
-`scripts/build_site.py`) get a wider frame, no right-hand rail, and the
-tool's doodle from the home page before the title. The classes live in section 12 of `site/site.css`.
+`scripts/build_site.py`) keep the same frame as every page, drop the
+right-hand rail so the tool uses the whole main column, and show the tool's
+doodle from the home page before the title. The classes live in section 12 of `site/site.css`.
 
 1. **Purpose:** one or two short sentences under the title.
 2. **Privacy:** `<p class="tool-privacy"><strong>Nothing is uploaded.</strong> ...</p>`,
-   one sentence on what stays in the browser.
+   one sentence on what stays in the browser, drawn like a tip.
 3. **Steps** (optional): three short numbered steps.
 4. **Tool:** `<div class="tool NAME" data-NAME hidden>`; the script removes
    `hidden`. Inside: labels above fields; `.tool-drop` on the main paste area
