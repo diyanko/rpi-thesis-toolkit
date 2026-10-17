@@ -23,7 +23,7 @@ tables, and citations are rebuilt. Markdown needs them checked and mostly
 converted; a LaTeX paper keeps most of them. The title page, contents, lists,
 and page numbers are built for you.
 
-## From Word or Google Docs
+## From Word or Google Docs {#from-word-or-google-docs}
 
 In Google Docs, copy the text, or choose **File → Download → Microsoft
 Word**.
@@ -43,7 +43,7 @@ Word**.
 A long `.docx`? [Pandoc](#convert-a-draft-with-pandoc-optional) can make a
 rough first pass.
 
-## From Markdown
+## From Markdown {#from-markdown}
 
 Markdown marks text with symbols, such as `**bold**` and `## Heading`; LaTeX
 uses commands, such as `\textbf{bold}` and `\section{Heading}`. Most of a
@@ -200,7 +200,7 @@ Paper used `\citep` or `\citet`? Add `natbib=true` to the biblatex options in
 `preamble.tex`, or switch to `\parencite` and `\textcite`. Two papers reuse
 a label such as `fig:results`? Prefix each chapter's labels (`ch3:fig:results`).
 
-## From RPI's official LaTeX template
+## From RPI's official LaTeX template {#from-rpis-official-latex-template}
 
 Your chapters, figures, tables, equations, labels, and citations mostly carry
 over. Copy each old chapter into a new file in `chapters/`, include it from
@@ -227,7 +227,7 @@ over. Copy each old chapter into a new file in `chapters/`, include it from
 Already have a `.bib` file? Copy it in as `references.bib` and
 [choose your style](citations.md#change-the-citation-style).
 
-## Already have a LaTeX thesis? Use just the class
+## Already have a LaTeX thesis? Use just the class {#already-have-a-latex-thesis-use-just-the-class}
 
 Keep your own project and take only the formatting. Put
 [`rpi-thesis.cls`](https://diyanko.github.io/rpi-thesis-toolkit/downloads/rpi-thesis.cls)

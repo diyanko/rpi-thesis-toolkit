@@ -13,7 +13,7 @@ finished draft to approved PDF, and what to double-check along the way.
 > unless you are **proficient in LaTeX**, and its staff review **formatting**
 > but cannot debug LaTeX code.
 
-## The path to graduation
+## The path to graduation {#the-path-to-graduation}
 
 Dates change each term. **Check the current OGE calendar**, and keep your
 advisor and committee informed of the current deadline policy.
@@ -48,7 +48,7 @@ advisor and committee informed of the current deadline policy.
    turnaround times. Revision emails may come from the ProQuest submission
    system rather than from RPI, so check your spam folder.
 
-## What OGE commonly flags
+## What OGE commonly flags {#what-oge-commonly-flags}
 
 The toolkit follows the manual edition recorded in the
 [requirements map](project/requirements.md). Check these areas yourself.
@@ -64,7 +64,7 @@ The toolkit follows the manual edition recorded in the
 | Equations | Numbered `equation` examples, including a multi-line one with a single centered number | {{rule:equations}}. {{rule:unnumbered-displays}}. Long equations broken ({{cite:equations,unnumbered-displays}}) |
 | References | Consistent formatting from one style; references placed before appendices; printed access dates; a hint from the optional build helper for URLs without one | Style agreed with advisor; an access date printed for every URL ({{cite:access-dates}}); non-journal sources checked against the style guide |
 
-## Final PDF checklist
+## Final PDF checklist {#final-pdf-checklist}
 
 Check [what OGE commonly flags](#what-oge-commonly-flags), then complete this list; the optional [Check your PDF](check-pdf.md) page measures a few of these points for you. The ticks are not saved: they reset when you leave the page, so copy the list somewhere if you want to keep your progress.
 
@@ -84,7 +84,7 @@ A successful compile proves only that LaTeX made a PDF. Archive the final
 source, the exact PDF you submitted, and your permission documents in two
 places ([back up your work](going-further.md#back-up-your-work)).
 
-## Official resources
+## Official resources {#official-resources}
 
 Everything official starts from the
 [OGE Submit Your Thesis / Dissertation page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation),

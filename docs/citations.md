@@ -5,7 +5,7 @@ For anyone adding sources to a thesis or dissertation that already compiles
 `references.bib`, cite it with a command such as `\parencite{key}`, and
 LaTeX builds the reference list for you.
 
-## Try the sample citation
+## Try the sample citation {#try-the-sample-citation}
 
 Try it on the source already in the starter. Leave `references.bib` alone.
 The sample uses a numbered style. `\parencite{key}` is the command for a
@@ -33,7 +33,7 @@ then collect them with Zotero or
 `\parencite{key}` in your chapter. When you compile, the bibliography step (a
 program called Biber) turns that into [1] and a full reference-list entry.
 
-## Step 1: Agree on a style with your advisor
+## Step 1: Agree on a style with your advisor {#step-1-agree-on-a-style-with-your-advisor}
 
 Fields differ: the humanities often use Chicago or MLA, the social sciences
 APA, and engineering IEEE. The sample's numbered style only shows citations
@@ -42,7 +42,7 @@ working; it is **not** a department's style. RPI's citation guidance is under
 [OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation).
 Use one style throughout ([change the citation style](#change-the-citation-style)).
 
-## Step 2: Collect and cite sources with Zotero
+## Step 2: Collect and cite sources with Zotero {#step-2-collect-and-cite-sources-with-zotero}
 
 This guide suggests [Zotero](https://www.zotero.org/), a free citation
 manager that keeps your papers together and shares libraries with co-authors.
@@ -82,7 +82,7 @@ or the key is not in the file
 ([bold keys](how-it-works.md#bold-citation-keys-and-question-marks)). The
 style chosen inside Zotero does not affect your PDF.
 
-### Where Zotero keeps your library
+### Where Zotero keeps your library {#where-zotero-keeps-your-library}
 
 **Never put the Zotero data folder in OneDrive, Dropbox, iCloud, or Google
 Drive**; it can corrupt the database ([Zotero: syncing](https://www.zotero.org/support/sync)).
@@ -118,7 +118,7 @@ Use Zotero sync plus your [computer backup](going-further.md#back-up-your-work).
 
 </details>
 
-## If you can't use Zotero: paste an entry by hand
+## If you can't use Zotero: paste an entry by hand {#if-you-cant-use-zotero-paste-an-entry-by-hand}
 
 Paste a BibTeX entry from the publisher, a library database, or Google
 Scholar. They are often slightly wrong, so check each one.
@@ -155,7 +155,7 @@ Only have a messy reference? An AI chat can turn it into a BibTeX entry.
 Then compare every field with the source, and paste only published
 references, never confidential material.
 
-## Web sources need an access date
+## Web sources need an access date {#web-sources-need-an-access-date}
 
 OGE requires an **access date for every reference with a URL**, even if your
 style would normally leave it out. Add `urldate` with the date *you* read it
@@ -179,7 +179,7 @@ Check that the date **prints** in your PDF; some styles hide it. The optional
 [build helper](going-further.md#build-commands) flags any `url` without a
 `urldate`. DOIs need no access date.
 
-## Change the citation style
+## Change the citation style {#change-the-citation-style}
 
 Four parts work together: the **class** sets the page layout, **biblatex**
 provides the citation commands, the **style** decides what they print, and
@@ -228,7 +228,7 @@ classic BibTeX with `natbib` has the matching commands `\citep` (like
 `\parencite`) and `\citet` (like `\textcite`); see
 [turn a chapter into a paper](going-further.md#turn-a-chapter-into-a-paper).
 
-### Print a full reference in the text
+### Print a full reference in the text {#print-a-full-reference-in-the-text}
 
 [Chapter attribution](writing.md#chapters-based-on-published-papers) and
 [reproduced figure captions](writing.md#reproduced-figures-and-permissions)
@@ -293,7 +293,7 @@ Citation managers handle journal articles well but are far less reliable for
 **websites, reports, theses, datasets, software, standards, and archival
 sources**. Compare every reference in the PDF with your style guide.
 
-### Numbered styles: check delayed figures and tables
+### Numbered styles: check delayed figures and tables {#numbered-styles-check-delayed-figures-and-tables}
 
 In a style numbered in order of first citation (such as IEEE, or the
 sample), OGE's formatting checklist expects reference 1 to be the first
@@ -317,7 +317,7 @@ alphabetical reference list (OGE manual §3.3), and author–year styles have no
 numbers. Use the style you agreed with your advisor
 ([step 1](#step-1-agree-on-a-style-with-your-advisor)).
 
-## If co-authors use Word
+## If co-authors use Word {#if-co-authors-use-word}
 
 A Zotero group library lets Word users (with the
 [Word plugin](https://www.zotero.org/support/word_processor_integration)) cite
