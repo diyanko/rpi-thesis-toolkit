@@ -32,7 +32,7 @@ advisor and committee informed of the current deadline policy.
 6. **Complete signatures and paperwork** as in OGE's current checklist for your
    degree. If a chapter reuses a paper you wrote **with co-authors**, this
    includes the **Declaration of Co-Contribution**. A paper you wrote alone
-   needs its chapter attribution (manual §2.8.1; see
+   needs its chapter attribution (manual {{cite:attribution-reuse}}; see
    [chapters based on published papers](writing.md#chapters-based-on-published-papers)).
    <!-- TODO(verify): requirements.md records that the manual's treatment of a sole-authored paper that is submitted but not yet published is unresolved. -->
    **Unresolved case:** if your sole-authored paper is *submitted or in review
@@ -56,13 +56,13 @@ The toolkit follows the manual edition recorded in the
 | Area | What the toolkit handles for you | What you still check |
 | --- | --- | --- |
 | Title page | Layout, capitalized title, degree wording, committee list, space for the seal, bracketed graduation date | Exact names, degree, department, month and year; the seal downloaded from RPI and saved as `assets/rpi-seal.jpg`, with no placeholder box left ([add the RPI seal](get-started.md#add-the-rpi-seal-one-minute)) |
-| Margins and page numbers | One-inch margins, letter paper, Roman numerals in front matter, Arabic from chapter 1; numbers 0.75 in from the edge, bottom center on front-matter and opening pages, top right elsewhere | Nothing extends into the margins (wide tables, images, long URLs, landscape pages) |
+| Margins and page numbers | {{rule:page-size}}. {{rule:front-roman}}. {{rule:body-arabic}}. {{rule:page-number-position}} ({{cite:page-size,front-roman,body-arabic,page-number-position}}) | Nothing extends into the margins (wide tables, images, long URLs, landscape pages) |
 | Contents and lists | Automatic contents, list of tables, and list of figures using your full captions, with aligned page numbers and room for numbers like 12.10 | Chapter and appendix titles in capitals; consistent section and caption capitalization (OGE asks for one consistent case; the starter's capitals for chapter titles are only its convention); no short captions; each list switched on only if you have that kind of object |
 | Captions | Bold, single-spaced captions, with examples that put table captions above and figure captions below | You place each `\caption` (table above, figure below); every figure and table has one, and it is mentioned in the text |
-| Attributions and co-contribution | A `\chapterattribution{...}` command that prints an unnumbered note on the chapter's first page | Exact wording from the current OGE manual; the citation in your reference style (`\fullcite{key}` does this); an attribution for every reused paper, including ones you wrote alone; every co-authored one listed on the Declaration of Co-Contribution |
+| Attributions and co-contribution | A `\chapterattribution{...}` command that prints an unnumbered note on the chapter's first page | Exact wording from the current OGE manual ({{cite:attribution}}); the citation in your reference style (`\fullcite{key}` does this); an attribution for every reused paper, including ones you wrote alone; every co-authored one listed on the Declaration of Co-Contribution |
 | Reproduced figures and tables | A caption example and wording for material used with permission or under a Creative Commons license | Permission or license for each item; credit in the caption; permissions documents as OGE instructs |
-| Equations | Numbered `equation` examples, including a multi-line one with a single centered number | Every displayed equation numbered, number on the same line, long equations broken |
-| References | Consistent formatting from one style; references placed before appendices; printed access dates; a hint from the optional build helper for URLs without one | Style agreed with advisor; an access date printed for every URL; non-journal sources checked against the style guide |
+| Equations | Numbered `equation` examples, including a multi-line one with a single centered number | Every displayed equation numbered, number on the same line, long equations broken ({{cite:equations}}) |
+| References | Consistent formatting from one style; references placed before appendices; printed access dates; a hint from the optional build helper for URLs without one | Style agreed with advisor; an access date printed for every URL ({{cite:access-dates}}); non-journal sources checked against the style guide |
 
 ## Final PDF checklist
 
