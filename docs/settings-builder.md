@@ -50,5 +50,22 @@ must be marked `Chair` or `Co-Chair`:
 ```
 
 There is no fixed committee size. Check the title page when names or titles
-are long. Download the seal separately using
-[Add the RPI seal](get-started.md#add-the-rpi-seal-one-minute).
+are long.
+
+## Add the seal
+
+Download the seal from RPI using
+[Add the RPI seal](get-started.md#add-the-rpi-seal-one-minute), then put it in
+your project's `assets` folder. The seal is not included in the toolkit.
+
+The usual name is `rpi-seal.jpg` (or `rpi-seal.png` for a PNG). If your file
+has a different name or extension, keep it: select **Use the downloaded seal's
+filename** in the form. It fills in the location, for example
+`assets/RPI seal (1).jpeg`. This only copies the filename; it does not upload
+or move the image. Copy the updated settings block, then compile again.
+
+Without JavaScript, set `seal-file` in `metadata.tex` to the file's actual
+location, for example `seal-file = {assets/RPI seal (1).jpeg},`. Keep the
+extension that came with the image; changing `.png` to `.jpg` does not
+convert it. Until the file is in that location, the title page shows a box
+naming the missing file.

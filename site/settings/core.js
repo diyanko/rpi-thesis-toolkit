@@ -48,21 +48,34 @@ export function escapeText(text) {
 }
 
 function escapePath(text) {
-  return text.replace(/[\\{}%#$&_^~]/g, char =>
+  return text.replace(/[{}%#^~]/g, char =>
     `\\csname char_generate:nn\\endcsname{${char.codePointAt(0)}}{12}`).replace(/[\r\n\t]/g, " ");
 }
 
 export function generate(settings, committee, schema) {
   const errors = validate(settings, committee, schema);
   if (errors.length) return {errors, text: ""};
+  const path = settings["seal-file"]?.replace(/\\/g, "/");
+  const encodedPath = path === undefined ? undefined : escapePath(path);
+  const expandPath = path !== encodedPath;
   const lines = Object.keys(schema.keys).filter(key => key in settings).map(key => {
-    // Paths are literal filenames rather than printed text.
-    const value = key === "seal-file" ? escapePath(settings[key]) : escapeText(settings[key]);
-    return `  ${key} = {${value}},`;
+    const value = key === "seal-file" ? encodedPath : escapeText(settings[key]);
+    return [key, `  ${key} = {${value}},`];
   });
+  let setup;
+  if (expandPath) {
+    // Expand only filename character escapes before the class stores the path.
+    // Keep printed text untouched. The missing-file box then sees the actual
+    // filename too, rather than the commands used to produce its characters.
+    const text = lines.filter(([key]) => key !== "seal-file").map(([, line]) => line).join("\n");
+    const seal = lines.find(([key]) => key === "seal-file")[1];
+    setup = `\\expanded{\\noexpand\\thesissetup{\n\\unexpanded{\n${text}\n}\n${seal}\n}}`;
+  } else {
+    setup = `\\thesissetup{\n${lines.map(([, line]) => line).join("\n")}\n}`;
+  }
   const chairs = committee.filter(member => schema.chairRoles.includes(member.role));
   const others = committee.filter(member => !schema.chairRoles.includes(member.role));
   const members = [...chairs, ...others].map(member =>
     `\\committeemember${member.role ? `[${escapeText(member.role).replace(/[\[\]]/g, char => `{${char}}`)}]` : ""}{${escapeText(member.name)}}`);
-  return {errors: [], text: `\\thesissetup{\n${lines.join("\n")}\n}\n\n${members.join("\n")}\n`};
+  return {errors: [], text: `${setup}\n\n${members.join("\n")}\n`};
 }
