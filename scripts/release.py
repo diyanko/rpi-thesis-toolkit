@@ -376,7 +376,7 @@ def remote_digest(asset):
     return digest[len("sha256:"):]
 
 
-def publish(net, cfg, gh, *, tag, sha, files, notes_text, log=print):
+def publish(net, cfg, gh, *, tag, sha, files, notes_text, log=print, sleep=time.sleep):
     """Create the release for tag or resume one. files: {name: bytes} built here.
     gh(args) runs a gh command."""
     commit = tag_commit(net, cfg, tag)
@@ -398,8 +398,13 @@ def publish(net, cfg, gh, *, tag, sha, files, notes_text, log=print):
             log(f"Creating pre-release {tag} with {', '.join(files)}")
             gh(["release", "create", tag, "--repo", cfg.slug, "--prerelease", "--title", tag,
                 "--notes-file", str(notes), "--verify-tag", *[str(p) for p in paths.values()]])
-            release = find_release(net, cfg, tag)
-            if release is None:
+            # GitHub's API can take a few seconds to list a release it just made.
+            for wait in (0, 2, 4, 8, 16):
+                sleep(wait)
+                release = find_release(net, cfg, tag)
+                if release is not None:
+                    break
+            else:
                 raise ReleaseError(f"gh release create finished but release {tag} is not visible")
         else:
             log(f"Release {tag} exists (draft: {bool(release.get('draft'))}); checking its assets")
