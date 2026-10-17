@@ -18,6 +18,11 @@ What it does:
     at 390 px. Image loading is checked in light and dark mode.
   * With --shots, saves PNG screenshots (390 and 1280 px, light and dark) to
     _local/shots/<timestamp>/ (ignored by git).
+  * With --baseline save, also copies that set to _local/shots/baseline/.
+    With --baseline compare, takes shots and lists the pages, widths and
+    themes whose image differs from the baseline (informational; exit status
+    is not affected). Images are compared by inflated PNG data, so a changed
+    compression level does not count as a change.
 
 Output: one "FAIL page width: issue" line per problem, a summary line, and
 JSON details in build/verify/ui_check.json. Exit status is 1 on any problem.
@@ -40,6 +45,7 @@ import sys
 import tempfile
 import threading
 import time
+import zlib
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -313,14 +319,68 @@ def take_shot(chrome: str, port: int, page: str, width: int, dark: bool, dest: P
     return None
 
 
+def png_data(path: Path) -> bytes:
+    """Inflated pixel stream (filtered scanlines) of a PNG, else the raw bytes."""
+    raw = path.read_bytes()
+    try:
+        pos, idat = 8, []
+        while pos < len(raw):
+            n = int.from_bytes(raw[pos:pos + 4], "big")
+            if raw[pos + 4:pos + 8] == b"IDAT":
+                idat.append(raw[pos + 8:pos + 8 + n])
+            pos += 12 + n
+        return zlib.decompress(b"".join(idat))
+    except (zlib.error, ValueError):
+        return raw
+
+
+def save_baseline(shots: Path, base: Path, errors: list[str]) -> bool:
+    """Make shots the baseline only when every shot was taken; else keep the old one."""
+    if errors or not any(shots.glob("*.png")):
+        return False
+    fresh = base.with_name(".baseline-new")
+    old = base.with_name(".baseline-old")
+    for leftover in (fresh, old):
+        shutil.rmtree(leftover, ignore_errors=True)
+    shutil.copytree(shots, fresh)
+    if base.exists():
+        base.rename(old)
+    fresh.rename(base)
+    shutil.rmtree(old, ignore_errors=True)
+    return True
+
+
+def compare_shots(new: Path, base: Path) -> list[str]:
+    changed = []
+    for png in sorted(new.glob("*.png")):
+        old = base / png.name
+        if not old.exists():
+            changed.append(f"{png.stem}: new (no baseline)")
+        elif png_data(png) != png_data(old):
+            changed.append(f"{png.stem}: changed")
+    for old in sorted(base.glob("*.png")):
+        if not (new / old.name).exists():
+            changed.append(f"{old.stem}: missing now")
+    return changed
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Visual/layout checks for the generated site.")
     ap.add_argument("--site", default="dist/site", help="built site folder (default dist/site)")
     ap.add_argument("--shots", action="store_true", help="save screenshots under _local/shots/")
+    ap.add_argument("--baseline", choices=["save", "compare"],
+                    help="save: keep this shots set as _local/shots/baseline/; "
+                         "compare: list shots that differ from it")
     ap.add_argument("--pages", nargs="+", metavar="PAT",
                     help="only pages whose path matches (glob or substring)")
     ap.add_argument("--quick", action="store_true", help="only widths 390 and 1280")
     args = ap.parse_args()
+    if args.baseline:
+        args.shots = True
+    baseline_dir = ROOT / "_local" / "shots" / "baseline"
+    if args.baseline == "compare" and not any(baseline_dir.glob("*.png")):
+        print("ui_check: no baseline; run with --baseline save first", file=sys.stderr)
+        return 1
 
     chrome = find_chrome()
     if not chrome:
@@ -401,6 +461,16 @@ def main() -> int:
     print(f"ui_check: {len(pages)} pages x {len(widths)} widths, {total} problems ({secs:.0f}s)")
     if args.shots and shot_dir:
         print(f"screenshots: {shot_dir.relative_to(ROOT)}")
+        if args.baseline == "save":
+            if save_baseline(shot_dir, baseline_dir, errors):
+                print(f"baseline saved: {baseline_dir.relative_to(ROOT)}")
+            else:
+                print("baseline NOT saved: some screenshots failed; the old baseline is kept")
+        elif args.baseline == "compare":
+            diffs = compare_shots(shot_dir, baseline_dir)
+            for d in diffs:
+                print(f"CHANGED {d}")
+            print(f"baseline: {len(diffs)} of {len(list(shot_dir.glob('*.png')))} shots differ")
 
     out = ROOT / "build" / "verify" / "ui_check.json"
     out.parent.mkdir(parents=True, exist_ok=True)
