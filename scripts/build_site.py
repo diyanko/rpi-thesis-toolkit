@@ -115,7 +115,7 @@ PROJECT = {
     "docs/project/attribution.md": ("attribution", None),
     "docs/project/components.md": ("components", None),   # design review: every component on one page
 }
-# Footer "Ask for help" and "Suggest a change" links: the one place the help/feedback form URL lives.
+# Footer "Ask for help or suggest a change" link: the one place the help/feedback form URL lives.
 FEEDBACK = ("docs/troubleshooting.md", "Ask for help")
 # Scripts that only one guide page loads: page -> script.
 PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js", "bring-your-work-in": "convert/ui.js",
