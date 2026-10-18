@@ -342,6 +342,43 @@ class Browser(unittest.TestCase):
         self.assertEqual(result["name"], "")
         self.assertEqual(result["shown"], "none")
 
+    def test_seal_name_with_special_characters_round_trips(self):
+        found = self.browser.evaluate(f"""(async () => {{
+          const core = await import('../settings/core.js'), schema = (await import('../settings/data.js')).default;
+          const settings = {{...{json.dumps(VALID)}, "seal-file": "assets/Seal#1.jpg"}};
+          const made = core.generate(settings, {json.dumps(COMMITTEE)}, schema);
+          return core.readMetadata(made.text, schema);
+        }})()""")
+        self.assertEqual(found["settings"]["seal-file"], "assets/Seal#1.jpg")
+        self.assertEqual(found["settings"]["title"], VALID["title"])
+        self.assertEqual(found["skipped"], [])
+
+    def test_load_never_drops_what_it_cannot_read(self):
+        self.browser.open(self.server.url + "/guide/settings-builder.html?keep")
+        self.wait_for_form()
+        odd = json.dumps("\\thesissetup{ title = {T}, degree-name = {M\\'{a}ster} }"
+                         " \\committeemember[Chair]{Ann} \\committeemember{Jos\\'{e} X}")
+        none = json.dumps("\\thesissetup{ title = {T} }")
+        result = self.browser.evaluate("""(async () => {
+          const input = document.getElementById('settings-load');
+          const load = async text => {
+            const data = new DataTransfer(), note = document.querySelector('[data-settings-loaded]');
+            note.textContent = '';
+            data.items.add(new File([text], 'metadata.tex'));
+            input.files = data.files; input.dispatchEvent(new Event('change', {bubbles: true}));
+            for (let i = 0; i < 50 && !note.textContent; i++) await new Promise(r => setTimeout(r, 20));
+            const rows = [...document.querySelectorAll('.settings-member [data-member-name]')].map(i => i.value);
+            return {rows, copy: document.querySelector('[data-settings-copy]').disabled,
+                    errors: document.querySelector('[data-settings-errors]').textContent};
+          };
+          return {odd: await load(ODD), none: await load(NONE)};
+        })()""".replace("ODD", odd).replace("NONE", none))
+        self.assertEqual(result["odd"]["rows"], ["Ann", ""])
+        self.assertIn("Other degree name (optional): your file uses LaTeX", result["odd"]["errors"])
+        self.assertTrue(result["odd"]["copy"])
+        self.assertEqual(result["none"]["rows"], [""])
+        self.assertTrue(result["none"]["copy"])
+
     def test_load_file_sketch_switch_and_download(self):
         self.browser.open(self.server.url + "/guide/settings-builder.html?load")
         self.wait_for_form()

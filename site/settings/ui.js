@@ -35,6 +35,7 @@
       .replace(/^Blank committee member name in metadata\.tex$/, "A committee member has no name")
       .replace(/ in metadata\.tex/g, "");
     const controls = new Map();
+    let held = new Set();   // optional settings an import could not read (see fill)
     // A short hint under the field it is about, instead of notes above the form.
     const link = (text, href) => { const a = document.createElement("a"); a.textContent = text; a.href = href; return a; };
     const HINTS = {
@@ -261,6 +262,7 @@
       sketch(settings, [...committee.filter(m => schema.chairRoles.includes(m.role)),
                         ...committee.filter(m => !schema.chairRoles.includes(m.role))]);
       const result = generate(settings, committee, schema);
+      for (const key of held) result.errors.push(`${labels[key] || key}: your file uses LaTeX here that the form cannot keep; edit that line in your file instead`);
       errors.replaceChildren();
       // An empty field gets one line, "still empty", not also a format error;
       // the empty fields share that line.
@@ -316,16 +318,18 @@
         if (control.type === "checkbox") control.checked = value === "true";
         else control.value = value;
       }
-      if (found.committee.length) {
-        members.querySelectorAll(".settings-member").forEach(row => row.remove());
-        for (const member of found.committee) addMember(member.role).value = member.name;
-      }
+      // The committee always comes from the file: with no lines there, one empty chair row.
+      members.querySelectorAll(".settings-member").forEach(row => row.remove());
+      for (const member of found.committee) addMember(member.role).value = member.name;
+      if (!found.committee.length) addMember(schema.chairRoles[0]);
+      // An optional setting the form could not read would vanish from the block: hold the copy back.
+      held = new Set(found.skipped.filter(key => controls.has(key) && !schema.required.includes(key)));
       update();
       const count = Object.keys(found.settings).length;
       const parts = ["Filled in from " + name + ": " + count + (count === 1 ? " setting" : " settings") + " and " +
         found.committee.length + (found.committee.length === 1 ? " committee member." : " committee members.")];
-      if (found.skipped.length) parts.push("Not filled in, because they use LaTeX commands: " +
-        [...new Set(found.skipped)].join(", ") + ". Keep those lines from your file.");
+      if (found.skipped.length) parts.push("Left empty, because they use LaTeX the form cannot keep: " +
+        [...new Set(found.skipped)].join(", ") + ". Fill them in here, or edit those lines in your file instead of copying this block.");
       if (found.unknown.length) parts.push("Not settings of this class: " + found.unknown.join(", ") + ".");
       loaded.textContent = parts.join(" ");
     };
@@ -354,7 +358,7 @@
       status.textContent = "Downloaded metadata.tex. Put it in your thesis folder in place of the old one.";
     });
     form.addEventListener("submit", event => event.preventDefault());
-    form.addEventListener("input", update);
+    form.addEventListener("input", event => { for (const [key, control] of controls) if (control === event.target) held.delete(key); update(); });
     form.addEventListener("change", update);
     copy.addEventListener("click", async () => {
       const text = block;

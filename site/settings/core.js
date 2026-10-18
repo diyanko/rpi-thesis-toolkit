@@ -110,7 +110,8 @@ function braceGroup(text, start) {
 }
 
 function plainValue(value) {
-  let text = value.trim();
+  // The form's own way of writing a filename character such as # (escapePath).
+  let text = value.trim().replace(/\\csname char_generate:nn\\endcsname\{(\d+)\}\{12\}/g, (_, code) => String.fromCharCode(Number(code)));
   while (text.startsWith("{") && braceGroup(text, 0)?.[1] === text.length) text = text.slice(1, -1).trim();
   // The form's own escapes become characters; any other command means "not plain".
   const marks = ["\u0001", "\u0002", "\u0003"];
@@ -132,7 +133,13 @@ export function readMetadata(source, schema) {
     // Split at commas outside braces.
     const parts = [];
     let depth = 0, from = 0;
-    const body = group[0];
+    let body = group[0];
+    // A block the form wrote for an unusual seal filename wraps the text settings in \unexpanded{...}.
+    const wrapped = body.indexOf("\\unexpanded");
+    if (wrapped >= 0) {
+      const inner = braceGroup(body, body.indexOf("{", wrapped));
+      if (inner) body = body.slice(0, wrapped) + inner[0] + "," + body.slice(inner[1]);
+    }
     for (let i = 0; i < body.length; i++) {
       if (body[i] === "\\") { i++; continue; }
       if (body[i] === "{") depth++;
@@ -157,8 +164,11 @@ export function readMetadata(source, schema) {
     const name = braceGroup(text, member.lastIndex);
     if (!name) continue;
     const plainName = plainValue("{" + name[0] + "}"), plainRole = plainValue(match[1] || "");
-    if (plainName === null || plainRole === null) found.skipped.push("committee member");
-    else found.committee.push({name: plainName, role: plainRole});
+    // A name the form cannot keep stays as an empty row to fill in, never dropped.
+    if (plainName === null || plainRole === null) {
+      found.skipped.push("committee member");
+      found.committee.push({name: "", role: plainRole ?? "", unreadable: true});
+    } else found.committee.push({name: plainName, role: plainRole});
     member.lastIndex = name[1];
   }
   found.ok = Boolean(group) || found.committee.length > 0;
