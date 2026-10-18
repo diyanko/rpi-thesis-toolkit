@@ -1008,6 +1008,8 @@ class Site:
                 body = search_disclosures(body)
                 self.search.extend(SearchSections(body, here, title).entries)
                 body, toc = self.page_top(body, Path(source).stem)
+            elif kind == "project":   # long reference pages (change log, requirements map) get the same list
+                body, toc = self.page_top(body, Path(source).stem)
 
         def item(path, label, name=None):
             entry = {"href": self.relative(here, path), "label": escape(label)}
@@ -1111,6 +1113,8 @@ class Site:
                 values["toc"] = toc
             if Path(source).stem in PAGE_SCRIPTS and (not self.offline or Path(source).stem in OFFLINE_SCRIPTS):
                 values["page_script"] = PAGE_SCRIPTS[Path(source).stem]
+        if kind == "project" and toc:   # long reference pages: the same "On this page" list
+            values["toc"] = toc
         if kind == "notfound":
             values["notfound"] = True
         else:  # every indexed page needs its own title and description

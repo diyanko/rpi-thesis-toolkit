@@ -345,6 +345,9 @@ kbd {
 }
 mark { background: var(--butter-wash); color: inherit; border-radius: 4px; padding: 0 2px; }
 ::selection { background: var(--select); color: var(--ink); }
+/* One scrollbar look everywhere (it inherits): the page, text boxes, tool
+   output, code and tables, in the theme's colors. */
+:root { scrollbar-color: var(--line-strong) transparent; }
 
 /* A single solid underline stays clear on wrapped links and in Safari.
    Keep the sketch treatment on illustrations rather than changing link geometry. */
@@ -438,7 +441,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .appearance-menu .theme-icon { flex: none; width: 20px; height: 20px; color: var(--ink-soft); }
 .appearance-menu button { min-height: 48px; }
 .appearance-menu button:hover { background: var(--paper-2); }
-.appearance-menu button[aria-pressed="true"] { background: var(--blue-wash); font-weight: 700; }
+.appearance-menu button[aria-pressed="true"] { background: var(--sage-wash); font-weight: 700; }   /* selected: the one sage, as for the current page */
 .appearance-menu button:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
 .unofficial-tag {   /* "not an RPI resource", said calmly next to the name */
   display: inline-block;
@@ -1407,7 +1410,6 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
     radial-gradient(farthest-side at 100% 50%, var(--scroll-hint), transparent) right / 12px 100% no-repeat scroll,
     var(--fill);
   scrollbar-width: thin;
-  scrollbar-color: var(--line-strong) transparent;
 }
 :is(.guide-content pre, .table-wrap)::-webkit-scrollbar { height: 8px; }
 :is(.guide-content pre, .table-wrap)::-webkit-scrollbar-track { background: transparent; }
@@ -1789,7 +1791,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .class-demo > label + input + label { border-left-width: 0; border-radius: 0 10px 10px 0; }
 .class-demo > label:first-of-type { border-radius: 10px 0 0 10px; }
 .class-demo > label:hover { background: var(--paper-2); }
-.class-demo > input:checked + label { background: var(--blue-wash); font-weight: 700; }
+.class-demo > input:checked + label { background: var(--sage-wash); font-weight: 700; }
 @media (max-width: 400px) { .class-demo { padding: 12px; } }
 .class-demo > input:focus-visible + label { outline: 3px solid var(--focus); outline-offset: 2px; position: relative; z-index: 1; }
 .class-demo-panels { grid-column: 1 / -1; min-width: 0; margin-top: 8px; }
@@ -2227,7 +2229,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .convert-view > label:first-of-type { border-radius: 10px 0 0 10px; }
 .convert-view > label:last-of-type { border-left-width: 0; border-radius: 0 10px 10px 0; }
 .convert-view > label:hover { background: var(--paper-2); }
-.convert-view > input:checked + label { background: var(--blue-wash); font-weight: 700; }
+.convert-view > input:checked + label { background: var(--sage-wash); font-weight: 700; }
 .convert-view > input:focus-visible + label { outline: 3px solid var(--focus); outline-offset: 2px; position: relative; z-index: 1; }
 .tool .convert-input, .guide-content .tool .convert-output, .guide-content .tool .convert-preview { height: 22rem; }
 .guide-content .tool-output:empty::before, .convert-preview:empty::before { content: attr(data-empty); font-family: var(--font-body); color: var(--muted); }
