@@ -28,8 +28,10 @@ steps from [Read an error message](troubleshooting.md#read-an-error-message).
 ## Messages this page knows
 
 The same table is used by the optional
-[build helper](going-further.md#build-commands), so both give the same advice.
-More messages and fixes are in [common messages](troubleshooting.md#common-messages).
+[build helper](going-further.md#build-commands) and by
+[common messages](troubleshooting.md#common-messages), so all three give the
+same advice. Common messages also covers problems that show no message, such
+as a figure that moves to another page.
 
 <div class="explain-known" data-explain-known></div>
 

@@ -428,7 +428,7 @@ def case_missing_math_font(proj, work):
     check("U+2605" in _missing_chars(log), "the test did not actually lose the fallback glyph")
     check("Some characters are missing from your PDF (U+2605)" in out,
           "the helper did not surface the missing character: " + tail(out))
-    check("STIX Two Math font not found: some mathematical symbols may be blank" in out,
+    check("could not find a fallback math font" in out,
           "the helper did not explain the missing font: " + tail(out))
 
 
@@ -1099,7 +1099,7 @@ def case_build_undefined(proj, work):
            "\nUnknown \\parencite{nosuchkey} and \\ref{sec:nosuchlabel}.\n")
     code, out = run([sys.executable, "scripts/build.py"], proj, work)
     check(code == 0, "build.py exited %d: %s" % (code, tail(out)))
-    check("A citation or cross-reference is undefined" in out and "troubleshooting" in out,
+    check("A citation or cross-reference is not known yet" in out and "how-it-works" in out,
           "no hint for the undefined citation and reference: " + tail(out))
 
 

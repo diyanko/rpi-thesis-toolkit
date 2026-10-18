@@ -77,7 +77,7 @@
     [/^(hyperlinks?|hyperref|link colou?rs?)$/, ["Where customizations belong"]],
     [/^signatures?( page| pages| form| forms)?$/, ["The path to graduation", "Official resources"]],
     [/^(mendeley|endnote|jabref|reference manager)( export)?$/, ["If you can't use Zotero: paste an entry by hand", "Step 2: Collect and cite sources with Zotero"]],
-    [/^(bibliography|references|reference list|bib|refs) (missing|empty)$/, ["The reference list is empty", "A citation key in bold"], "troubleshooting"],
+    [/^(bibliography|references|reference list|bib|refs) (missing|empty)$/, ["The reference list is empty", "Citation `...' undefined, or Reference `...' undefined, or ?? or a bold citation key in the PDF"], "troubleshooting"],
     [/^(abstract|acknowledg[em]+ents?|front matter)$/, ["What each file does", "Optional sections"]],
     [/^appendi(x|ces)$/, ["What each file does", "Optional sections"]],
     [/^(main tex|file structure|files)$/, ["What each file does"]],
@@ -99,13 +99,13 @@
   // Pasted compiler warnings whose wording differs from the guide's row
   // names. The third item says the row answers that message directly.
   var logRoutes = [
-    [/\bcitation\b.*\bundefined\b|\bundefined citations\b/i, ["A citation key in bold", "Bold citation keys and question marks"], true],
+    [/\bcitation\b.*\bundefined\b|\bundefined citations\b/i, ["Citation `...' undefined, or Reference `...' undefined, or ?? or a bold citation key in the PDF", "Bold citation keys and question marks"], true],
     [/\bempty bibliography\b/i, ["The reference list is empty"], true],
     [/\breference\b.*\bundefined\b|\bundefined references\b|\blabel\(?s\)? may have changed\b|\brerun to get cross-references\b/i,
-      ["?? instead of a number", "Cross-references"], true],
-    [/\blabel\b.*\bmultiply[- ]defined\b|\bmultiply-defined labels\b/i, ["Cross-references", "?? instead of a number"], false],
+      ["Citation `...' undefined, or Reference `...' undefined, or ?? or a bold citation key in the PDF", "Cross-references"], true],
+    [/\blabel\b.*\bmultiply[- ]defined\b|\bmultiply-defined labels\b/i, ["Cross-references", "Citation `...' undefined, or Reference `...' undefined, or ?? or a bold citation key in the PDF"], false],
     [/\bfile\b.*\.(?:png|jpe?g|pdf|eps|svg|tiff?)\b.*\bnot found\b|\bpdftex\.def error\b.*\bnot found\b|\bcannot determine size of graphic\b/i,
-      ["A figure file cannot be found", "Add a figure"], true],
+      ["LaTeX Error: File `figures/...' not found", "Add a figure"], true],
     [/\bunknown graphics extension\b/i, ["Export a chart or convert an image", "Add a figure"], true],
     [/\benvironment sideways(?:table|figure) undefined\b/i, ["Too wide for the page?"], true]
   ];
