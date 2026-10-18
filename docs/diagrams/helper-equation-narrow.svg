@@ -2,13 +2,13 @@
   <title id="t">From a handwritten equation to a numbered one</title>
   <desc id="d">Illustrative example. You supply an equation written by hand or clicked together in an equation editor: x equals minus b plus or minus the square root of b squared minus 4ac, all over 2a. An equation editor, or an AI assistant that accepts images, gives LaTeX that goes between \begin{equation} and \end{equation}, with no dollar signs inside: x = \frac{-b \pm \sqrt{b^2-4ac}}{2a}. Paste it into your chapter. The PDF shows the typeset fraction with its number, (2.3), at the right margin.</desc>
   <style>
-    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
-      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
-      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    svg { --bg: #faf5ea; --card: #fffcf5; --ink: #2d2620; --muted: #625547;
+      --terra: #a24a24; --sage: #4a6b42; --plum: #70466a; --blue: #24518c; --red: #c8102e;
+      --terra-w: #f6dfcd; --sage-w: #e4ecd2; --plum-w: #f1e0ea; --blue-w: #e0e6ef; --butter-w: #f7e8b3; }
     @media (prefers-color-scheme: dark) {
-      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
-        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
-        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+      svg { --bg: #181614; --card: #27231e; --ink: #f2ece2; --muted: #b9ae9d;
+        --terra: #f6a57f; --sage: #a6d49a; --plum: #e0b6dc; --blue: #a2c8fb; --red: #ff8d98;
+        --terra-w: #3b2418; --sage-w: #21321f; --plum-w: #34233a; --blue-w: #1d2c43; --butter-w: #3a3118; }
     }
     .bg { fill: var(--bg); }
     .card { fill: var(--card); }

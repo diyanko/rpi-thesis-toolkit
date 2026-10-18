@@ -8,12 +8,12 @@
     @font-face { font-family: "Fraunces"; font-weight: 600; src: url("fonts/fraunces-600-latin.woff2") format("woff2"); }
     @font-face { font-family: "Fraunces"; font-style: italic; font-weight: 400; src: url("fonts/fraunces-400-italic-latin.woff2") format("woff2"); }
     @font-face { font-family: "Atkinson Hyperlegible Next"; font-weight: 400 700; src: url("fonts/atkinson-hyperlegible-next-latin.woff2") format("woff2"); }
-    .display { font-family: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif; font-weight: 600; fill: #2b2723; }
+    .display { font-family: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif; font-weight: 600; fill: #2d2620; }
     .hand { font-family: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif; font-style: italic; font-weight: 400; }
-    .body { font-family: "Atkinson Hyperlegible Next", system-ui, sans-serif; fill: #463f38; }
-    .ink { stroke: #2b2723; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .body { font-family: "Atkinson Hyperlegible Next", system-ui, sans-serif; fill: #4a4037; }
+    .ink { stroke: #2d2620; stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
     .thin { stroke-width: 2.4; }
-    .scribble { stroke: #6a6056; stroke-width: 3.2; fill: none; stroke-linecap: round; }
+    .scribble { stroke: #625547; stroke-width: 3.2; fill: none; stroke-linecap: round; }
   </style>
   <defs>
     <filter id="rough" filterUnits="userSpaceOnUse" x="0" y="0" width="1200" height="630">
@@ -22,12 +22,12 @@
     </filter>
   </defs>
 
-  <rect width="1200" height="630" fill="#fbf7ef"/>
-  <rect y="560" width="1200" height="70" fill="#f3ecdf"/>
-  <path d="M0 560 H1200" stroke="#e4dac8" stroke-width="2"/>
+  <rect width="1200" height="630" fill="#faf5ea"/>
+  <rect y="560" width="1200" height="70" fill="#f1e8d6"/>
+  <path d="M0 560 H1200" stroke="#e3d6bf" stroke-width="2"/>
 
   <!-- wordmark: the site mark (a copy of site/logo.svg) + name -->
-  <g transform="translate(68 52) scale(2)" fill="none" stroke="#2b2723" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+  <g transform="translate(68 52) scale(2)" fill="none" stroke="#2d2620" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
     <path d="M12 4.5 C8 4.3 8.3 7.5 8.4 10.5 C8.5 13.5 7.7 15.4 4.5 16 C7.8 16.7 8.6 18.6 8.4 21.5 C8.2 24.6 8.1 27.8 12 27.6"/>
     <path d="M20 4.5 C24 4.3 23.7 7.5 23.6 10.5 C23.5 13.5 24.3 15.4 27.5 16 C24.2 16.7 23.4 18.6 23.6 21.5 C23.8 24.6 23.9 27.8 20 27.6"/>
     <path d="M12 16.2 a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0 Z" fill="#c8102e" stroke="none"/>
@@ -45,20 +45,20 @@
     <tspan x="72">A free, unofficial starter and plain-language guide for</tspan>
     <tspan x="72" dy="38">master’s theses and PhD and DEng dissertations.</tspan>
   </text>
-  <text class="body" x="72" y="604" font-size="22" fill="#655b51">Unofficial · community-made · not affiliated with RPI</text>
+  <text class="body" x="72" y="604" font-size="22" fill="#625547">Unofficial · community-made · not affiliated with RPI</text>
 
   <!-- typeset page doodle -->
   <g filter="url(#rough)">
-    <rect x="884" y="132" width="230" height="300" rx="5" class="ink thin" style="fill:#f3ecdf" transform="rotate(6 999 282)"/>
-    <rect x="868" y="124" width="230" height="300" rx="5" class="ink" style="fill:#fffdf8" transform="rotate(2 983 274)"/>
+    <rect x="884" y="132" width="230" height="300" rx="5" class="ink thin" style="fill:#f1e8d6" transform="rotate(6 999 282)"/>
+    <rect x="868" y="124" width="230" height="300" rx="5" class="ink" style="fill:#fffcf5" transform="rotate(2 983 274)"/>
     <g transform="rotate(2 983 274)">
-      <rect x="890" y="150" width="186" height="248" fill="none" stroke="#2b4d7a" stroke-width="2" stroke-dasharray="6 7"/>
+      <rect x="890" y="150" width="186" height="248" fill="none" stroke="#24518c" stroke-width="2" stroke-dasharray="6 7"/>
       <text class="display" x="983" y="184" font-size="17" text-anchor="middle">1. INTRODUCTION</text>
-      <path d="M896 200 C 940 196, 1020 200, 1070 198 L 1069 340 C 1010 344, 950 342, 897 340 Z" fill="#e2ebd9"/>
+      <path d="M896 200 C 940 196, 1020 200, 1070 198 L 1069 340 C 1010 344, 950 342, 897 340 Z" fill="#e4ecd2"/>
       <path class="scribble" d="M904 216 H1062 M904 236 H1062 M904 256 H1060 M904 276 H1000 M918 300 H1062 M904 320 H1058"/>
       <text class="display" x="983" y="385" font-size="18" text-anchor="middle" font-weight="400">7</text>
     </g>
   </g>
-  <text class="hand" x="990" y="486" font-size="26" fill="#9e4526" text-anchor="middle">you write the words;</text>
-  <text class="hand" x="990" y="520" font-size="26" fill="#2b4d7a" text-anchor="middle">the template formats them</text>
+  <text class="hand" x="990" y="486" font-size="26" fill="#a24a24" text-anchor="middle">you write the words;</text>
+  <text class="hand" x="990" y="520" font-size="26" fill="#24518c" text-anchor="middle">the template formats them</text>
 </svg>

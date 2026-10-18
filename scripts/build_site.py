@@ -1327,11 +1327,46 @@ def build_site(destination=None, offline=False, previews=False, cheatsheet=False
     return destination
 
 
+def drawing_colors():
+    """Every color in the drawings (docs/diagrams, site/art, the logo and the
+    link-preview card) must be a color of site/site.css, so a palette change
+    there cannot leave a drawing behind."""
+    tokens = {h.lower() for h in re.findall(r"#[0-9a-fA-F]{6}\b", (SITE / "site.css").read_text(encoding="utf-8"))}
+    errors = []
+    drawings = sorted((ROOT / "docs/diagrams").glob("*.svg")) + sorted((SITE / "art").glob("*.svg")) + \
+        [SITE / "logo.svg", SITE / "og-card.svg"]
+    for path in drawings:
+        stray = sorted({h.lower() for h in re.findall(r"#[0-9a-fA-F]{6}\b", path.read_text(encoding="utf-8"))} - tokens)
+        if stray:
+            errors.append(f"{path.relative_to(ROOT)}: {', '.join(stray)} is not a color in site/site.css; "
+                          "use the matching token's color (section 2) so the drawing follows the palette.")
+    return errors
+
+
+def stylesheet_colors():
+    """Colors live in one place: the tokens before "3. Base" in site/site.css.
+    After it, a rule may use a token, or neutral black, white or gray (print,
+    shadows); any other color there is an error, so the palette cannot split."""
+    css = (SITE / "site.css").read_text(encoding="utf-8")
+    start = css.index("/* ---------- 3. Base")
+    errors = []
+    for match in re.finditer(r"#([0-9a-fA-F]{3,8})\b", css[start:]):
+        digits = match[1].lower()
+        rgb = [digits[i] * 2 for i in range(3)] if len(digits) in (3, 4) else [digits[i:i + 2] for i in (0, 2, 4)]
+        if len(set(rgb)) > 1:   # not a gray
+            line = css[:start + match.start()].count("\n") + 1
+            errors.append(f"site/site.css line {line}: {match[0]} is a color outside the tokens; "
+                          "add or use a token in section 2 instead.")
+    return errors
+
+
 def build_into(destination, final, offline, previews, cheatsheet, publish, complete=False):
     """Write and check the site in `destination` (the staging folder); `final` is
     where it will end up."""
     site = Site(offline)
     site.errors.extend(checker_ids())
+    site.errors.extend(drawing_colors())
+    site.errors.extend(stylesheet_colors())
     checks = (SITE / "pdf-check/core.js").read_text(encoding="utf-8")
     pinned = re.search(r'PDFJS_VERSION = "([^"]+)"', checks)
     for name in PDF_CHECK[3:]:

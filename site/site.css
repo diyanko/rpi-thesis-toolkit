@@ -80,26 +80,28 @@
 :root {
   color-scheme: light dark;
 
-  --paper:       #fbf7ef;  /* page background */
-  --paper-2:     #f3ecdf;  /* bands, code */
-  --footer:      #efe7d8;  /* footer band, a shade deeper than the page */
-  --card:        #fffdf8;
-  --ink:         #2b2723;  /* main text */
-  --ink-soft:    #463f38;
-  --muted:       #5d5349;  /* secondary text */
-  --line:        #e4dac8;
-  --line-strong: #c2b297;
-  --btn-edge:    #2b2723;  /* button outline (primary) */
-  --btn-edge-2:  #2b2723;  /* button outline (secondary) */
-  --btn-shadow:  #2b2723;  /* offset shadow under buttons */
+  --paper:       #faf5ea;  /* page background */
+  --paper-2:     #f1e8d6;  /* bands, code */
+  --footer:      #ede3d0;  /* footer band, a shade deeper than the page */
+  --card:        #fffcf5;
+  --ink:         #2d2620;  /* main text */
+  --ink-soft:    #4a4037;
+  --muted:       #625547;  /* secondary text */
+  --line:        #e3d6bf;
+  --line-strong: #c4ae8a;
+  --btn-edge:    #2d2620;  /* button outline (primary) */
+  --btn-edge-2:  #2d2620;  /* button outline (secondary) */
+  --btn-shadow:  #2d2620;  /* offset shadow under buttons */
 
-  --sage:  #46684b;  --sage-wash:  #e2ebd9;   /* tips */
-  --blue:  #1f4f8f;  --blue-wash:  #dfe7f2;   /* notes, links */
-  --terra: #9e4526;  --terra-wash: #f6e0d3;   /* warnings, accents */
-  --plum:  #6b4669;  --plum-wash:  #efe2ed;   /* important */
-  --butter-wash: #f7ebbd;
+  /* The light accents, named once: the page uses them, and print uses them in either theme. */
+  --light-sage: #4a6b42; --light-blue: #24518c; --light-terra: #a24a24; --light-plum: #70466a; --light-red: #c8102e;
+  --sage:  var(--light-sage);   --sage-wash:  #e4ecd2;   /* tips */
+  --blue:  var(--light-blue);   --blue-wash:  #e0e6ef;   /* notes, links */
+  --terra: var(--light-terra);  --terra-wash: #f6dfcd;   /* warnings, accents */
+  --plum:  var(--light-plum);   --plum-wash:  #f1e0ea;   /* important */
+  --butter-wash: #f7e8b3;
 
-  --rpi-red: #c8102e;   /* used sparingly: primary button, one squiggle */
+  --rpi-red: var(--light-red);   /* used sparingly: primary button, one squiggle */
   --on-red:  #ffffff;
   --link:    var(--blue);
   --scroll-hint: rgba(43, 39, 35, 0.22);   /* edge shadow on scrollable code and tables */
@@ -107,12 +109,14 @@
   --squiggle: var(--rpi-red);   /* the hero's hand-drawn underline */
   --logo-dot: #c8102e;          /* the dot in the header mark (site/logo.svg) */
   --select:  #f3dc8c;           /* highlighter yellow for selected text */
+  --overlay-ink: #f4efe6;   /* the picture viewer and search: always dark, in both themes */
+  --overlay-bg:  #181511;
   --card-shadow: 0 1px 2px rgba(43, 39, 35, 0.05), 0 10px 22px -16px rgba(43, 39, 35, 0.35);   /* home cards */
 
   --table-head: var(--paper-2);
   --control-edge: var(--muted);
-  --checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%2346684b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 5.8 C 5 7.4, 6.6 9.2, 8.1 10.6 C 9.6 9, 11.2 7.3, 12.7 5.6' fill='none' stroke='%232b2723' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");   /* the arrow on select menus */
+  --checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%234a6b42' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 5.8 C 5 7.4, 6.6 9.2, 8.1 10.6 C 9.6 9, 11.2 7.3, 12.7 5.6' fill='none' stroke='%232d2620' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");   /* the arrow on select menus */
 
   /* LaTeX highlighting, shared by guide code blocks (built by scripts/build_site.py)
      and tool output (site/tools-highlight.js). Each is AA on --paper-2 in both themes. */
@@ -123,37 +127,37 @@
   --code-com:   var(--muted);   /* % comments, also italic */
 
   /* The dark palette is defined once; both System and Dark use it. */
-  --dark-paper: #1c1a17;
-  --dark-paper-2: #25221d;
-  --dark-footer: #161411;
-  --dark-card: #2c2822;
-  --dark-ink: #efe8dc;
-  --dark-ink-soft: #ddd4c6;
-  --dark-muted: #bcb1a0;
-  --dark-line: #494238;
-  --dark-line-strong: #756a58;
-  --dark-btn-edge: #0b0a08;
-  --dark-btn-edge-2: #8a7f70;
-  --dark-btn-shadow: #0b0a08;
-  --dark-sage: #a9c9a1;
-  --dark-sage-wash: #263226;
-  --dark-blue: #9fc2f5;
-  --dark-blue-wash: #222f44;
-  --dark-terra: #eda482;
-  --dark-terra-wash: #3a271e;
-  --dark-plum: #d8b6d3;
-  --dark-plum-wash: #33263a;
-  --dark-butter-wash: #3a3320;
+  --dark-paper: #181614;
+  --dark-paper-2: #211e1a;
+  --dark-footer: #121110;
+  --dark-card: #27231e;
+  --dark-ink: #f2ece2;
+  --dark-ink-soft: #ddd5c8;
+  --dark-muted: #b9ae9d;
+  --dark-line: #423b32;
+  --dark-line-strong: #776b5b;
+  --dark-btn-edge: #e9e1d4;
+  --dark-btn-edge-2: #a99d8b;
+  --dark-btn-shadow: #5e5447;
+  --dark-sage: #a6d49a;
+  --dark-sage-wash: #21321f;
+  --dark-blue: #a2c8fb;
+  --dark-blue-wash: #1d2c43;
+  --dark-terra: #f6a57f;
+  --dark-terra-wash: #3b2418;
+  --dark-plum: #e0b6dc;
+  --dark-plum-wash: #34233a;
+  --dark-butter-wash: #3a3118;
   --dark-rpi-red: #d6223f;
   --dark-squiggle: #ff8d98;
   --dark-logo-dot: #ff5a6e;
   --dark-select: #5c4b1d;
   --dark-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 24px -14px rgba(0, 0, 0, 0.7);
   --dark-scroll-hint: rgba(0, 0, 0, 0.6);
-  --dark-table-head: #353027;
-  --dark-control-edge: #8a7f70;
-  --dark-checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%23a9c9a1' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --dark-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 5.8 C 5 7.4, 6.6 9.2, 8.1 10.6 C 9.6 9, 11.2 7.3, 12.7 5.6' fill='none' stroke='%23efe8dc' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --dark-table-head: #2e2a24;
+  --dark-control-edge: #958a78;
+  --dark-checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%23a6d49a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --dark-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 5.8 C 5 7.4, 6.6 9.2, 8.1 10.6 C 9.6 9, 11.2 7.3, 12.7 5.6' fill='none' stroke='%23f2ece2' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 
   --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --font-body: "Plain Zero", "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -1236,8 +1240,8 @@ dialog.viewer {
   width: 100%; height: 100%; max-width: none; max-height: none;
   margin: 0; padding: 64px clamp(12px, 4vw, 48px) clamp(12px, 3vw, 32px);
   border: 0;
-  color: #f4efe6;
-  background: #181511;   /* underlying page text must not compete with the picture */
+  color: var(--overlay-ink);
+  background: var(--overlay-bg);   /* underlying page text must not compete with the picture */
   overflow: auto;
 }
 dialog.viewer::backdrop { background: transparent; }
@@ -1257,19 +1261,19 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   width: 100%; max-height: calc(100vh - 96px); max-height: calc(100dvh - 96px);
   overflow: auto;
 }
-.viewer-pan:focus-visible { outline: 3px solid #f4efe6; outline-offset: 2px; }
+.viewer-pan:focus-visible { outline: 3px solid var(--overlay-ink); outline-offset: 2px; }
 .viewer img[src$=".svg"] { width: min(100%, 1400px); object-fit: contain; padding: clamp(8px, 2vw, 20px); }
 .viewer-close {
   display: inline-flex; align-items: center; min-height: 44px;
   position: fixed; top: 14px; right: clamp(12px, 3vw, 28px);
   padding: 6px 16px;
-  color: #f4efe6; font-weight: 700; text-decoration: none;
+  color: var(--overlay-ink); font-weight: 700; text-decoration: none;
   background: rgb(0 0 0 / 0.35);
-  border: 1.5px solid rgb(244 239 230 / 0.7);
+  border: 1.5px solid color-mix(in srgb, var(--overlay-ink) 70%, transparent);
   border-radius: 999px;
 }
-.viewer-close:hover { background: rgb(0 0 0 / 0.6); border-color: #f4efe6; }
-.viewer-close:focus-visible { outline: 2px solid #f4efe6; outline-offset: 3px; }
+.viewer-close:hover { background: rgb(0 0 0 / 0.6); border-color: var(--overlay-ink); }
+.viewer-close:focus-visible { outline: 2px solid var(--overlay-ink); outline-offset: 3px; }
 @media (max-width: 600px) {   /* phones: each table row becomes a small card, nothing hidden off to the side */
   .guide-content .table-wrap { overflow: visible; }
   .guide-content .table-wrap :is(table, tbody, tr, td) { display: block; width: auto; }
@@ -1297,8 +1301,8 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
     top: 64px; left: 12px; right: 12px;
     margin: 0;
     padding: 6px 10px;
-    color: #f4efe6;
-    background: #181511;
+    color: var(--overlay-ink);
+    background: var(--overlay-bg);
     border-radius: 6px;
     font-size: 0.9rem;
     text-align: left;
@@ -1821,9 +1825,9 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
     --ink: #000; --ink-soft: #111; --muted: #333;
     --line: #bbb; --line-strong: #888;
     --btn-edge: #000; --btn-edge-2: #000; --btn-shadow: transparent;
-    --sage: #46684b; --blue: #1f4f8f; --terra: #9e4526; --plum: #6b4669;   /* light-theme accents, for markers and rules */
+    --sage: var(--light-sage); --blue: var(--light-blue); --terra: var(--light-terra); --plum: var(--light-plum);   /* light-theme accents, for markers and rules */
     --sage-wash: #fff; --blue-wash: #fff; --terra-wash: #fff; --plum-wash: #fff; --butter-wash: #fff;
-    --rpi-red: #c8102e; --on-red: #fff;
+    --rpi-red: var(--light-red); --on-red: #fff;
     --link: #000; --focus: #000; --scroll-hint: transparent;
   }
   html, body { background: #fff !important; color: #000; }
