@@ -132,6 +132,7 @@
         const useName = chosen => {
           if (chosen && chosen[0]) {
             control.value = "assets/" + chosen[0].name;
+            held.delete(key);
             update();
           }
         };

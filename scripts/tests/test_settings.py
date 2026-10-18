@@ -319,6 +319,14 @@ class Browser(unittest.TestCase):
         self.assertEqual(found["unknown"], ["colour"])
         self.assertEqual(found["settings"]["author"], "A. B Doe")
         self.assertEqual(found["committee"], [{"name": "Ann & Co", "role": "Chair"}])
+        # Every block counts, in order, as in LaTeX: a later block's override is kept.
+        later = json.dumps((ROOT / "metadata.tex").read_text(encoding="utf-8")
+                           + "\n\\thesissetup{copyright-page=true}\n\\thesissetup{ title = {Old}, title = {$x$} }\n")
+        found = self.browser.evaluate(f"""(async () => (await import('../settings/core.js')).readMetadata(
+          {later}, (await import('../settings/data.js')).default))()""")
+        self.assertEqual(found["settings"]["copyright-page"], "true")
+        self.assertNotIn("title", found["settings"])
+        self.assertEqual(found["skipped"], ["title"])
         for value in (r"Jos\'{e} Example", r"The $H_2$ cycle", r"A^2 study"):
             source = json.dumps("\\thesissetup{ author = {" + value + "} }")
             found = self.browser.evaluate(f"""(async () => (await import('../settings/core.js')).readMetadata(

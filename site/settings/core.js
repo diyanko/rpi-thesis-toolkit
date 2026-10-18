@@ -109,9 +109,16 @@ function braceGroup(text, start) {
   return null;
 }
 
+// A seal path as the form writes it: characters such as # as \csname char_generate:nn\endcsname{35}{12}.
+function sealValue(value) {
+  let text = value.trim();
+  while (text.startsWith("{") && braceGroup(text, 0)?.[1] === text.length) text = text.slice(1, -1).trim();
+  text = text.replace(/\\csname char_generate:nn\\endcsname\{(\d+)\}\{12\}/g, (_, code) => String.fromCharCode(Number(code)));
+  return /[\\{}]/.test(text) ? null : text;
+}
+
 function plainValue(value) {
-  // The form's own way of writing a filename character such as # (escapePath).
-  let text = value.trim().replace(/\\csname char_generate:nn\\endcsname\{(\d+)\}\{12\}/g, (_, code) => String.fromCharCode(Number(code)));
+  let text = value.trim();
   while (text.startsWith("{") && braceGroup(text, 0)?.[1] === text.length) text = text.slice(1, -1).trim();
   // The form's own escapes become characters; any other command means "not plain".
   const marks = ["\u0001", "\u0002", "\u0003"];
@@ -127,15 +134,19 @@ function plainValue(value) {
 export function readMetadata(source, schema) {
   const text = stripComments(String(source || ""));
   const found = {settings: {}, committee: [], skipped: [], unknown: []};
-  const at = text.indexOf("\\thesissetup");
-  const group = at < 0 ? null : braceGroup(text, text.indexOf("{", at));
-  if (group) {
+  // Every \thesissetup block, in order: as in LaTeX, a later value replaces an earlier one.
+  const groups = [];
+  for (let at = text.indexOf("\\thesissetup"); at >= 0; at = text.indexOf("\\thesissetup", at + 1)) {
+    const group = braceGroup(text, text.indexOf("{", at));
+    if (group) groups.push(group);
+  }
+  for (const group of groups) {
     // Split at commas outside braces.
     const parts = [];
     let depth = 0, from = 0;
     let body = group[0];
     // A block the form wrote for an unusual seal filename wraps the text settings in \unexpanded{...}.
-    const wrapped = body.indexOf("\\unexpanded");
+    const wrapped = body.trimStart().startsWith("\\unexpanded") ? body.indexOf("\\unexpanded") : -1;
     if (wrapped >= 0) {
       const inner = braceGroup(body, body.indexOf("{", wrapped));
       if (inner) body = body.slice(0, wrapped) + inner[0] + "," + body.slice(inner[1]);
@@ -153,9 +164,9 @@ export function readMetadata(source, schema) {
       const key = part.slice(0, eq).trim();
       if (!key) continue;
       if (!Object.hasOwn(schema.keys, key)) { found.unknown.push(key); continue; }
-      const value = plainValue(part.slice(eq + 1));
-      if (value === null) found.skipped.push(key);
-      else found.settings[key] = value;
+      const value = (key === "seal-file" ? sealValue : plainValue)(part.slice(eq + 1));
+      if (value === null) { found.skipped.push(key); delete found.settings[key]; }
+      else { found.settings[key] = value; found.skipped = found.skipped.filter(name => name !== key); }
     }
   }
   const member = /\\committeemember\s*(?:\[([^\]]*)\])?\s*/g;
@@ -171,7 +182,7 @@ export function readMetadata(source, schema) {
     } else found.committee.push({name: plainName, role: plainRole});
     member.lastIndex = name[1];
   }
-  found.ok = Boolean(group) || found.committee.length > 0;
+  found.ok = groups.length > 0 || found.committee.length > 0;
   return found;
 }
 
