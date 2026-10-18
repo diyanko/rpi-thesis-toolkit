@@ -51,7 +51,7 @@ Follow the core path in order, or go straight to what you need.
   advisors, committee members, and OGE reviewers)
 - **Tools** (in your browser; nothing is uploaded):
   [Settings builder](docs/settings-builder.md) ·
-  [Bring your work in](docs/bring-your-work-in.md) ·
+  [Convert to LaTeX](docs/convert-to-latex.md) ·
   [Check your references](docs/check-references.md) ·
   [Explain my error](docs/explain-my-error.md) ·
   [Check your PDF](docs/check-pdf.md)

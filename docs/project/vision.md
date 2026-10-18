@@ -50,7 +50,7 @@ two clicks.
 | Visitor | First click | Then |
 | --- | --- | --- |
 | First-time student | Start | Overleaf or your computer, first compile |
-| Draft written elsewhere | Tools: Bring your work in | Paste, convert, place into the starter |
+| Draft written elsewhere | Tools: Convert to LaTeX | Paste, convert, place into the starter |
 | Already uses LaTeX | Start: use just the class | Swap the class, compile |
 | Stuck on an error | Help | Explain my error, or Fixing problems |
 | Advisor or OGE reviewer | Tools: Check your PDF | Reviewer checklist |
@@ -62,7 +62,7 @@ Tracked as [GitHub issues](https://github.com/diyanko/rpi-thesis-toolkit/issues)
 this list sets the order.
 
 1. Shorter home page with a Tools group, sharing, and current trust facts.
-2. Bring your work in: pasted text and tables first; files later.
+2. Convert to LaTeX: pasted text and tables first; files later.
 3. Explain my error, Settings builder, and a style-aware reference check.
 4. Before 1.0: a student tries the starter unaided, and OGE answers the open
    questions in the requirements map.

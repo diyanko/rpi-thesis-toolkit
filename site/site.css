@@ -1949,7 +1949,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 @media (max-width: 600px) { dialog.benefit-preview { padding-top: 72px; } }
 
 /* ---------- 12. Tools: one pattern ------------------------------------
-   Settings builder, Bring your work in, Check your references, Explain my
+   Settings builder, Convert to LaTeX, Check your references, Explain my
    error, Check your PDF. Every tool page uses the same parts and classes
    (docs/project/components.md, "Tool pages"):
      .tool          the tool's root; hidden until its script runs
@@ -2246,7 +2246,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .guide-content .settings-errors:empty { display: none; }
 .guide-content .settings-errors li { margin: 0.15rem 0; }
 
-/* Bring your work in: the pasted text on the left, the LaTeX on the right;
+/* Convert to LaTeX: the pasted text on the left, the LaTeX on the right;
    stacked on narrow screens. */
 .convert-options { margin: 0 0 1rem; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; }
 .convert-options legend { padding: 0; margin: 0 0 6px; font-family: var(--font-body); font-size: 1rem; font-weight: 700; }

@@ -480,7 +480,7 @@ I am using the RPI Thesis Toolkit, an unofficial LaTeX starter for RPI theses. C
 The prompt for **an error** is in [fixing problems](troubleshooting.md#ask-an-ai-chat-to-explain-it),
 and the one for **suggesting a change to the toolkit** is on the
 [Contribute page](../CONTRIBUTING.md#three-ways-to-help). For a section or a
-table, try [Bring your work in](bring-your-work-in.md) first: it converts in
+table, try [Convert to LaTeX](convert-to-latex.md) first: it converts in
 your browser.
 
 ### Ask for a file conversion

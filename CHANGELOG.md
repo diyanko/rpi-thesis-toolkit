@@ -15,6 +15,14 @@ date and links its download and its code changes on GitHub, and the
 [requirements map](docs/project/requirements.md) records every formatting
 rule with its source.
 
+## Unreleased
+
+**Changes your PDF?** No.
+
+- **Convert to LaTeX:** the tool once called "Bring your work in" has a
+  clearer name, so it no longer sounds like the guide page "Bring your
+  draft". Its old address forwards to the new one.
+
 ## 0.10.0 (beta), 18 Oct 2026
 
 Published as the pre-release `v0.10.0`.

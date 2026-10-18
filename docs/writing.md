@@ -221,7 +221,7 @@ Start from the sample table in `chapters/02-research.tex`. The caption goes
 - Refer to it with `Table~\ref{tab:my-table}`.
 
 Have the data in a spreadsheet? Copy the cells into
-[Bring your work in](bring-your-work-in.md): it writes the whole table,
+[Convert to LaTeX](convert-to-latex.md): it writes the whole table,
 caption and label included, in your browser. More routes:
 [make a table from a spreadsheet](#make-a-table-from-a-spreadsheet).
 
@@ -371,7 +371,7 @@ third-party services whose terms can change.
 
 | I need to... | Start here |
 | --- | --- |
-| Turn pasted text, or spreadsheet cells, into LaTeX | [Bring your work in](bring-your-work-in.md), on this site |
+| Turn pasted text, or spreadsheet cells, into LaTeX | [Convert to LaTeX](convert-to-latex.md), on this site |
 | Edit a table's layout cell by cell | [Tables Generator](#make-a-table-from-a-spreadsheet) |
 | Build an equation by clicking | [Equation editor](#write-an-equation) |
 | Find a symbol I can draw | [Detexify](#find-a-symbols-command) |

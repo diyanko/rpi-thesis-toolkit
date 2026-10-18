@@ -397,7 +397,7 @@ SETTLE = """Promise.race([new Promise(r => setTimeout(r, 5000)), Promise.all([do
 FULL_MAX = 16000  # px; longer pages are cut off at this height
 # A tablet in portrait, an ultrawide and a 4K monitor: one home page, guide page and
 # tool page, so the layouts between phone and laptop, and above, stay reviewed.
-WIDE_SHOTS = {"index.html", "guide/writing.html", "guide/bring-your-work-in.html"}
+WIDE_SHOTS = {"index.html", "guide/writing.html", "guide/convert-to-latex.html"}
 SHOTS = main_checkout(ROOT) / "_local" / "shots"
 
 

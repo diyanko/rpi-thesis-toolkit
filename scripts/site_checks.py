@@ -33,7 +33,7 @@ BUILD_FILE = "build.txt"
 # its check-pdf page links the website's checker instead.
 PDF_CHECK = ["pdf-check/ui.js", "pdf-check/core.js", "pdf-check/pdfjs/LICENSE",
              "pdf-check/pdfjs/pdf.min.mjs", "pdf-check/pdfjs/pdf.worker.min.mjs"]
-# The "Bring your work in" page (docs/bring-your-work-in.md) converts pasted
+# The "Convert to LaTeX" page (docs/convert-to-latex.md) converts pasted
 # text to LaTeX in the browser: ui.js (the page) and core.js (the readers and
 # the LaTeX writer). Both run in the offline guide too.
 CONVERT = ["convert/ui.js", "convert/core.js"]

@@ -1,4 +1,4 @@
-# Bring your work in
+# Convert to LaTeX
 
 Paste a section of your draft from Word, Google Docs, a spreadsheet, or a
 Markdown or text file; the page writes it as LaTeX for the starter. It is a

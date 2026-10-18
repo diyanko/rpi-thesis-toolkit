@@ -72,7 +72,7 @@ NAV = [
     # Only tools that exist; each is also linked from the page where it helps most.
     ("Tools", [
         ("settings-builder", "Settings builder", False),
-        ("bring-your-work-in", "Bring your work in", False),
+        ("convert-to-latex", "Convert to LaTeX", False),
         ("check-references", "Check your references", False),
         ("explain-my-error", "Explain my error", False),
         ("check-pdf", "Check your PDF", False),
@@ -86,9 +86,12 @@ GUIDE = [page for _, pages in NAV for page in pages]  # the same pages, in one l
 # Help card on the landing page.
 GROUP_OF = {name: group for group, pages in NAV for name, _, _ in pages}
 # Tool page -> the guide page that sends students to it (its "Back to" link).
-TOOL_HOME = {"settings-builder": "get-started", "bring-your-work-in": "bring-your-draft",
+TOOL_HOME = {"settings-builder": "get-started", "convert-to-latex": "bring-your-draft",
              "check-references": "citations", "explain-my-error": "troubleshooting",
              "check-pdf": "submission"}
+# Old guide addresses -> their new page, so links and bookmarks keep working.
+# Each becomes a small page that forwards without JavaScript (online site only).
+MOVED = {"bring-your-work-in": "convert-to-latex"}
 QUICK = ("how-do-i", "How do I…?", True)
 # When a student needs each page, shown as a small tag under the page title.
 # The sidebar lists pages without tags (SIDEBAR_TAGS is empty): its numbers and
@@ -98,7 +101,7 @@ QUICK = ("how-do-i", "How do I…?", True)
 TAGS = {
     "Start here": ("start", ["get-started"]),
     "Need now": ("now", ["writing", "citations"]),
-    "If you have a draft": ("draft", ["bring-your-draft", "bring-your-work-in"]),
+    "If you have a draft": ("draft", ["bring-your-draft", "convert-to-latex"]),
     "When stuck": ("stuck", ["troubleshooting", "how-do-i", "explain-my-error"]),
     "Need later": ("later", ["submission"]),
     "Optional": ("optional", ["settings-builder", "how-it-works", "going-further", "check-pdf", "check-references", "reviewer-checklist"]),
@@ -124,11 +127,11 @@ PROJECT = {
 # Footer "Ask for help or suggest a change" link: the one place the help/feedback form URL lives.
 FEEDBACK = ("docs/troubleshooting.md", "Ask for help")
 # Scripts that only one guide page loads: page -> script.
-PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js", "bring-your-work-in": "convert/ui.js",
+PAGE_SCRIPTS = {"check-pdf": "pdf-check/ui.js", "convert-to-latex": "convert/ui.js",
                  "settings-builder": "settings/ui.js", "check-references": "bibcheck/ui.js",
                  "explain-my-error": "explain/ui.js"}
 # Page scripts that also run in the offline guide (file: pages).
-OFFLINE_SCRIPTS = {"bring-your-work-in", "explain-my-error"}
+OFFLINE_SCRIPTS = {"convert-to-latex", "explain-my-error"}
 # The release the website links: its version, tag (always "v" + version; beta status is
 # GitHub's pre-release flag, never part of the name), and ZIP names
 # (rpi-thesis-starter-v<version>.zip). The home page's "Get the starter" button downloads
@@ -596,7 +599,7 @@ class Site:
             self.assets.update({f"site/{name}": name for name in PDF_CHECK})
             self.assets.update({f"site/{name}": name for name in BIB_CHECK})
             self.assets.update({f"site/settings/{name}.js": f"settings/{name}.js" for name in ("core", "ui")})
-        self.assets.update({f"site/{name}": name for name in CONVERT})  # "Bring your work in", online and offline
+        self.assets.update({f"site/{name}": name for name in CONVERT})  # "Convert to LaTeX", online and offline
         self.starter_zip = self.overleaf = ""
         if not offline and self.repo:
             version = RELEASE_VERSION
@@ -1545,6 +1548,15 @@ def stylesheet_colors():
     return errors
 
 
+def moved_page(new):
+    """A page left at an old guide address: forwards to guide/<new>.html."""
+    return ('<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width, initial-scale=1">\n'
+            f'<meta name="robots" content="noindex">\n<meta http-equiv="refresh" content="0; url={new}.html">\n'
+            f'<link rel="canonical" href="{new}.html">\n<title>This page has moved</title>\n</head>\n'
+            f'<body>\n<p>This page has moved to <a href="{new}.html">{new}.html</a>.</p>\n</body>\n</html>\n')
+
+
 def build_into(destination, final, offline, previews, cheatsheet, publish, complete=False):
     """Write and check the site in `destination` (the staging folder); `final` is
     where it will end up."""
@@ -1606,6 +1618,9 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
         source_path(source)
         (destination / output).parent.mkdir(parents=True, exist_ok=True)
         (destination / output).write_text(site.render(source), encoding="utf-8")
+    if not offline:
+        for old, new in MOVED.items():
+            (destination / f"guide/{old}.html").write_text(moved_page(new), encoding="utf-8")
     by_link = {entry["href"]: entry for entry in site.search}
     for page, anchor, task in site.search_tasks:
         target = by_link.get(page + "#" + anchor) if anchor else next(

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for "Bring your work in" (site/convert/core.js and ui.js).
+"""Tests for "Convert to LaTeX" (site/convert/core.js and ui.js).
 
     python3 scripts/tests/test_convert.py
 
@@ -47,9 +47,9 @@ def fixture(name):
 
 
 def widget_markup():
-    found = re.search(r'(?m)^<div class="[^"]*\bconvert\b[^"]*" .*$', (ROOT / "docs/bring-your-work-in.md").read_text(encoding="utf-8"))
+    found = re.search(r'(?m)^<div class="[^"]*\bconvert\b[^"]*" .*$', (ROOT / "docs/convert-to-latex.md").read_text(encoding="utf-8"))
     if not found:
-        raise RuntimeError('docs/bring-your-work-in.md has no <div class="convert" ...> line')
+        raise RuntimeError('docs/convert-to-latex.md has no <div class="convert" ...> line')
     return found[0]
 
 
