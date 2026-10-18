@@ -3,30 +3,34 @@
 Fill in your title page details; the page writes the settings block for
 `metadata.tex`.
 
-<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The form runs in your browser and saves nothing; leaving or reloading the page clears it.</p>
+<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The form, and any file you choose, stay in your browser; nothing is saved, and leaving or reloading the page clears it.</p>
 
-1. Enter your details and each committee member, with full names. Type
-   plain text; `&` and `%` are handled for you.
+1. Enter your details and each committee member, with full names, or start
+   from the `metadata.tex` you have. Type plain text; `&` and `%` are handled
+   for you.
 2. Copy the block. In `metadata.tex`, replace the `\thesissetup{...}` block
-   and all `\committeemember` lines with it.
+   and all `\committeemember` lines with it, or download a whole new
+   `metadata.tex` and put it in place of the old one.
 3. Compile and check your title page. The form checks the settings, not
    whether the names are right; use the
    [final PDF checklist](submission.md#final-pdf-checklist).
 
-Choose the month you graduate, not the month you submit. For math in a title,
-edit the copied block ([example](going-further.md#all-thesis-settings)).
-
 <div class="tool settings-builder" data-settings-builder hidden>
+<label class="tool-drop tool-file settings-load" for="settings-load"><span class="tool-file-button" data-icon="file">Start from your metadata.tex</span> <span class="tool-file-or">or drop it here. Optional: it fills in the form, read in your browser.</span></label><input class="visually-hidden" id="settings-load" type="file" accept=".tex,text/plain" data-settings-load>
+<p class="tool-file-names" data-settings-loaded aria-live="polite"></p>
+<div class="settings-layout">
 <form autocomplete="off" novalidate>
 <fieldset><legend>Title page settings</legend><div data-settings-fields></div></fieldset>
-<fieldset><legend>Committee</legend><p>Keep Chair or Co-Chair spelled exactly this way. Other roles may be left empty.</p><div data-settings-members></div><button class="button button-secondary" type="button" data-settings-add>Add a committee member</button></fieldset>
+<fieldset><legend>Committee</legend><p>Every approved member, with at least one Chair or Co-Chair.</p><div data-settings-members></div><button class="button button-secondary button-small" type="button" data-settings-add data-icon="add">Add a member</button></fieldset>
 </form>
+<figure class="settings-preview" data-settings-preview><label class="tool-switch"><input type="checkbox" role="switch" checked data-settings-sketch> <span>Show a sketch of the title page</span></label><figcaption>A sketch drawn from the form, for spacing and spelling. Your PDF from LaTeX is the real title page.</figcaption></figure>
+</div>
 <div class="tool-status" role="status" aria-live="polite" data-settings-status></div>
 <ul class="settings-errors" data-settings-errors></ul>
 <p class="tool-label" id="settings-output-label">Block for metadata.tex</p>
 <pre class="tool-output settings-output" data-settings-output data-empty="The block appears here when the form is complete." aria-labelledby="settings-output-label" aria-describedby="settings-paste"></pre>
 <p class="tool-hint" id="settings-paste">Replace your existing settings and committee lines with this whole block.</p>
-<p class="tool-actions"><button class="button" type="button" data-settings-copy disabled>Copy settings</button></p>
+<p class="tool-actions"><button class="button" type="button" data-settings-copy data-icon="copy" disabled>Copy settings</button> <button class="button button-secondary" type="button" data-settings-download data-icon="download" disabled>Download metadata.tex</button></p>
 </div>
 
 <p class="tool-nojs" data-settings-nojs>The form needs JavaScript, which is off or not available in this browser.
@@ -58,8 +62,8 @@ Download the seal from RPI using
 your project's `assets` folder. The seal is not included in the toolkit.
 
 The usual name is `rpi-seal.jpg` (or `rpi-seal.png` for a PNG). If your file
-has a different name or extension, keep it: select **Use the downloaded seal's
-filename** in the form. It fills in the location, for example
+has a different name or extension, keep it: choose **Use the seal's filename** in the
+form, or drop the file on it. It fills in the location, for example
 `assets/RPI seal (1).jpeg`. This only copies the filename; it does not upload
 or move the image. Copy the updated settings block, then compile again.
 
