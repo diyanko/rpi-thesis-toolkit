@@ -17,6 +17,7 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))  # scripts/
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # scripts/tests/, for python3 -m unittest
 import check_pdfs  # noqa: E402
 from chrome import Chrome  # noqa: E402
 import pdf_fixtures  # noqa: E402
@@ -301,6 +302,39 @@ class Measurements(unittest.TestCase):
         self.assertEqual(found["blank"]["state"], UNKNOWN)
         self.assertEqual(found["paper"]["state"], OK)
 
+    def test_a_flagged_page_can_be_shown_with_what_was_measured(self):
+        # The page view draws the measured number's box and the page-number lines.
+        found = self.analyse(document([body_page("2", "Ordinary body text.", number=("2", 303, 14.4))]))["distance"]
+        self.assertEqual(found["state"], CHECK, found)
+        self.assertEqual([s["page"] for s in found["shows"]], [3])
+        shown = found["shows"][0]
+        self.assertEqual(shown["guides"], ["number"])
+        self.assertEqual(shown["what"], "page number")
+        self.assertLess(shown["box"][1], 14.4)
+        self.assertGreater(shown["box"][3], 14.4)
+        self.assertIn("0.20 in from the bottom edge", shown["note"])
+
+    def test_text_in_the_margin_is_shown_where_it_is(self):
+        found = self.analyse(document([body_page("2", "Ordinary body text.", extra=[item("Running head", 5, 740)])]))["margins"]
+        self.assertEqual(len(found["shows"]), 1)
+        self.assertAlmostEqual(found["shows"][0]["box"][0], 5)
+        self.assertEqual(found["shows"][0]["guides"], ["margin"])
+
+    def test_passing_results_show_no_pages(self):
+        found = self.analyse(document([body_page("2", "Ordinary body text.")]))
+        self.assertEqual({key: f["shows"] for key, f in found.items() if f["shows"]}, {})
+
+    def test_coverage_names_the_pages_not_measured(self):
+        # Issue 43: a page with no text was not measured, and the result says so.
+        drawn = {"width": 612, "height": 792, "rotate": 0, "items": [], "fonts": [], "drawn": True}
+        found = self.analyse(document([body_page("2", "Ordinary body text."), drawn, body_page("4", "More text.")]))
+        self.assertEqual(found["margins"]["state"], OK)
+        self.assertIn("Measured on 5 of 6 pages; not measured: PDF page 5 (no text", found["margins"]["coverage"])
+        self.assertIn("not measured: PDF page 5 (no page number was found as text)", found["position"]["coverage"])
+        found = self.analyse(document([body_page("2", "Ordinary body text.")]))
+        self.assertEqual(found["margins"]["coverage"], "Measured on all 4 pages.")
+        self.assertEqual(found["distance"]["coverage"], "Measured on all 3 pages after the title page.")
+
 
 
 # Page helpers for Upload: choose(n, name) picks PDF n of the server (or broken
@@ -342,10 +376,10 @@ class Upload(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         folder, errors = fixtures()
-        failed = {"starter", "a4-paper", "many-pages"} & set(errors)
+        failed = {"starter", "a4-paper", "many-pages", "number-far"} & set(errors)
         if failed:  # TeX is here, so a fixture that does not compile is an error, never a skip
             raise AssertionError("fixtures did not compile: " + "; ".join(f"{n}: {errors[n]}" for n in sorted(failed)))
-        names = ["starter", "a4-paper", "many-pages"]
+        names = ["starter", "a4-paper", "many-pages", "number-far"]
         cls.server = check_pdfs.server(check_pdfs.ROOT / "site", [folder / f"{name}.pdf" for name in names])
         cls.browser = Chrome(check_pdfs.find_chrome())
 
@@ -404,15 +438,53 @@ class Upload(unittest.TestCase):
 
     def test_the_printout_goes_after_printing_and_with_a_new_choice(self):
         self.run_js("choose(0, 'starter.pdf').then(() => settle(() => heading(), 'results'))")
-        self.run_js("window.print = function () {}; document.querySelector('.pdf-check-results button').click(); true")
+        self.run_js("window.print = function () {}; document.querySelector('.pdf-check-print-button').click(); true")
         self.assertTrue(self.run_js("Boolean(document.querySelector('.pdf-check-print'))"))
         self.run_js("window.dispatchEvent(new Event('afterprint')); true")
         self.assertFalse(self.run_js("Boolean(document.querySelector('.pdf-check-print'))"))
         self.assertFalse(self.run_js("document.documentElement.classList.contains('pdf-check-printing')"))
-        self.run_js("document.querySelector('.pdf-check-results button').click(); true")
+        self.run_js("document.querySelector('.pdf-check-print-button').click(); true")
         self.run_js("choose(1, 'next.pdf').then(() => settle(() => heading(), 'results'))")
         self.assertFalse(self.run_js("Boolean(document.querySelector('.pdf-check-print'))"),
                          "a printout of the previous PDF stayed in the page")
+
+    def open_page_view(self):
+        self.run_js("choose(3, 'far.pdf').then(() => settle(() => heading(), 'results'))")
+        self.released()
+        self.run_js("document.querySelector('.pdf-check-show button').click(); "
+                    "settle(() => document.querySelector('.pdf-check-viewer[data-drawn]'), 'the page to be drawn')")
+
+    def test_points_to_look_at_come_first_with_a_count(self):
+        self.run_js("choose(3, 'far.pdf').then(() => settle(() => heading(), 'results'))")
+        self.assertEqual(self.run_js("document.querySelector('.pdf-check-item').className"), "pdf-check-item is-check")
+        self.assertIn("1 to look at", self.run_js("document.querySelector('.pdf-check-tally').textContent"))
+        self.released()
+
+    def test_the_page_view_draws_the_page_and_releases_the_reader(self):
+        self.open_page_view()
+        self.assertEqual(self.run_js("document.querySelector('.pdf-check-viewer').getAttribute('data-drawn')"), "2")
+        label = self.run_js("document.querySelector('.pdf-check-viewer canvas').getAttribute('aria-label')")
+        self.assertIn("0.20 in from the bottom edge", label)
+        self.assertTrue(self.run_js("document.activeElement.id === 'pdf-check-viewer-title'"))
+        self.assertTrue(self.run_js("document.querySelectorAll('.pdf-check-viewer .is-box').length > 0"))
+        # Something was drawn: the canvas is not all white.
+        self.assertTrue(self.run_js("""(() => { const c = document.querySelector('.pdf-check-viewer canvas');
+          const d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+          for (let i = 0; i < d.length; i += 4) if (d[i] < 128) return true; return false; })()"""))
+        self.run_js("document.querySelector('.pdf-check-viewer-next').click(); "
+                    "settle(() => document.querySelector('.pdf-check-viewer').getAttribute('data-drawn') === '3', 'the next page')")
+        # Escape closes it, gives focus back to the button, and ends the worker.
+        self.run_js("document.activeElement.dispatchEvent(new KeyboardEvent('keydown', {key: 'Escape', bubbles: true})); true")
+        self.assertFalse(self.run_js("Boolean(document.querySelector('.pdf-check-viewer'))"))
+        self.assertTrue(self.run_js("document.activeElement === document.querySelector('.pdf-check-show button')"))
+        self.assertEqual(self.run_js("document.querySelector('.pdf-check-show button').getAttribute('aria-expanded')"), "false")
+        self.released()
+
+    def test_a_new_choice_closes_the_page_view(self):
+        self.open_page_view()
+        self.run_js("choose(0, 'starter.pdf').then(() => settle(() => heading() === 'Results for starter.pdf', 'results'))")
+        self.assertFalse(self.run_js("Boolean(document.querySelector('.pdf-check-viewer'))"))
+        self.released()
 
 
 if __name__ == "__main__":

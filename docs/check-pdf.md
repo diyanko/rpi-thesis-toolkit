@@ -7,7 +7,7 @@ use the [final PDF checklist](submission.md#final-pdf-checklist) as well.
 
 <p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page reads your PDF in your browser. Its PDF reader, Mozilla's free pdf.js, is part of this website, so nothing is downloaded from another website.</p>
 
-<div class="tool pdf-check" data-pdf-check data-version="" hidden><label class="pdf-check-drop tool-drop tool-file" for="pdf-check-file"><span class="tool-file-button is-primary">Choose your PDF</span> <span class="tool-file-or">or drop it here</span></label><input class="visually-hidden" id="pdf-check-file" type="file" accept="application/pdf,.pdf"><p class="tool-file-names" data-file-names></p><div class="pdf-check-status tool-status" role="status" aria-live="polite"></div><p class="tool-actions pdf-check-actions"><button type="button" class="button button-secondary pdf-check-cancel" hidden>Cancel the check</button> <button type="button" class="button button-secondary pdf-check-again" hidden>Check another PDF</button></p><div class="pdf-check-results tool-results"></div></div>
+<div class="tool pdf-check" data-pdf-check data-version="" hidden><label class="pdf-check-drop tool-drop tool-file" for="pdf-check-file"><span class="tool-file-button is-primary" data-icon="file">Choose your PDF</span> <span class="tool-file-or">or drop it here</span></label><input class="visually-hidden" id="pdf-check-file" type="file" accept="application/pdf,.pdf"><p class="tool-file-names" data-file-names></p><div class="pdf-check-status tool-status" role="status" aria-live="polite"></div><p class="tool-actions pdf-check-actions"><button type="button" class="button button-secondary pdf-check-cancel" hidden data-icon="remove">Cancel the check</button> <button type="button" class="button button-secondary pdf-check-again" hidden data-icon="again">Check another PDF</button></p><div class="pdf-check-results tool-results"></div></div>
 
 <p class="pdf-check-nojs tool-nojs" data-pdf-check-nojs>The checker needs JavaScript, which is off or not available in this browser. Everything it looks at is listed below; check those points by eye, then use the <a href="submission.md#final-pdf-checklist">final PDF checklist</a>.</p>
 
@@ -28,6 +28,22 @@ gets one of these results:
   example because it found no contents page. It says why. Check the point by
   eye; it has not passed.
 - **Information:** a fact about the file, not a rule.
+
+The results start with a count of each kind, and the points to look at come
+first. Some points also say which pages they measured: a page with no text,
+such as a full-page picture or a scan, cannot be measured, and the result
+names it so you can check it by eye.
+
+When a point names PDF pages, **Show PDF page** draws that page from your
+PDF, in this browser, with what the checker measured drawn over it: the
+1 in margins (a dashed line), the lines 0.75 in from the top and bottom
+edges where the manual puts page numbers (dotted lines), and a box around
+the page number, heading, or text the point is about. A short legend under
+the page says the same in words, and the result above it gives the measured
+values. **Previous page** and **Next page** step through the pages the point
+names; **Close** (or the Esc key) closes the view. The box is drawn from the
+checker's measurements, so it shows where the checker looked, not a new
+check.
 
 To keep a record, or to send one with a question, use **Print or save the
 result** below the results. The printout lists the file name, the date, the
