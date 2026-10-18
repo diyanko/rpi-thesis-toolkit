@@ -1162,6 +1162,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .pager-prev .pager-label::before { content: "← " / ""; }
 .pager-next .pager-label::after { content: " →" / ""; }
 .pager-next { grid-column: 2; text-align: right; }
+.guide-content .page-feedback { margin: 2.2rem 0 0.6rem; font-size: 0.95rem; line-height: 1.45; color: var(--muted); }
 .guide-content .to-top { margin: 0 0 1.1rem; font-size: 0.95rem; line-height: 1.4; text-align: right; }
 .guide-content .to-top a { display: inline-block; padding: 8px 0 8px 10px; }   /* a comfortable touch target */
 
@@ -1830,7 +1831,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 }
 
 @media print {
-  .site-header, .nav-menu-list, .guide-sidebar, .guide-topics, .pager, .guide-end, .skip-link, .site-footer, .hero-actions, .diagram-open, .viewer, .page-toc, .page-toc-wide, .code-toolbar { display: none !important; }
+  .site-header, .nav-menu-list, .guide-sidebar, .guide-topics, .pager, .guide-end, .skip-link, .site-footer, .hero-actions, .diagram-open, .viewer, .page-toc, .page-toc-wide, .code-toolbar, .page-feedback { display: none !important; }
   .code-block { border: 0; background: none; }
   .guide-content .code-block > pre { padding-top: 16px; }
   :root, :root[data-theme], :root:not([data-theme]) {

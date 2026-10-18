@@ -160,6 +160,9 @@ $endfor$
 $endif$
   <main class="guide-content" id="main">
 $body$
+$if(page_feedback)$
+    <p class="page-feedback">Something wrong or unclear on this page? <a href="$page_feedback$">Tell the maintainer</a>, no account needed.</p>
+$endif$
 $-- Long pages (those with "On this page") end with a way back up.
 $if(toc)$
     <div class="guide-end">

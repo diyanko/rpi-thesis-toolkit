@@ -1228,6 +1228,8 @@ class Site:
         if self.repo:
             values["repo_url"] = self.repo
             values["edit_url"] = f"{self.repo}/edit/main/{source}"
+        if kind == "guide" and self.form_url:   # "Something wrong or unclear here?" under each guide page
+            values["page_feedback"] = escape(self.form_url, quote=True)
         if self.offline:
             values["offline"] = True
         if self.build_id:
