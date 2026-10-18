@@ -296,18 +296,10 @@ files (`.aux`, `.bbl`, `.toc`, ...) are scratch notes you never edit; the
 
 ## Bold citation keys and question marks
 
-These are LaTeX saying "I haven't finished filling this in yet". Start with
-your editor's compile ([your computer](get-started.md#step-3a-your-computer-route)
-or [Overleaf](get-started.md#step-3b-overleaf-route));
-if it does not clear, try a [clean recompile](troubleshooting.md#clean-recompile);
-in TeXShop, TeXworks, or TeXstudio, follow the
-[other-editor steps](get-started.md#other-editors).
-
-| You see | It means | Fix |
-| --- | --- | --- |
-| A citation key in **bold**, like **lamport1994** | Not in the reference list yet | Compile again. If it stays bold, check the key's spelling in your citation command and in `references.bib` |
-| **??** where a number should be | The `\ref{}` label is not known yet | Compile again. If it stays, check `\label{}` and `\ref{}` |
-| An empty or outdated contents page | Written on one pass, read on the next | Compile again |
+A citation key in **bold**, **??** where a number should be, or an empty
+contents page is LaTeX saying "I haven't finished filling this in yet": the
+notes from one pass are read on the next. Compile again; if it stays, the
+[fixes are in fixing problems](troubleshooting.md#citations-and-references).
 
 ## Where the PDF ends up
 

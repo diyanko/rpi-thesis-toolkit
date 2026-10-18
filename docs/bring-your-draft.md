@@ -86,7 +86,7 @@ route below changes your original file.
 | "see Figure 3" | `Figure~\ref{fig:my-plot}` | [Cross-references](writing.md#cross-references) |
 | `- item` lines | `itemize` with one `\item` per line | |
 
-### Convert a draft with Pandoc (optional)
+<details id="convert-a-draft-with-pandoc-optional"><summary>Optional: convert a long draft with Pandoc</summary>
 
 [Pandoc](https://pandoc.org/) is a free program that converts Markdown or
 Word (`.docx`) files. It saves typing but does not make a finished chapter.
@@ -180,6 +180,8 @@ document. More options: the [Pandoc manual](https://pandoc.org/MANUAL.html).
 
 *In words:* headings, bold, italics, and citations become LaTeX commands;
 a display equation goes in an `equation` environment so it gets a number.
+
+</details>
 
 </details>
 
