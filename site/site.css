@@ -416,12 +416,12 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .appearance-toggle {
   display: grid; place-items: center;
   width: 44px; height: 44px; padding: 10px;
-  color: var(--ink-soft); background: var(--card);
-  border: 1.5px solid var(--control-edge);
-  border-radius: 50%; cursor: pointer;
+  color: var(--ink); background: var(--card);
+  border: 2px solid var(--btn-edge-2);   /* the secondary button's hand-drawn edge */
+  border-radius: var(--sketch); box-shadow: 2px 2px 0 var(--btn-shadow); cursor: pointer;
 }
 .appearance-toggle:hover { color: var(--ink); background: var(--paper-2); }
-.theme-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.theme-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .appearance-toggle .theme-icon { display: none; }
 .appearance[data-mode="system"] .theme-icon-system,
 .appearance[data-mode="light"] .theme-icon-light,
@@ -1624,13 +1624,14 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 /* Optional guide search: the same paper and ink in both themes. */
 .search-open {
   display: inline-flex; align-items: center; gap: 8px;
-  color: var(--ink-soft); background: transparent;
-  border: 1.5px solid var(--control-edge); border-radius: 999px;
-  font: inherit; font-size: 0.95rem; cursor: pointer; min-height: 44px;
+  color: var(--ink); background: var(--card);
+  border: 2px solid var(--btn-edge-2); border-radius: var(--sketch);   /* as .appearance-toggle */
+  box-shadow: 2px 2px 0 var(--btn-shadow);
+  font: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; min-height: 44px;
   padding: 8px 13px; text-align: left;
 }
 .search-open:hover, .search-close:hover { color: var(--ink); background: var(--paper-2); }
-.search-icon { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.search-icon { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .search-open[hidden], .guide-search[hidden] { display: none; }
 .search-dialog {
   color: var(--ink); background: var(--paper);
@@ -2211,9 +2212,9 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .settings-page .tp-gap-20 { margin-top: calc(100cqw * 20 / 612); }
 .settings-page .tp-gap-40 { margin-top: calc(100cqw * 40 / 612); }
 .settings-page .is-empty { color: var(--page-muted); opacity: 0.7; }
-.settings-page .tp-seal {   /* 0.25 of the text width, the seal's shape; pushed down like \vfill */
-  display: grid; place-items: center;
-  width: 25%; aspect-ratio: 605 / 608; margin-top: auto;
+.settings-page .tp-seal {   /* a circle 0.25 of the text width (468pt); pushed down like \vfill */
+  display: grid; place-items: center; flex: none;
+  width: calc(100cqw * 117 / 612); height: calc(100cqw * 117 / 612); margin-top: auto;
   border: 1px dashed var(--line-strong); border-radius: 50%;
   color: var(--muted); font-size: calc(100cqw * 8 / 612);
 }
