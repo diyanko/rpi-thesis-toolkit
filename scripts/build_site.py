@@ -1350,6 +1350,57 @@ def drawing_colors():
     return errors
 
 
+def drawing_code_style():
+    """The code classes every drawing's <style> carries: the LaTeX colors of
+    site/site.css (the --code-* tokens and tok-* rules), c-cmd for tok-cmd."""
+    css = (SITE / "site.css").read_text(encoding="utf-8")
+    lines = ["    .c-tex, .c-bib, .c-md { fill: var(--ink); }"]
+    for name, token in re.findall(r"--code-(\w+):\s*var\(--([\w-]+)\)", css):
+        rule = re.search(r"\.tok-" + name + r"\s*\{\s*color:\s*var\(--code-" + name + r"\);\s*([^}]*?)\s*\}", css)
+        lines.append(f"    .c-{name} {{ fill: var(--{token}); {rule[1] + ' ' if rule and rule[1] else ''}}}")
+    return "\n".join(lines) + "\n"
+
+
+def drawing_code(text, bibtex=False):
+    """One line of LaTeX (or BibTeX) as the tspans a drawing draws it with:
+    highlight_latex's coloring, so a drawing matches the website's code."""
+    return highlight_latex(text, bibtex).replace('<span class="tok-', '<tspan class="c-').replace("</span>", "</tspan>")
+
+
+def drawing_code_colors():
+    """Code in the drawings is colored as on the website. A line of code is a
+    <text> with class c-tex (LaTeX), c-bib (BibTeX) or c-md (Markdown); its
+    tspans must be exactly drawing_code's, or c-* classes only for Markdown."""
+    style = drawing_code_style()
+    errors = []
+    drawings = sorted((ROOT / "docs/diagrams").glob("*.svg")) + sorted((SITE / "art").glob("*.svg"))
+    for path in drawings:
+        svg, name = path.read_text(encoding="utf-8"), path.relative_to(ROOT)
+        if style not in svg:
+            errors.append(f"{name}: its <style> lacks the code classes; paste these lines before </style> "
+                          f"(made from the LaTeX colors in site/site.css):\n{style}")
+        for match in re.finditer(r"<text\b([^>]*)>(.*?)</text>", svg, flags=re.S):
+            classes = (re.search(r'\bclass="([^"]*)"', match[1]) or [None, ""])[1].split()
+            inner, line = match[2], svg[:match.start()].count("\n") + 1
+            plain = unescape(re.sub(r"<[^>]+>", "", inner))
+            if "c-tex" in classes or "c-bib" in classes:
+                expected = drawing_code(plain, "c-bib" in classes)
+                if inner != expected:
+                    errors.append(f"{name} line {line}: this code is not colored as on the website; "
+                                  f"write the text as {expected}")
+            elif "c-md" in classes:
+                if re.search(r'<tspan(?! class="c-(?:cmd|brace|opt|math|com)">)', inner):
+                    errors.append(f"{name} line {line}: Markdown code may use only "
+                                  '<tspan class="c-cmd|c-brace|c-opt|c-math|c-com"> with no other attributes.')
+            elif 'class="c-' in inner:
+                errors.append(f"{name} line {line}: c-* code colors belong inside a <text> with class "
+                              "c-tex, c-bib or c-md.")
+            elif ({"code", "m"} & set(classes)) and re.search(r"\\[A-Za-z]", plain):
+                errors.append(f"{name} line {line}: this LaTeX code needs class c-tex on its <text> and the "
+                              "website's colors on its tspans (scripts/build_site.py, drawing_code).")
+    return errors
+
+
 def stylesheet_colors():
     """Colors live in one place: the tokens before "3. Base" in site/site.css.
     After it, a rule may use a token, or neutral black, white or gray (print,
@@ -1373,6 +1424,7 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
     site = Site(offline)
     site.errors.extend(checker_ids())
     site.errors.extend(drawing_colors())
+    site.errors.extend(drawing_code_colors())
     site.errors.extend(stylesheet_colors())
     checks = (SITE / "pdf-check/core.js").read_text(encoding="utf-8")
     pinned = re.search(r'PDFJS_VERSION = "([^"]+)"', checks)
