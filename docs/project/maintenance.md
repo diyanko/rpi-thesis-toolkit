@@ -34,6 +34,7 @@ adding it.
 | Maintainer docs | `docs/project/`, `AGENTS.md`, `CLAUDE.md`, `.github/` templates |
 | Website | `site/` (templates, CSS, fonts, `site.json` settings) |
 | Scripts and CI | `scripts/`, `.github/workflows/` |
+| Outreach print material (handout, poster) | `outreach/` (PDFs built by `scripts/outreach.py` into `build/outreach/`) |
 | Student editor settings | `.vscode/settings.json`, `.vscode/extensions.json` (shipped in the ZIP) |
 
 **How the class is organized.** `rpi-thesis.cls` has numbered sections, one
