@@ -836,6 +836,8 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .here + .home-foot { margin-top: clamp(24px, 3vw, 34px); }
 .home-news { margin: 0; flex: 1 1 30rem; max-width: 60rem; color: var(--ink-soft); }
 .home-news .tag { margin-right: 0.4em; }
+.home-news a { white-space: nowrap; }   /* "All changes" and "How to update" stay whole */
+@media (max-width: 480px) { .home-news a { white-space: normal; } }   /* except where even two words may not fit */
 .home-share { margin: 0; display: flex; align-items: center; gap: 12px; }
 /* Icons for actions, drawn by hand like the callout icons: a button, file
    picker or quiet button opts in with data-icon="copy" (or download, add,

@@ -119,7 +119,10 @@ def cite(keys, rules, link):
             groups[-1][1].extend(pieces)
         elif pieces:
             groups.append([rules[key]["section"], pieces])
-    return "; ".join(f"[{'; '.join(pieces)}]({link}#{section})" for section, pieces in groups)
+    # "p. 4" and "§2.1" never break inside on a narrow line (no-break spaces).
+    def tight(text):
+        return re.sub(r"\b(pp?\.|Table) (?=\d)", lambda m: m[1] + "\u00a0", text)
+    return "; ".join(f"[{tight('; '.join(pieces))}]({link}#{section})" for section, pieces in groups)
 
 
 def in_code(text, matches):
