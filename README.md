@@ -3,11 +3,11 @@
 An unofficial, community-made starter. Not affiliated with or endorsed by
 Rensselaer Polytechnic Institute or its Office of Graduate Education (OGE).
 
-**Write your RPI thesis or dissertation in LaTeX — even if you have never used it before.**
+**A LaTeX starter and plain-language guide for RPI theses and dissertations, written for first-time LaTeX users too.**
 
 Get the starter, compile your first PDF, and let one shared formatting file
 (`rpi-thesis.cls`) handle margins, page numbers, headings, contents, and
-references — on your own computer, on Overleaf, or both. Draft wherever you
+references, on your own computer, on Overleaf, or both. Draft wherever you
 and your advisor work best, and bring each chapter in when it is ready. No programming, Git, or
 paid software required.
 
