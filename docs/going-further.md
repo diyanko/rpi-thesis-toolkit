@@ -6,18 +6,6 @@ the task you need; Git, AI, and the extra packages are optional. Still setting
 up? [Get started](get-started.md). For the bigger picture, see
 [the suggested workflow](how-it-works.md#the-suggested-workflow-and-why).
 
-**Sharing, backups, and help:** [common situations](#common-situations) ·
-[back up your work](#back-up-your-work) ·
-[private GitHub repository](#use-a-private-github-repository) ·
-[update the formatting](#update-the-formatting-safely) ·
-[AI for technical help](#use-ai-for-technical-help)
-
-**Settings and extras:** [where customizations belong](#where-customizations-belong) ·
-[all thesis settings](#all-thesis-settings) ·
-[build commands](#build-commands) ·
-[chapter-title case](#use-another-case-for-chapter-titles) ·
-[recipes for common extras](#recipes-for-common-extras)
-
 ## Common situations
 
 - [Move from Overleaf to your computer](#overleaf-to-your-computer), or [the other way](#your-computer-to-overleaf)
@@ -28,6 +16,7 @@ up? [Get started](get-started.md). For the bigger picture, see
 - [Bring in a draft written elsewhere](bring-your-draft.md)
 - [Write with co-authors or lab-mates](#co-authors-and-lab-mates)
 - [Turn a chapter into a paper](#turn-a-chapter-into-a-paper) or [make slides](#make-slides)
+- [Write a proposal or qualifying exam](#write-a-proposal-or-qualifying-exam) in the same format
 
 ### Overleaf to your computer
 
@@ -238,6 +227,36 @@ Optional: to turn Markdown slides into PowerPoint, run
 each top-level heading (`# Slide title`); lower-level headings stay on that
 slide.
 
+### Write a proposal or qualifying exam
+
+Other long documents, such as a thesis or candidacy proposal or a research or
+doctoral qualifying exam report, can use the starter as a model: the same
+chapters, citations, figures, and page layout. OGE does not review them, so
+follow what your department or committee asks for.
+
+Copy the starter into a new folder. Keep `metadata.tex` filled in (the class
+still checks it), and in `main.tex` replace `\maketitle` with a simple title
+page of your own, whose lines you can change freely:
+
+```latex
+\pagenumbering{roman}
+\begin{titlepage}
+  \centering
+  \MakeUppercase{Your proposal title}\par
+  \vspace{2\baselineskip}
+  Your Full Name\par
+  \vspace{2\baselineskip}
+  Doctoral Candidacy Proposal\par
+  Department of Your Department\par
+  Rensselaer Polytechnic Institute\par
+  \vspace{2\baselineskip}
+  May 2027\par
+\end{titlepage}
+\setcounter{page}{2}
+```
+
+Delete the front-matter lines you do not need, such as the acknowledgment.
+
 ## Back up your work
 
 Keep your thesis in two places, one off your computer, so a lost laptop costs
@@ -385,12 +404,12 @@ Before version 1.0, anything may change, and the changelog says what to do.
 4. **Recompile and look** at your PDF, especially the title page, contents,
    and page numbers.
 
-Which version do you have? Your compile log has a line of the form
-`rpi-thesis YYYY/MM/DD vX.Y.Z`, and your PDF shows it under **Creator** in its
-document properties; the website's footer shows the newest. The
-[online changelog](https://github.com/diyanko/rpi-thesis-toolkit/blob/main/CHANGELOG.md)
-lists what each version changed, starting with **Changes your PDF?** (the copy
-in your download is frozen at that version).
+Which version do you have? The quickest way: drop your PDF into
+[Check your PDF](check-pdf.md); it names the version that made it and says
+whether a newer one exists. Your compile log also has a line of the form
+`rpi-thesis YYYY/MM/DD vX.Y.Z`, and the website's footer shows the newest. The
+[changelog](../CHANGELOG.md) lists what each version changed, starting with
+**Changes your PDF?**
 
 Close to a deadline, update only if a change fixes something that affects
 you. To hear about updates, use **Watch → Custom → Releases** on the toolkit's
@@ -552,7 +571,8 @@ Other class commands:
   appendix.
 
 `degree-name` does not make the toolkit suitable for undergraduate theses or
-other document types; those need their own requirements check.
+other document types; those need their own requirements check. For a proposal
+or qualifying exam, see [write a proposal or qualifying exam](#write-a-proposal-or-qualifying-exam).
 
 ## Build commands
 

@@ -62,11 +62,11 @@ The toolkit follows the manual edition recorded in the
 | Attributions and co-contribution | A `\chapterattribution{...}` command that prints an unnumbered note on the chapter's first page | Exact wording from the current OGE manual ({{cite:attribution}}); the citation in your reference style (`\fullcite{key}` does this); an attribution for every reused paper, including ones you wrote alone; every co-authored one listed on the Declaration of Co-Contribution |
 | Reproduced figures and tables | A caption example and wording for material used with permission or under a Creative Commons license | Permission or license for each item; credit in the caption; permissions documents as OGE instructs |
 | Equations | Numbered `equation` examples, including a multi-line one with a single centered number | {{rule:equations}}. {{rule:unnumbered-displays}}. Long equations broken ({{cite:equations,unnumbered-displays}}) |
-| References | Consistent formatting from one style; references placed before appendices; printed access dates; a hint from the optional build helper for URLs without one | Style agreed with advisor; an access date printed for every URL ({{cite:access-dates}}); non-journal sources checked against the style guide |
+| References | Consistent formatting from one style; references placed before appendices; printed access dates; [Check your references](check-references.md) lists URLs without one | Style agreed with advisor; an access date printed for every URL ({{cite:access-dates}}); non-journal sources checked against the style guide |
 
 ## Final PDF checklist
 
-Check [what OGE commonly flags](#what-oge-commonly-flags), then complete this list; the optional [Check your PDF](check-pdf.md) page measures a few of these points for you. The ticks are not saved: they reset when you leave the page, so copy the list somewhere if you want to keep your progress.
+Check [what OGE commonly flags](#what-oge-commonly-flags), then complete this list. Two optional tools help: [Check your PDF](check-pdf.md) measures a few of these points, and [Check your references](check-references.md) looks through `references.bib`. The ticks are not saved: they reset when you leave the page, so copy the list somewhere if you want to keep your progress.
 
 - [ ] Every sample paragraph, placeholder, and invented example is gone.
 - [ ] Built with a [clean recompile](troubleshooting.md#clean-recompile), with any `\includeonly` line commented out again.
@@ -75,10 +75,9 @@ Check [what OGE commonly flags](#what-oge-commonly-flags), then complete this li
 - [ ] No bold citation keys or **??** anywhere; no missing characters.
 - [ ] Contents and lists include figures and tables in the appendices.
 - [ ] Reviewed newer class changes and applied any formatting fixes your thesis
-  needs: compare the version at the top of `rpi-thesis.cls` (also printed in
-  the compile log) with the toolkit's [changelog](../CHANGELOG.md), and read
-  its **Changes your PDF?** notes
-  ([update safely](going-further.md#update-the-formatting-safely)).
+  needs: [Check your PDF](check-pdf.md) names the version that made your PDF;
+  read the [changelog](../CHANGELOG.md) entries since then, starting with
+  **Changes your PDF?** ([update safely](going-further.md#update-the-formatting-safely)).
 
 A successful compile proves only that LaTeX made a PDF. Archive the final
 source, the exact PDF you submitted, and your permission documents in two

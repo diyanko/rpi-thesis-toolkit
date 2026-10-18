@@ -114,7 +114,9 @@ and [fixing problems](troubleshooting.md#common-messages).
    Replace `your-key` with the key from your source's entry. Check how your
    style prints both ([the citation commands](citations.md#change-the-citation-style)).
 
-Only sources you cite appear in the reference list. Agree on a citation style
+Only sources you cite appear in the reference list; to check your
+`references.bib` for missing fields or repeated keys, use
+[Check your references](check-references.md). Agree on a citation style
 with your advisor first ([agree on a style](citations.md#step-1-agree-on-a-style-with-your-advisor)),
 because the style decides what each command prints.
 
@@ -212,7 +214,9 @@ Start from the sample table in `chapters/02-research.tex`. The caption goes
 - In a cell, `&`, `%`, `_`, `#`, and `$` need a backslash: `R\&D`, `50\%`.
 - Refer to it with `Table~\ref{tab:my-table}`.
 
-Have the data in a spreadsheet? Try
+Have the data in a spreadsheet? Copy the cells into
+[Bring your work in](bring-your-work-in.md): it writes the whole table,
+caption and label included, in your browser. More routes:
 [make a table from a spreadsheet](#make-a-table-from-a-spreadsheet).
 
 <details>
@@ -361,7 +365,8 @@ third-party services whose terms can change.
 
 | I need to... | Start here |
 | --- | --- |
-| Turn spreadsheet cells into a table | [Tables Generator](#make-a-table-from-a-spreadsheet) |
+| Turn pasted text, or spreadsheet cells, into LaTeX | [Bring your work in](bring-your-work-in.md), on this site |
+| Edit a table's layout cell by cell | [Tables Generator](#make-a-table-from-a-spreadsheet) |
 | Build an equation by clicking | [Equation editor](#write-an-equation) |
 | Find a symbol I can draw | [Detexify](#find-a-symbols-command) |
 | Make a flowchart or schematic | [Diagram tools](#draw-a-diagram) |

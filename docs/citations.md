@@ -175,9 +175,9 @@ directly only in a file you maintain by hand, like this one:
 }
 ```
 
-Check that the date **prints** in your PDF; some styles hide it. The optional
-[build helper](going-further.md#build-commands) flags any `url` without a
-`urldate`. DOIs need no access date.
+Check that the date **prints** in your PDF; some styles hide it.
+[Check your references](check-references.md) lists any `url` without a
+`urldate`, in your browser. DOIs need no access date.
 
 ## Change the citation style
 

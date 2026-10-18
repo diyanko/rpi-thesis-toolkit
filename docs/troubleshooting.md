@@ -133,6 +133,7 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 | The reference list is empty | Cite at least one entry, for example with `\parencite{key}`, then compile again. |
 | A new Zotero source doesn't appear | Re-export, compile again, and check that the key in your citation command matches the key in the `.bib` file exactly. |
 | `Misplaced alignment tab character &` in the references | A title in the `.bib` file contains `&`. Write it as `\&`. |
+| `File 'main.bbl' not created by biblatex` | A bibliography file from an earlier build, often one that used BibTeX or `natbib`, is in the way. Do a [clean recompile](#clean-recompile). |
 
 ### Layout and the PDF
 

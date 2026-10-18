@@ -196,8 +196,9 @@ it does not remove the need to revise the argument for its audience.
   a line ([read an error message](troubleshooting.md#read-an-error-message)).
 - **Advisors who prefer Word.** Send a PDF to comment on, or a Word copy, and
   apply their edits by hand ([common situations](going-further.md#common-situations)).
-- **Tables take a bit more effort.** Copy the sample chapters' example and
-  adapt it.
+- **Tables take a bit more effort.** Paste spreadsheet cells into
+  [Bring your work in](bring-your-work-in.md), or adapt the sample chapters'
+  example.
 - **The Office of Graduate Education (OGE) can't debug LaTeX.** Its staff
   review your formatting, not your code
   ([ask for help](troubleshooting.md#ask-for-help)).
