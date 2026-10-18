@@ -249,6 +249,13 @@ type your headings and decide where each caption goes.
 
 ## What each file does
 
+![Which file changes which part of the PDF. On the left, five project files; on the right, pages of main.pdf. metadata.tex points to the title page, with your title, name, and degree. main.tex points to the contents: it sets the order of the chapters. chapters/ points to a chapter page: these files hold your words. references.bib and preamble.tex point to the reference list: they set the citation style and the references. rpi-thesis.cls points to a dashed frame around the whole PDF: it sets the formatting of every page and is normally never edited.](diagrams/file-to-pdf.svg)
+
+*In words:* `metadata.tex` fills the title page, `main.tex` sets the
+order, `chapters/` hold your words, `references.bib` and `preamble.tex`
+make the citations and reference list, and `rpi-thesis.cls` formats every
+page.
+
 | File or folder | What it is | Do you edit it? |
 | --- | --- | --- |
 | `main.tex` | The file you compile; lists the pieces in order | To add or remove chapters |

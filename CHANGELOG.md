@@ -74,6 +74,8 @@ rule with its source.
 - **More drawings:** the six reasons in "Why LaTeX for a thesis" show their
   drawings in the cards, and Writing basics has two new ones: how to add a
   chapter, and how `\label` and `\ref` fill in a figure's number.
+  How it works and Going further also show which file changes which part
+  of the PDF.
 
 ## Unreleased
 
