@@ -2126,6 +2126,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; resize: vertical;
 }
 .guide-content .tool-actions { display: flex; flex-wrap: wrap; gap: 10px 14px; margin: 1rem 0 0; }
+.guide-content > .tool-actions { margin: 1rem 0 1.4rem; }   /* a button in the text keeps room below it */
 @media (max-width: 480px) {   /* phones: a row of actions becomes full-width buttons of one size */
   .guide-content .tool-actions > .button:not(.button-small) { flex: 1 1 100%; }
 }

@@ -68,8 +68,9 @@ On Overleaf? Skip to [Step 3b](#step-3b-overleaf-route).
 You need **LaTeX** (the programs that make the PDF) and **an editor with a
 LaTeX extension** (an add-on that compiles when you save and shows the PDF
 beside your text). This guide walks through VS Code with the LaTeX Workshop
-extension, which the starter's settings are made for. Any editor with a LaTeX
-extension works the same way ([other editors](#other-editors)).
+extension, a popular free editor the starter's settings are made for. Already
+happy with TeXstudio or another LaTeX editor? Keep it
+([other editors](#other-editors)).
 
 1. **Install a current, full LaTeX distribution.** Allow an hour or more.
    - **Windows:** [TeX Live for Windows](https://tug.org/texlive/windows.html).

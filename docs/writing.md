@@ -1,12 +1,11 @@
 # Writing basics
 
-For anyone writing the chapters of a thesis or dissertation, once the sample
-compiles ([get started](get-started.md)). You write ordinary text plus a few
-*commands*: short instructions that start with a backslash, `\`. The *class
-file* (`rpi-thesis.cls`, the file of formatting rules) handles the layout. Compile after each small change,
-so you always know what broke. Prefer paper? Print the
-[one-page cheat sheet](../cheatsheet/). Need a table, equation, figure, or
-code listing? Jump to [helpers for common tasks](#helpers-for-common-tasks).
+Once the sample compiles ([get started](get-started.md)), this is all you
+need to write. You type ordinary text plus a few *commands*, short
+instructions that start with a backslash, `\`, and the *class file*
+(`rpi-thesis.cls`) handles the layout. Compile after each small change, so you
+always know what broke. Prefer paper? Print the
+[one-page cheat sheet](../cheatsheet/).
 
 ## The 10 commands you'll actually use
 
@@ -53,15 +52,12 @@ This is another paragraph.
 LaTeX numbers headings and builds the contents, so never type the numbers.
 Use at most four levels (`\chapter` to `\subsubsection`).
 
-**Capitalization.** OGE's rule (manual §2.3; see the heading rows in the
-[requirements map](project/requirements.md)) is to use one consistent case
-for each kind of heading. The starter's own convention is CAPITALS for
-chapter and appendix titles, matching its built-in titles (CONTENTS,
-REFERENCES), so type them that way unless you choose another consistent case
-([use another case](going-further.md#use-another-case-for-chapter-titles)). For sections and captions, pick sentence
-case ("Results of the field study") or title case ("Results of the Field
-Study") and never mix them. To change the reference-list title, add
-`\renewcommand{\referencesname}{References}` to `preamble.tex`.
+**Capitalization.** OGE asks for one consistent case per kind of heading
+(manual §2.3). The starter types chapter and appendix titles in CAPITALS, to
+match CONTENTS and REFERENCES
+([another case](going-further.md#use-another-case-for-chapter-titles)). For
+sections and captions, pick sentence case ("Results of the field study") or
+title case ("Results of the Field Study"), and never mix them.
 
 ## Chapters
 
@@ -375,7 +371,7 @@ third-party services whose terms can change.
 | Convert a document or image file | [Conversion help](going-further.md#ask-for-a-file-conversion) |
 | Get unstuck on a tricky technical step | [An AI assistant](#ask-an-ai-assistant) |
 
-### Make a table from a spreadsheet
+<details id="make-a-table-from-a-spreadsheet"><summary>Make a table from a spreadsheet</summary>
 
 Use [Tables Generator](https://www.tablesgenerator.com/latex_tables) to turn
 spreadsheet cells into an editable LaTeX table.
@@ -397,7 +393,9 @@ need other code ([wide and multipage tables](#too-wide-for-the-page)). To put
 LaTeX in a cell on purpose, such as `$x^2$`, untick **Escape special
 characters**.
 
-### Write an equation
+</details>
+
+<details id="write-an-equation"><summary>Write an equation</summary>
 
 Use [LaTeXEditor.app](https://latexeditor.app/) to build an equation by
 clicking symbols, fractions, matrices, or a system of equations.
@@ -413,7 +411,9 @@ clicking symbols, fractions, matrices, or a system of equations.
   not have loaded. Chemistry such as `\ce{H2O}` needs
   `\usepackage[version=4]{mhchem}` in `preamble.tex`; compile to check.
 
-### Find a symbol's command
+</details>
+
+<details id="find-a-symbols-command"><summary>Find a symbol's command</summary>
 
 Use [Detexify](https://detexify.kirelabs.org/) when you can draw a symbol but
 do not know its LaTeX command.
@@ -425,7 +425,9 @@ add `\usepackage{...}` to `preamble.tex`; `amssymb` and `amsfonts` are already
 covered by the class. For a whole handwritten equation, rebuild it in the
 equation editor instead.
 
-### Draw a diagram
+</details>
+
+<details id="draw-a-diagram"><summary>Draw a diagram</summary>
 
 Use [draw.io](https://app.diagrams.net/) to arrange shapes and arrows into
 flowcharts, concept maps, timelines, or schematics.
@@ -450,7 +452,9 @@ Want a mathematical drawing as TikZ code?
 [Mathcha](https://www.mathcha.io/) can export it: add `\usepackage{tikz}` to
 `preamble.tex` and check that it compiles.
 
-### Export a chart or convert an image
+</details>
+
+<details id="export-a-chart-or-convert-an-image"><summary>Export a chart or convert an image</summary>
 
 For a chart, keep the spreadsheet or plotting code and the original data, and
 export a PDF where possible, or a PNG, for the [figure example](#add-a-figure).
@@ -462,7 +466,9 @@ it; renaming the file does not convert it. Keep photos and scans sharp enough
 for print, and inspect labels and cropping afterwards. Need the steps?
 [Describe the conversion you want](going-further.md#ask-for-a-file-conversion).
 
-### Ask an AI assistant
+</details>
+
+<details id="ask-an-ai-assistant"><summary>Ask an AI assistant</summary>
 
 For the tricky technical bits, an AI assistant that accepts images can turn a
 table screenshot, a photo of a handwritten equation, or a rough sketch into
@@ -492,6 +498,8 @@ paste only the table, equation, or figure into the template's examples (never
 another document's *preamble*, the setup lines before `\begin{document}`, and
 don't change `rpi-thesis.cls`), and share only
 material you're comfortable sending to that service.
+
+</details>
 
 More: [AI for technical help](going-further.md#use-ai-for-technical-help). Stuck?
 See [fixing problems](troubleshooting.md).
