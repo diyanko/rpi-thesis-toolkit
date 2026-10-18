@@ -18,7 +18,7 @@ Paste or drop your `references.bib`; the page lists common problems
    the reference list in your PDF.
 
 <div class="tool bibcheck" data-bibcheck hidden>
-<label class="tool-drop tool-file" for="bibcheck-files" data-drop><span class="tool-file-button">Choose files</span> <span class="tool-file-or">or drop references.bib and .tex files here</span></label><input class="visually-hidden" id="bibcheck-files" type="file" accept=".bib,.tex" multiple>
+<label class="tool-drop tool-file" for="bibcheck-files" data-drop><span class="tool-file-button" data-icon="file">Choose files</span> <span class="tool-file-or">or drop references.bib and .tex files here</span></label><input class="visually-hidden" id="bibcheck-files" type="file" accept=".bib,.tex" multiple>
 <p class="tool-file-names" data-file-names></p>
 <label for="bibcheck-bib">Contents of references.bib</label>
 <textarea id="bibcheck-bib" data-bib rows="10" spellcheck="false" placeholder="Paste references.bib here."></textarea>
@@ -30,7 +30,7 @@ Paste or drop your `references.bib`; the page lists common problems
 <textarea id="bibcheck-tex" data-tex rows="5" spellcheck="false" placeholder="Paste chapter text here."></textarea>
 <label><input type="checkbox" data-unused> Also list entries not cited in the supplied .tex files</label>
 </details>
-<p class="tool-actions"><button type="button" class="button" data-run>Check references</button> <button type="button" class="button button-secondary" data-clear>Clear</button></p>
+<p class="tool-actions"><button type="button" class="button" data-run data-icon="search">Check references</button> <button type="button" class="button button-secondary" data-clear data-icon="clear">Clear</button></p>
 <div class="tool-status" role="status" aria-live="polite"></div>
 <div class="tool-results tool-card" data-results></div>
 </div>
@@ -53,16 +53,40 @@ Results are grouped by how they may affect your references:
 - **Tidy-ups:** possible duplicate records, repeated DOI links, or entries
   not cited in the supplied chapters, if you requested that check.
 
-Every point gives the key (the label after `@book{`, for example), field,
-suggested fix, and a link to the relevant [Citations guide](citations.md).
-The page never changes your files. If Zotero exported the file, correct the
-record in Zotero and export again; see [auto-export cautions](citations.md#set-it-and-forget-it).
+Every point gives the key (the label after `@book{`, for example), the
+field, and its line in the box (with the file name when you added several
+`.bib` files). Choose the line to select that entry or field in the box.
+Each point also suggests a fix and links to the guide section that explains
+it. **By entry** lists the same points under each entry instead.
+
+### Safe fixes
+
+A few points have a fix the page can make for you. Each one shows the field
+now and after the fix; nothing changes until you choose the button, one fix
+at a time or all at once. The page offers a fix only when the change is
+certain and keeps the meaning:
+
+- escaping a literal `&`, `%`, `_`, or `#` in a text field (not in names,
+  links, or math);
+- keeping only the DOI when `doi` holds a full `https://doi.org/` address
+  or starts with `doi:`;
+- writing an English month name, such as `January`, as its number;
+- moving a full date such as `2020-05-01` from `year` to `date`;
+- adding a missing comma between two fields.
+
+Fixes never add information, such as dates, DOIs, or pages, and never change
+keys; everything else stays advice for you to check against the source. The
+fixes change only the text in the box. Choose **Download** to save the
+corrected file, and use it in place of your old one. **Undo the fixes**
+restores the text from before them. If Zotero exported the file, correct the
+record in Zotero as well and export again, or the next export replaces your
+changes; see [auto-export cautions](citations.md#set-it-and-forget-it).
 
 ## Checklist without JavaScript
 
-- [ ] Each key is unique, including capitalization; every cited key exists
+- [ ] <span id="checklist-keys"></span>Each key is unique, including capitalization; every cited key exists
   in a `.bib` file your document loads.
-- [ ] Each entry has its usual fields: an article's author, title, journal,
+- [ ] <span id="checklist-fields"></span>Each entry has its usual fields: an article's author, title, journal,
   and date; a book's author or editor, title, date, and publisher; a chapter's
   book title and pages; a thesis or report's institution and type. Compare
   with the source and [your style guide](citations.md#step-1-agree-on-a-style-with-your-advisor).
@@ -70,10 +94,10 @@ record in Zotero and export again; see [auto-export cautions](citations.md#set-i
   access date appears in the PDF. This follows the OGE manual §3.4 p. 34
   ([access dates](citations.md#web-sources-need-an-access-date)). DOIs alone
   do not need access dates.
-- [ ] Publication dates use `date = {YYYY-MM-DD}` (or a year or year-month
+- [ ] <span id="checklist-dates"></span>Publication dates use `date = {YYYY-MM-DD}` (or a year or year-month
   when that is all the source gives). A separate `year` is four digits;
   `month` is a number or a month macro such as `jan`.
-- [ ] `doi` contains the identifier, such as `10.1234/example`, rather than
+- [ ] <span id="checklist-links"></span>`doi` contains the identifier, such as `10.1234/example`, rather than
   a full web address. Check DOI and ISBN digits against the source. Prefer
   HTTPS when the source supports it; remove a URL that only repeats the DOI
   if your style does not need both.
@@ -81,9 +105,9 @@ record in Zotero and export again; see [auto-export cautions](citations.md#set-i
   braces, such as `author = {{Example Institute}}`. Check particles, suffixes,
   and differing initials against the sources
   ([name examples](citations.md#if-you-cant-use-zotero-paste-an-entry-by-hand)).
-- [ ] Capitals that must survive sentence case have protection, such as
+- [ ] <span id="checklist-capitals"></span>Capitals that must survive sentence case have protection, such as
   `{NASA}` and `{Python}`. Protect proper names, rather than every word.
-- [ ] Literal `&`, `%`, `_`, and `#` in text fields are escaped as `\&`,
+- [ ] <span id="checklist-special-characters"></span>Literal `&`, `%`, `_`, and `#` in text fields are escaped as `\&`,
   `\%`, `\_`, and `\#`. URL and DOI fields handle these characters
   separately. Mathematical expressions such as `$L_p$` keep their mathematical
   syntax. Braces balance, and accented names remain readable in UTF-8.
@@ -111,7 +135,9 @@ review. It does not visit links, verify published facts, infer which chapter
 files your document includes, or decide whether two similar names are the
 same person. Citation commands hidden in custom commands may be missed.
 It reads common braced and quoted entries, string macros defined before use,
-and concatenated values. Inherited fields (`crossref` or `xdata`) are reported
+and concatenated values. When an entry is missing a closing brace, the page
+reports it and checks the following entries on their own. It skips citations
+inside `\verb`, `\lstinline`, and verbatim or listing environments. Inherited fields (`crossref` or `xdata`) are reported
 for review rather than treated as missing. Advanced date notation, custom
 name formats, and custom data models may need manual review. Files are
 limited to 5 MB per selection; split larger libraries before checking.
