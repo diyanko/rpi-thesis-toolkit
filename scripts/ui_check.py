@@ -247,7 +247,7 @@ const STYLE_WIDTH = 1280;
 const STYLED = [".button:not(.button-small)", ".button-small", ".tool-file", ".tool-file-button", ".tool-status",
   ".tool-privacy", ".tool-results", ".tool-hint", ".tool-label", ".tool-switch", ".tool select",
   ".tool :is(input[type=text], textarea.settings-grow)", ".tool textarea:not(.tool-drop, .settings-grow)", ".tool textarea.tool-drop", ".tool-output", ".tag:not(.tag-optional)", ".tag-optional",
-  ".pager a", ".guide-content > h2", ".guide-content > h3", ".table-wrap", ".tip", ".note", ".warning", ".important"];
+  ".pager a", ".guide-content > h2", ".guide-content > h3", ".action-rows .help-card", ".button-quiet", ".nav-menu-list a:not([aria-current])", ".release-pdf", ".table-wrap", ".tip", ".note", ".warning", ".important"];
 // Measured on each; height is left out because boxes for text are sized to their purpose.
 const LOOK = ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "fontSize", "fontWeight",
   "borderTopWidth", "borderTopStyle", "lineHeight"];

@@ -66,6 +66,35 @@ messages. When in doubt, choose the plainer sentence.
   some cleanup, and a requirements check", not "format once" or "the move is
   a paste".
 
+## Page rules
+
+A few rules keep every page easy to read and easy to change. Follow them
+before adding anything new; change the rule here, not one page, when it no
+longer fits.
+
+1. **One home per topic.** Each fact, command, or how-to is explained fully in
+   one place. Everywhere else gets one sentence and a link. When you find the
+   same explanation twice, keep the better one and link to it.
+2. **Lead with the action.** A page's main action is a button
+   (`.button`, or one `.action-rows` row per way of doing it), near the top.
+   Other links stay in the text.
+3. **Name a tool where it helps,** in one sentence, at the step where a
+   student needs it (the Settings builder at "put your name on it", Explain
+   my error where a compile fails).
+4. **Fold only alternatives and depth:** a specific editor, style, system, or
+   optional detail longer than about five lines goes in
+   `<details><summary>If you use ...: ...</summary>`. What most readers need
+   stays visible.
+5. **Warm and short.** Speak student to student ("Made by students, for
+   students"); one idea per sentence; cut words before adding them.
+6. **Only shared parts.** Use the components in the
+   [component gallery](components.md), the color tokens, and the icon set;
+   no styles for one page. A new kind of part goes in the gallery and in
+   `STYLED` in `scripts/ui_check.py`, which checks it looks the same on every
+   page. The build rejects colors outside the tokens.
+7. **Phones:** keep the home page and the tool pages short on a phone; other
+   pages only need to read well there.
+
 ## Core path and supporting material
 
 The core path is LaTeX for the RPI thesis: get the starter, compile a first

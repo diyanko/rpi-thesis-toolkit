@@ -487,11 +487,11 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   background: var(--card); border: 1.5px solid var(--control-edge); border-radius: 14px;
   box-shadow: 0 8px 24px var(--scroll-hint);
 }
-.nav-menu-list a { display: block; padding: 8px 12px; color: var(--ink); text-decoration: none; border-radius: 8px; }
+.site-nav .nav-menu-list a { display: block; padding: 8px 12px; color: var(--ink); text-decoration: none; border-radius: 8px; }   /* not the header bar's link padding */
 .nav-menu-list a:hover { background: var(--paper-2); }
 .nav-menu-list a[aria-current="page"] { background: var(--sage-wash); font-weight: 700; }
 .nav-menu-list a:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
-.nav-menu-tools .nav-menu-list a { display: flex; align-items: flex-start; gap: 12px; }
+.site-nav .nav-menu-tools .nav-menu-list a { display: flex; align-items: flex-start; gap: 12px; }
 .nav-menu-icon { width: 30px; height: 30px; flex: none; margin-top: 2px; }   /* the tool's doodle from the home page */
 .nav-menu-name { display: block; font-weight: 700; }
 .nav-menu-blurb { display: block; font-size: 0.85rem; color: var(--muted); }
@@ -733,18 +733,18 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 /* A door with one action (the Contribute page): the button sits at the foot of each card. */
 /* Doors with one action each (the Contribute page): one row per way, what it
    is on the left and its button on the right; stacked on phones. */
-.guide-content > .contribute-doors { grid-template-columns: minmax(0, 1fr); gap: 14px; max-width: none; margin: 1.6rem 0 2.2rem; padding: 0; }
-.guide-content .contribute-doors .help-card { display: flex; flex-direction: row; align-items: center; gap: 20px; padding: 12px 18px; }
-.contribute-doors .help-card h3 { margin: 0 0 2px; font-size: 1.15rem; }
-.contribute-doors .help-card .kicker { margin: 4px 0 0; font-size: 0.75rem; }
-.contribute-doors .help-text { flex: 1 1 auto; min-width: 0; }
-.contribute-doors .help-text > :last-child { margin-bottom: 0; }
-.contribute-doors .help-card p { margin-bottom: 0; }
-.contribute-doors .help-action { flex: none; margin: 0; }
-.contribute-doors .button { white-space: nowrap; }
+.guide-content > .action-rows { grid-template-columns: minmax(0, 1fr); gap: 14px; max-width: none; margin: 1.6rem 0 2.2rem; padding: 0; }
+.guide-content .action-rows .help-card { display: flex; flex-direction: row; align-items: center; gap: 20px; padding: 12px 18px; }
+.action-rows .help-card h3 { margin: 0 0 2px; font-size: 1.15rem; }
+.action-rows .help-card .kicker { margin: 4px 0 0; font-size: 0.75rem; }
+.action-rows .help-text { flex: 1 1 auto; min-width: 0; }
+.action-rows .help-text > :last-child { margin-bottom: 0; }
+.action-rows .help-card p { margin-bottom: 0; }
+.action-rows .help-action { flex: none; margin: 0; }
+.action-rows .button { white-space: nowrap; }
 @media (max-width: 600px) {
-  .guide-content .contribute-doors .help-card { flex-direction: column; align-items: stretch; gap: 12px; }
-  .contribute-doors .button { width: 100%; }
+  .guide-content .action-rows .help-card { flex-direction: column; align-items: stretch; gap: 12px; }
+  .action-rows .button { width: 100%; }
 }
 
 /* Cards lift a little while you point at them or tab into them */

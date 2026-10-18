@@ -161,6 +161,10 @@ of action, in the same 24 px, 2 px stroke, slightly wobbly style.
 The quiet button (`.button-quiet`) is a 44 px icon with no edge until you
 point at it, for a small action beside a field, such as removing a row.
 
+**Action rows** (`.action-rows`, a list of `.card.help-card` items): one row
+per way of doing something, its title and one line on the left and one
+button on the right; stacked on phones. The Contribute page uses it.
+
 **Header menus.** Guide and Tools in the header are native `<details>` menus
 (they open without JavaScript; `site/theme.js` closes them on Esc or a click
 elsewhere). The Tools menu takes each tool's doodle and one line from the

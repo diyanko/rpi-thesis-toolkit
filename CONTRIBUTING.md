@@ -5,7 +5,7 @@ hard way makes it better for you and for everyone writing after you. None of
 these needs LaTeX or GitHub skills, and everyone taking part follows the
 [code of conduct](CODE_OF_CONDUCT.md).
 
-<ul class="guide-list doors contribute-doors" role="list">
+<ul class="guide-list doors action-rows" role="list">
 <li class="card help-card"><div class="help-text"><h3>Send a note</h3><p>A question, an idea, a tip, or how it went on your computer.</p><p class="kicker">About a minute, no account</p></div><p class="help-action"><a class="button" data-form href="docs/troubleshooting.md#ask-for-help">Open the form</a></p></li>
 <li class="card help-card"><div class="help-text"><h3>Open an issue</h3><p>A public note the maintainer answers: a bug or a suggestion.</p><p class="kicker">Free GitHub account</p></div><p class="help-action"><a class="button button-secondary" href="https://github.com/diyanko/rpi-thesis-toolkit/issues/new/choose">Open an issue</a></p></li>
 <li class="card help-card"><div class="help-text"><h3>Propose a change</h3><p>A fix to the guide or the class, prepared for review.</p><p class="kicker">With your AI assistant</p></div><p class="help-action"><a class="button button-secondary" href="#three-ways-to-help">See how</a></p></li>
