@@ -56,6 +56,9 @@ rule with its source.
   own messages (such as a missing setting, an unknown degree or month, or a
   missing seal), and each fix says what to do on your computer and on
   Overleaf where they differ.
+- **Navigation:** Previous and Next stay within the core path or Go further;
+  each tool page links back to the guide page that uses it, and its input
+  sits nearer the top.
 - **Get started and Submitting:** a warmer, shorter start; the starter
   download is a button; other editors fold away; the Submitting notice is
   shorter.
