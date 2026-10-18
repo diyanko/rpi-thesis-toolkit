@@ -77,7 +77,7 @@
   <rect class="w-terra" x="518" y="237" width="40" height="13" opacity=".9"/>
   <text x="412" y="274" style="font-size:16px" font-weight="700">Common culprits</text>
   <circle cx="416" cy="297.1" r="2.6" style="fill:var(--terra)"/>
-  <text x="428" y="302" style="font-size:15px">a typo in a command: <tspan class="code" style="font-size:15px;fill:var(--ink)">\cit</tspan></text>
+  <text x="428" y="302" style="font-size:15px">a typo in a command: <tspan class="code c-tex" style="font-size:15px"><tspan class="c-cmd">\cit</tspan></tspan></text>
   <circle cx="416" cy="322.1" r="2.6" style="fill:var(--terra)"/>
   <text x="428" y="327" style="font-size:15px">a missing <tspan class="m" style="font-size:15px">}</tspan> or <tspan class="m" style="font-size:15px">$</tspan></text>
   <circle cx="416" cy="347.1" r="2.6" style="fill:var(--terra)"/>

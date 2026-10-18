@@ -34,6 +34,7 @@ import subprocess
 import sys
 import tempfile
 from urllib.parse import quote, unquote, urlsplit
+from xml.etree import ElementTree
 
 import settings
 import rules  # scripts/rules.py: the OGE rules in docs/project/requirements.md
@@ -1368,10 +1369,33 @@ def drawing_code(text, bibtex=False):
 
 
 def drawing_code_colors():
-    """Code in the drawings is colored as on the website. A line of code is a
-    <text> with class c-tex (LaTeX), c-bib (BibTeX) or c-md (Markdown); its
-    tspans must be exactly drawing_code's, or c-* classes only for Markdown."""
+    """Code in the drawings is colored as on the website. A line or bit of code
+    is a <text> or <tspan> with class c-tex (LaTeX), c-bib (BibTeX) or c-md
+    (Markdown) holding only plain text and c-* tspans; for LaTeX and BibTeX the
+    pieces must be exactly drawing_code's."""
     style = drawing_code_style()
+    kinds = {"c-tex", "c-bib", "c-md"}
+    colors = {"c-cmd", "c-brace", "c-opt", "c-math", "c-com"}
+
+    def classes(element):
+        return set(element.get("class", "").split())
+
+    def pieces(element):
+        """[(color or "", text)] of a code element, or None if a child is not a bare c-* tspan."""
+        out = [("", element.text or "")]
+        for child in element:
+            if child.tag.rpartition("}")[2] != "tspan" or set(child.attrib) != {"class"} or len(child) \
+                    or not classes(child) <= colors or len(classes(child)) != 1:
+                return None
+            out += [(child.get("class"), child.text or ""), ("", child.tail or "")]
+        merged = []
+        for color, text in out:
+            if merged and merged[-1][0] == color:
+                merged[-1] = (color, merged[-1][1] + text)
+            elif text:
+                merged.append((color, text))
+        return merged
+
     errors = []
     drawings = sorted((ROOT / "docs/diagrams").glob("*.svg")) + sorted((SITE / "art").glob("*.svg"))
     for path in drawings:
@@ -1379,24 +1403,35 @@ def drawing_code_colors():
         if style not in svg:
             errors.append(f"{name}: its <style> lacks the code classes; paste these lines before </style> "
                           f"(made from the LaTeX colors in site/site.css):\n{style}")
-        for match in re.finditer(r"<text\b([^>]*)>(.*?)</text>", svg, flags=re.S):
-            classes = (re.search(r'\bclass="([^"]*)"', match[1]) or [None, ""])[1].split()
-            inner, line = match[2], svg[:match.start()].count("\n") + 1
-            plain = unescape(re.sub(r"<[^>]+>", "", inner))
-            if "c-tex" in classes or "c-bib" in classes:
-                expected = drawing_code(plain, "c-bib" in classes)
-                if inner != expected:
-                    errors.append(f"{name} line {line}: this code is not colored as on the website; "
-                                  f"write the text as {expected}")
-            elif "c-md" in classes:
-                if re.search(r'<tspan(?! class="c-(?:cmd|brace|opt|math|com)">)', inner):
-                    errors.append(f"{name} line {line}: Markdown code may use only "
-                                  '<tspan class="c-cmd|c-brace|c-opt|c-math|c-com"> with no other attributes.')
-            elif 'class="c-' in inner:
-                errors.append(f"{name} line {line}: c-* code colors belong inside a <text> with class "
-                              "c-tex, c-bib or c-md.")
-            elif ({"code", "m"} & set(classes)) and re.search(r"\\[A-Za-z]", plain):
-                errors.append(f"{name} line {line}: this LaTeX code needs class c-tex on its <text> and the "
+        try:
+            root = ElementTree.fromstring(svg)
+        except ElementTree.ParseError as problem:
+            errors.append(f"{name}: not well-formed SVG ({problem}); fix the markup there.")
+            continue
+        inside = set()
+        for element in root.iter():
+            kind = classes(element) & kinds
+            if not kind:
+                continue
+            inside.update(element.iter())
+            code = "".join(element.itertext())
+            found = pieces(element)
+            if found is None:
+                errors.append(f"{name}: in the code {code!r}, use only plain text and "
+                              '<tspan class="c-cmd|c-brace|c-opt|c-math|c-com"> with no other attributes.')
+            elif kind != {"c-md"}:
+                expected = drawing_code(code, kind == {"c-bib"})
+                if found != pieces(ElementTree.fromstring(f"<t>{expected}</t>")):
+                    errors.append(f"{name}: the code {code!r} is not colored as on the website; "
+                                  f"write it as {expected}")
+        for element in root.iter():
+            if element in inside:
+                continue
+            if classes(element) & colors:
+                errors.append(f"{name}: {element.text!r} has a c-* code color outside a <text> or <tspan> "
+                              "with class c-tex, c-bib or c-md.")
+            elif classes(element) & {"code", "m"} and re.search(r"\\[A-Za-z]", "".join(element.itertext())):
+                errors.append(f"{name}: the code {''.join(element.itertext())!r} needs class c-tex and the "
                               "website's colors on its tspans (scripts/build_site.py, drawing_code).")
     return errors
 
