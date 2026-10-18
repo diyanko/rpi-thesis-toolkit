@@ -26,11 +26,16 @@
     .s { fill: var(--muted); }
     .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
     .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
-    .k { fill: var(--terra); font-weight: 700; }
     .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
     .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
     .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
   </style>
   <defs>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -53,22 +58,22 @@
   <path class="ln thin mut" d="M10 48 H350"/>
   <text class="m" x="24" y="37" style="font-size:14px">metadata.tex</text>
   <text class="hand end" x="336" y="37" style="font-size:15px">you edit this</text>
-  <text class="code" x="48" y="71" style="font-size:14px" xml:space="preserve">\thesissetup{</text>
-  <text class="code" x="48" y="94" style="font-size:14px" xml:space="preserve">  title = <tspan style="fill:var(--ink)" font-weight="700">{Your thesis title},</tspan></text>
-  <text class="code" x="48" y="117" style="font-size:14px" xml:space="preserve">  author = <tspan style="fill:var(--ink)" font-weight="700">{Your full name},</tspan></text>
-  <text class="code" x="48" y="140" style="font-size:14px" xml:space="preserve">  degree = <tspan style="fill:var(--ink)" font-weight="700">doctoral,</tspan></text>
-  <text class="code" x="48" y="163" style="font-size:14px" xml:space="preserve">  department = <tspan style="fill:var(--ink)" font-weight="700">{Department of</tspan></text>
-  <text class="code" x="48" y="186" style="font-size:14px" xml:space="preserve">    <tspan style="fill:var(--ink)" font-weight="700">Your Full Department Name},</tspan></text>
-  <text class="code" x="48" y="209" style="font-size:14px" xml:space="preserve">  graduation-month = <tspan style="fill:var(--ink)" font-weight="700">May,</tspan></text>
-  <text class="code" x="48" y="232" style="font-size:14px" xml:space="preserve">  graduation-year = <tspan style="fill:var(--ink)" font-weight="700">{2027},</tspan></text>
-  <text class="code" x="48" y="255" style="font-size:14px" xml:space="preserve">  …</text>
-  <text class="code" x="48" y="278" style="font-size:14px" xml:space="preserve">}</text>
-  <text class="code" x="48" y="311" style="font-size:14px" xml:space="preserve">\committeemember[Chair]<tspan style="fill:var(--ink)" font-weight="700"></tspan></text>
-  <text class="code" x="48" y="334" style="font-size:14px" xml:space="preserve">  <tspan style="fill:var(--ink)" font-weight="700">{Your committee chair}</tspan></text>
-  <text class="code" x="48" y="357" style="font-size:14px" xml:space="preserve">\committeemember<tspan style="fill:var(--ink)" font-weight="700"></tspan></text>
-  <text class="code" x="48" y="380" style="font-size:14px" xml:space="preserve">  <tspan style="fill:var(--ink)" font-weight="700">{Committee member two}</tspan></text>
-  <text class="code" x="48" y="403" style="font-size:14px" xml:space="preserve">\committeemember<tspan style="fill:var(--ink)" font-weight="700"></tspan></text>
-  <text class="code" x="48" y="426" style="font-size:14px" xml:space="preserve">  <tspan style="fill:var(--ink)" font-weight="700">{Committee member three}</tspan></text>
+  <text class="code c-tex" x="48" y="71" style="font-size:14px" xml:space="preserve"><tspan class="c-cmd">\thesissetup</tspan><tspan class="c-brace">{</tspan></text>
+  <text class="code c-tex" x="48" y="94" style="font-size:14px" xml:space="preserve">  title = <tspan class="c-brace">{</tspan>Your thesis title<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-tex" x="48" y="117" style="font-size:14px" xml:space="preserve">  author = <tspan class="c-brace">{</tspan>Your full name<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-tex" x="48" y="140" style="font-size:14px" xml:space="preserve">  degree = doctoral,</text>
+  <text class="code c-tex" x="48" y="163" style="font-size:14px" xml:space="preserve">  department = <tspan class="c-brace">{</tspan>Department of</text>
+  <text class="code c-tex" x="48" y="186" style="font-size:14px" xml:space="preserve">    Your Full Department Name<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-tex" x="48" y="209" style="font-size:14px" xml:space="preserve">  graduation-month = May,</text>
+  <text class="code c-tex" x="48" y="232" style="font-size:14px" xml:space="preserve">  graduation-year = <tspan class="c-brace">{</tspan>2027<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-tex" x="48" y="255" style="font-size:14px" xml:space="preserve">  …</text>
+  <text class="code c-tex" x="48" y="278" style="font-size:14px" xml:space="preserve"><tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="48" y="311" style="font-size:14px" xml:space="preserve"><tspan class="c-cmd">\committeemember</tspan><tspan class="c-opt">[</tspan><tspan class="c-opt">Chair</tspan><tspan class="c-opt">]</tspan></text>
+  <text class="code c-tex" x="48" y="334" style="font-size:14px" xml:space="preserve">  <tspan class="c-brace">{</tspan>Your committee chair<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="48" y="357" style="font-size:14px" xml:space="preserve"><tspan class="c-cmd">\committeemember</tspan></text>
+  <text class="code c-tex" x="48" y="380" style="font-size:14px" xml:space="preserve">  <tspan class="c-brace">{</tspan>Committee member two<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="48" y="403" style="font-size:14px" xml:space="preserve"><tspan class="c-cmd">\committeemember</tspan></text>
+  <text class="code c-tex" x="48" y="426" style="font-size:14px" xml:space="preserve">  <tspan class="c-brace">{</tspan>Committee member three<tspan class="c-brace">}</tspan></text>
   <circle class="w-butter" cx="29" cy="89.1" r="11"/>
   <path class="ln" d="M18.9 95.2C18.6 93.9 18.3 92.7 18.1 91.4S17.6 88.7 17.8 87.4S18.3 84.8 18.9 83.6S20.3 81.3 21.3 80.4S23.4 78.8 24.6 78.4S27.2 77.6 28.5 77.6S31.2 77.7 32.5 78.1S34.9 79.2 35.9 80.1S37.7 82.1 38.3 83.2S39.4 85.7 39.6 87S39.8 89.7 39.6 90.9S38.7 93.5 38 94.6S36.2 96.6 35.2 97.3S32.8 98.6 31.5 98.9S28.8 99.2 27.5 99.1S24.9 98.6 23.7 98.1S21.2 96.8 20.5 95.8S19.3 93.4 19.2 92.1"/>
   <text class="n mid" x="29" y="94" style="font-size:14px">1</text>

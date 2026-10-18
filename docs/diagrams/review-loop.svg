@@ -26,11 +26,16 @@
     .s { fill: var(--muted); }
     .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
     .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
-    .k { fill: var(--terra); font-weight: 700; }
     .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
     .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
     .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
   </style>
   <defs>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>

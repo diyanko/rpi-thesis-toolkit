@@ -26,7 +26,6 @@
     .s { fill: var(--muted); }
     .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
     .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
-    .k { fill: var(--terra); font-weight: 700; }
     .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
     .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
@@ -42,6 +41,12 @@
     .note { fill: var(--muted); font-size: 16px; }
     .chapter { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .selected { fill: var(--blue); font-weight: 700; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
   </style>
   <rect class="bg" width="640" height="400" rx="18"/>
   <text class="title" x="20" y="32" style="font-size:20px">one chapter at a time</text>
