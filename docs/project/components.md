@@ -125,6 +125,16 @@ A crop of the sample PDF (made by `build_site.py --previews`; absent otherwise).
 
 <!-- preview compile-pass-2-chapter: Chapter 1 after step 3: "a real citation example [1]", then "Chapter 2 contains small examples you can adapt, and Chapter 3 closes the document." -->
 
+## Picture cards
+
+Short cards that each show a drawing small; a card opens the drawing full
+size (How it works, "Why LaTeX for a thesis").
+
+<div class="benefit-cards">
+<a class="benefit-card" href="../diagrams/class-swap.svg"><img class="benefit-thumb" src="../diagrams/class-swap.svg" alt="" width="720" height="430" loading="lazy"><strong>A card title</strong><span>One short line under it.</span></a>
+<a class="benefit-card" href="../diagrams/move-a-chapter.svg"><img class="benefit-thumb" src="../diagrams/move-a-chapter.svg" alt="" width="720" height="456" loading="lazy"><strong>Another card</strong><span>Two short sentences. At most.</span></a>
+</div>
+
 ## Disclosure
 
 <details><summary>Optional: a closed section with a longer summary line that may wrap on phones</summary>

@@ -1904,16 +1904,20 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content summary::before { display: none; }
 }
 
-/* Clickable concept pictures use the existing optional image viewer. */
+/* Picture cards: each shows its drawing small and opens it in the optional
+   image viewer (How it works, "Why LaTeX for a thesis"). */
 .benefit-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 1.4em 0; }
 .guide-content .benefit-card { display: block; min-width: 0; padding: 17px 19px; color: var(--ink); text-decoration: none; border: 1.8px solid var(--ink-soft); border-radius: 11px 14px 10px 13px / 14px 10px 13px 11px; background: var(--card); }
 .benefit-card strong { display: block; color: var(--link); font-size: 1.08em; line-height: 1.35; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .benefit-card span { display: block; margin-top: 7px; line-height: 1.45; }
 .guide-content .benefit-card:hover { background: var(--paper-2); }
 .guide-content .benefit-card:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+.guide-content .benefit-card { display: flex; flex-direction: column; }
+.guide-content img.benefit-thumb { display: block; width: 100%; height: auto; aspect-ratio: 720 / 430; object-fit: contain; object-position: center top; margin: 0 0 12px; padding: 0; border: 0; background: none; }
 @media (max-width: 600px) {
   .benefit-cards { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .guide-content .benefit-card { padding: 14px 16px; }
+  .guide-content .benefit-card { display: grid; grid-template-columns: 124px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 12px 14px; }
+  .guide-content img.benefit-thumb { grid-row: span 2; margin: 0; aspect-ratio: 4 / 3; }
 }
 @media print {
   .benefit-cards { display: block; }
