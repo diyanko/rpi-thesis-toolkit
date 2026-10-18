@@ -1,22 +1,69 @@
 # Change log
 
-What changed for you in each version, newest first. Your version is in the
-`\ProvidesClass` line near the top of `rpi-thesis.cls` (and under Creator in
-your PDF's document properties). Technical details are in the
-[project's pull requests](https://github.com/diyanko/rpi-thesis-toolkit/pulls?q=is%3Apr).
+What changed in each version, newest first, with its date. Each entry
+starts with one question, **Changes your PDF?** **Yes** means updating
+`rpi-thesis.cls` may change how your thesis looks, including page breaks:
+recompile and compare every page. **No** means only the guide, the website,
+scripts, or examples changed. Before updating, read
+[update the formatting safely](docs/going-further.md#update-the-formatting-safely).
+Your version is in the `\ProvidesClass` line near the top of
+`rpi-thesis.cls`, and [Check your PDF](docs/check-pdf.md) names it too.
 
-**Changes your PDF?** **Yes** means updating `rpi-thesis.cls` may change how
-your thesis looks, including page breaks: recompile and compare every page.
-**No** means only the guide, scripts, or examples changed. Before updating,
-read [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
+Want the detail? On the toolkit's website, each version below links its
+download and its code changes on GitHub, and the
+[requirements map](docs/project/requirements.md) records every formatting
+rule with its source.
+
+## Unreleased
+
+**Changes your PDF?** No.
+
+**Version:** minor
+
+- **Settings builder:** a title page sketch follows the form as you type
+  (switch it off if you prefer), with your title, name, degree, committee,
+  department, and date in the class's layout. Start from the `metadata.tex`
+  you have, read in your browser, and download a finished `metadata.tex`.
+  The degree menu shows the name the title page prints, the month menu asks
+  you to choose, and the messages name the form's own fields.
+- **Explain my error:** reads a whole log, pasted or chosen as a `.log`
+  file: after the first error it lists, folded away, the other errors,
+  missing citations and references, lines too wide, missing characters, and
+  rerun notes, and it marks where LaTeX stopped. It knows the class's own
+  messages (a missing setting or chair, an unknown setting, an older
+  `rpi-thesis.cls`, the seal placeholder) and names the command behind
+  "Undefined control sequence".
+- **Check your references:** each point names its line and selects it in the
+  box; safe fixes show the change, apply one or all, and download the
+  corrected file; a "By entry" view; an unclosed entry no longer hides the
+  ones after it.
+- **Bring your work in:** a Preview beside the LaTeX, a Show where button on
+  each note, and captions for Markdown tables.
+- **Check your PDF:** results open with a count per result and the points to
+  look at first; a point that names pages can show each page with the
+  margins, page-number lines, and measured text drawn on it; page-number and
+  margin results say which pages were measured; sources are named in full.
+- **Guide:** the tools are named where they help: the Settings builder when
+  you put your name on the title page, Explain my error when a compile fails,
+  Bring your work in for drafts and spreadsheet tables, Check your references
+  for access dates. A short recipe shows how to use the starter as a model for
+  a proposal or qualifying exam, and "update the formatting safely" points to
+  Check your PDF to see your version.
+- **Change log:** on the website, each version answers "Changes your PDF?"
+  in a box you can spot at a glance, with links to download that version and
+  to its code changes; the next version's changes are listed first.
+- **Website:** a simpler header (Get started, Guide and Tools menus, How do
+  I...?); buttons share one set of hand-drawn icons; the text, sidebar, and
+  "On this page" sit together with even margins on wide screens; tool pages
+  no longer flash "JavaScript is off" while loading; the offline guide says
+  the Settings builder runs on the website; short names in code no longer
+  break at a hyphen on phones.
 
 ## 0.9.0 (beta), 17 Oct 2026
 
 Published as the pre-release `v0.9.0`.
 
 **Changes your PDF?** No.
-
-**Version:** minor
 
 - **Five tools, one design:** every tool page has the same layout, a clear
   "Nothing is uploaded" line, and short results; the home page lists them all.
@@ -247,8 +294,9 @@ lines from `\begin{singlespace}` to `\end{singlespace}` with
 
 ## 0.1.0 (beta), 14 Oct 2026
 
-Published as the pre-release `v0.1.0`. **Changes your PDF?** Not
-applicable: the first version.
+Published as the pre-release `v0.1.0`.
+
+**Changes your PDF?** Not applicable: the first version.
 
 - **The class** follows the OGE *Dissertation and Thesis Manual* and RPI's
   official LaTeX template (every rule and difference is in the
