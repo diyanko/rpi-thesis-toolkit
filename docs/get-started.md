@@ -1,25 +1,20 @@
 # Get started
 
-No LaTeX experience needed. You will *compile* the sample thesis (turn its
-files into a PDF) with your name on it. This guide suggests one of two setups;
-both work the same way: edit, save, see the PDF.
+No LaTeX experience needed. By the end of this page you will *compile* the
+sample thesis (turn its files into a PDF) with your own name on its title
+page. Pick one of two setups; both work the same way: edit, save, see the PDF.
 
 - **An editor on your computer** (suggested): an editor with a LaTeX
   extension rebuilds the PDF each time you save and shows it beside your text.
   The one-time install takes an hour or more, mostly waiting for a download.
 - **Overleaf** (no install): the same in your browser, ready in minutes.
 
-Curious whether LaTeX suits you? See [why LaTeX](how-it-works.md#why-latex-for-a-thesis), or jump in.
 Have a draft? Do these steps first, then [bring your draft](bring-your-draft.md).
-Still drafting elsewhere? That is fine
-([the suggested workflow](how-it-works.md#the-suggested-workflow-and-why)).
+Not sure LaTeX suits you? Read [why LaTeX](how-it-works.md#why-latex-for-a-thesis).
 
 ## Step 1: Choose your LaTeX workspace
 
-This is where your thesis becomes a PDF. With the same files, engine,
-packages, and fonts, both make the same PDF, and your first checkpoint is the
-same: the sample PDF with your name on it ([Step 4](#step-4-check-your-first-pdf)
-and [Step 5](#step-5-make-it-yours)).
+Both make the same PDF from the same files; choose the one that fits you.
 
 | | Your computer (an editor) | Overleaf (in your browser) |
 | --- | --- | --- |
@@ -31,9 +26,9 @@ and [Step 5](#step-5-make-it-yours)).
 | **Working with others** | Share the PDF, or Git | Real-time co-editing |
 
 Your own computer suits a full thesis: no compile limit, and the files stay
-with you. Overleaf suits you if you would rather install nothing or want to
-co-edit in real time. Either is your choice, not an OGE requirement, and you
-can [switch later](going-further.md#use-your-computer-and-overleaf).
+with you. Overleaf suits you if you would rather install nothing or co-edit in
+real time. It is your choice, not an OGE requirement, and you can
+[switch later](going-further.md#use-your-computer-and-overleaf).
 
 ## Step 2: Get the files
 
@@ -42,11 +37,12 @@ the Overleaf link in Step 3b to the new tag, and build_site.py stops if they
 do not match the release (maintenance.md, "Make a release"). The landing
 page's computer card opens this step. -->
 
-1. **[Download the starter (ZIP)](https://github.com/diyanko/rpi-thesis-toolkit/releases/download/v0.9.0/rpi-thesis-starter-v0.9.0.zip)**:
-   the thesis files, this guide for offline reading (open `START-HERE.html`),
-   and a cheat sheet. A ZIP is one compressed file that holds a folder. No
-   account needed. Reading this in `START-HERE.html`? You already have the
-   files: continue to your route below.
+<p class="tool-actions"><a class="button" data-icon="download" href="https://github.com/diyanko/rpi-thesis-toolkit/releases/download/v0.9.0/rpi-thesis-starter-v0.9.0.zip">Download the starter (ZIP)</a></p>
+
+1. **What's inside:** the thesis files, this guide for offline reading (open
+   `START-HERE.html`), and a cheat sheet. A ZIP is one compressed file that
+   holds a folder. No account needed. Reading this in `START-HERE.html`? You
+   already have the files: continue to your route below.
 2. **Your computer:** extract (unzip) it and move the folder that contains
    `main.tex` somewhere normal, such as `Documents`.
    - **Windows:** right-click the ZIP and choose **Extract All**. Opening it
@@ -159,7 +155,7 @@ For VS Code, use the `.deb` or `.rpm`, not the Flatpak, which
 
 </details>
 
-### Other editors
+<details id="other-editors"><summary>If you use another editor: TeXShop, TeXworks, TeXstudio, Vim, Emacs, or Sublime Text</summary>
 
 Any editor with a LaTeX extension can compile this starter, including AI
 assistants that can edit files and open a local folder. Open the folder that
@@ -193,6 +189,8 @@ BibTeX in its menus), then compiles twice more.
 - **TeXstudio:** **Build & View**. References missing? Run **Tools →
   Bibliography**, then **Build & View** twice
   ([compiling guide](https://texstudio-org.github.io/compiling.html)).
+
+</details>
 
 </details>
 
@@ -313,11 +311,9 @@ Save (or click **Recompile** on Overleaf) and check the title page. For an
 
 ### Stuck on something technical?
 
-An AI chat can explain an error or walk you through an install. It is
-optional, and for technical help only, never for writing your thesis. Give it
-your operating system and the first error, try one change at a time, keep
-your original, and don't paste confidential or unpublished material
-([more](going-further.md#use-ai-for-technical-help)).
+Paste the error into [Explain my error](explain-my-error.md), or ask an AI
+chat for technical help only, never for writing your thesis
+([how to ask well](going-further.md#use-ai-for-technical-help)).
 
 **Next step: [writing basics](writing.md)**, for chapters, figures, tables,
 and equations. Have a draft? [Bring one small section in](bring-your-draft.md)

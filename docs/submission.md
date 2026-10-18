@@ -1,17 +1,16 @@
 # Submitting your thesis or dissertation
 
-For master's and doctoral students approaching their defense or final
-submission with a draft that compiles. This page gives the usual path from
-finished draft to approved PDF, and what to double-check along the way.
+You are close. For master's and doctoral students nearing the defense or
+final submission: the usual path from a finished draft to an approved PDF,
+and what to double-check on the way.
 
 > [!IMPORTANT]
-> This toolkit is unofficial and community-made, not affiliated with or
-> endorsed by RPI or the Office of Graduate Education (OGE), and not reviewed
-> by OGE. OGE's current rules win: use the
-> [OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation)
-> for the manual, checklist, forms, and dates. OGE recommends its Word template
-> unless you are **proficient in LaTeX**, and its staff review **formatting**
-> but cannot debug LaTeX code.
+> This toolkit is unofficial: not affiliated with, endorsed by, or reviewed by
+> RPI or the Office of Graduate Education (OGE), and OGE's current rules win.
+> The manual, checklists, forms, and dates are on the
+> [OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation).
+> OGE recommends its Word template unless you are **proficient in LaTeX**; its
+> staff review **formatting** but cannot debug LaTeX code.
 
 ## The path to graduation
 

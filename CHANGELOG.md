@@ -50,6 +50,11 @@ rule with its source.
   for access dates. A short recipe shows how to use the starter as a model for
   a proposal or qualifying exam, and "update the formatting safely" points to
   Check your PDF to see your version.
+- **Get started and Submitting:** a warmer, shorter start; the starter
+  download is a button; other editors fold away; the Submitting notice is
+  shorter.
+- **Contribute:** three ways to help, each with one button, the no-account
+  form first.
 - **Change log:** on the website, each version answers "Changes your PDF?"
   in a box you can spot at a glance, with links to download that version and
   to its code changes; the next version's changes are listed first.
