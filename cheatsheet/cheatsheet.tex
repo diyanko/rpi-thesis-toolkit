@@ -14,6 +14,11 @@
 \usepackage{array}
 \pagestyle{empty}
 
+% The toolkit version this sheet matches (scripts/bump.py updates it) and
+% the website; in the PDF, links are live but print as plain text.
+\newcommand{\sheetversion}{0.10.0}
+\newcommand{\site}{https://diyanko.github.io/rpi-thesis-toolkit}
+
 % Palette: ink for text, three muted accents that stay dark in grayscale.
 \definecolor{ink}{HTML}{2D2620}
 \definecolor{terra}{HTML}{A24A24}
@@ -22,6 +27,14 @@
 \definecolor{paper}{HTML}{FAF5EA}
 \definecolor{codebg}{HTML}{F5EFE3}
 \color{ink}
+\usepackage{hyperref}
+\hypersetup{colorlinks,linkcolor=ink,urlcolor=ink,
+  pdftitle={RPI Thesis Toolkit: the field guide},
+  pdfauthor={RPI Thesis Toolkit contributors},
+  pdfsubject={One-page reference for the unofficial RPI LaTeX thesis starter},
+  pdfkeywords={LaTeX, thesis, dissertation, RPI, cheat sheet}}
+% A link that looks like the text around it, underlined so it reads as one.
+\newcommand{\link}[2]{\href{#1}{\underline{#2}}}
 
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{0pt}
@@ -232,7 +245,7 @@ An earlier account~\parencite{lamport1994}.
 \note{Keys must be unique. Braces keep capitals: \code{\{RPI\}}.}
 \note{Agree on a style with your advisor first (\file{preamble.tex}); it
 decides what each command prints. The sample style is only an example.
-\cs{fullcite} needs setup in MLA and Chicago (see the guide).}
+\cs{fullcite} needs setup in MLA and Chicago (see the \link{\site/guide/citations.html}{guide}).}
 \end{fg}
 \gap
 % ============================ 5. FIGURE
@@ -346,13 +359,16 @@ A key in \textbf{bold} & Run Biber: compile again; check the key.\\
 \code{Runaway argument} & A missing \code{\}} near your last edit.\\
 \end{tabular}
 \note{Undo your last change and compile after every small edit. More help:
-paste the error into \textbf{Explain my error} on the toolkit's website, or see
-the guide's \textbf{Fixing problems} page (open \file{START-HERE.html}).}
+paste the error into \link{\site/guide/explain-my-error.html}{\textbf{Explain my error}} on the toolkit's website, or see
+the guide's \link{\site/guide/troubleshooting.html}{\textbf{Fixing problems}} page (offline: \file{START-HERE.html}).}
 \end{fg}
 \end{minipage}
 
 \vfill
 {\fontsize{7.1}{8}\selectfont\color{ink!75}\centering
-\textbf{RPI Thesis Toolkit} \textperiodcentered{} unofficial community project, not
-endorsed by RPI/OGE \textperiodcentered{} check the current OGE manual\par}
+\textbf{RPI Thesis Toolkit} v\sheetversion{} \textperiodcentered{}
+\link{\site/}{diyanko.github.io/rpi-thesis-toolkit} \textperiodcentered{}
+\link{\site/project/changelog.html}{what changed} \textperiodcentered{}
+unofficial community project, not endorsed by RPI/OGE \textperiodcentered{}
+check the \link{\site/guide/submission.html\#official-resources}{current OGE manual}\par}
 \end{document}

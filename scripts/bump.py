@@ -11,9 +11,9 @@ the section overrides the choice, for example for a new setting.
 (docs/project/maintenance.md, "Versions and compatibility").
 Edits the class line (version and today's date), main.tex's requested date,
 the release the website links, the README and Get started download links,
-CITATION.cff, and turns the change log's "Unreleased" heading into the
-version. Touches only files; then run verify.py release and follow
-docs/project/maintenance.md ("Make a release").
+the cheat sheet's version line, CITATION.cff, and turns the change log's
+"Unreleased" heading into the version. Touches only files; then run
+verify.py release and follow docs/project/maintenance.md ("Make a release").
 """
 
 import re
@@ -39,6 +39,8 @@ def plan(new, today):
         ("scripts/build_site.py", r'RELEASE_VERSION = "[\d.]+"', f'RELEASE_VERSION = "{new}"'),
         *[(name, rf"v{re.escape(old)}(/|%2F)rpi-thesis-(starter|overleaf)-v{re.escape(old)}",
            rf"v{new}\1rpi-thesis-\2-v{new}") for name in ("README.md", "docs/get-started.md")],
+        ("cheatsheet/cheatsheet.tex", r"\\newcommand\{\\sheetversion\}\{[\d.]+\}",
+         rf"\\newcommand{{\\sheetversion}}{{{new}}}"),
         ("CITATION.cff", r"version: [\d.]+\ndate-released: [\d-]+", f"version: {new}\ndate-released: {today}"),
         ("CHANGELOG.md", r"^## Unreleased[ \t]*$",
          f"## {new} (beta), {today.day} {today:%b %Y}\n\nPublished as the pre-release `v{new}`."),
