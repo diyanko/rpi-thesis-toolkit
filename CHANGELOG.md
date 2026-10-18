@@ -22,6 +22,12 @@ rule with its source.
 - **Convert to LaTeX:** the tool once called "Bring your work in" has a
   clearer name, so it no longer sounds like the guide page "Bring your
   draft". Its old address forwards to the new one.
+- **Website:** the seal in the Settings builder's title page sketch stays a
+  circle; Search and the appearance button use the same hand-drawn buttons
+  and icons as the rest of the site.
+- **Guide:** the starter ZIP is the one download (GitHub's whole-repository
+  ZIP and the template route are gone), and Overleaf uploads use the smaller
+  Overleaf ZIP.
 
 ## 0.10.0 (beta), 18 Oct 2026
 
