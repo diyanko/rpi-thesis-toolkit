@@ -61,6 +61,11 @@ title case ("Results of the Field Study"), and never mix them.
 
 ## Chapters
 
+![Adding a chapter in three steps. Step 1: create a new file, chapters/04-discussion.tex, containing \chapter{Discussion}, \label{chap:discussion}, and your first paragraph. Step 2: add one line to main.tex, \include{chapters/04-discussion}, where the chapter belongs, here between the Research and Conclusion lines. Step 3: compile. The contents now list 1 Introduction, 2 Research, 3 Discussion, 4 Conclusion, then References.](diagrams/add-a-chapter.svg)
+
+*In words:* a new file, one `\include` line in `main.tex`, then compile. The
+order of the `\include` lines sets the chapter numbers, not the file names.
+
 1. Create a new file, e.g. `chapters/04-discussion.tex`, containing only this:
 
    ```tex
@@ -88,6 +93,11 @@ label a unique name.
 ```tex
 As Figure~\ref{fig:my-plot} shows, … (see Equation~\eqref{eq:line}).
 ```
+
+![A chapter file has the sentence As Figure~\ref{fig:my-plot} shows, and below it a figure whose \caption is followed by \label{fig:my-plot}. The name fig:my-plot is marked in both places: the same name links them. After compiling, the PDF reads As Figure 2.1 shows, and the caption below the picture reads Figure 2.1: Plot of yields. Never type the number: LaTeX fills it in, and renumbers it when chapters or figures move.](diagrams/label-and-ref.svg)
+
+*In words:* the same name in `\label` and `\ref`; compile, and both show
+the figure's number.
 
 Seeing **??** instead of a number, or a citation key in **bold**? Compile
 again; if it stays, check that the names match exactly. More in
