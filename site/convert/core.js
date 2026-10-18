@@ -5,6 +5,13 @@
 //   convert({html, text}, {chapter: false}) -> {latex, source, notes, steps,
 //       filename, kind, escaped}
 //       html is the clipboard's text/html (may be ""), text its text/plain.
+//       Each note has places: [{from, to}], the lines of the LaTeX (counted
+//       from 0) it is about, so the page can show where.
+//   preview(latex) -> {blocks}: the converter's own LaTeX read back into a
+//       small tree (headings with their numbers, paragraphs, lists, tables,
+//       quotes, code, equations, picture markers), each with its lines, for
+//       the page's preview. It reads only what write() produces; anything
+//       else stays as text. Nothing is evaluated.
 //
 // Two steps. Readers (Word, Google Docs, spreadsheet cells, other rich text,
 // Markdown, plain text, tab-separated cells) build a small tree of plain
@@ -27,8 +34,9 @@
 (function (root) {
   "use strict";
 
-  var LIMIT = 2000000;
-  var EQ = "\u0001EQ\u0001";  // where an equation from Word was, until the writer marks it          // characters of pasted HTML or text read at most
+  var LIMIT = 2000000;       // characters of pasted HTML or text read at most
+  var EQ = "\u0001EQ\u0001";  // where an equation from Word was, until the writer marks it
+  var MAX_PLACES = 500;      // places listed for one note at most
   var MAX_ROWS = 500, MAX_COLS = 30, MAX_DEPTH = 200;
 
   // ---------- Escaping ------------------------------------------------------
@@ -150,12 +158,15 @@
            "{n} code blocks went into verbatim environments, which print them exactly as written.", "", ""],
     odd: ["", "", "writing", "find-a-symbols-command"],
     cut: ["The pasted text was too long; only the first " + LIMIT + " characters were read.",
-          "The pasted text was too long; only the first " + LIMIT + " characters were read.", "", ""]
+          "The pasted text was too long; only the first " + LIMIT + " characters were read.", "", ""],
+    plain: ["The formatting was too large to read, so only the plain text was converted: headings, bold, italics, lists, and tables were not kept. Paste a smaller part to keep them.",
+            "The formatting was too large to read, so only the plain text was converted: headings, bold, italics, lists, and tables were not kept. Paste a smaller part to keep them.", "", ""]
   };
   function Notes() { this.count = {}; this.odd = []; }
   Notes.prototype.add = function (id, n) { this.count[id] = (this.count[id] || 0) + (n === undefined ? 1 : n); };
-  Notes.prototype.list = function () {
+  Notes.prototype.list = function (places) {
     var out = [], count = this.count, odd = this.odd;
+    places = places || {};
     Object.keys(NOTES).forEach(function (id) {
       var n = count[id], spec = NOTES[id], text;
       if (id === "odd") {
@@ -168,7 +179,7 @@
       } else {
         text = (n === 1 ? spec[0] : spec[1]).replace("{n}", String(n));
       }
-      out.push({ id: id, text: text, page: spec[2], anchor: spec[3] });
+      out.push({ id: id, text: text, page: spec[2], anchor: spec[3], places: places[id] || [] });
     });
     return out;
   };
@@ -191,8 +202,8 @@
   function nestItems(flat, notes) {
     var roots = [], stack = [];
     flat.forEach(function (item) {
-      var level = Math.max(1, item.level || 1);
-      if (level > 4) { notes.add("nested"); level = 4; }
+      var level = Math.max(1, item.level || 1), deep = level > 4;
+      if (deep) { notes.add("nested"); level = 4; }
       while (stack.length > level) stack.pop();
       if (stack.length === level && stack[level - 1].ordered !== !!item.ordered) stack.pop();
       while (stack.length < level) {
@@ -205,7 +216,7 @@
         }
         stack.push(list);
       }
-      stack[stack.length - 1].items.push({ children: item.children, lists: [] });
+      stack[stack.length - 1].items.push({ children: item.children, lists: [], deep: deep });
     });
     return roots;
   }
@@ -285,8 +296,10 @@
       var href = tag === "a" ? node.getAttribute("href") || "" : "";
       if (tag === "a" && /^#(_ftn|_edn|ftnt|cmnt)/i.test(href)) {
         if (/^#cmnt/i.test(href)) { notes.add("comment"); return []; }
-        if (!/ref/i.test(href)) notes.add("footnote");  // the marker, not the link back from the footnote text
-        return [txt(node.textContent.replace(/\s+/g, ""))];
+        var marker = [txt(node.textContent.replace(/\s+/g, ""))];
+        if (/ref/i.test(href)) return marker;  // the link back from the footnote text
+        notes.add("footnote");
+        return [{ type: "mark", note: "footnote", children: marker }];
       }
       var m2 = marks(node, m);
       var children = [];
@@ -300,7 +313,7 @@
       if (tag === "a" && href) {
         var safe = safeLink(href);
         if (safe) return [{ type: "link", href: safe, children: children }];
-        if (href.charAt(0) !== "#") notes.add("link");
+        if (href.charAt(0) !== "#") { notes.add("link"); return [{ type: "mark", note: "link", children: children }]; }
       }
       return children;
     }
@@ -344,7 +357,13 @@
     function readTable(table) {
       var rows = [], merged = false;
       var trs = Array.prototype.filter.call(table.querySelectorAll("tr"), function (tr) { return tr.closest("table") === table; });
-      trs.slice(0, MAX_ROWS + 1).forEach(function (tr, r) {
+      // Rows with text are read up to one past the limit (tableBlock then
+      // says the table was cut); empty rows do not count.
+      var filled = 0, last = trs.length;
+      for (var k = 0; k < trs.length; k++) {
+        if (/[^\s\u00a0]/.test(trs[k].textContent) && ++filled > MAX_ROWS) { last = k + 1; break; }
+      }
+      trs.slice(0, last).forEach(function (tr, r) {
         var row = rows[r] = rows[r] || [];
         Array.prototype.forEach.call(tr.children, function (cell) {
           var t = cell.tagName.toLowerCase();
@@ -366,7 +385,9 @@
         });
       });
       if (merged) notes.add("merged");
-      return tableBlock(rows.filter(Boolean));
+      var block = tableBlock(rows.filter(Boolean));
+      block.merged = merged;
+      return block;
     }
     function captionOf(el) {
       return /MsoCaption/i.test(el.getAttribute("class") || "") ? true : false;
@@ -454,9 +475,10 @@
     end();
     return out;
   }
-  // A caption paragraph ("Table 2: Sites", or Word's Caption style) right
-  // before or after a table becomes its caption.
-  var CAPTION = /^\s*table\s+[0-9A-Z.\-]+\s*[:.\-\u2013\u2014]?\s*/i;
+  // A caption paragraph ("Table 2: Sites", "Table: Sites", or Word's Caption
+  // style) right before or after a table becomes its caption. The colon,
+  // period, or dash is needed, so "Table 3 shows ..." stays a paragraph.
+  var CAPTION = /^\s*table(?:\s+[0-9A-Z]+(?:[.\-][0-9A-Z]+)*)?\s*[:.\-\u2013\u2014](?=\s|$)\s*/i;
   function attachCaptions(blocks) {
     for (var i = 0; i < blocks.length; i++) {
       if (blocks[i].type !== "table" || blocks[i].caption) continue;
@@ -472,9 +494,10 @@
     }
     return blocks.filter(function (b) { return !b.used; });
   }
-  function tableBlock(rows) {
+  // Empty rows and columns are dropped first, so the limits count only what
+  // holds text; cut says rows or columns with text were left out.
+  function tableBlock(rows, cut) {
     var width = 0;
-    rows = rows.slice(0, MAX_ROWS).map(function (row) { return row.slice(0, MAX_COLS); });
     rows.forEach(function (row) { width = Math.max(width, row.length); });
     rows = rows.map(function (row) {
       var full = [];
@@ -485,7 +508,11 @@
     var keep = [];
     for (var c = 0; c < width; c++) keep.push(rows.some(function (row) { return hasContent(row[c]); }));
     rows = rows.map(function (row) { return row.filter(function (_, k) { return keep[k]; }); });
-    return { type: "table", rows: rows };
+    if (rows.length > MAX_ROWS || (rows[0] && rows[0].length > MAX_COLS)) {
+      cut = true;
+      rows = rows.slice(0, MAX_ROWS).map(function (row) { return row.slice(0, MAX_COLS); });
+    }
+    return { type: "table", rows: rows, cut: !!cut };
   }
 
   // ---------- Reading tab-separated cells -----------------------------------
@@ -546,7 +573,7 @@
         var safe = safeLink(m[2]);
         if (!safe) notes.add("link");
         var kids = readInline(m[1], { add: function () {} }, true);
-        out.push(safe ? { type: "link", href: safe, children: kids } : { type: "span", children: kids });
+        out.push(safe ? { type: "link", href: safe, children: kids } : { type: "mark", note: "link", children: kids });
         i += m[0].length; continue;
       }
       if ((m = /^<((?:https?:\/\/|mailto:)[^\s>]+)>/.exec(rest))) { push(); out.push({ type: "link", href: m[1], children: [txt(m[1].replace(/^mailto:/, ""))] }); i += m[0].length; continue; }
@@ -684,6 +711,11 @@
     var out = [];
     var labels = {};
     var counts = { tab: 0, eq: 0 };
+    // Where each note applies: note id -> [[first, last] entry of out].
+    var where = {};
+    function at(id, from, to) { (where[id] = where[id] || []).push([from, to === undefined ? from : to]); }
+    // The notes found in a line's pieces (ctx.found) apply to that line.
+    function place(ctx, index) { (ctx.found || []).forEach(function (id) { at(id, index); }); ctx.found = []; }
     var levels = [];
     (function collect(list) {
       list.forEach(function (b) { if (b.type === "heading") levels.push(b.level); if (b.type === "quote") collect(b.blocks); });
@@ -721,6 +753,7 @@
         case "strong": return ctx.heading ? inlines(n.children, ctx) : wrapCmd("\\textbf", inlines(n.children, ctx));
         case "em": return wrapCmd("\\emph", inlines(n.children, ctx));
         case "span": return inlines(n.children, ctx);
+        case "mark": (ctx.found = ctx.found || []).push(n.note); return inlines(n.children, ctx);
         case "sup": return wrapCmd("\\textsuperscript", inlines(n.children, ctx));
         case "sub": return wrapCmd("\\textsubscript", inlines(n.children, ctx));
         case "code": return "\\texttt{" + escapeText(n.text, state).replace(/\s+/g, " ") + "}";
@@ -743,9 +776,14 @@
     function line(nodes, ctx) {
       ctx = ctx || {};
       ctx.pictures = ctx.pictures || [];
+      ctx.found = ctx.found || [];
       var text = inlines(nodes, ctx).replace(/\s+/g, " ").trim().replace(/^~+|~+$/g, "").trim();
       // Word writes each run of an equation separately: one marker for each equation.
-      text = text.replace(new RegExp("(" + EQ + "[ ~]*)+", "g"), function (m) { notes.add("equation"); return "[equation]" + (/[ ~]$/.test(m) ? " " : ""); });
+      text = text.replace(new RegExp("(" + EQ + "[ ~]*)+", "g"), function (m) {
+        notes.add("equation");
+        ctx.found.push("equation");
+        return "[equation]" + (/[ ~]$/.test(m) ? " " : "");
+      });
       return text.trim();
     }
     // "[" at the start of an \item or a table row would be read as an option.
@@ -755,16 +793,21 @@
         alt = String(alt || "").replace(/[\s\u0000-\u001f]+/g, " ").trim().slice(0, 120);
         out.push(indent + "% A picture was here" + (alt ? " (\"" + alt + "\")" : "") +
           ". Save it in figures/ and add a figure: see the guide, Writing basics, \"Add a figure\".");
+        at("picture", out.length - 1);
       });
     }
     function heading(b) {
       var depth = b.level - top;
       var commands = chapter ? ["chapter", "section", "subsection", "subsubsection"] : ["section", "subsection", "subsubsection"];
-      if (depth >= commands.length) { notes.add("deep"); depth = commands.length - 1; }
+      var deep = depth >= commands.length;
+      if (deep) { notes.add("deep"); depth = commands.length - 1; }
       var ctx = { heading: true, upper: chapter && depth === 0, pictures: [] };
       var text = line(b.children, ctx) || (depth === 0 && chapter ? "TITLE" : "Heading");
       if (out.length && out[out.length - 1] !== "" && !/^% !TEX/.test(out[out.length - 1])) out.push("");
       out.push("\\" + commands[depth] + "{" + text + "}");
+      place(ctx, out.length - 1);
+      if (deep) at("deep", out.length - 1);
+      if (chapter && depth === 0 && chapters > 1) at("chapters", out.length - 1);
       if (chapter && depth === 0) out.push("\\label{" + label("chap", plain(b.children)) + "}");
       out.push("");
       pictureLines(ctx.pictures, "");
@@ -776,6 +819,8 @@
         var ctx = { pictures: [] };
         var text = line(item.children, ctx);
         out.push(indent + "  \\item" + (text ? " " + guard(text) : ""));
+        place(ctx, out.length - 1);
+        if (item.deep) at("nested", out.length - 1);
         pictureLines(ctx.pictures, indent + "  ");
         item.lists.forEach(function (sub) { list(sub, indent + "  "); });
       });
@@ -786,9 +831,8 @@
       if (!rows.length) return;
       var cols = rows[0].length;
       if (cols > 6) notes.add("wide");
-      if (rows.length >= MAX_ROWS || cols >= MAX_COLS) notes.add("big");
+      if (b.cut) notes.add("big");
       var pictures = [];
-      var cells = rows.map(function (row) { return row.map(function (c) { return line(c, { pictures: pictures }); }); });
       var spec = "";
       var longCols = 0, numeric = [];
       for (var c = 0; c < cols; c++) {
@@ -804,15 +848,24 @@
       var caption = b.caption ? escapeText(b.caption, state).replace(/\s+/g, " ").trim() : "";
       if (!caption) notes.add("caption");
       if (out.length && out[out.length - 1] !== "") out.push("");
+      var start = out.length;
+      if (!caption) at("caption", start + 2);
       out.push("\\begin{table}[htbp]", "  \\centering",
                "  \\caption{" + (caption || "Your full caption, ending with a period.") + "}",
                "  \\label{" + label("tab", b.caption || rows[0].map(plain).join(" ") || base + "-" + counts.tab) + "}",
                "  \\begin{tabular}{" + spec + "}", "    \\toprule");
-      cells.forEach(function (row, r) {
-        out.push("    " + row.map(guard).join(" & ") + " \\\\");
-        if (r === 0 && cells.length > 1) out.push("    \\midrule");
+      rows.forEach(function (row, r) {
+        var ctx = { pictures: pictures };
+        var cells = row.map(function (c) { return line(c, ctx); });
+        out.push("    " + cells.map(guard).join(" & ") + " \\\\");
+        place(ctx, out.length - 1);
+        if (r === 0 && rows.length > 1) out.push("    \\midrule");
       });
       out.push("    \\bottomrule", "  \\end{tabular}", "\\end{table}", "");
+      var end = out.length - 2;
+      if (cols > 6) at("wide", start, end);
+      if (b.cut) at("big", start, end);
+      if (b.merged) at("merged", start, end);
       pictureLines(pictures, "");
     }
     function block(b, indent) {
@@ -820,7 +873,7 @@
       if (b.type === "para") {
         var ctx = { pictures: [] };
         var text = line(b.children, ctx);
-        if (text) out.push(indent + text, "");
+        if (text) { out.push(indent + text, ""); place(ctx, out.length - 2); }
         pictureLines(ctx.pictures, indent);
         if (ctx.pictures.length && out[out.length - 1] !== "") out.push("");
         return;
@@ -835,16 +888,19 @@
         return;
       }
       if (b.type === "code") {
+        at("code", out.length, out.length + 2);
         out.push("\\begin{verbatim}", b.text.replace(/\\end\{verbatim\}/g, "\\end {verbatim}"), "\\end{verbatim}", "");
         return;
       }
       if (b.type === "math") {
         counts.eq++;
+        at("display-math", out.length, out.length + 3);
         out.push("\\begin{equation}", "  " + b.text.replace(/\n/g, "\n  "),
                  "  \\label{" + label("eq", base + "-" + counts.eq) + "}", "\\end{equation}", "");
       }
     }
 
+    var chapters = 0;
     if (chapter) {
       out.push("% !TEX root = ../main.tex");
       var first = blocks[0];
@@ -852,13 +908,42 @@
         out.push("\\chapter{TITLE}", "\\label{chap:" + base + "}", "");
         labels["chap:" + base] = true;
       }
-      var chapters = blocks.filter(function (b) { return b.type === "heading" && b.level === top; }).length;
+      chapters = blocks.filter(function (b) { return b.type === "heading" && b.level === top; }).length;
       if (chapters > 1) notes.add("chapters", chapters);
     }
     blocks.forEach(function (b) { block(b, ""); });
     while (out.length && out[out.length - 1] === "") out.pop();
-    var latex = out.join("\n").replace(/\n{3,}/g, "\n\n");
-    return { latex: latex ? latex + "\n" : "", escaped: state.escaped, kind: kind, base: base };
+    // The lines of the result, at most one blank line in a row; first[k] and
+    // last[k] are the lines of out[k].
+    var lines = [], first = [], last = [];
+    out.forEach(function (entry, k) {
+      first[k] = lines.length;
+      entry.split("\n").forEach(function (l) {
+        if (l === "" && lines.length && lines[lines.length - 1] === "") return;
+        lines.push(l);
+      });
+      first[k] = Math.min(first[k], lines.length - 1);
+      last[k] = lines.length - 1;
+    });
+    var places = {};
+    function put(id, from, to) { (places[id] = places[id] || []).push({ from: from, to: to }); }
+    Object.keys(where).forEach(function (id) {
+      where[id].forEach(function (r) { put(id, first[r[0]], last[r[1]]); });
+    });
+    // Notes about text kept as typed: the lines that hold it.
+    lines.forEach(function (l, n) {
+      if (/^\s*%/.test(l)) return;
+      if (l.indexOf("[@") >= 0) put("citation", n, n);
+      if (l.indexOf("[\\textasciicircum{}") >= 0) put("footnote_md", n, n);
+      if (notes.odd.some(function (c) { return l.indexOf(c) >= 0; })) put("odd", n, n);
+    });
+    Object.keys(places).forEach(function (id) {   // in order, each once
+      places[id] = places[id].sort(function (a, b) { return a.from - b.from || a.to - b.to; }).filter(function (r, k, list) {
+        return !k || r.from !== list[k - 1].from || r.to !== list[k - 1].to;
+      }).slice(0, MAX_PLACES);
+    });
+    var latex = lines.join("\n");
+    return { latex: latex ? latex + "\n" : "", escaped: state.escaped, kind: kind, base: base, places: places };
   }
 
   // ---------- Next steps --------------------------------------------------------
@@ -887,13 +972,13 @@
   }
 
   // ---------- The whole conversion -------------------------------------------------
-  var NAMES = { word: "Word", gdocs: "Google Docs", sheets: "Google Sheets cells", excel: "Excel cells", html: "Rich text",
-                markdown: "Markdown", text: "Plain text", tsv: "Spreadsheet cells" };
+  var NAMES = { word: "Word", gdocs: "Google Docs", sheets: "Google Sheets cells", excel: "Excel cells", html: "rich text",
+                markdown: "Markdown", text: "plain text", tsv: "spreadsheet cells" };
   function convert(input, options) {
     options = options || {};
     var notes = new Notes();
     var html = String(input && input.html || ""), text = String(input && input.text || "");
-    if (html.length > LIMIT) { html = ""; notes.add("cut"); text = text.slice(0, LIMIT); }
+    if (html.length > LIMIT) { html = ""; notes.add("plain"); }
     if (text.length > LIMIT) { text = text.slice(0, LIMIT); notes.add("cut"); }
     var read = null;
     if (/<[a-z][\s\S]*>/i.test(html)) {
@@ -906,7 +991,7 @@
     }
     if (!read) {
       var md = looksLikeMarkdown(text);
-      read = { source: md ? "markdown" : "text", blocks: readMarkdown(text, notes, md) };
+      read = { source: md ? "markdown" : "text", blocks: attachCaptions(readMarkdown(text, notes, md)) };
     }
     var result = write(read.blocks, options, notes);
     return {
@@ -916,11 +1001,195 @@
       kind: result.kind,
       escaped: result.escaped,
       filename: result.base + ".tex",
-      notes: result.latex ? notes.list() : [],
+      notes: result.latex ? notes.list(result.places) : [],
       steps: result.latex ? steps(result, !!options.chapter) : []
     };
   }
 
-  root.ConvertCore = { convert: convert, escapeText: escapeText, escapeUrl: escapeUrl, slug: slug, readTsv: readTsv,
+  // ---------- Reading the LaTeX back, for the preview --------------------------------
+  // Only the shapes write() produces; any other text is shown as it is.
+  // Inline pieces: {t: text|strong|em|code|math|link|sup|sub|mark|picture}.
+  var UNMATH = {};
+  Object.keys(MATH).forEach(function (c) { if (!UNMATH[MATH[c]]) UNMATH[MATH[c]] = c; });
+  var UNESCAPE = { "%": "%", "&": "&", "_": "_", "#": "#", "$": "$", "{": "{", "}": "}", ",": " ", " ": " " };
+  var WORDS = { textbackslash: "\\", textasciitilde: "~", textasciicircum: "^", dots: "…" };
+  var WRAPS = { textbf: "strong", emph: "em", textsuperscript: "sup", textsubscript: "sub" };
+  var NO_CAPTION = "Your full caption, ending with a period.";
+
+  function readTex(s) {
+    var out = [], i = 0, buf = "";
+    function push(node) { if (buf) { out.push({ t: "text", text: buf }); buf = ""; } if (node) out.push(node); }
+    function group() {   // s[i] is "{": its contents, with i after the closing brace
+      var depth = 0, start = i + 1;
+      for (; i < s.length; i++) {
+        var c = s.charAt(i);
+        if (c === "\\") { i++; continue; }
+        if (c === "{") depth++;
+        else if (c === "}" && --depth === 0) { i++; return s.slice(start, i - 1); }
+      }
+      return s.slice(start);
+    }
+    function flat(nodes) { return nodes.map(function (n) { return n.text !== undefined ? n.text : flat(n.children || []); }).join(""); }
+    while (i < s.length) {
+      var c = s.charAt(i), m;
+      if (c === "\\") {
+        if ((m = /^\\([A-Za-z]+)/.exec(s.slice(i)))) {
+          var name = m[1];
+          i += m[0].length;
+          var arg = s.charAt(i) === "{";
+          if (WORDS[name] !== undefined) { if (s.slice(i, i + 2) === "{}") i += 2; buf += WORDS[name]; }
+          else if (WRAPS[name] && arg) push({ t: WRAPS[name], children: readTex(group()) });
+          else if (name === "texttt" && arg) push({ t: "code", text: flat(readTex(group())) });
+          else if (name === "ensuremath" && arg) {
+            var symbol = group();
+            if (UNMATH[symbol]) buf += UNMATH[symbol]; else push({ t: "math", text: symbol });
+          } else if (name === "url" && arg) { var address = group(); push({ t: "link", href: address, children: [{ t: "text", text: address }] }); }
+          else if (name === "href" && arg) {
+            var href = group().replace(/\\([%#])/g, "$1");
+            push({ t: "link", href: href, children: s.charAt(i) === "{" ? readTex(group()) : [] });
+          } else buf += "\\" + name;
+        } else {
+          var next = s.charAt(i + 1);
+          buf += UNESCAPE[next] !== undefined ? UNESCAPE[next] : next;
+          i += 2;
+        }
+        continue;
+      }
+      if (c === "$" && (m = /^\$((?:[^$\\]|\\.)+)\$/.exec(s.slice(i)))) { push({ t: "math", text: m[1] }); i += m[0].length; continue; }
+      if (s.slice(i, i + 10) === "[equation]") { push({ t: "mark", text: "[equation]" }); i += 10; continue; }
+      if (c === "{") { push(); Array.prototype.push.apply(out, readTex(group())); continue; }
+      if (c === "}") { i++; continue; }
+      if (c === "~") { buf += " "; i++; continue; }
+      if (s.slice(i, i + 3) === "---") { buf += "—"; i += 3; continue; }
+      if (s.slice(i, i + 2) === "--") { buf += "–"; i += 2; continue; }
+      buf += c; i++;
+    }
+    push();
+    return out;
+  }
+  function pictureAlt(line) {
+    var m = /^% A picture was here(?: \("(.*)"\))?\./.exec(line);
+    return m ? { t: "picture", alt: m[1] || "" } : null;
+  }
+  // Table cells: split at & without a backslash.
+  function texCells(row) {
+    var cells = [], cell = "";
+    for (var i = 0; i < row.length; i++) {
+      var c = row.charAt(i);
+      if (c === "\\") { cell += c + row.charAt(i + 1); i++; }
+      else if (c === "&") { cells.push(cell.trim()); cell = ""; }
+      else cell += c;
+    }
+    cells.push(cell.trim());
+    return cells;
+  }
+
+  // Chapter numbers depend on where the text goes, so the preview writes N:
+  // N.1 for a section, Table N.1, equation (N.1).
+  function preview(latex) {
+    var lines = String(latex || "").split("\n"), i = 0;
+    if (lines[lines.length - 1] === "") lines.pop();
+    var counts = [0, 0, 0, 0], tables = 0, equations = 0;
+    var LEVELS = { chapter: 0, section: 1, subsection: 2, subsubsection: 3 };
+
+    function list(env) {
+      var node = { type: "list", ordered: env === "enumerate", items: [], from: i };
+      i++;
+      while (i < lines.length) {
+        var l = lines[i].trim(), m, last = node.items[node.items.length - 1];
+        if (l === "\\end{" + env + "}") break;
+        if ((m = /^\\begin\{(itemize|enumerate)\}$/.exec(l))) {
+          if (!last) node.items.push(last = { children: [], lists: [], line: i, from: i, to: i });
+          var sub = list(m[1]);
+          last.lists.push(sub);
+          last.to = sub.to;
+          continue;
+        }
+        if (/^\\item(\s|$)/.test(l)) node.items.push({ children: readTex(l.replace(/^\\item\s?/, "")), lists: [], line: i, from: i, to: i });
+        else if (pictureAlt(l) && last) { last.children.push(pictureAlt(l)); last.to = i; }
+        i++;
+      }
+      node.to = Math.min(i, lines.length - 1);
+      i++;
+      return node;
+    }
+    function table() {
+      var node = { type: "table", caption: null, placeholder: false, align: [], head: 0, rows: [], from: i };
+      i++;
+      while (i < lines.length && lines[i].trim() !== "\\end{table}") {
+        var l = lines[i].trim(), m;
+        if ((m = /^\\caption\{(.*)\}$/.exec(l))) {
+          node.placeholder = m[1] === NO_CAPTION;
+          node.caption = readTex(m[1]);
+          node.captionLine = i;
+        } else if ((m = /^\\begin\{tabular\}\{(.*)\}$/.exec(l))) {
+          node.align = (m[1].match(/p\{[^}]*\}|[lrc]/g) || []).map(function (a) { return a.charAt(0); });
+        } else if (l === "\\midrule") node.head = node.rows.length;
+        else if (/\\\\$/.test(l)) {
+          node.rows.push({ cells: texCells(l.replace(/\s*\\\\$/, "")).map(readTex), line: i });
+        }
+        i++;
+      }
+      node.to = Math.min(i, lines.length - 1);
+      i++;
+      node.number = "N." + (++tables);
+      return node;
+    }
+    function blocks(stop) {
+      var out = [], para = null;
+      while (i < lines.length) {
+        var raw = lines[i], l = raw.trim(), m;
+        if (stop && l === stop) break;
+        if (!l) { para = null; i++; continue; }
+        var picture = pictureAlt(l);
+        if (picture) { para = null; out.push({ type: "picture", alt: picture.alt, from: i, to: i }); i++; continue; }
+        if (l.charAt(0) === "%" || l === "\\centering") { i++; continue; }
+        if (/^\\label\{[^}]*\}$/.test(l)) { if (out.length) out[out.length - 1].to = i; i++; continue; }
+        if ((m = /^\\(chapter|section|subsection|subsubsection)\{(.*)\}$/.exec(l))) {
+          para = null;
+          var level = LEVELS[m[1]];
+          counts[level]++;
+          for (var k = level + 1; k < 4; k++) counts[k] = 0;
+          if (level === 0) tables = equations = 0;
+          var number = level === 0 ? "N." : "N." + counts.slice(1, level + 1).join(".");
+          out.push({ type: "heading", level: level, number: number, children: readTex(m[2]), from: i, to: i });
+          i++; continue;
+        }
+        if ((m = /^\\begin\{(itemize|enumerate)\}$/.exec(l))) { para = null; out.push(list(m[1])); continue; }
+        if (/^\\begin\{table\}/.test(l)) { para = null; out.push(table()); continue; }
+        if (l === "\\begin{quote}") {
+          para = null;
+          var from = i++;
+          var inner = blocks("\\end{quote}");
+          out.push({ type: "quote", blocks: inner, from: from, to: Math.min(i, lines.length - 1) });
+          i++; continue;
+        }
+        if (l === "\\begin{verbatim}") {
+          para = null;
+          var start = i++, code = [];
+          while (i < lines.length && lines[i] !== "\\end{verbatim}") code.push(lines[i++].replace(/\\end \{verbatim\}/g, "\\end{verbatim}"));
+          out.push({ type: "code", text: code.join("\n"), from: start, to: Math.min(i, lines.length - 1) });
+          i++; continue;
+        }
+        if (l === "\\begin{equation}") {
+          para = null;
+          var top = i++, math = [];
+          while (i < lines.length && lines[i].trim() !== "\\end{equation}") {
+            if (!/^\s*\\label\{[^}]*\}$/.test(lines[i])) math.push(lines[i].replace(/^ {2}/, ""));
+            i++;
+          }
+          out.push({ type: "math", text: math.join("\n"), number: "(N." + (++equations) + ")", from: top, to: Math.min(i, lines.length - 1) });
+          i++; continue;
+        }
+        if (para) { para.children.push({ t: "text", text: " " }); Array.prototype.push.apply(para.children, readTex(l)); para.to = i; }
+        else out.push(para = { type: "para", children: readTex(l), from: i, to: i });
+        i++;
+      }
+      return out;
+    }
+    return { blocks: blocks(null) };
+  }
+
+  root.ConvertCore = { convert: convert, preview: preview, escapeText: escapeText, escapeUrl: escapeUrl, slug: slug, readTsv: readTsv,
                        cleanHtml: cleanHtml, safeLink: safeLink };
 })(typeof window !== "undefined" ? window : this);

@@ -6,7 +6,7 @@ first pass: read it next to your original, and move one section at a time.
 
 <p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page converts your text in your browser. Nothing in what you paste is loaded or run, not even pictures, and nothing is saved when you leave the page.</p>
 
-<div class="tool convert" data-convert hidden><fieldset class="convert-options"><legend>Start the LaTeX with</legend><label><input type="radio" name="convert-start" value="body" checked> <span>Part of a chapter: headings become <code>\section</code></span></label><label><input type="radio" name="convert-start" value="chapter"> <span>A new chapter: the first heading becomes <code>\chapter</code></span></label></fieldset><div class="convert-panes"><div class="convert-pane"><label class="convert-label" for="convert-input">Your text</label><textarea class="convert-input tool-drop" id="convert-input" spellcheck="false" autocomplete="off" aria-describedby="convert-hint" placeholder="Paste or drop your text here."></textarea><p class="visually-hidden" id="convert-hint">From Word, Google Docs, Excel, Google Sheets, or a Markdown or text file.</p><p class="convert-actions tool-actions"><button type="button" class="button button-secondary convert-example">Show an example</button> <button type="button" class="button button-secondary convert-clear">Clear</button></p></div><div class="convert-pane"><p class="convert-label tool-label" id="convert-output-label">LaTeX <span class="convert-source"></span></p><pre class="convert-output tool-output" data-empty="The LaTeX appears here." aria-labelledby="convert-output-label"></pre><p class="convert-actions tool-actions"><button type="button" class="button convert-copy" disabled>Copy</button> <button type="button" class="button button-secondary convert-download" disabled>Download .tex</button></p></div></div><div class="convert-status tool-status" role="status" aria-live="polite"></div><div class="convert-results tool-results"></div></div>
+<div class="tool convert" data-convert hidden><fieldset class="convert-options"><legend>Start the LaTeX with</legend><label><input type="radio" name="convert-start" value="body" checked> <span>Part of a chapter: headings become <code>\section</code></span></label><label><input type="radio" name="convert-start" value="chapter"> <span>A new chapter: the first heading becomes <code>\chapter</code></span></label></fieldset><div class="convert-panes"><div class="convert-pane"><div class="convert-head"><label class="convert-label" for="convert-input">Your text</label></div><textarea class="convert-input tool-drop" id="convert-input" spellcheck="false" autocomplete="off" aria-describedby="convert-hint" placeholder="Paste or drop your text here."></textarea><p class="visually-hidden" id="convert-hint">From Word, Google Docs, Excel, Google Sheets, or a Markdown or text file.</p><p class="convert-actions tool-actions"><button type="button" class="button button-secondary convert-example" data-icon="eye">Show an example</button> <button type="button" class="button button-secondary convert-clear" data-icon="clear">Clear</button></p></div><div class="convert-pane"><div class="convert-head"><p class="convert-label tool-label" id="convert-output-label">Result <span class="convert-source"></span></p><fieldset class="convert-view"><legend class="visually-hidden">Show the result as</legend><input type="radio" name="convert-view" value="latex" id="convert-view-latex" checked><label for="convert-view-latex" id="convert-view-latex-label">LaTeX</label><input type="radio" name="convert-view" value="preview" id="convert-view-preview"><label for="convert-view-preview" id="convert-view-preview-label">Preview</label></fieldset></div><pre class="convert-output tool-output" tabindex="0" data-empty="The LaTeX appears here." aria-labelledby="convert-view-latex-label"></pre><div class="convert-preview" tabindex="0" role="region" aria-labelledby="convert-view-preview-label" data-empty="The preview appears here." hidden></div><p class="convert-actions tool-actions"><button type="button" class="button convert-copy" disabled data-icon="copy">Copy</button> <button type="button" class="button button-secondary convert-download" disabled data-icon="download">Download .tex</button></p></div></div><div class="convert-status tool-status" role="status" aria-live="polite"></div><div class="convert-results tool-results"></div></div>
 
 <p class="convert-nojs tool-nojs" data-convert-nojs>The converter needs JavaScript, which is off or not available in this browser. The same steps by hand are under <a href="#without-the-converter">without the converter</a>.</p>
 
@@ -29,10 +29,17 @@ first pass: read it next to your original, and move one section at a time.
 Choose **Part of a chapter** for a section that goes into an existing
 chapter file, and **A new chapter** for a whole chapter in a file of its own.
 
+**Preview**, beside **LaTeX**, shows the result roughly as a page would:
+numbered headings, lists, and tables with the caption above. It is drawn by
+this page, not your PDF, so fonts and spacing differ, math shows as its
+LaTeX, and N stands for the chapter's number. **Copy** and **Download .tex**
+always give the LaTeX.
+
 ## What it leaves for you
 
 Under the LaTeX, the page lists what it did not convert, with a link to the
-guide section that shows how.
+guide section that shows how. **Show where** marks the lines a point is about
+in the LaTeX, or in the preview; press it again for the next place.
 
 - **Pictures:** a `%` line marks where each one was. Save the picture in
   `figures/` and [add a figure](writing.md#add-a-figure).
@@ -46,6 +53,8 @@ guide section that shows how.
   ([cite a source](writing.md#cite-a-source)).
 - **Cross-references:** "see Figure 3" stays as typed; change it to
   `Figure~\ref{fig:...}` ([cross-references](writing.md#cross-references)).
+- **Table captions:** a line such as "Table 2: Visits by site" right above
+  or below a table becomes its caption; otherwise the caption says to write one.
 - **Merged table cells** are split into separate cells; check them.
 - **Files:** Word, Excel, and PowerPoint files are not read yet. Open the
   file, select the text, copy it, and paste it here. A long `.docx` can go
