@@ -103,20 +103,11 @@ relative path, so open or print it from inside the repository.
 Edge, choose **Print**, then **Save as PDF**, with margins set to **None**
 and headers and footers turned off. Each slide prints as one 16:9 page.
 
-**Optional, in a terminal:** a script, `python3 scripts/outreach.py`, is
-planned to print every `outreach/**/*.html` page into `build/outreach/`.
-Until it exists, run this one line from the repository folder (the folder
-that contains `main.tex`). It needs Chromium or Google Chrome; replace
-`chromium` with the name of the program on your computer if it differs, such
-as `google-chrome`.
-
-```sh
-chromium --headless --no-pdf-header-footer --print-to-pdf=build/outreach/slides.pdf outreach/workshop/slides.html
-```
-
-It writes `build/outreach/slides.pdf` (create the `build/outreach` folder
-first if Chrome reports that it cannot write the file). Never commit the PDF;
-`build/` is not tracked. Tested with headless Chromium on Linux only.
+**Optional, in a terminal:** from the repository folder, run
+`python3 scripts/outreach.py`. It prints every outreach page, this deck
+included, to `build/outreach/` (the deck is `build/outreach/workshop/slides.pdf`).
+It needs Chromium or Google Chrome. Never commit the PDFs; `build/` is not
+tracked.
 
 ## Run sheet
 
