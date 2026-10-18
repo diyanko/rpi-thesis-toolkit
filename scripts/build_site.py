@@ -916,18 +916,21 @@ class Site:
         code changes on GitHub, for anyone who wants the detail."""
         versions = re.findall(r'<h2 id="[^"]*">(\d+\.\d+\.\d+) \(beta\)', body)
         def meta(match):
-            version = match[2]
+            # During the beta, many versions share a day: the heading is just the
+            # version (a short "On this page" list); its date leads the line under it.
+            anchor, version, date = match[1], match[2], match[3]
             later = versions.index(version) + 1
-            links = [f'Pre-release <code>v{version}</code>']
+            links = [escape(date), f'Pre-release <code>v{version}</code>']
             if self.repo:
                 links.append(f'<a href="{self.repo}/releases/download/v{version}/rpi-thesis-starter-v{version}.zip">'
-                             'Download this version</a>')
+                             'Download</a>')
                 if later < len(versions):
                     links.append(f'<a href="{self.repo}/compare/v{versions[later]}...v{version}">Code changes</a>')
                 else:
-                    links.append(f'<a href="{self.repo}/tree/v{version}">Code at this version</a>')
-            return match[1] + '<p class="release-meta">' + '<span class="sep" aria-hidden="true">·</span>'.join(links) + '</p>'
-        body = re.sub(r'(<h2 id="[^"]*">(\d+\.\d+\.\d+) \(beta\), [^<]*</h2>)\s*'
+                    links.append(f'<a href="{self.repo}/tree/v{version}">Code</a>')
+            return (f'<h2 id="{anchor}">{version}</h2><p class="release-meta">'
+                    + '<span class="sep" aria-hidden="true">·</span>'.join(links) + '</p>')
+        body = re.sub(r'<h2 id="([^"]*)">(\d+\.\d+\.\d+) \(beta\), ([^<]*)</h2>\s*'
                       r'<p>Published as the pre-release <code[^>]*>v\2</code>\.</p>', meta, body)
         def answer(match):
             text = match[1].strip()
@@ -948,7 +951,7 @@ class Site:
         # Unreleased work: say what it means; "**Version:**" only steers scripts/bump.py.
         body = re.sub(r'<p><strong>Version:</strong>[^<]*</p>\s*', "", body)
         return re.sub(r'(<h2 id="unreleased">)Unreleased(</h2>)',
-                      r'\1Coming in the next version\2<p class="release-meta">Guide and website changes are already live;'
+                      r'\1Coming next\2<p class="release-meta">Guide and website changes are already live;'
                       r' changes to the starter files arrive with the next download.</p>', body)
 
     def render(self, source):

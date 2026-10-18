@@ -1,6 +1,7 @@
 # Change log
 
-What changed in each version, newest first, with its date. Each entry
+What changed in each version, newest first. Every version so far is a beta
+pre-release, and several may come out on one day. Each entry
 starts with one question, **Changes your PDF?** **Yes** means updating
 `rpi-thesis.cls` may change how your thesis looks, including page breaks:
 recompile and compare every page. **No** means only the guide, the website,
@@ -9,8 +10,8 @@ scripts, or examples changed. Before updating, read
 Your version is in the `\ProvidesClass` line near the top of
 `rpi-thesis.cls`, and [Check your PDF](docs/check-pdf.md) names it too.
 
-Want the detail? On the toolkit's website, each version below links its
-download and its code changes on GitHub, and the
+Want the detail? On the toolkit's website, each version below gives its
+date and links its download and its code changes on GitHub, and the
 [requirements map](docs/project/requirements.md) records every formatting
 rule with its source.
 
