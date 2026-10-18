@@ -834,6 +834,22 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .here-col .tk-icon { width: 36px; height: 36px; }
 .here-col li :is(a, strong) { display: inline-block; font-weight: 700; font-size: 1rem; }
 .here-col li p > span { display: block; }
+/* Phones: each part is a small tile with its icon and name, two to a row; the
+   page it opens explains the rest, so the one-line descriptions stay for laptops. */
+@media (max-width: 600px) {
+  .here-col { padding: 16px 14px 14px; }
+  .here-col ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  .here-col li, .here-col li:first-child {
+    align-items: center; gap: 8px; padding: 10px;
+    background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px 14px 9px 13px / 13px 9px 14px 10px;
+  }
+  .here-col .tk-icon { width: 26px; height: 26px; }
+  .here-col li p { font-size: 0.95rem; line-height: 1.25; }
+  .here-col li p > span { display: none; }
+  .here-col li { position: relative; }
+  .here-col li a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }   /* the whole tile opens it */
+  .here-col li:has(a:hover) { border-color: var(--line-strong); background: var(--card); }
+}
 
 .home-foot {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
