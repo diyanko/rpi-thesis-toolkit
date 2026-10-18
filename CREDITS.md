@@ -38,6 +38,9 @@ include the RPI seal, which each student downloads from RPI.
 | Other projects' | The tools and fonts below, under their own licenses |
 | Yours | Your thesis or dissertation: your text, figures, data, and permissions; never covered by this project's license |
 
+The license grants no trademark rights and implies no endorsement by RPI or
+its Office of Graduate Education.
+
 The full record, with sources and how each item is treated, is the
 [attribution record](docs/project/attribution.md).
 
