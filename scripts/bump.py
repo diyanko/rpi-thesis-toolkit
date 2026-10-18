@@ -43,8 +43,15 @@ def plan(new, today):
         ("CHANGELOG.md", r"^## Unreleased[ \t]*$",
          f"## {new} (beta), {today.day} {today:%b %Y}\n\nPublished as the pre-release `v{new}`."),
     ]
+    # The "**Version:**" line only steers this script; the released entry leaves it out.
+    log = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8")
+    section = re.search(r"(?ms)^## Unreleased[ \t]*$.*?(?=^## |\Z)", log)
+    if section:
+        cleaned = re.sub(r"(?m)^\*\*Version:\*\*[^\n]*\n\n?", "", section[0], count=1)
+        log = log[:section.start()] + cleaned + log[section.end():]
     for name, pattern, replacement in edits:
-        text, count = re.subn(pattern, replacement, (ROOT / name).read_text(encoding="utf-8"), flags=re.M)
+        source = log if name == "CHANGELOG.md" else (ROOT / name).read_text(encoding="utf-8")
+        text, count = re.subn(pattern, replacement, source, flags=re.M)
         if not count or (name not in {"README.md", "docs/get-started.md"} and count != 1):
             raise ValueError(f"{name}: expected release text is missing or repeated; check it before bumping.")
         prepared[name] = text

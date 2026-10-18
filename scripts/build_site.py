@@ -47,7 +47,7 @@ SITE = ROOT / "site"
 NAME = "RPI Thesis Toolkit"
 HOME_TITLE = NAME + " · LaTeX thesis and dissertation starter for RPI"
 HOME_DESCRIPTION = (
-    "Unofficial, community-made LaTeX starter and plain-language guide for RPI "
+    "Unofficial, community-made LaTeX starter, plain-language guide, and browser tools for RPI "
     "master's theses and doctoral dissertations. Not affiliated with or endorsed by RPI."
 )
 
@@ -423,6 +423,18 @@ def highlight_latex(text, bibtex=False):
             span("brace", brace)
     plain(text[pos:])
     return "".join(out)
+
+
+def home_tool(name):
+    """(doodle, one-line description) of a tool from the home page's list
+    (site/index.html), so the header's Tools menu says what the home page says."""
+    home = (ROOT / "site/index.html").read_text(encoding="utf-8")
+    found = re.search(r'<li>(<svg class="doodle tk-icon"(?:(?!</svg>).)*</svg>)<p><a href="docs/'
+                      + re.escape(name) + r'\.md">[^<]*</a> <span>([^<]*)</span>', home, flags=re.S)
+    if not found:
+        raise SystemExit(f"site/index.html: the toolkit list has no entry for docs/{name}.md; "
+                         "add it there (its doodle and one line), so the header's Tools menu can show it.")
+    return found[1].replace('class="doodle tk-icon"', 'class="doodle nav-menu-icon"', 1), found[2]
 
 
 def tool_mark(body, name):
@@ -867,7 +879,7 @@ class Site:
                                "site/site.json); keep both, or update offline_checker in scripts/build_site.py.")
             return body
         link = escape(self.site_url + "/guide/check-pdf.html", quote=True)
-        note = ('<p class="pdf-check-nojs tool-nojs">The checker runs on the toolkit\'s website, not in this offline copy '
+        note = ('<p class="pdf-check-nojs tool-nojs tool-offline">The checker runs on the toolkit\'s website, not in this offline copy '
                 f'of the guide: open <a href="{link}">Check your PDF</a> there. Your PDF still stays on your '
                 'computer.')
         return intro.sub(lambda _: note, widget.sub("", body, count=1), count=1)
@@ -884,6 +896,60 @@ class Site:
                 f'open <a href="{link}">Check your references on the toolkit website</a>. '
                 'Your files stay in your browser; nothing is uploaded.</p>')
         return interactive.sub(lambda _: note, body, count=1)
+
+    def offline_settings(self, body, source):
+        """The offline guide has no settings form: say where it runs, not that JavaScript is off."""
+        intro = re.compile(r'<p class="tool-nojs" data-settings-nojs>The form needs JavaScript[^.]*\.')
+        if not self.site_url or not intro.search(body):
+            self.errors.append(f"{source}: the offline guide replaces the sentence starting \"The form needs "
+                               "JavaScript\" with a link to the website (site_url in site/site.json); keep it, "
+                               "or update offline_settings in scripts/build_site.py.")
+            return body
+        link = escape(self.site_url + "/guide/settings-builder.html", quote=True)
+        note = ('<p class="tool-nojs tool-offline" data-settings-nojs>The form runs on the toolkit\'s website, not in this offline '
+                f'copy of the guide: open <a href="{link}">Settings builder</a> there.')
+        return intro.sub(lambda _: note, body, count=1)
+
+    def changelog_page(self, body):
+        """The change log on the website: each release's "Changes your PDF?" answer
+        as a tag students can scan, and under each heading its download and its
+        code changes on GitHub, for anyone who wants the detail."""
+        versions = re.findall(r'<h2 id="[^"]*">(\d+\.\d+\.\d+) \(beta\)', body)
+        def meta(match):
+            version = match[2]
+            later = versions.index(version) + 1
+            links = [f'Pre-release <code>v{version}</code>']
+            if self.repo:
+                links.append(f'<a href="{self.repo}/releases/download/v{version}/rpi-thesis-starter-v{version}.zip">'
+                             'Download this version</a>')
+                if later < len(versions):
+                    links.append(f'<a href="{self.repo}/compare/v{versions[later]}...v{version}">Code changes</a>')
+                else:
+                    links.append(f'<a href="{self.repo}/tree/v{version}">Code at this version</a>')
+            return match[1] + '<p class="release-meta">' + '<span class="sep" aria-hidden="true">·</span>'.join(links) + '</p>'
+        body = re.sub(r'(<h2 id="[^"]*">(\d+\.\d+\.\d+) \(beta\), [^<]*</h2>)\s*'
+                      r'<p>Published as the pre-release <code[^>]*>v\2</code>\.</p>', meta, body)
+        def answer(match):
+            text = match[1].strip()
+            if re.match(r"No\b", text):   # "No." alone, or "No visible change." kept as written
+                kind, word, rest = "no", "No", re.sub(r"^No(?:[.,:]\s*|\s*$)", "", text)
+                rest = rest or "Only the guide, the website, scripts, or examples changed; your thesis looks the same."
+            elif re.match(r"Yes\b", text):
+                kind, word, rest = "yes", "Yes", re.sub(r"^Yes[.,:]?\s*", "", text)
+            elif text.startswith("Not applicable"):
+                kind, word, rest = "first", "New", "The first version."
+            else:   # "Only if ...": some theses
+                kind, word, rest = "some", "Some", text
+            rest = rest[:1].upper() + rest[1:]
+            return (f'<div class="release-pdf release-pdf-{kind}"><p class="release-pdf-word" aria-hidden="true">{word}</p>'
+                    f'<div><p class="release-pdf-q">Changes your PDF?<span class="visually-hidden"> {word}.</span></p>'
+                    f'<p>{rest}</p></div></div>')
+        body = re.sub(r'<p><strong>Changes your PDF\?</strong> (?!<)(.*?)</p>', answer, body, flags=re.S)
+        # Unreleased work: say what it means; "**Version:**" only steers scripts/bump.py.
+        body = re.sub(r'<p><strong>Version:</strong>[^<]*</p>\s*', "", body)
+        return re.sub(r'(<h2 id="unreleased">)Unreleased(</h2>)',
+                      r'\1Coming in the next version\2<p class="release-meta">Guide and website changes are already live;'
+                      r' changes to the starter files arrive with the next download.</p>', body)
 
     def render(self, source):
         here = self.pages[source]
@@ -905,6 +971,8 @@ class Site:
             body = self.rewrite(body, source, here, posixpath.dirname(source))
             if source == "docs/explain-my-error.md":
                 body = self.explain_page(body, source)
+            if source == "CHANGELOG.md":
+                body = self.changelog_page(body)
             if source == "docs/troubleshooting.md":
                 body = self.search_messages(body, here, title)
             if source == f"docs/{QUICK[0]}.md":
@@ -926,6 +994,8 @@ class Site:
                 body = self.offline_checker(body, source)
             if Path(source).stem == "check-references" and self.offline:
                 body = self.offline_bibcheck(body, source)
+            if Path(source).stem == "settings-builder" and self.offline:
+                body = self.offline_settings(body, source)
             # The PDF checker compares a PDF's class version with the release the website links.
             body = body.replace('data-pdf-check data-version=""', f'data-pdf-check data-version="{RELEASE_VERSION}"')
             # Keyboard users must also be able to pan long code lines without
@@ -959,6 +1029,17 @@ class Site:
         header = [entry for entry, (_, _, top) in zip(nav, chain) if top]
         if quick and QUICK[2]:
             header.append(quick)
+        # The header: Get started, a Guide menu, a Tools menu, How do I...?
+        groups_by_name = dict(NAV)
+        start = guide_item(*groups_by_name["Core path"][0][:2])
+        guide_menu = [entry for entry in (guide_item(name, label) for name, label, _ in
+                      groups_by_name["Core path"][1:] + groups_by_name["Go further"]) if entry]
+        tools_menu = []
+        for name, label, _ in groups_by_name["Tools"]:
+            entry = guide_item(name, label)
+            if entry:
+                icon, blurb = home_tool(name)
+                tools_menu.append({**entry, "icon": icon, "blurb": blurb})
         values = {
             "lang": "en",
             "kind": kind,
@@ -970,6 +1051,12 @@ class Site:
             "nav": nav + ([quick] if quick else []),
             "navgroups": groups,
             "header": header,
+            "menu_start": start,
+            "menu_guide": guide_menu,
+            "menu_guide_current": any(entry.get("current") for entry in guide_menu),
+            "menu_tools": tools_menu,
+            "menu_tools_current": any(entry.get("current") for entry in tools_menu),
+            "menu_quick": quick,
             "project": [
                 item(self.pages[path], label)
                 for path, (_, label) in PROJECT.items()

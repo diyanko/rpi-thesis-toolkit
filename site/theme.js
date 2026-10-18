@@ -87,8 +87,28 @@
     });
     control.hidden = false;
   }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ready);
-  else ready();
+  // The header's Guide and Tools menus (native details): one open at a time,
+  // closed by Esc (focus returns to its name) or a click outside.
+  function menus() {
+    var all = Array.prototype.slice.call(document.querySelectorAll(".nav-menu"));
+    all.forEach(function (menu) {
+      menu.addEventListener("toggle", function () {
+        if (menu.open) all.forEach(function (other) { if (other !== menu) other.open = false; });
+      });
+    });
+    document.addEventListener("click", function (event) {
+      all.forEach(function (menu) { if (menu.open && !menu.contains(event.target)) menu.open = false; });
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key !== "Escape") return;
+      all.forEach(function (menu) {
+        if (menu.open) { menu.open = false; menu.querySelector("summary").focus(); }
+      });
+    });
+  }
+  function start() { ready(); menus(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
 
   window.addEventListener("storage", function (event) {
     if (event.key === key || event.key === null) apply(event.newValue);

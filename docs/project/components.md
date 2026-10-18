@@ -150,6 +150,26 @@ Navigation links in the header, the sidebar and the footer share one set of
 states: hover underlines the text, and the current page is the one sage pill.
 No box anywhere carries a colored bar on one edge; status is said in words.
 
+**Icons.** An action button opts into one hand-drawn icon with
+`data-icon="..."` (copy, download, add, remove, clear, search, bulb, eye,
+file, print, again, prev, next, check, undo; section 5 of `site/site.css`).
+Use these for the same action everywhere; draw a new one only for a new kind
+of action, in the same 24 px, 2 px stroke, slightly wobbly style.
+
+<p class="tool-actions"><button type="button" class="button" data-icon="copy">Copy</button> <button type="button" class="button button-secondary" data-icon="download">Download .tex</button> <button type="button" class="button button-secondary button-small" data-icon="add">Add a member</button> <button type="button" class="button-quiet" data-icon="remove" aria-label="Remove"></button></p>
+
+The quiet button (`.button-quiet`) is a 44 px icon with no edge until you
+point at it, for a small action beside a field, such as removing a row.
+
+**Header menus.** Guide and Tools in the header are native `<details>` menus
+(they open without JavaScript; `site/theme.js` closes them on Esc or a click
+elsewhere). The Tools menu takes each tool's doodle and one line from the
+home page's list, so the two never disagree.
+
+**Release answer.** On the website's change log, each version's
+"Changes your PDF?" line becomes a stamp: No in sage, Yes in terra, Some in
+plum (`changelog_page` in `scripts/build_site.py`).
+
 A tertiary text link, used for a secondary route:
 
 <p><a class="text-link" href="#buttons-and-links">A text link<span class="arrow" aria-hidden="true">→</span></a></p>
@@ -182,9 +202,14 @@ doodle from the home page before the title. The classes live in section 12 of `s
    the buttons (one `.button`, the rest `.button-secondary`); `.tool-status`
    for the one-line status; `.tool-results` (plus `.tool-card` for a single
    panel) for results.
-5. **No JavaScript:** `<p class="tool-nojs" data-NAME-nojs>`: "The X needs
+5. **Preview** (optional): a live picture of the result beside the form on
+   wide screens and under it otherwise, captioned as a sketch, never as the
+   real output; the Settings builder's title page (`.settings-preview`) is
+   the example. It uses the page's tokens, so it follows light and dark.
+6. **No JavaScript:** `<p class="tool-nojs" data-NAME-nojs>`: "The X needs
    JavaScript, which is off or not available in this browser", then what to
-   use instead (a table or checklist further down the page).
+   use instead (a table or checklist further down the page). The note waits
+   a moment before showing, so a slow load does not flash it.
 
 Wording: each result says what is wrong, why it matters in one clause, and
 the fix, with a guide link. Every tool has a short message for empty input,

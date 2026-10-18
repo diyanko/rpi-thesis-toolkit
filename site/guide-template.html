@@ -73,10 +73,29 @@ $endif$
     </div>
   </div>
   </div>
+$-- Get started, then two menus (native details: they open without JavaScript;
+$-- theme.js closes them on Esc or a click elsewhere), then How do I...?
   <nav class="site-nav" aria-label="Main">
-$for(header)$
-    <a href="$it.href$"$if(it.current)$ aria-current="page"$endif$>$it.label$</a>
+$if(menu_start)$
+    <a href="$menu_start.href$"$if(menu_start.current)$ aria-current="page"$endif$>$menu_start.label$</a>
+$endif$
+    <details class="nav-menu"><summary$if(menu_guide_current)$ class="is-current"$endif$>Guide</summary>
+      <ul class="nav-menu-list" role="list">
+$for(menu_guide)$
+        <li><a href="$it.href$"$if(it.current)$ aria-current="page"$endif$>$it.label$</a></li>
 $endfor$
+      </ul>
+    </details>
+    <details class="nav-menu nav-menu-tools"><summary$if(menu_tools_current)$ class="is-current"$endif$>Tools</summary>
+      <ul class="nav-menu-list" role="list">
+$for(menu_tools)$
+        <li><a href="$it.href$"$if(it.current)$ aria-current="page"$endif$>$it.icon$<span><span class="nav-menu-name">$it.label$</span> <span class="nav-menu-blurb">$it.blurb$</span></span></a></li>
+$endfor$
+      </ul>
+    </details>
+$if(menu_quick)$
+    <a href="$menu_quick.href$"$if(menu_quick.current)$ aria-current="page"$endif$>$menu_quick.label$</a>
+$endif$
   </nav>
 </header>
 $if(home)$
