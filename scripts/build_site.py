@@ -84,6 +84,11 @@ GUIDE = [page for _, pages in NAV for page in pages]  # the same pages, in one l
 # Quick answers: a guide page outside the stages and the previous/next chain.
 # It sits above the stages in the sidebar, last in the header, and in the
 # Help card on the landing page.
+GROUP_OF = {name: group for group, pages in NAV for name, _, _ in pages}
+# Tool page -> the guide page that sends students to it (its "Back to" link).
+TOOL_HOME = {"settings-builder": "get-started", "bring-your-work-in": "bring-your-draft",
+             "check-references": "citations", "explain-my-error": "troubleshooting",
+             "check-pdf": "submission"}
 QUICK = ("how-do-i", "How do I…?", True)
 # When a student needs each page, shown as a small tag under the page title.
 # The sidebar lists pages without tags (SIDEBAR_TAGS is empty): its numbers and
@@ -1174,9 +1179,15 @@ class Site:
             names = [name for name, _, _ in chain]
             if Path(source).stem in names:
                 index = names.index(Path(source).stem)
-                if index > 0:
+                group = GROUP_OF.get(names[index])
+                # Previous and next stay inside one part of the guide; a tool
+                # page links back to the guide page that sends you to it.
+                if names[index] in TOOL_HOME:
+                    values["prev"] = nav[names.index(TOOL_HOME[names[index]])]
+                    values["prev_label"] = "Back to"
+                elif index > 0 and GROUP_OF.get(names[index - 1]) == group:
                     values["prev"] = nav[index - 1]
-                if index + 1 < len(nav):
+                if names[index] not in TOOL_HOME and index + 1 < len(nav) and GROUP_OF.get(names[index + 1]) == group:
                     values["next"] = nav[index + 1]
                     next_tag = PAGE_TAGS[chain[index + 1][0]][0]
                     if next_tag == "If you have a draft":

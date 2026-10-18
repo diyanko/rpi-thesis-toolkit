@@ -170,7 +170,7 @@ $endif$
 $if(pager)$
     <nav class="pager" aria-label="Previous and next page">
 $if(prev)$
-      <a class="pager-prev" rel="prev" href="$prev.href$"><span class="pager-label">Previous</span> $prev.label$</a>
+      <a class="pager-prev" rel="prev" href="$prev.href$"><span class="pager-label">$if(prev_label)$$prev_label$$else$Previous$endif$</span> $prev.label$</a>
 $endif$
 $if(next)$
       <a class="pager-next" rel="next" href="$next.href$"><span class="pager-label">$if(next_label)$$next_label$$else$Next$endif$</span> $next.label$</a>
