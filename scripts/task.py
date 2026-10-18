@@ -8,9 +8,10 @@ start: makes branch issue-N-<slug> and a worktree at _local/wt/issue-N of the
 main checkout, from a freshly fetched origin/main. The slug comes from the
 issue title (gh) or --slug. Links .venv from the main checkout when present.
 
-finish: run inside that worktree. Rebases on origin/main, runs verify.py,
-compares screenshots when site/ or docs/ changed (Chrome only, informational),
-asks Codex for a review (when installed; P0 to P2 findings stop here unless
+finish: run inside that worktree. Rebases on origin/main, runs verify.py quick,
+and when site/ or docs/ changed runs the ui_check.py layout sweep (problems
+stop here) and compares screenshots (Chrome only, informational), then
+asks Codex for a review (when installed; P0 or P1 findings stop here unless
 --accept-review or TASK_ACCEPT_REVIEW=1), commits anything uncommitted
 (--message), pushes, opens the pull request, and turns on auto-merge.
 Every step prints one line; the first failure stops with the fix.
@@ -243,7 +244,7 @@ def main():
     end = sub.add_parser("finish", help="verify, review, push, and open the pull request")
     end.add_argument("--message", "-m", help="commit message for uncommitted changes")
     end.add_argument("--no-review", action="store_true", help="skip the Codex review")
-    end.add_argument("--accept-review", action="store_true", help="continue past P0-P2 review findings")
+    end.add_argument("--accept-review", action="store_true", help="continue past P0-P1 review findings")
     args = parser.parse_args()
     (start if args.command == "start" else finish)(args)
 
