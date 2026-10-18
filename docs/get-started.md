@@ -14,7 +14,7 @@ Not sure LaTeX suits you? Read [why LaTeX](how-it-works.md#why-latex-for-a-thesi
 
 ## Step 1: Choose your LaTeX workspace
 
-Both make the same PDF from the same files; choose the one that fits you.
+With the same files, engine, packages, and fonts, both make the same PDF; choose the one that fits you.
 
 | | Your computer (an editor) | Overleaf (in your browser) |
 | --- | --- | --- |
