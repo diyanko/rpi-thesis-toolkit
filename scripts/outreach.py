@@ -8,7 +8,8 @@ Each page sets its own paper size with CSS @page; headless Chrome prints it
 at that size (preferCSSPageSize), with backgrounds. Files whose name starts
 with an underscore are skipped. The handout also gets a two-up print version,
 handout-2up.pdf: each side twice on US letter landscape, built from
-outreach/handout.html on the fly, so the words live in one file. What each
+outreach/handout.html on the fly, so the words live in one file. Every
+other top-level outreach/handout*.html gets one the same way. What each
 file is, and how to print it: outreach/README.md.
 
 Python standard library only; pypdf, when installed, checks the page sizes.
@@ -25,8 +26,8 @@ from common import ROOT, find_chrome
 
 OUTREACH = ROOT / "outreach"
 OUT = ROOT / "build" / "outreach"
-HANDOUT = "handout.html"
-TWO_UP = "handout-2up.html"
+# Every top-level outreach/handout*.html also gets a two-up print version.
+HANDOUT = re.compile(r"handout[\w-]*\.html")
 
 # One side of the handout: from its "<!-- page: name -->" comment to the
 # </section> that closes the page (the last one before the next side).
@@ -50,19 +51,41 @@ CROWDED = """(() => {
 })()"""
 
 
-def two_up(html):
+# On a two-up sheet: every panel exactly 5.5 in wide (528 CSS px), side by
+# side from the left edge, with equal left and right safe margins of at
+# least 0.25 in (24 px). Returns a problem, or "" when the geometry is right.
+GEOMETRY = """(() => {
+  for (const [s, sheet] of [...document.querySelectorAll('.sheet')].entries()) {
+    const box = sheet.getBoundingClientRect();
+    const panels = [...sheet.querySelectorAll(':scope > .page')];
+    if (Math.abs(box.width - 1056) > 0.5) return `sheet ${s + 1} is ${box.width}px wide, not 11 in`;
+    for (const [i, p] of panels.entries()) {
+      const r = p.getBoundingClientRect(), st = getComputedStyle(p);
+      const left = parseFloat(st.paddingLeft), right = parseFloat(st.paddingRight);
+      if (Math.abs(r.width - 528) > 0.5) return `sheet ${s + 1}, panel ${i + 1} is ${r.width}px wide, not 5.5 in`;
+      if (Math.abs(r.left - box.left - i * 528) > 0.5) return `sheet ${s + 1}, panel ${i + 1} is not at ${i * 5.5} in`;
+      if (Math.abs(left - right) > 0.5 || Math.min(left, right, parseFloat(st.paddingTop), parseFloat(st.paddingBottom)) < 24)
+        return `sheet ${s + 1}, panel ${i + 1} margins are uneven or under 0.25 in`;
+    }
+  }
+  return "";
+})()"""
+
+
+def two_up(html, name):
     """The handout as US letter landscape sheets, two copies of each side."""
     sides = SIDE.findall(html)
     if not sides:
-        raise SystemExit(f"outreach/{HANDOUT}: no sides found; keep a <!-- page: name --> comment "
+        raise SystemExit(f"outreach/{name}: no sides found; keep a <!-- page: name --> comment "
                          "before each <section class=\"page ...\">.")
     cut = '<span class="cut cut-top" aria-hidden="true"></span><span class="cut cut-bottom" aria-hidden="true"></span>'
     sheets = "\n".join(f'<div class="sheet" aria-label="{name}, two copies">\n{page}\n{page}\n{cut}\n</div>'
                        for name, page in sides)
-    head, _, _ = html.partition("<body")
-    head = head.replace("<title>RPI Thesis Toolkit handout</title>",
-                        "<title>RPI Thesis Toolkit handout, two-up</title>")
-    return f'{head}<body class="handout imposed">\n{sheets}\n</body>\n</html>\n'
+    head, _, rest = html.partition("<body")
+    body_class = re.match(r'\s+class="([^"]*)"', rest)
+    classes = (body_class[1] if body_class else "handout") + " imposed"
+    head = head.replace("</title>", ", two-up</title>", 1)
+    return f'{head}<body class="{classes}">\n{sheets}\n</body>\n</html>\n'
 
 
 def pages(only=None):
@@ -73,8 +96,8 @@ def pages(only=None):
         if any(part.startswith("_") for part in rel.parts):
             continue
         found.append((rel.as_posix(), rel.with_suffix(".pdf").as_posix()))
-        if rel.as_posix() == HANDOUT:
-            found.append((TWO_UP, "handout-2up.pdf"))
+        if len(rel.parts) == 1 and HANDOUT.fullmatch(rel.name):
+            found.append((f"{rel.stem}-2up.html", f"{rel.stem}-2up.pdf"))
     if only:
         found = [item for item in found if any(word in item[0] for word in only)]
     return found
@@ -119,11 +142,12 @@ def main():
     if not todo:
         sys.exit("No outreach pages to print (outreach/**/*.html, names not starting with _).")
 
-    handout = (OUTREACH / HANDOUT).read_text(encoding="utf-8") if (OUTREACH / HANDOUT).exists() else ""
-
     def dynamic(path, _query):
-        if path == f"/outreach/{TWO_UP}" and handout:
-            return two_up(handout).encode("utf-8"), "text/html; charset=utf-8"
+        name = path.removeprefix("/outreach/")
+        if name.endswith("-2up.html") and "/" not in name:
+            source = OUTREACH / name.replace("-2up.html", ".html")
+            if HANDOUT.fullmatch(source.name) and source.exists():
+                return two_up(source.read_text(encoding="utf-8"), source.name).encode("utf-8"), "text/html; charset=utf-8"
         return None
 
     OUT.mkdir(parents=True, exist_ok=True)
@@ -134,6 +158,10 @@ def main():
             browser.evaluate("document.fonts.ready.then(() => Promise.all([...document.images]"
                              ".map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; }))))"
                              ".then(() => true)")
+            if page.endswith("-2up.html"):
+                problem = browser.evaluate(GEOMETRY)
+                if problem:
+                    print(f"  Warning: outreach/{page}: {problem}.")
             crowded = browser.evaluate(CROWDED)
             if crowded:
                 print(f"  Warning: outreach/{page}: text runs into the margin on page {crowded}; "
