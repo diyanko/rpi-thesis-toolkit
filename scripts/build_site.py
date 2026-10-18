@@ -34,6 +34,7 @@ import subprocess
 import sys
 import tempfile
 from urllib.parse import quote, unquote, urlsplit
+from xml.etree import ElementTree
 
 import settings
 import rules  # scripts/rules.py: the OGE rules in docs/project/requirements.md
@@ -1359,6 +1360,95 @@ def drawing_colors():
     return errors
 
 
+def drawing_code_style():
+    """The code classes every drawing's <style> carries: the LaTeX colors of
+    site/site.css (the --code-* tokens and tok-* rules), c-cmd for tok-cmd."""
+    css = (SITE / "site.css").read_text(encoding="utf-8")
+    lines = ["    .c-tex, .c-bib, .c-md { fill: var(--ink); }"]
+    for name, token in re.findall(r"--code-(\w+):\s*var\(--([\w-]+)\)", css):
+        rule = re.search(r"\.tok-" + name + r"\s*\{\s*color:\s*var\(--code-" + name + r"\);\s*([^}]*?)\s*\}", css)
+        lines.append(f"    .c-{name} {{ fill: var(--{token}); {rule[1] + ' ' if rule and rule[1] else ''}}}")
+    return "\n".join(lines) + "\n"
+
+
+def drawing_code(text, bibtex=False):
+    """One line of LaTeX (or BibTeX) as the tspans a drawing draws it with:
+    highlight_latex's coloring, so a drawing matches the website's code."""
+    return highlight_latex(text, bibtex).replace('<span class="tok-', '<tspan class="c-').replace("</span>", "</tspan>")
+
+
+def drawing_code_colors():
+    """Code in the drawings is colored as on the website. A line or bit of code
+    is a <text> or <tspan> with class c-tex (LaTeX), c-bib (BibTeX) or c-md
+    (Markdown) holding only plain text and c-* tspans; for LaTeX and BibTeX the
+    pieces must be exactly drawing_code's."""
+    style = drawing_code_style()
+    kinds = {"c-tex", "c-bib", "c-md"}
+    colors = {"c-cmd", "c-brace", "c-opt", "c-math", "c-com"}
+
+    def classes(element):
+        return set(element.get("class", "").split())
+
+    def pieces(element):
+        """[(color or "", text)] of a code element, or None if a child is not a bare c-* tspan."""
+        out = [("", element.text or "")]
+        for child in element:
+            if child.tag.rpartition("}")[2] != "tspan" or set(child.attrib) != {"class"} or len(child) \
+                    or not classes(child) <= colors or len(classes(child)) != 1:
+                return None
+            out += [(child.get("class"), child.text or ""), ("", child.tail or "")]
+        merged = []
+        for color, text in out:
+            if merged and merged[-1][0] == color:
+                merged[-1] = (color, merged[-1][1] + text)
+            elif text:
+                merged.append((color, text))
+        return merged
+
+    errors = []
+    drawings = sorted((ROOT / "docs/diagrams").glob("*.svg")) + sorted((SITE / "art").glob("*.svg"))
+    for path in drawings:
+        svg, name = path.read_text(encoding="utf-8"), path.relative_to(ROOT)
+        if style not in svg:
+            errors.append(f"{name}: its <style> lacks the code classes; paste these lines before </style> "
+                          f"(made from the LaTeX colors in site/site.css):\n{style}")
+        for rule in re.findall(r"[^{}]*\{[^{}]*monospace[^{}]*\}|style=\"[^\"]*monospace[^\"]*\"", svg):
+            if "font-variant-ligatures: none" not in rule:
+                errors.append(f"{name}: {rule.strip()[:60]}... sets a code font; add font-variant-ligatures: none "
+                              "so code shows the characters typed, as on the website.")
+        try:
+            root = ElementTree.fromstring(svg)
+        except ElementTree.ParseError as problem:
+            errors.append(f"{name}: not well-formed SVG ({problem}); fix the markup there.")
+            continue
+        inside = set()
+        for element in root.iter():
+            kind = classes(element) & kinds
+            if not kind:
+                continue
+            inside.update(element.iter())
+            code = "".join(element.itertext())
+            found = pieces(element)
+            if found is None:
+                errors.append(f"{name}: in the code {code!r}, use only plain text and "
+                              '<tspan class="c-cmd|c-brace|c-opt|c-math|c-com"> with no other attributes.')
+            elif kind != {"c-md"}:
+                expected = drawing_code(code, kind == {"c-bib"})
+                if found != pieces(ElementTree.fromstring(f"<t>{expected}</t>")):
+                    errors.append(f"{name}: the code {code!r} is not colored as on the website; "
+                                  f"write it as {expected}")
+        for element in root.iter():
+            if element in inside:
+                continue
+            if classes(element) & colors:
+                errors.append(f"{name}: {element.text!r} has a c-* code color outside a <text> or <tspan> "
+                              "with class c-tex, c-bib or c-md.")
+            elif classes(element) & {"code", "m"} and re.search(r"\\[A-Za-z]", "".join(element.itertext())):
+                errors.append(f"{name}: the code {''.join(element.itertext())!r} needs class c-tex and the "
+                              "website's colors on its tspans (scripts/build_site.py, drawing_code).")
+    return errors
+
+
 def stylesheet_colors():
     """Colors live in one place: the tokens before "3. Base" in site/site.css.
     After it, a rule may use a token, or neutral black, white or gray (print,
@@ -1382,6 +1472,7 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
     site = Site(offline)
     site.errors.extend(checker_ids())
     site.errors.extend(drawing_colors())
+    site.errors.extend(drawing_code_colors())
     site.errors.extend(stylesheet_colors())
     checks = (SITE / "pdf-check/core.js").read_text(encoding="utf-8")
     pinned = re.search(r'PDFJS_VERSION = "([^"]+)"', checks)

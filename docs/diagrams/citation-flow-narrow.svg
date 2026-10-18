@@ -24,13 +24,19 @@
     text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
     .h { font-size: 22px; font-weight: 700; }
     .s { fill: var(--muted); }
-    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
-    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-size: 16px; fill: var(--muted); }
     .k { fill: var(--terra); font-weight: 700; }
     .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
     .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
     .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
   </style>
   <defs>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -53,7 +59,8 @@
   <text x="84" y="126" style="font-size:15px">1994</text>
   <path class="ln thin mut dot" d="M30 146 H202"/>
   <text class="s" x="32" y="170" style="font-size:14px">Citation Key</text>
-  <text class="m" x="32" y="194" style="font-size:15.5px"><tspan class="k">lamport1994</tspan></text>
+  <rect class="w-butter" x="30.0" y="178.5" width="106.8" height="22.9" rx="3"/>
+  <text class="m" x="32" y="194" style="font-size:15.5px">lamport1994</text>
   <text class="hand" x="232" y="168" style="font-size:15.5px">key pinned</text>
   <text class="hand" x="232" y="187" style="font-size:15.5px">with Better</text>
   <text class="hand" x="232" y="206" style="font-size:15.5px">BibTeX</text>
@@ -68,18 +75,20 @@
   <path class="card" d="M18 310 H302 L318 326 V460 H18 Z"/>
   <path class="ln" d="M16.9 310.1C22.2 310.1 27.5 310.2 32.8 310.1S43.4 310 48.7 309.9S59.3 309.3 64.6 309.2S75.3 309.3 80.6 309.4S91.2 309.9 96.5 310.1S107.1 310.5 112.4 310.5S123 310.4 128.3 310.2S138.9 309.9 144.2 309.7S154.9 309.5 160.2 309.6S170.8 309.9 176.1 310.1S186.7 310.6 192 310.5S202.6 309.9 207.9 309.8S218.5 309.7 223.8 309.8S234.5 310 239.8 310S250.4 309.8 255.7 309.8S266.3 310 271.6 310.1S282.2 310.5 287.5 310.6S298.2 310.3 303.5 310.3M301.6 310C304.1 313 307.1 315.6 309.7 318.4S315.1 324.1 317.7 326.9M317.6 325.9C317.3 337.2 317.1 348.5 317.2 359.8S318.5 382.4 318.6 393.7S318.1 416.3 318 427.6S317.9 450.2 318.5 461.5M319.7 460.2C311.3 460.4 302.9 459.9 294.5 459.7S277.6 459.5 269.2 459.5S252.4 459.5 244 459.6S227.2 460.3 218.8 460.3S201.9 459.8 193.5 459.7S176.7 459.8 168.3 459.9S151.5 460.2 143.1 460.3S126.2 460.2 117.8 460.2S101 460.3 92.6 460.3S75.8 460.4 67.3 460.4S50.5 460.7 42.1 460.7S25.3 460.5 16.9 460.3M18.4 461C18.4 454.6 18.9 448.2 18.9 441.9S18.5 429.1 18.3 422.7S17.9 410 17.8 403.6S18.1 390.8 18 384.4S17.8 371.7 17.6 365.3S17 352.6 17.1 346.2S18 333.4 18.3 327.1S18.7 314.3 18.9 307.9M301.8 310.3C301.5 315.8 301.6 321.4 301.7 326.9M301.6 326.7C306.9 326.4 312.2 326.7 317.5 326.7"/>
   <text class="m" x="34" y="340" style="font-size:16.5px">references.bib</text>
-  <text class="code" x="34" y="368.6" style="font-size:14px">@book{<tspan class="k">lamport1994</tspan>,</text>
-  <text class="code" x="34" y="390.6" style="font-size:14px" xml:space="preserve">  author = {Leslie Lamport},</text>
-  <text class="code" x="34" y="412.6" style="font-size:14px" xml:space="preserve">  title  = {LaTeX: …},</text>
-  <text class="code" x="34" y="434.6" style="font-size:14px" xml:space="preserve">  …}</text>
+  <rect class="w-butter" x="82.6" y="354.6" width="96.8" height="20.7" rx="3"/>
+  <text class="code c-bib" x="34" y="368.6" style="font-size:14px" xml:space="preserve"><tspan class="c-cmd">@book</tspan><tspan class="c-brace">{</tspan>lamport1994,</text>
+  <text class="code c-bib" x="34" y="390.6" style="font-size:14px" xml:space="preserve">  <tspan class="c-opt">author</tspan> = <tspan class="c-brace">{</tspan>Leslie Lamport<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-bib" x="34" y="412.6" style="font-size:14px" xml:space="preserve">  <tspan class="c-opt">title</tspan>  = <tspan class="c-brace">{</tspan>LaTeX: …<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-bib" x="34" y="434.6" style="font-size:14px" xml:space="preserve">  …<tspan class="c-brace">}</tspan></text>
   <path class="ln terra dash" d="M83.7 472.6C82.4 477.3 82.2 482.3 82.3 487.1S83.7 496.8 83.9 501.7S84.6 511.5 83.5 516.2" marker-start="url(#at)" marker-end="url(#at)"/>
   <text class="hand" x="104" y="500" style="font-size:17px">the keys must match</text>
   <path class="w-blue" transform="translate(6 6)" d="M18 526 H302 L318 542 V626 H18 Z"/>
   <path class="card" d="M18 526 H302 L318 542 V626 H18 Z"/>
   <path class="ln" d="M16.4 525.1C26 524.8 35.5 524.8 45.1 524.9S64.2 525.6 73.7 525.7S92.8 525.8 102.4 525.9S121.5 526.3 131.1 526.3S150.2 525.6 159.7 525.5S178.8 525.2 188.4 525.4S207.5 526.2 217 526.4S236.2 526.2 245.7 526.2S264.8 526 274.4 526S293.5 526.1 303 525.9M302 525.7C307.4 531.1 313.1 536.3 318.4 541.9M318.3 540.5C317.9 550.2 317.3 559.9 317.3 569.6S317.8 589 317.9 598.7S317.6 618.1 317.7 627.8M319.3 626.1C313.7 626.2 308.1 626.1 302.5 626S291.3 625.7 285.7 625.6S274.5 625.6 268.9 625.8S257.7 626.3 252.1 626.5S240.9 627 235.3 627.1S224.1 627.3 218.5 627.3S207.2 627.2 201.6 627.1S190.4 627 184.8 626.9S173.6 626.8 168 626.7S156.8 626.3 151.2 626.1S140 625.5 134.4 625.5S123.2 625.6 117.6 625.6S106.4 625.7 100.8 625.7S89.6 625.6 84 625.5S72.8 625.1 67.2 625S55.9 625.1 50.3 625.2S39.1 625.5 33.5 625.6S22.3 625.3 16.7 625.5M17.9 626.3C18.3 615 18.2 603.6 18.2 592.3S17.7 569.5 17.6 558.2S17.4 535.5 17.6 524.1M302.2 525.9C302.4 531.2 302.2 536.5 302 541.8M301.9 541.7C307.3 541.7 312.8 541.6 318.2 541.6"/>
   <text class="m" x="34" y="554" style="font-size:14px">chapters/01-introduction.tex</text>
-  <text class="code" x="34" y="584" style="font-size:14px">…as in this example</text>
-  <text class="code" x="34" y="610" style="font-size:14px">~\parencite{<tspan class="k">lamport1994</tspan>}.</text>
+  <text class="code c-tex" x="34" y="584" style="font-size:14px" xml:space="preserve">…as in this example</text>
+  <rect class="w-butter" x="133.3" y="596.0" width="96.8" height="20.7" rx="3"/>
+  <text class="code c-tex" x="34" y="610" style="font-size:14px" xml:space="preserve">~<tspan class="c-cmd">\parencite</tspan><tspan class="c-brace">{</tspan>lamport1994<tspan class="c-brace">}</tspan>.</text>
   <text class="hand hb" x="20" y="656" style="font-size:17px">you write only the key</text>
   <path class="ln" d="M232.1 637.1C231.1 641.8 231.5 646.8 231.8 651.7S233.9 661.3 234.1 666.1S234.3 676 233 680.7" marker-end="url(#a)"/>
   <text class="hand" x="244" y="660" style="font-size:16px">compile</text>

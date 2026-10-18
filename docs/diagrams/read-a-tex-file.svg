@@ -24,13 +24,18 @@
     text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
     .h { font-size: 22px; font-weight: 700; }
     .s { fill: var(--muted); }
-    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
-    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
-    .k { fill: var(--terra); font-weight: 700; }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-size: 16px; fill: var(--muted); }
     .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
     .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
     .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
   </style>
   <defs>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -49,19 +54,19 @@
   <path class="ln" d="M15 42.1C22 42.1 29 42 36 42.1S50.1 42.2 57.1 42.2S71.1 42.1 78.1 41.9S92.1 41.6 99.1 41.5S113.1 41.7 120.1 41.7S134.2 41.5 141.2 41.6S155.2 42.3 162.2 42.5S176.2 42.8 183.2 42.7S197.2 41.9 204.2 41.7S218.2 41.1 225.2 41.1S239.2 41.7 246.2 41.9S260.2 42.4 267.2 42.4S281.2 42 288.2 41.9S302.3 41.6 309.3 41.7S323.3 42.3 330.3 42.5S344.3 42.5 351.3 42.4S365.3 41.7 372.3 41.7S386.3 42.4 393.3 42.5S407.3 42.5 414.3 42.4S428.4 42.2 435.4 42M434 41.6C440.8 48.5 447.6 55.5 454.4 62.5M454.1 61.3C454.2 68.1 453.7 74.9 453.7 81.7S454.1 95.3 454.2 102.1S454.4 115.7 454.3 122.5S454 136 453.9 142.8S453.7 156.4 453.7 163.2S453.4 176.8 453.5 183.6S454.1 197.2 454.3 204S454.8 217.6 454.8 224.4S454.4 237.9 454.3 244.7S454.1 258.3 454.1 265.1S454.3 278.7 454.3 285.5S454.1 299.1 454.1 305.9S454.1 319.5 454.1 326.3S454.1 339.9 454.1 346.6S454.1 360.2 454.1 367S454.3 380.6 454.2 387.4S454 401 453.8 407.8S453 421.4 453.2 428.2M454.8 426C450 426 445.3 426.1 440.6 426S431.2 425.5 426.4 425.3S417 425.1 412.3 425.2S402.8 425.5 398.1 425.7S388.7 426.1 384 426.2S374.5 426.2 369.8 426.2S360.4 426 355.6 425.9S346.2 425.6 341.5 425.6S332 425.9 327.3 426S317.9 426.2 313.1 426.2S303.7 426 299 426S289.5 425.8 284.8 425.8S275.4 426.2 270.7 426.3S261.2 426.5 256.5 426.5S247 426.5 242.3 426.4S232.9 426.4 228.2 426.4S218.7 426.3 214 426.3S204.5 426.4 199.8 426.3S190.4 426.1 185.7 426S176.2 425.8 171.5 425.7S162 425.6 157.3 425.6S147.9 425.6 143.2 425.6S133.7 425.8 129 425.8S119.5 425.6 114.8 425.5S105.4 425.1 100.7 425S91.2 424.9 86.5 424.8S77.1 424.8 72.3 424.8S62.9 424.9 58.2 424.9S48.7 424.9 44 425S34.6 425.5 29.8 425.7S20.4 425.8 15.7 426M16.5 426.6C16.2 420.8 16 414.9 15.9 409.1S16.2 397.4 16.2 391.5S16.2 379.8 16.1 374S15.7 362.3 15.6 356.4S15.3 344.7 15.4 338.9S16.2 327.2 16.4 321.3S16.9 309.6 16.9 303.8S16.6 292.1 16.5 286.2S16.2 274.5 16.1 268.7S16.3 256.9 16.4 251.1S16.7 239.4 16.8 233.5S16.8 221.8 16.8 216S16.6 204.3 16.5 198.4S16.4 186.7 16.4 180.9S16.6 169.2 16.7 163.3S16.5 151.6 16.5 145.7S16.4 134 16.3 128.2S16.1 116.5 16 110.6S15.6 98.9 15.7 93.1S15.9 81.4 16.1 75.5S16.6 63.8 16.5 58S16 46.3 15.7 40.4M434.4 42C434.4 48.9 434.7 55.8 434.6 62.6M434.3 62.2C440.9 62.3 447.5 62.3 454.1 62.2"/>
   <text class="m" x="32" y="70" style="font-size:14px">chapters/02-research.tex</text>
   <path class="ln thin mut" d="M16 82 H454"/>
-  <text class="code" x="66" y="110.4" style="font-size:14.5px" xml:space="preserve"><tspan class="k">\section</tspan><tspan class="k">{</tspan><tspan style="fill:var(--ink)" font-weight="700">A figure</tspan><tspan class="k">}</tspan></text>
-  <text class="code" x="66" y="140.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">Figure~</tspan><tspan style="fill:var(--blue)" font-weight="700">\ref{fig:example}</tspan><tspan style="fill:var(--ink)"> shows a layout</tspan></text>
-  <text class="code" x="66" y="170.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">described in~</tspan><tspan style="fill:var(--blue)" font-weight="700">\parencite{lamport1994}</tspan><tspan style="fill:var(--ink)">.</tspan></text>
-  <text class="code" x="66" y="200.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--sage)" font-style="italic">% Ask my advisor about colors.</tspan></text>
-  <text class="code" x="66" y="260.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">The caption goes below the image.</tspan></text>
-  <text class="code" x="66" y="290.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--plum)" font-weight="700">\begin{figure}</tspan><tspan style="fill:var(--ink)">[htbp]</tspan></text>
-  <text class="code" x="66" y="320.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">  </tspan><tspan class="k">\includegraphics</tspan><tspan class="k">{</tspan><tspan style="fill:var(--ink)" font-weight="700">example-image</tspan><tspan class="k">}</tspan></text>
-  <text class="code" x="66" y="350.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">  </tspan><tspan class="k">\caption</tspan><tspan class="k">{</tspan><tspan style="fill:var(--ink)" font-weight="700">A sample image.</tspan><tspan class="k">}</tspan></text>
-  <text class="code" x="66" y="380.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--ink)">  </tspan><tspan class="k">\label</tspan><tspan class="k">{</tspan><tspan style="fill:var(--ink)" font-weight="700">fig:example</tspan><tspan class="k">}</tspan></text>
-  <text class="code" x="66" y="410.4" style="font-size:14.5px" xml:space="preserve"><tspan style="fill:var(--plum)" font-weight="700">\end{figure}</tspan></text>
+  <text class="code c-tex" x="66" y="110.4" style="font-size:14.5px" xml:space="preserve"><tspan class="c-cmd">\section</tspan><tspan class="c-brace">{</tspan>A figure<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="66" y="140.4" style="font-size:14.5px" xml:space="preserve">Figure~<tspan class="c-cmd">\ref</tspan><tspan class="c-brace">{</tspan>fig:example<tspan class="c-brace">}</tspan> shows a layout</text>
+  <text class="code c-tex" x="66" y="170.4" style="font-size:14.5px" xml:space="preserve">described in~<tspan class="c-cmd">\parencite</tspan><tspan class="c-brace">{</tspan>lamport1994<tspan class="c-brace">}</tspan>.</text>
+  <text class="code c-tex" x="66" y="200.4" style="font-size:14.5px" xml:space="preserve"><tspan class="c-com">% Ask my advisor about colors.</tspan></text>
+  <text class="code c-tex" x="66" y="260.4" style="font-size:14.5px" xml:space="preserve">The caption goes below the image.</text>
+  <text class="code c-tex" x="66" y="290.4" style="font-size:14.5px" xml:space="preserve"><tspan class="c-cmd">\begin</tspan><tspan class="c-brace">{</tspan>figure<tspan class="c-brace">}</tspan><tspan class="c-opt">[</tspan><tspan class="c-opt">htbp</tspan><tspan class="c-opt">]</tspan></text>
+  <text class="code c-tex" x="66" y="320.4" style="font-size:14.5px" xml:space="preserve">  <tspan class="c-cmd">\includegraphics</tspan><tspan class="c-brace">{</tspan>example-image<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="66" y="350.4" style="font-size:14.5px" xml:space="preserve">  <tspan class="c-cmd">\caption</tspan><tspan class="c-brace">{</tspan>A sample image.<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="66" y="380.4" style="font-size:14.5px" xml:space="preserve">  <tspan class="c-cmd">\label</tspan><tspan class="c-brace">{</tspan>fig:example<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="66" y="410.4" style="font-size:14.5px" xml:space="preserve"><tspan class="c-cmd">\end</tspan><tspan class="c-brace">{</tspan>figure<tspan class="c-brace">}</tspan></text>
   <text class="hand end" x="440" y="230.4" style="font-size:14.5px">(blank line)</text>
   <path class="ln thin blue" d="M60.6 128.6C59.3 128.6 58 128.5 56.7 128.4M56.7 127.4C56.3 135.4 56 143.4 55.7 151.4S55.1 167.4 55 175.4M55 174.4C56.4 174.5 57.8 174.5 59.1 174.6"/>
-  <path class="ln thin plum" d="M59.2 278.5C57.9 278.6 56.5 278.7 55.2 278.7M55.3 276.9C55.1 286.1 55.6 295.3 55.9 304.5S56.5 323 56.5 332.2S55.9 350.7 55.8 359.9S55.8 378.4 55.9 387.6S56.4 406.1 56.8 415.3M56.7 413.7C58.1 413.6 59.5 413.6 60.8 413.6"/>
+  <path class="ln thin blue" d="M59.2 278.5C57.9 278.6 56.5 278.7 55.2 278.7M55.3 276.9C55.1 286.1 55.6 295.3 55.9 304.5S56.5 323 56.5 332.2S55.9 350.7 55.8 359.9S55.8 378.4 55.9 387.6S56.4 406.1 56.8 415.3M56.7 413.7C58.1 413.6 59.5 413.6 60.8 413.6"/>
   <circle class="w-butter" cx="38" cy="105.4" r="10"/>
   <path class="ln" d="M48.6 106.2C48.2 107.5 47.6 109 46.9 110.2S45.1 112.6 44 113.4S41.3 114.8 39.9 115S36.9 114.8 35.6 114.3S33 112.9 31.9 112S29.8 109.9 29.1 108.6S27.8 105.9 27.7 104.5S27.9 101.5 28.5 100.2S30.1 97.7 31.3 96.8S33.9 95.4 35.3 95.1S38.3 94.9 39.6 95.2S42.5 96.1 43.6 97S45.9 99 46.6 100.2S47.9 103 47.9 104.3S47.6 107.2 46.8 108.5"/>
   <text class="n mid" x="38" y="109.95" style="font-size:13px">1</text>
@@ -85,7 +90,7 @@
   <text class="n mid" x="489" y="65.65" style="font-size:14px">1</text>
   <text x="510" y="66" style="font-size:15px" font-weight="700">A command starts</text>
   <text x="510" y="85" style="font-size:15px" font-weight="700">with a backslash</text>
-  <text class="code" x="510" y="105" style="font-size:14px;fill:var(--terra);font-weight:700">\section  \parencite</text>
+  <text class="code c-tex" x="510" y="105" style="font-size:14px" xml:space="preserve"><tspan class="c-cmd">\section</tspan>  <tspan class="c-cmd">\parencite</tspan></text>
   <circle class="w-butter" cx="489" cy="123.75" r="11"/>
   <path class="ln" d="M479.8 129.4C478.6 127.9 477.8 125.8 477.7 123.9S478.5 119.8 479.5 118.2S482.2 115.1 483.9 114.2S487.8 112.9 489.8 113.1S493.9 113.9 495.4 115S498.3 118 499 119.8S499.9 123.8 499.6 125.7S498.2 129.6 496.9 131S493.7 133.6 491.8 134.2S487.7 135.1 485.9 134.6S482.1 133 480.7 131.7S478.3 128.5 477.4 126.7"/>
   <text class="n mid" x="489" y="128.65" style="font-size:14px">2</text>

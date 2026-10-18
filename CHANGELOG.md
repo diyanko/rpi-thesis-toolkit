@@ -66,6 +66,11 @@ rule with its source.
   no longer flash "JavaScript is off" while loading; the offline guide says
   the Settings builder runs on the website; short names in code no longer
   break at a hyphen on phones.
+- **Drawings:** LaTeX in the guide's drawings is colored like LaTeX on the
+  website, in light and dark: commands blue, braces bold terra, options plum,
+  math green, comments gray and italic. "One chapter at a time" is redrawn in
+  the same hand-drawn style as the others, and code in three drawings is
+  larger so it stays readable on tablets.
 
 ## 0.9.0 (beta), 17 Oct 2026
 

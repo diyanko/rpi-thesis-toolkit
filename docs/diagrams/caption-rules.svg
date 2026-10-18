@@ -24,13 +24,18 @@
     text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
     .h { font-size: 22px; font-weight: 700; }
     .s { fill: var(--muted); }
-    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
-    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
-    .k { fill: var(--terra); font-weight: 700; }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-size: 16px; fill: var(--muted); }
     .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
     .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
     .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
   </style>
   <defs>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -95,6 +100,6 @@
   <text class="end" x="688" y="188" style="font-size:14px;font-family:'Iowan Old Style','Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif">2</text>
   <text class="hand" x="432" y="236" style="font-size:17px">the list shows the full caption,</text>
   <text class="hand" x="432" y="258" style="font-size:17px">word for word: don't use</text>
-  <text class="code" x="432" y="282" style="font-size:15px"><tspan style="fill:var(--ink)">\caption[short]{…}</tspan></text>
+  <text class="code c-tex" x="432" y="282" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\caption</tspan><tspan class="c-opt">[</tspan><tspan class="c-opt">short</tspan><tspan class="c-opt">]</tspan><tspan class="c-brace">{</tspan>…<tspan class="c-brace">}</tspan></text>
   <path class="ln terra dash" d="M299.6 314.6C302.6 309.2 305.8 304 309 298.8S315.5 288.5 318.8 283.3S325.2 272.9 328.7 267.9S336 258.1 339.9 253.4S348 244.3 352.2 239.8S360.8 231.2 365.1 226.9S373.5 217.9 377.9 213.8S386.9 205.4 391.9 201.9S402.2 195.4 407.6 192.5S418.5 187.1 424.1 184.7" marker-end="url(#at)"/>
 </svg>
