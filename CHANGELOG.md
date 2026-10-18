@@ -66,6 +66,9 @@ rule with its source.
   math green, comments gray and italic. "One chapter at a time" is redrawn in
   the same hand-drawn style as the others, and code in three drawings is
   larger so it stays readable on tablets.
+- **More drawings:** the six reasons in "Why LaTeX for a thesis" show their
+  drawings in the cards, and Writing basics has two new ones: how to add a
+  chapter, and how `\label` and `\ref` fill in a figure's number.
 
 ## 0.9.0 (beta), 17 Oct 2026
 
