@@ -1,0 +1,330 @@
+/* ==========================================================================
+   RPI Thesis Toolkit outreach pages (handout and poster), for print.
+   The website's look on paper: the same fonts, colors, doodles and
+   hand-drawn boxes as site/site.css, on white paper (home printers cannot
+   print to the edge, so a page-wide color would leave a white frame).
+   Everything stays readable in black and white: text is ink, colors are
+   light washes behind it.
+
+   Sections: 1 Fonts  2 Colors  3 Base  4 Shared pieces  5 Handout
+             6 Handout two-up (imposed)  7 Poster
+   ========================================================================== */
+
+/* ---------- 1. Fonts: the website's own files (site/fonts), embedded in the PDF */
+@font-face {
+  font-family: "Fraunces"; font-style: normal; font-weight: 600;
+  src: url("../site/fonts/fraunces-600-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Fraunces"; font-style: italic; font-weight: 400;
+  src: url("../site/fonts/fraunces-400-italic-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 400 700;
+  src: url("../site/fonts/atkinson-hyperlegible-next-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Next"; font-style: italic; font-weight: 400;
+  src: url("../site/fonts/atkinson-hyperlegible-next-400-italic-latin.woff2") format("woff2");
+}
+
+/* ---------- 2. Colors: the light tokens of site/site.css, section 2 ------ */
+:root {
+  color-scheme: light;
+  --paper:       #faf5ea;
+  --paper-2:     #f1e8d6;
+  --card:        #fffcf5;
+  --ink:         #2d2620;
+  --ink-soft:    #4a4037;
+  --muted:       #625547;
+  --line:        #e3d6bf;
+  --line-strong: #c4ae8a;
+  --sage:  #4a6b42;  --sage-wash:  #e4ecd2;
+  --blue:  #24518c;  --blue-wash:  #e0e6ef;
+  --terra: #a24a24;  --terra-wash: #f6dfcd;
+  --plum:  #70466a;  --plum-wash:  #f1e0ea;
+  --butter-wash: #f7e8b3;
+  --rpi-red: #c8102e;
+
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --sketch: 9pt 12pt 8pt 11pt / 11pt 8pt 12pt 9pt;   /* hand-drawn box */
+  --wobble: 58% 42% 55% 45% / 48% 56% 44% 52%;       /* hand-drawn circle */
+}
+
+/* ---------- 3. Base ------------------------------------------------------ */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fff; }
+body {
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 10pt;
+  line-height: 1.4;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+p { margin: 0; text-wrap: pretty; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+code { font-family: var(--font-mono); font-variant-ligatures: none; }
+strong { font-weight: 700; }
+
+/* On screen, show each page as a sheet on a grey desk. */
+@media screen {
+  html { background: #8a8178; }
+  body { background: transparent; padding: 24px 0; }
+  .page, .sheet { margin: 0 auto 24px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); }
+}
+
+/* ---------- 4. Shared pieces -------------------------------------------- */
+.page {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  break-after: page;
+}
+.page:last-child { break-after: auto; }
+
+/* The site mark: braces hugging a red dot (site/logo.svg), and the name. */
+.brand { display: flex; align-items: center; gap: 6pt; }
+.brand svg { width: 17pt; height: 17pt; flex: none; }
+.brand .brace { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.brand .dot { fill: var(--rpi-red); }
+.brand-name { font-family: var(--font-display); font-weight: 600; font-size: 11.5pt; letter-spacing: -0.01em; }
+.tag {
+  display: inline-block;
+  padding: 0 7pt;
+  font-size: 7.5pt;
+  font-weight: 700;
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--terra);
+  background: var(--terra-wash);
+  border: 0.75pt solid color-mix(in srgb, var(--terra) 40%, transparent);
+  border-radius: 999px;
+}
+.eyebrow {
+  font-size: 8.5pt;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* The hand-drawn wave under one word, as on the home page. */
+.squiggle { position: relative; white-space: nowrap; }
+.squiggle::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0.05em; bottom: -0.15em;
+  height: 0.16em;
+  background: var(--rpi-red);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 7'%3E%3Cpath d='M-1 4.2 C 2 1.6, 6 1.4, 10 3.5 S 17 5.6, 21 2.9' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left center / 0.4em 100%;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 7'%3E%3Cpath d='M-1 4.2 C 2 1.6, 6 1.4, 10 3.5 S 17 5.6, 21 2.9' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left center / 0.4em 100%;
+}
+/* Handwriting: Fraunces italic in a color, for notes in the margin. */
+.hand { font-family: var(--font-display); font-style: italic; font-weight: 400; }
+.hand-terra { color: var(--terra); }
+.hand-blue { color: var(--blue); }
+.hand-sage { color: var(--sage); }
+.hand-plum { color: var(--plum); }
+
+/* A hand-drawn box with a color wash printed a little off, as in the diagrams. */
+.sketch {
+  position: relative;
+  background: var(--card);
+  border: 1.2pt solid var(--ink);
+  border-radius: var(--sketch);
+  box-shadow: 4pt 4pt 0 var(--wash, var(--paper-2));
+}
+.wash-sage   { --wash: var(--sage-wash); }
+.wash-blue   { --wash: var(--blue-wash); }
+.wash-terra  { --wash: var(--terra-wash); }
+.wash-plum   { --wash: var(--plum-wash); }
+.wash-butter { --wash: var(--butter-wash); }
+
+/* Doodle icons from outreach/icons.svg */
+.icon { width: 24pt; height: 24pt; flex: none; overflow: visible; }
+
+/* A list item with an icon, a bold name and a few words. */
+.item { display: flex; align-items: flex-start; gap: 7pt; }
+.item > div { min-width: 0; }
+.item strong { display: block; font-size: 10.5pt; line-height: 1.2; }
+.item span { display: block; color: var(--ink-soft); font-size: 9.5pt; line-height: 1.3; }
+
+/* A QR code with its quiet zone (4 modules, from the padding) and its address under it. */
+.qr { display: flex; flex-direction: column; align-items: center; gap: 3pt; }
+.qr-code {
+  background: #fff;
+  border: 1pt solid var(--line-strong);
+  border-radius: 6pt;
+}
+.qr-code img { display: block; width: 100%; height: auto; }
+.qr-url { font-weight: 700; font-size: 9.5pt; line-height: 1.2; text-align: center; overflow-wrap: anywhere; }
+
+.disclaimer { font-size: 9pt; line-height: 1.35; color: var(--ink-soft); }
+.disclaimer strong { color: var(--ink); }
+
+/* ---------- 5. Handout: half letter, 5.5 x 8.5 in, portrait -------------- */
+@page { size: 5.5in 8.5in; margin: 0; }
+.handout .page {
+  width: 5.5in;
+  height: 8.5in;
+  padding: 0.33in 0.4in 0.32in;
+  display: flex;
+  flex-direction: column;
+}
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 8pt; }
+
+/* Front */
+.front h1 { font-size: 24pt; margin: 9pt 0 6pt; }
+.front .lead { font-size: 10.5pt; line-height: 1.36; color: var(--ink-soft); }
+.front .lead strong { color: var(--ink); }
+
+.code-note { margin: 8pt 0 0; display: grid; grid-template-columns: auto 1fr; gap: 0 6pt; align-items: stretch; }
+.code-note > p.hand { grid-column: 1 / -1; font-size: 11pt; margin: 0 0 4pt 2pt; }
+.code-card { padding: 7pt 10pt 7pt 11pt; }
+.code-card pre { margin: 0; font-family: var(--font-mono); font-size: 9.5pt; line-height: 1.55; white-space: pre; }
+.c-cmd { color: var(--blue); }
+.c-brace { color: var(--terra); }
+.c-note { display: flex; flex-direction: column; padding-top: 8.2pt; font-size: 10pt; }
+.c-note > span { height: 14.725pt; }   /* one code line: 9.5pt x 1.55 */
+.c-note span { display: flex; align-items: center; gap: 3pt; }
+.c-note svg { width: 18pt; height: 9pt; flex: none; overflow: visible; }
+.c-note path { fill: none; stroke: currentColor; stroke-width: 1.1pt; stroke-linecap: round; stroke-linejoin: round; }
+.front .after-code { margin-top: 7pt; font-size: 9.5pt; color: var(--ink-soft); }
+
+.front h2 { font-size: 14pt; margin: 0 0 6pt; }
+.front h2 .hand { font-size: 10.5pt; font-weight: 400; color: var(--muted); margin-left: 4pt; letter-spacing: 0; }
+.ways { margin-top: 10pt; }
+.ways ol { display: grid; gap: 4pt; }
+.ways .item { align-items: center; }
+.ways .num {
+  flex: none; display: grid; place-items: center;
+  width: 15pt; height: 15pt;
+  font-family: var(--font-display); font-weight: 600; font-size: 9pt;
+  border: 1pt solid var(--ink); border-radius: var(--wobble);
+  background: var(--card);
+}
+
+.tools { margin-top: 9pt; }
+.tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6pt 10pt; }
+.tools .item { gap: 6pt; }
+.tools .icon { width: 21pt; height: 21pt; margin-top: 1pt; }
+.tools .item strong { font-size: 10pt; }
+.tools .item span { font-size: 9.5pt; }
+.tools-note { align-self: center; font-size: 10.5pt; line-height: 1.25; padding-left: 4pt; }
+
+.start {
+  margin-top: auto;
+  display: flex; align-items: center; gap: 12pt;
+  padding: 6pt 7pt 6pt 14pt;
+}
+.start-text { flex: 1; min-width: 0; }
+.start-text h3 { font-size: 16pt; margin-bottom: 4pt; }
+.start-text .qr-url { text-align: left; font-size: 10pt; margin-top: 5pt; }
+.start-text p { font-size: 9.5pt; color: var(--ink-soft); }
+.start-text .arrow-note { margin-top: 6pt; font-size: 10.5pt; display: flex; align-items: center; gap: 4pt; }
+.start-text .arrow-note svg { width: 34pt; height: 12pt; overflow: visible; }
+.start-text .arrow-note path { fill: none; stroke: var(--terra); stroke-width: 1.2pt; stroke-linecap: round; stroke-linejoin: round; }
+.start .qr-code { width: 1.26in; padding: calc(1.26in * 4 / 41); }   /* 33 modules + 4 on each side */
+
+/* Back */
+.back h1 { font-size: 27pt; margin: 16pt 0 12pt; }
+.letter p { font-size: 11pt; line-height: 1.45; color: var(--ink-soft); }
+.letter p + p { margin-top: 7pt; }
+.asks { margin: 18pt 0 0; padding: 14pt 13pt 13pt 15pt; display: flex; gap: 12pt; align-items: center; }
+.asks ul { flex: 1; display: grid; gap: 9pt; }
+.asks li { display: flex; align-items: baseline; gap: 6pt; font-family: var(--font-display); font-style: italic; font-size: 14pt; line-height: 1.15; }
+.asks li svg { width: 11pt; height: 11pt; flex: none; overflow: visible; transform: translateY(1pt); }
+.asks li path { fill: none; stroke: var(--terra); stroke-width: 1.4pt; stroke-linecap: round; stroke-linejoin: round; }
+.asks .qr { flex: none; }
+.asks .qr-code { width: 1.25in; padding: calc(1.25in * 4 / 37); }   /* 29 modules + 4 on each side */
+.asks .qr-url { font-size: 8pt; }
+.asks .qr-label { font-weight: 700; font-size: 9.5pt; }
+.after-asks { margin-top: 12pt; font-size: 10.5pt; color: var(--ink-soft); }
+
+.sign { margin-top: 16pt; display: flex; align-items: flex-end; justify-content: space-between; gap: 10pt; }
+.sign-off { font-size: 11pt; color: var(--ink-soft); }
+.signature { display: block; font-family: var(--font-display); font-style: italic; font-size: 22pt; line-height: 1.1; color: var(--ink); margin-top: 1pt; }
+.github { max-width: 2.3in; font-size: 9pt; line-height: 1.35; color: var(--ink-soft); text-align: right; }
+.github strong { display: block; color: var(--ink); }
+
+.good { margin-top: auto; padding: 9pt 12pt; }
+.good h3 { font-family: var(--font-body); font-size: 9pt; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); margin-bottom: 4pt; }
+.good p + p { margin-top: 4pt; }
+
+/* ---------- 6. Handout two-up: two half-letter pages on US letter landscape.
+   scripts/outreach.py builds this from handout.html: each .sheet holds two
+   copies of one side, so a double-sided print (flip on short edge), cut in
+   the middle, gives two identical pamphlets. */
+@page sheet { size: 11in 8.5in; margin: 0; }
+.sheet {
+  page: sheet;
+  position: relative;
+  width: 11in;
+  height: 8.5in;
+  display: flex;
+  background: #fff;
+  break-after: page;
+}
+.sheet:last-child { break-after: auto; }
+.sheet .page { flex: none; }
+/* Faint cut marks: short ticks at the middle of the top and bottom edges,
+   in the margins, never on the content. */
+.cut { position: absolute; left: 5.5in; width: 0; height: 0.22in; border-left: 0.5pt solid #9b8f80; }
+.cut-top { top: 0.06in; }
+.cut-bottom { bottom: 0.06in; }
+
+/* ---------- 7. Poster: US letter, portrait ------------------------------- */
+@page poster { size: 8.5in 11in; margin: 0; }
+.poster .page { page: poster; width: 8.5in; height: 11in; padding: 0.55in 0.6in 0.5in; display: flex; flex-direction: column; }
+.poster .brand svg { width: 24pt; height: 24pt; }
+.poster .brand-name { font-size: 16pt; }
+.poster .tag { font-size: 9pt; padding: 1pt 10pt; }
+.poster .eyebrow { margin-top: 10pt; font-size: 11pt; }
+.poster h1 { font-size: 43pt; line-height: 1.02; margin: 5pt 0 9pt; }
+.poster .lead { font-size: 14pt; line-height: 1.4; color: var(--ink-soft); max-width: 6.6in; }
+.poster .lead strong { color: var(--ink); }
+.poster .art { margin: 10pt 0 0; padding: 4pt 0.45in 0; background: var(--paper); border-radius: var(--sketch); }
+.poster .art img { display: block; width: 100%; height: auto; }
+
+.poster h2 { font-size: 18pt; margin: 0 0 8pt; }
+.poster-main { margin-top: 14pt; display: grid; grid-template-columns: 1.5fr 1fr; gap: 22pt; }
+.poster .ways, .poster .tools { margin: 0; }
+.poster .ways ol { gap: 7pt; }
+.poster .ways .num { width: 19pt; height: 19pt; font-size: 11pt; }
+.poster .ways .icon { width: 28pt; height: 28pt; }
+.poster .item strong { font-size: 12.5pt; }
+.poster .item span { font-size: 11pt; }
+.poster .tools ul { display: grid; gap: 3pt; }
+.poster .tools li { display: flex; align-items: center; gap: 8pt; font-weight: 700; font-size: 12pt; line-height: 1.2; }
+.poster .tools .icon { width: 24pt; height: 24pt; }
+.poster .tools .hand { margin-top: 7pt; font-size: 12pt; }
+
+.poster-foot { margin-top: auto; padding-top: 6pt; }
+.qr-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18pt; align-items: stretch; }
+.poster .start { margin: 0; display: flex; align-items: center; gap: 12pt; padding: 10pt 10pt 10pt 16pt; }
+.poster .start > div:first-child { flex: 1; min-width: 0; }
+.poster .start h3 { font-size: 20pt; margin-bottom: 5pt; }
+.poster .start p { font-size: 11pt; color: var(--ink-soft); }
+.poster .start .qr-url { margin-top: 8pt; text-align: left; font-size: 10pt; color: var(--ink); }
+.poster .start .qr-code { width: 1.45in; padding: calc(1.45in * 4 / 41); }   /* 33 modules + 4 on each side */
+.feedback { display: flex; align-items: center; gap: 10pt; padding: 10pt 10pt 10pt 14pt; }
+.feedback > div:first-child { flex: 1; min-width: 0; }
+.feedback h3 { font-size: 16pt; margin: 2pt 0 5pt; }
+.feedback .eyebrow { font-size: 9pt; }
+.feedback p { font-size: 10.5pt; color: var(--ink-soft); }
+.feedback .qr-code { width: 0.95in; padding: calc(0.95in * 4 / 37); }   /* 29 modules + 4 on each side */
+.feedback .qr-url { font-size: 8pt; color: var(--ink); }
+.poster .disclaimer { margin-top: 10pt; font-size: 9.5pt; text-align: center; }
