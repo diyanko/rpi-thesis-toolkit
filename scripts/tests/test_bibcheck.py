@@ -12,6 +12,7 @@ import sys
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import build_site
 from chrome import Chrome, LocalServer
 from common import ROOT, find_chrome
 
@@ -512,9 +513,8 @@ class PageControls(unittest.TestCase):
 
 
 class OfflineGuide(unittest.TestCase):
-    @unittest.skipUnless(shutil.which('pandoc'), 'no Pandoc')
+    @unittest.skipUnless(build_site.pandoc_ready(), 'no Pandoc 3.11 or newer')
     def test_offline_render_replaces_controls_with_online_route_and_checklist(self):
-        import build_site
         site = build_site.Site(offline=True)
         html = site.render('docs/check-references.md')
         self.assertEqual(site.errors, [])

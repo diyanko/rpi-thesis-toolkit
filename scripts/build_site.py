@@ -166,6 +166,14 @@ def pandoc(args, text):
     return result.stdout
 
 
+def pandoc_ready():
+    """True when Pandoc is installed and new enough (3.11) for this script."""
+    if not shutil.which("pandoc"):
+        return False
+    options = subprocess.run(["pandoc", "--help"], capture_output=True, text=True).stdout
+    return "--variable-json" in options and "--syntax-highlighting" in options
+
+
 def check_pandoc():
     if not shutil.which("pandoc"):
         raise SystemExit(
@@ -173,8 +181,7 @@ def check_pandoc():
             "https://pandoc.org/installing.html\n"
             "You do not need it to write a thesis or edit the guide; CI builds the site."
         )
-    options = subprocess.run(["pandoc", "--help"], capture_output=True, text=True).stdout
-    if "--variable-json" not in options or "--syntax-highlighting" not in options:
+    if not pandoc_ready():
         raise SystemExit("Your Pandoc is too old for this script. Install Pandoc 3.11 or newer.")
 
 
