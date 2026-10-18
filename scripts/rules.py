@@ -121,7 +121,9 @@ def cite(keys, rules, link):
             groups.append([rules[key]["section"], pieces])
     # "p. 4" and "§2.1" never break inside on a narrow line (no-break spaces).
     def tight(text):
-        return re.sub(r"\b(pp?\.|Table) (?=\d)", lambda m: m[1] + "\u00a0", text)
+        text = re.sub(r"\b(pp?\.|Table) (?=\d)", lambda m: m[1] + "\u00a0", text)
+        text = re.sub(r"(\S) (?=pp?\.\u00a0)", "\\1\u00a0", text)       # "§2.1 p. 16" is one piece
+        return re.sub(r"(?<=\d)-(?=\d)", "\u2011", text)                 # "pp. 27-29" does not break at the dash
     return "; ".join(f"[{tight('; '.join(pieces))}]({link}#{section})" for section, pieces in groups)
 
 

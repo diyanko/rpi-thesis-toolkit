@@ -8,7 +8,7 @@
     @media (prefers-color-scheme: dark) {
       svg { --bg: #181614; --card: #27231e; --paper2: #211e1a; --ink: #f2ece2; --muted: #b9ae9d;
         --terra: #f6a57f; --sage: #a6d49a; --blue: #a2c8fb; --red: #ff8d98; --plum: #e0b6dc;
-        --terra-w: #3b2418; --sage-w: #21321f; --blue-w: #1d2c43; --butter-w: #3a3118; --plum-w: #34233a; --ontag: #181614; }
+        --terra-w: #3b2418; --sage-w: #273b27; --blue-w: #1d2c43; --butter-w: #3a3118; --plum-w: #34233a; --ontag: #181614; }
     }
     .card { fill: var(--card); } .p2 { fill: var(--paper2); }
     .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }

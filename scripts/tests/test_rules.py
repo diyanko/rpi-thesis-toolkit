@@ -72,12 +72,12 @@ class Expand(unittest.TestCase):
         text, problems, used = self.expand("{{rule:black-text}} ({{cite:black-text}}).")
         self.assertEqual(problems, [])
         self.assertEqual(used, ["black-text", "black-text"])
-        self.assertEqual(text, "All text black ([§2.1 p.\u00a016; FC](project/requirements.md#fonts)).")
+        self.assertEqual(text, "All text black ([§2.1\u00a0p.\u00a016; FC](project/requirements.md#fonts)).")
 
     def test_several_cites_show_each_piece_once_and_share_a_section_link(self):
         text, _, _ = self.expand("{{cite:body-arabic,number-place,black-text}}")
-        self.assertEqual(text, "[§2.2 p.\u00a016; §2.2 pp.\u00a016-17; FC](project/requirements.md#page-numbers); "
-                               "[§2.1 p.\u00a016](project/requirements.md#fonts)")
+        self.assertEqual(text, "[§2.2\u00a0p.\u00a016; §2.2\u00a0pp.\u00a016\u201117; FC](project/requirements.md#page-numbers); "
+                               "[§2.1\u00a0p.\u00a016](project/requirements.md#fonts)")
 
     def test_unknown_id_is_a_problem(self):
         _, problems, _ = self.expand("{{cite:no-such-rule}} {{rule:black-text,body-arabic}}")

@@ -109,6 +109,9 @@
   --squiggle: var(--rpi-red);   /* the hero's hand-drawn underline */
   --logo-dot: #c8102e;          /* the dot in the header mark (site/logo.svg) */
   --select:  #f3dc8c;           /* highlighter yellow for selected text */
+  --page-paper: #fffdf8;   /* a printed page (title page sketch, PDF page view): paper in both themes */
+  --page-ink:   #2d2620;
+  --page-muted: #625547;
   --overlay-ink: #f4efe6;   /* the picture viewer and search: always dark, in both themes */
   --overlay-bg:  #181511;
   --card-shadow: 0 1px 2px rgba(43, 39, 35, 0.05), 0 10px 22px -16px rgba(43, 39, 35, 0.35);   /* home cards */
@@ -138,9 +141,9 @@
   --dark-line-strong: #776b5b;
   --dark-btn-edge: #e9e1d4;
   --dark-btn-edge-2: #a99d8b;
-  --dark-btn-shadow: #5e5447;
+  --dark-btn-shadow: #463e34;
   --dark-sage: #a6d49a;
-  --dark-sage-wash: #21321f;
+  --dark-sage-wash: #273b27;
   --dark-blue: #a2c8fb;
   --dark-blue-wash: #1d2c43;
   --dark-terra: #f6a57f;
@@ -322,7 +325,7 @@ h4 { font-size: 1.15rem; margin: 1.6em 0 0.3em; }
 p { margin: 0 0 1.1em; text-wrap: pretty; }
 strong, b { font-weight: 700; }
 
-code, kbd, pre { font-family: var(--font-mono); }
+code, kbd, pre { font-family: var(--font-mono); font-variant-ligatures: none; }   /* -- stays two hyphens */
 code {
   font-size: 0.86em;
   background: var(--paper-2);
@@ -880,7 +883,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
    until you point at it. 44 px square for touch. */
 .button-quiet {
   display: inline-grid; place-items: center; width: 44px; height: 44px; padding: 0;
-  color: var(--muted); background: transparent; border: 1.5px solid transparent; border-radius: var(--wobble);
+  color: var(--ink-soft); background: transparent; border: 1.5px solid transparent; border-radius: var(--wobble);
   cursor: pointer;
 }
 .button-quiet:is(:hover, :focus-visible) { color: var(--terra); border-color: currentColor; background: var(--terra-wash); }
@@ -1510,7 +1513,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .guide-content td code { overflow-wrap: break-word; }   /* "style=numeric,sorting=none" stays whole */
 .guide-content td:first-child code:not(.phrase, .long) { white-space: nowrap; }   /* keys and file names; messages wrap */
 .guide-content td code.long { overflow-wrap: anywhere; }
-.page-project .guide-content td code { white-space: normal; overflow-wrap: anywhere; }   /* maintainer tables carry long identifiers */   /* a 50-character \includegraphics line */
+.page-project .guide-content td code { white-space: normal; overflow-wrap: anywhere; }   /* maintainer tables carry long identifiers */
 .guide-content th:empty { padding: 0; }
 @media (max-width: 640px) {   /* narrow screens or large text: a long name wraps rather than widening the page */
   /* A short name moves to the next line whole, and breaks inside only when
@@ -2033,6 +2036,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 }
 .tool-switch:hover input, .tool-switch:hover input::before { border-color: var(--ink); }
 .tool-switch input:checked { background: var(--sage); border-color: var(--sage); }
+.tool-switch input:not(:checked)::before { background: var(--line-strong); }   /* off: a knob you can see in both themes */
 .tool-switch input:checked::before { left: calc(100% - 1.2em); border-color: var(--sage); }
 .tool-switch input:focus-visible { outline-offset: 3px; }
 
@@ -2156,7 +2160,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   display: flex; flex-direction: column; align-items: center;
   aspect-ratio: 8.5 / 11;
   padding: calc(100cqw * 72 / 612);
-  background: var(--card); color: var(--ink);
+  background: var(--page-paper); color: var(--page-ink);
   border: 1.5px solid var(--line-strong); border-radius: 4px;
   box-shadow: 4px 4px 0 var(--line);
   font-family: "Times New Roman", "STIX Two Text", Times, serif;
@@ -2169,7 +2173,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .settings-page .tp-gap-12 { margin-top: calc(100cqw * 12 / 612); }
 .settings-page .tp-gap-20 { margin-top: calc(100cqw * 20 / 612); }
 .settings-page .tp-gap-40 { margin-top: calc(100cqw * 40 / 612); }
-.settings-page .is-empty { color: var(--muted); opacity: 0.7; }
+.settings-page .is-empty { color: var(--page-muted); opacity: 0.7; }
 .settings-page .tp-seal {   /* 0.25 of the text width, the seal's shape; pushed down like \vfill */
   display: grid; place-items: center;
   width: 25%; aspect-ratio: 605 / 608; margin-top: auto;
@@ -2388,7 +2392,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .pdf-check-page {   /* its aspect ratio is the page's own, set by ui.js */
   position: relative; box-sizing: content-box;
   width: 100%; max-width: 32rem; aspect-ratio: 8.5 / 11; margin: 0.4rem 0 0.6rem;
-  background: var(--card);
+  background: var(--page-paper);
   border: 1px solid var(--line-strong);
   box-shadow: 3px 3px 0 var(--line);
 }
