@@ -61,7 +61,7 @@ title case ("Results of the Field Study"), and never mix them.
 
 ## Chapters
 
-![Adding a chapter in three steps. Step 1: create a new file, chapters/04-discussion.tex, containing \chapter{Discussion}, \label{chap:discussion}, and your first paragraph. Step 2: add one line to main.tex, \include{chapters/04-discussion}, where the chapter belongs, here between the Research and Conclusion lines. Step 3: compile. The contents now list 1 Introduction, 2 Research, 3 Discussion, 4 Conclusion, then References.](diagrams/add-a-chapter.svg)
+![Adding a chapter in three steps. Step 1: create a new file, chapters/04-discussion.tex, containing \chapter{DISCUSSION}, \label{chap:discussion}, and your first paragraph. Step 2: add one line to main.tex, \include{chapters/04-discussion}, where the chapter belongs, here between the Research and Conclusion lines. Step 3: compile. The contents now list 1 INTRODUCTION, 2 RESEARCH, 3 DISCUSSION, 4 CONCLUSION, then REFERENCES.](diagrams/add-a-chapter.svg)
 
 *In words:* a new file, one `\include` line in `main.tex`, then compile. The
 order of the `\include` lines sets the chapter numbers, not the file names.

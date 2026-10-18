@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 500" width="720" height="500" role="img" aria-labelledby="t d">
   <title id="t">Add a chapter</title>
-  <desc id="d">Three steps. 1: create a new file, chapters/04-discussion.tex, containing \chapter{Discussion}, \label{chap:discussion}, and your first paragraph. 2: add one line to main.tex, \include{chapters/04-discussion}, where the chapter belongs: here after \include{chapters/02-research} and before \include{chapters/03-conclusion}. 3: compile. The contents now list 1 Introduction, 2 Research, 3 Discussion, 4 Conclusion: the order of the lines in main.tex sets the chapter numbers, not the file names.</desc>
+  <desc id="d">Three steps. 1: create a new file, chapters/04-discussion.tex, containing \chapter{DISCUSSION}, \label{chap:discussion}, and your first paragraph. 2: add one line to main.tex, \include{chapters/04-discussion}, where the chapter belongs: here after \include{chapters/02-research} and before \include{chapters/03-conclusion}. 3: compile. The contents now list 1 INTRODUCTION, 2 RESEARCH, 3 DISCUSSION, 4 CONCLUSION: the order of the lines in main.tex sets the chapter numbers, not the file names.</desc>
   <style>
     svg { --bg: #faf5ea; --card: #fffcf5; --ink: #2d2620; --muted: #625547;
       --terra: #a24a24; --sage: #4a6b42; --plum: #70466a; --blue: #24518c; --red: #c8102e;
@@ -56,7 +56,7 @@
   <path class="ln" d="M355.9 53.8C356 60.4 356.1 67.1 356.1 73.7M355.9 73.5C362.5 73.4 369.1 73.4 375.7 73.6"/>
   <text class="m" x="56" y="82" style="font-size:14px">chapters/04-discussion.tex</text>
   <path class="ln thin mut" d="M39.7 93.7C46.7 93.9 53.7 94.2 60.7 94.4S74.8 94.5 81.8 94.5S95.8 94 102.8 93.9S116.8 93.6 123.8 93.6S137.8 93.8 144.8 93.8S158.8 93.8 165.8 93.8S179.8 93.7 186.8 93.7S200.8 94 207.9 94S221.9 94.3 228.9 94.2S242.9 93.9 249.9 93.8S263.9 93.9 270.9 94S284.9 94.2 291.9 94.2S305.9 94.1 312.9 94.1S326.9 94.3 333.9 94.2S348 93.9 355 93.8S369 93.7 376 93.8"/>
-  <text class="code c-tex" x="58" y="126" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\chapter</tspan><tspan class="c-brace">{</tspan>Discussion<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="58" y="126" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\chapter</tspan><tspan class="c-brace">{</tspan>DISCUSSION<tspan class="c-brace">}</tspan></text>
   <text class="code c-tex" x="58" y="152" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\label</tspan><tspan class="c-brace">{</tspan>chap:discussion<tspan class="c-brace">}</tspan></text>
   <text class="code c-tex" x="58" y="186" style="font-size:15px" xml:space="preserve">Your first paragraph.</text>
   <circle class="w-butter" cx="54" cy="244" r="11"/>
@@ -88,12 +88,12 @@
   <path class="ln thin" d="M478.2 72.3C485.5 72.3 492.8 72.1 500.1 72.1S514.7 72.1 522 72.1S536.5 72.2 543.8 72.1S558.4 71.6 565.7 71.5S580.2 71.3 587.5 71.3S602.1 71.4 609.4 71.5S624 72 631.2 72.2S645.8 72.6 653.1 72.7S667.7 72.6 674.9 72.5S689.5 72.2 696.8 72.1M696.2 71.6C696.1 78.3 696 85 696 91.7S696.2 105.1 696.2 111.8S695.9 125.2 695.9 131.9S695.9 145.4 696 152.1S696.5 165.5 696.5 172.2S696.4 185.6 696.3 192.3S695.8 205.7 695.7 212.4S695.4 225.8 695.5 232.5S695.9 245.9 696.1 252.6S696.7 266 696.7 272.8S696.4 286.2 696.2 292.9S695.7 306.3 695.7 313S695.7 326.4 695.7 333.1S696 346.5 696.1 353.2S696.4 366.6 696.4 373.3M697.9 371.8C691.8 371.9 685.7 372.2 679.6 372.2S667.4 372.2 661.4 372.2S649.2 372.1 643.1 372S630.9 371.8 624.8 371.8S612.7 372 606.6 372.1S594.4 372.3 588.3 372.3S576.1 372 570.1 371.9S557.9 371.6 551.8 371.5S539.6 371.6 533.5 371.5S521.4 371.4 515.3 371.3S503.1 371.2 497 371.3S484.8 371.8 478.8 372M480.2 372.6C480.2 364.2 480 355.8 479.9 347.4S479.7 330.7 479.7 322.3S479.8 305.6 480 297.2S480.4 280.5 480.5 272.1S480.6 255.4 480.6 247S480.6 230.2 480.6 221.9S480.6 205.1 480.6 196.7S480.4 180 480.3 171.6S480.1 154.9 480 146.5S479.9 129.8 479.8 121.4S479.6 104.7 479.5 96.3S479.4 79.5 479.5 71.2"/>
   <path class="card" d="M474 66 H690 V366 H474 Z"/>
   <path class="ln" d="M472.9 66.3C479 66.4 485.1 66.3 491.1 66.3S503.2 66.1 509.3 66S521.4 66.1 527.5 66.2S539.6 66.2 545.7 66.1S557.8 65.6 563.9 65.5S576 65.3 582 65.3S594.2 65.4 600.2 65.5S612.3 65.7 618.4 65.9S630.5 66.3 636.6 66.4S648.7 66.6 654.8 66.6S666.9 66.6 672.9 66.5S685.1 66.3 691.1 66.2M690.2 65.1C690.3 71.9 690.2 78.6 690.2 85.3S690.4 98.7 690.3 105.5S690.1 118.9 690 125.6S689.7 139.1 689.8 145.8S690.2 159.3 690.3 166S690.5 179.4 690.4 186.1S690.1 199.6 689.9 206.3S689.5 219.7 689.5 226.5S689.7 239.9 689.9 246.6S690.4 260.1 690.5 266.8S690.5 280.2 690.4 287S689.9 300.4 689.8 307.1S689.6 320.6 689.7 327.3S690 340.7 690.1 347.5S690.3 360.9 690.3 367.6M691.2 366C685.2 366.2 679.1 366.4 673.1 366.4S661 366.3 654.9 366.2S642.8 365.9 636.7 365.8S624.6 365.6 618.6 365.7S606.5 366 600.4 366.1S588.3 366.2 582.3 366.1S570.2 365.8 564.1 365.7S552 365.7 545.9 365.7S533.8 365.7 527.8 365.6S515.7 365.4 509.6 365.4S497.5 365.5 491.4 365.6S479.3 366.1 473.3 366.3M474.2 367.5C474.1 357.4 474 347.3 473.9 337.2S473.8 317 473.9 306.9S474.3 286.8 474.4 276.7S474.6 256.5 474.7 246.4S474.8 226.2 474.8 216.1S474.6 196 474.4 185.9S474.1 165.7 474 155.6S474 135.4 473.9 125.4S473.6 105.2 473.5 95.1S473.5 74.9 473.6 64.8"/>
-  <text class="n" x="494" y="104" style="font-size:20px">Contents</text>
-  <text x="496" y="150" style="font-size:17px">1  Introduction</text>
-  <text x="496" y="190" style="font-size:17px">2  Research</text>
+  <text class="n" x="494" y="104" style="font-size:20px">CONTENTS</text>
+  <text x="496" y="150" style="font-size:17px">1  INTRODUCTION</text>
+  <text x="496" y="190" style="font-size:17px">2  RESEARCH</text>
   <rect class="w-sage" x="484" y="206" width="198" height="34" rx="4"/>
-  <text class="hs" x="496" y="230" style="font-size:17px" font-weight="700">3  Discussion</text>
-  <text x="496" y="270" style="font-size:17px">4  Conclusion</text>
-  <text x="496" y="310" style="font-size:17px">References</text>
+  <text class="hs" x="496" y="230" style="font-size:17px" font-weight="700">3  DISCUSSION</text>
+  <text x="496" y="270" style="font-size:17px">4  CONCLUSION</text>
+  <text x="496" y="310" style="font-size:17px">REFERENCES</text>
   <text class="hand hs mid" x="588" y="410" style="font-size:17px">the new chapter, in place</text>
 </svg>

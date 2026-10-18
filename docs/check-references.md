@@ -4,18 +4,14 @@ description: Check references.bib for citation keys, missing fields, names, date
 
 # Check your references
 
-Paste or drop your `references.bib`; the page lists common problems
-(repeated keys, missing fields, names, dates) and the fix for each.
+Paste or drop your `references.bib`, and optionally your `preamble.tex` and
+chapters; the page lists common problems (repeated keys, missing fields,
+names, dates) and the fix for each. Then compile and look at the reference
+list in your PDF.
 
 <p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page reads your files in your browser and saves nothing.</p>
 
 <!-- bibcheck-interactive-start -->
-
-1. Paste `references.bib`, or choose or drop the file.
-2. Optional: add `preamble.tex` (your citation style) and chapter `.tex`
-   files to check the keys you cite.
-3. Choose **Check references**, fix what it lists, then compile and look at
-   the reference list in your PDF.
 
 <div class="tool bibcheck" data-bibcheck hidden>
 <label class="tool-drop tool-file" for="bibcheck-files" data-drop><span class="tool-file-button" data-icon="file">Choose files</span> <span class="tool-file-or">or drop references.bib and .tex files here</span></label><input class="visually-hidden" id="bibcheck-files" type="file" accept=".bib,.tex" multiple>

@@ -1,19 +1,10 @@
 # Settings builder
 
-Fill in your title page details; the page writes the settings block for
-`metadata.tex`.
+Fill in your title page details, or start from the `metadata.tex` you have;
+the page writes the settings block. Type plain text: `&` and `%` are handled
+for you.
 
-<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The form, and any file you choose, stay in your browser; nothing is saved, and leaving or reloading the page clears it.</p>
-
-1. Enter your details and each committee member, with full names, or start
-   from the `metadata.tex` you have. Type plain text; `&` and `%` are handled
-   for you.
-2. Copy the block. In `metadata.tex`, replace the `\thesissetup{...}` block
-   and all `\committeemember` lines with it, or download a whole new
-   `metadata.tex` and put it in place of the old one.
-3. Compile and check your title page. The form checks the settings, not
-   whether the names are right; use the
-   [final PDF checklist](submission.md#final-pdf-checklist).
+<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The form and any file you choose stay in your browser and clear when you leave the page.</p>
 
 <div class="tool settings-builder" data-settings-builder hidden>
 <label class="tool-drop tool-file settings-load" for="settings-load"><span class="tool-file-button" data-icon="file">Start from your metadata.tex</span> <span class="tool-file-or">or drop it here. Optional: it fills in the form, read in your browser.</span></label><input class="visually-hidden" id="settings-load" type="file" accept=".tex,text/plain" data-settings-load>
@@ -36,6 +27,15 @@ Fill in your title page details; the page writes the settings block for
 <p class="tool-nojs" data-settings-nojs>The form needs JavaScript, which is off or not available in this browser.
 You can still edit <code>metadata.tex</code> using the settings table below.
 Keep text inside braces, for example <code>title = {Your thesis title},</code>.</p>
+
+## After you copy
+
+1. In `metadata.tex`, replace the `\thesissetup{...}` block and all
+   `\committeemember` lines with the copied block, or put the downloaded
+   `metadata.tex` in place of the old one.
+2. Compile and check your title page. The form checks the settings, not
+   whether the names are right; use the
+   [final PDF checklist](submission.md#final-pdf-checklist).
 
 ## Settings reference
 
