@@ -103,7 +103,8 @@ class Bump(unittest.TestCase):
         self.assertIn("v0.7.1", (self.root / "rpi-thesis.cls").read_text(encoding="utf-8"))
 
     def test_no_argument_refuses_without_unreleased_or_pdf_line(self):
-        for log in ("# Changes\n\n## 0.7.0\n", "# Changes\n\n## Unreleased\n\n- Fix.\n"):
+        for log in ("# Changes\n\n## 0.7.0\n", "# Changes\n\n## Unreleased\n\n- Fix.\n",
+                    "# Changes\n\n## Unreleased\n\n**Changes your PDF?** No.\n\n## Unreleased\n\n- Fix.\n"):
             with self.subTest(log=log):
                 (self.root / "CHANGELOG.md").write_text(log, encoding="utf-8")
                 before = self.snapshot()

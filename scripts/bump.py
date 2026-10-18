@@ -60,6 +60,8 @@ def plan(new, today):
 
 def choose(old, changelog):
     """(new version, why) from the Unreleased section of the change log."""
+    if len(re.findall(r"(?m)^## Unreleased[ \t]*$", changelog)) > 1:
+        raise ValueError("CHANGELOG.md: more than one '## Unreleased' section; merge them into one.")
     section = re.search(r"(?ms)^## Unreleased[ \t]*$(.*?)(?=^## |\Z)", changelog)
     if not section:
         raise ValueError("CHANGELOG.md: no '## Unreleased' section; add the change-log lines first.")

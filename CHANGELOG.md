@@ -50,6 +50,12 @@ rule with its source.
   for access dates. A short recipe shows how to use the starter as a model for
   a proposal or qualifying exam, and "update the formatting safely" points to
   Check your PDF to see your version.
+- **One set of fixes for every error message:** Fixing problems, Explain my
+  error, and the optional build helper now give the same advice from one
+  list. Explain my error and the build helper also recognize the starter's
+  own messages (such as a missing setting, an unknown degree or month, or a
+  missing seal), and each fix says what to do on your computer and on
+  Overleaf where they differ.
 - **Get started and Submitting:** a warmer, shorter start; the starter
   download is a button; other editors fold away; the Submitting notice is
   shorter.
@@ -76,17 +82,6 @@ rule with its source.
   chapter, and how `\label` and `\ref` fill in a figure's number.
   How it works and Going further also show which file changes which part
   of the PDF.
-
-## Unreleased
-
-**Changes your PDF?** No.
-
-- **One set of fixes for every error message:** Fixing problems, Explain my
-  error, and the optional build helper now give the same advice from one
-  list. Explain my error and the build helper also recognize the starter's
-  own messages (such as a missing setting, an unknown degree or month, or a
-  missing seal), and each fix says what to do on your computer and on
-  Overleaf where they differ.
 
 ## 0.9.0 (beta), 17 Oct 2026
 
