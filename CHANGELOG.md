@@ -75,6 +75,17 @@ rule with its source.
   drawings in the cards, and Writing basics has two new ones: how to add a
   chapter, and how `\label` and `\ref` fill in a figure's number.
 
+## Unreleased
+
+**Changes your PDF?** No.
+
+- **One set of fixes for every error message:** Fixing problems, Explain my
+  error, and the optional build helper now give the same advice from one
+  list. Explain my error and the build helper also recognize the starter's
+  own messages (such as a missing setting, an unknown degree or month, or a
+  missing seal), and each fix says what to do on your computer and on
+  Overleaf where they differ.
+
 ## 0.9.0 (beta), 17 Oct 2026
 
 Published as the pre-release `v0.9.0`.

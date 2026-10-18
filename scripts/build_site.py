@@ -312,6 +312,53 @@ def size_attrs(size):
     return f' width="{size[0]}" height="{size[1]}"' if size else ""
 
 
+# Known problems (KNOWN_PROBLEMS in scripts/build.py) as HTML table rows. The
+# fields are plain text, also printed by build.py and shown by site/explain/;
+# here commands, file names, and addresses become code and links.
+PROBLEM_CODE = re.compile(
+    r"https?://[^\s)]+[^\s).,]"                                    # an address
+    r"|[A-Z]:\\\w+|~/\w+"                                            # C:\thesis, ~/thesis
+    r"|\\[A-Za-z@]+(?:\{[^{}\s]*\})?|\\[_&$%#{}']\w?"                  # \ref{...}, \_, \'e
+    r"|\$\.\.\.\$|\[(?:Co-)?[Cc]hair\]|\[htbp\]"
+    r"|\b(?:figures|chapters|assets|build)/[\w./-]*"
+    r"|\b[\w-]+(?:\.[\w-]+)*\.(?:tex|cls|sty|bib|jpg|png|deb|rpm)\b")
+
+
+def problem_text(text):
+    out = []
+    for piece in re.split(f"({PROBLEM_CODE.pattern})", text):
+        if not piece:
+            continue
+        if piece.startswith("http") and PROBLEM_CODE.fullmatch(piece):
+            out.append(f'<a href="{escape(piece)}">{escape(piece)}</a>')
+        elif PROBLEM_CODE.fullmatch(piece):
+            out.append(f"<code>{escape(piece)}</code>")
+        else:
+            out.append(escape(piece))
+    return "".join(out)
+
+
+def problem_rows(entries, href, skip=()):
+    """One row per entry: what you see; what it means and what to try. href(page,
+    anchor) makes a guide link; links to an anchor in skip are left out."""
+    rows = []
+    for entry in entries:
+        seen = [f"<code>{escape(entry['message'])}</code>"] if entry.get("message") else []
+        if entry.get("symptom"):
+            seen.append(problem_text(entry["symptom"]))
+        steps = [problem_text(entry["means"]) + " " + problem_text(entry["fix"])]
+        if entry.get("editor"):
+            steps.append("In an editor on your computer: " + problem_text(entry["editor"]))
+        if entry.get("overleaf"):
+            steps.append("On Overleaf: " + problem_text(entry["overleaf"]))
+        page, anchor, section = build_helper.problem_guide(entry)
+        if (page, anchor) not in skip:
+            steps.append(f'More: <a href="{href(page, anchor)}">{escape(section)}</a>.')
+        rows.append(f"<tr><td>{', or '.join(seen)}</td><td>{'<br>'.join(steps)}</td></tr>")
+    return ("<table>\n<thead>\n<tr><th>What you see</th><th>What it means and what to try</th></tr>\n"
+            "</thead>\n<tbody>\n" + "\n".join(rows) + "\n</tbody>\n</table>")
+
+
 def responsive_tables(body):
     """A scroll box lets wide tables scroll on phones without losing table semantics.
     In a table, code with spaces (a whole error message) is marked so it may wrap,
@@ -853,26 +900,45 @@ class Site:
 
         return re.sub(r"<h[1-6]\b[^>]*>.*?</h[1-6]>|<tr\b[^>]*>.*?</tr>", row, body, flags=re.S)
 
-    def explain_page(self, body, source):
+    def known_problems(self, text, source):
         """Put the known problems (KNOWN_PROBLEMS in scripts/build.py) into the
-        "Explain my error" page twice: as the table everyone sees, with or
-        without JavaScript, and as JSON for site/explain/ui.js."""
-        marker = '<div class="explain-known" data-explain-known></div>'
-        if marker not in body:
-            self.errors.append(f"{source}: keep the line {marker}; the table of known messages goes there.")
-            return body
-        rows = []
-        for entry in build_helper.KNOWN_PROBLEMS:
-            page, anchor, section = entry["guide"]
-            rows.append(f"<tr><td><code>{escape(entry['message'])}</code></td><td>{escape(entry['means'])}</td>"
-                        f"<td>{escape(entry['fix'])} More: <a href=\"{page}.html#{anchor}\">{escape(section)}</a>.</td></tr>")
-        table = ("<table>\n<thead>\n<tr><th>What you see</th><th>What it means</th><th>What to try</th></tr>\n"
-                 "</thead>\n<tbody>\n" + "\n".join(rows) + "\n</tbody>\n</table>")
-        fields = ("id", "pattern", "means", "fix", "editor", "overleaf", "guide")
-        payload = json.dumps([{key: entry[key] for key in fields if key in entry}
-                              for entry in build_helper.KNOWN_PROBLEMS],
-                             ensure_ascii=True, separators=(",", ":"))
-        return (body.replace(marker, table, 1) + '\n<script type="application/json" id="explain-problems">'
+        Markdown before Pandoc reads it, so their links are checked like any
+        other: the whole table on "Explain my error", where the marker line
+        is, and one table per section on the troubleshooting page, where
+        {{common-messages:SECTION}} is."""
+        sections = {key: [entry for entry in build_helper.KNOWN_PROBLEMS if entry["section"] == key]
+                    for key in build_helper.SECTIONS}
+        if source == "docs/explain-my-error.md":
+            marker = '<div class="explain-known" data-explain-known></div>'
+            if marker not in text:
+                self.errors.append(f"{source}: keep the line {marker}; the table of known messages goes there.")
+                return text
+            known = [entry for entries in sections.values() for entry in entries if "pattern" in entry]
+            return text.replace(marker, problem_rows(known, lambda page, anchor: f"{page}.md#{anchor}"), 1)
+
+        def table(match):
+            key = match[1]
+            if key not in sections:
+                self.errors.append(f"{source}: {{{{common-messages:{key}}}}} names no section; use one of "
+                                   + ", ".join(sections) + " (SECTIONS in scripts/build.py).")
+                return match[0]
+            placed.append(key)
+            here = [("troubleshooting", "common-messages")] + [("troubleshooting", name) for name in sections]
+            return problem_rows(sections[key], lambda page, anchor: (
+                f"#{anchor}" if page == "troubleshooting" else f"{page}.md#{anchor}"), here)
+
+        placed = []
+        text = re.sub(r"\{\{common-messages:([\w-]+)\}\}", table, text)
+        for key in sections:
+            if placed.count(key) != 1:
+                self.errors.append(f"{source}: put {{{{common-messages:{key}}}}} on its own line exactly once; "
+                                   "the known problems of that section (scripts/build.py) go there.")
+        return text
+
+    def explain_page(self, body):
+        """Give site/explain/ui.js the known problems as JSON."""
+        payload = json.dumps(build_helper.page_problems(), ensure_ascii=True, separators=(",", ":"))
+        return (body + '\n<script type="application/json" id="explain-problems">'
                 + payload.replace("<", "\\u003c") + "</script>\n")
 
     def offline_checker(self, body, source):
@@ -975,6 +1041,8 @@ class Site:
                 title = PROJECT[source][1]
             # {{rule:id}} and {{cite:id}} name a row of the requirements map (scripts/rules.py).
             text = text.replace("{{settings-table}}", self.settings["table"])
+            if source in ("docs/explain-my-error.md", "docs/troubleshooting.md"):
+                text = self.known_problems(text, source)
             text, problems, _ = rules.expand(text, source)
             self.errors.extend(problems)
             body = pandoc(["--from=gfm", "--to=html5", "--wrap=none", "--syntax-highlighting=none"], text)
@@ -983,7 +1051,7 @@ class Site:
                               lambda m: (m[1] or m[3]) + escape(self.form_url, quote=True) + (m[2] or m[4]), body)
             body = self.rewrite(body, source, here, posixpath.dirname(source))
             if source == "docs/explain-my-error.md":
-                body = self.explain_page(body, source)
+                body = self.explain_page(body)
             if source == "CHANGELOG.md":
                 body = self.changelog_page(body)
             if source == "docs/troubleshooting.md":

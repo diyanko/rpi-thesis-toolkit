@@ -29,6 +29,11 @@ LONG_NAME = "./chapters/02-a-chapter-with-a-rather-long-file-name-for-the-log.te
 WRAPPED = LONG_NAME + ":8: Undefined control sequence."
 assert len(WRAPPED) > 79
 
+def wrap(line):
+    """A long log line as TeX writes it: cut every 79 bytes."""
+    return "\n".join(line[start:start + 79] for start in range(0, len(line), 79))
+
+
 # name -> (pasted text, known problem id or None, file, line); file and line
 # are None when the text has no error block.
 FIXTURES = {
@@ -85,25 +90,93 @@ FIXTURES = {
         "tool-missing", None, None),
     "latexmk-missing-vscode": ("spawn latexmk ENOENT\n", "tool-missing", None, None),
     "biber-mac": ("biber: lipo: can't figure out the architecture type of: biber\n", "biber-mac", None, None),
-    # The class's own messages about metadata.tex.
-    "thesis-title": (
-        "! Class rpi-thesis Error: Missing title in metadata.tex.\n\n"
+    # The class's own errors and warnings, as pdfLaTeX writes them: lines over
+    # 79 bytes wrap, which the page and build.py join again.
+    "missing-setting": (
+        "./main.tex:14: Class rpi-thesis Error: Missing title in metadata.tex.\n\n"
         "See the rpi-thesis class documentation for explanation.\n"
-        "Type  H <return>  for immediate help.\n ...\n\nl.5 \\begin{document}\n", "thesis-required", "", "5"),
-    "thesis-year": ("! Class rpi-thesis Error: Graduation year must have four digits.\n\nl.5 \\begin{document}\n",
-                    "thesis-required", "", "5"),
-    "thesis-chair": (
-        "./main.tex:5: Class rpi-thesis Error: Committee chair is missing: roles given in metadata.tex"
-        " were [chair], but the role must be written [Chair] or [Co-Chair].\n\nl.5 \\begin{document}\n",
-        "thesis-chair", "main.tex", "5"),
-    "thesis-degree": (
-        "! Class rpi-thesis Error: Unknown degree choice \"phd\" in metadata.tex.\n\nl.4 }\n",
-        "thesis-unknown", "", "4"),
+        "l.14 \\thesisfrontmatter\n", "missing-setting", "main.tex", "14"),
+    "unknown-setting": (wrap(
+        "./metadata.tex:25: Class rpi-thesis Error: Unknown setting \"departmnt\" in metadata.tex."
+        " Check its spelling against the guide: Going further, \"All thesis settings\".")
+        + "\nl.25 }\n", "unknown-setting", "metadata.tex", "25"),
+    "unknown-degree": (wrap(
+        "./metadata.tex:25: Class rpi-thesis Error: Unknown degree choice \"PhD\" in metadata.tex:"
+        " use masters, doctoral, or engineering-doctorate (lower case).")
+        + "\nl.25 }\n", "unknown-degree", "metadata.tex", "25"),
+    "unknown-month": (wrap(
+        "./metadata.tex:25: Class rpi-thesis Error: Unknown graduation month \"may\" in metadata.tex:"
+        " use May, August, or December (capital first letter).")
+        + "\nl.25 }\n", "unknown-month", "metadata.tex", "25"),
+    "graduation-year": (
+        "./main.tex:14: Class rpi-thesis Error: Graduation year must have four digits.\n"
+        "l.14 \\thesisfrontmatter\n", "graduation-year", "main.tex", "14"),
+    "committee-chair": (wrap(
+        "./main.tex:14: Class rpi-thesis Error: Committee chair is missing: roles given in metadata.tex"
+        " were [chair], but the role must be written [Chair] or [Co-Chair].")
+        + "\nl.14 \\thesisfrontmatter\n", "committee-chair", "main.tex", "14"),
+    "no-committee": (
+        "./main.tex:14: Class rpi-thesis Error: No committee members in metadata.tex.\n"
+        "l.14 \\thesisfrontmatter\n", "committee-chair", "main.tex", "14"),
+    "class-option": (
+        "./rpi-thesis.cls:34: Class rpi-thesis Error: Unsupported class option: 11pt.\n"
+        "l.34 \\ProcessOptions\\relax\n", "class-option", "rpi-thesis.cls", "34"),
+    "appendices": (
+        "./main.tex:6: Class rpi-thesis Error: Could not set up appendices: \\chapter was changed.\n"
+        "l.6 \\documentclass{rpi-thesis}[2026/10/17]\n", "appendices", "main.tex", "6"),
     "class-version": (
-        "LaTeX Warning: You have requested, on input line 1, version `2026/10/17' of document class"
-        " rpi-thesis, but only version `2026/01/01' is available.\n", "class-version", None, None),
-    "seal-missing": ("Class rpi-thesis Warning: RPI seal not found. Download it from RPI.\n",
-                     "seal-missing", None, None),
+        "LaTeX Warning: You have requested, on input line 6, version\n"
+        "               `2027/01/01' of document class rpi-thesis,\n"
+        "               but only version\n"
+        "               `2026/10/17 v0.9.0 RPI community thesis starter'\n"
+        "               is available.\n", "class-version", None, None),
+    "seal-missing": (
+        "Class rpi-thesis Warning: RPI seal not found. Download it from RPI's Thesis Pre\n"
+        "paration page and save it as assets/rpi-seal.jpg (see assets/README.md) on inpu\n"
+        "t line 14.\n", "seal-missing", None, None),
+    "math-font": (
+        "Class rpi-thesis Warning: STIX Two Math font not found. Some math\n"
+        "(rpi-thesis)              symbols may be blank. Update your full TeX Live\n", "math-font", None, None),
+    "aux-not-written": (
+        "./main.tex:22: I can't write on file `chapters/01-introduction.aux'.\n"
+        "\\@include ...mmediate \\openout \\@partaux \"#1.aux\" \n"
+        "l.22 \\include{chapters/01-introduction}\n", "aux-not-written", "main.tex", "22"),
+    "missing-character": (
+        "Missing character: There is no \u0103 (U+0103) in font [texgyretermes-regular.otf]:mapping=tex-text;!\n",
+        "missing-character", None, None),
+    "overfull-hbox": (
+        "Overfull \\hbox (15.2pt too wide) in paragraph at lines 12--14\n"
+        "[]\\T1/ntxtlf/m/n/12 See https://example.org/a/very/long/path []\n", "overfull-hbox", None, None),
+    "overfull-vbox": ("Overfull \\vbox (3.5pt too high) has occurred while \\output is active []\n",
+                      "overfull-vbox", None, None),
+    "presubmission-hints": (
+        "Output written on build/main.pdf (12 pages).\n\n"
+        "Pre-submission hints (your PDF was built; check these before submitting):\n"
+        "- references.bib, line 3: entry 'web2024' has a url but no access date.\n",
+        "presubmission-hints", None, None),
+    "alignment-tab": (
+        "./build/main.bbl:40: Misplaced alignment tab character &.\n"
+        "l.40 ...Theory & Practice\n", "alignment-tab", "build/main.bbl", "40"),
+    "environment-undefined": (
+        "./chapters/02-research.tex:12: LaTeX Error: Environment figur undefined.\n"
+        "l.12 \\begin{figur}\n", "environment", "chapters/02-research.tex", "12"),
+    "environment-mismatch": (
+        "./chapters/02-research.tex:20: LaTeX Error: \\begin{figure} on input line 12 ended by \\end{table}.\n"
+        "l.20 \\end{table}\n", "environment", "chapters/02-research.tex", "20"),
+    "package-missing": (
+        "./preamble.tex:9: LaTeX Error: File `siunitxx.sty' not found.\n"
+        "l.9 \\usepackage{siunitxx}\n", "package-missing", "preamble.tex", "9"),
+    "miktex-perl": ("latexmk: could not find the script engine 'perl'.\n", "miktex-perl", None, None),
+    "old-latex": (
+        "LaTeX Warning: You have requested release `2022-06-01' of LaTeX,\n"
+        "               but only release `2020-02-02' is available.\n", "old-latex", None, None),
+    "biblatex-version": (
+        "ERROR - Error: Found biblatex control file version 3.10, expected version 3.11.\n",
+        "biblatex-version", None, None),
+    "rerun": ("LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.\n",
+              "rerun", None, None),
+    "underfull": ("Underfull \\hbox (badness 10000) in paragraph at lines 20--20\n[]\\T1/ntxtlf/m/n/12 Text\n",
+                  "underfull", None, None),
     "bbl-not-biblatex": ("! Package biblatex Error: File 'main.bbl' not created by biblatex.\n\n"
                          "l.20 \\begin{document}\n", "bbl-not-biblatex", "", "20"),
     # An error nobody listed: the page shows the generic reading steps.
@@ -137,19 +210,19 @@ class SharedTable(unittest.TestCase):
             with self.subTest(name):
                 text = unwrap(text)
                 where = build.first_error(text) or text
-                found = [entry["id"] for entry in build.KNOWN_PROBLEMS if build.re.search(entry["pattern"], where)]
+                found = [entry["id"] for entry in build.page_problems() if build.re.search(entry["pattern"], where)]
                 self.assertEqual(found[:1], [expected] if expected else [])
 
     def test_warning_patterns_match_real_logs_in_python(self):
-        for log, ids in (("starter-built", ("undefined-reference", "seal-missing", "overfull", "underfull")),
+        for log, ids in (("starter-built", ("undefined-reference", "seal-missing", "overfull-hbox", "underfull")),
                          ("starter-failed", ("biber-not-run", "rerun")),
                          ("lualatex-missing-character", ("missing-character",))):
-            found = [entry["id"] for entry in build.KNOWN_PROBLEMS if build.re.search(entry["pattern"], unwrap(LOGS[log]))]
+            found = [entry["id"] for entry in build.page_problems() if build.re.search(entry["pattern"], unwrap(LOGS[log]))]
             for expected in ids:
                 self.assertIn(expected, found, log)
 
     def test_patterns_read_the_same_in_javascript(self):
-        for entry in build.KNOWN_PROBLEMS:
+        for entry in build.page_problems():
             for python_only in ("(?P", "(?i", "(?m", "(?s", "(?x", "\\A", "\\Z", "(?#"):
                 self.assertNotIn(python_only, entry["pattern"], entry["id"])
 
@@ -157,9 +230,26 @@ class SharedTable(unittest.TestCase):
         ids = [entry["id"] for entry in build.KNOWN_PROBLEMS]
         self.assertEqual(len(ids), len(set(ids)))
         for entry in build.KNOWN_PROBLEMS:
-            page, anchor, _ = entry["guide"]
+            page, anchor, _ = build.problem_guide(entry)
             self.assertTrue((ROOT / "docs" / (page + ".md")).is_file(), entry["id"])
-            self.assertIn(entry["when"], ("failed", "built", "any", "page"), entry["id"])
+            self.assertIn(entry["section"], build.SECTIONS, entry["id"])
+            self.assertTrue(entry.get("message") or entry.get("symptom"), entry["id"])
+            self.assertTrue(entry["means"] and entry["fix"], entry["id"])
+            if "pattern" in entry:
+                self.assertIn(entry["when"], ("failed", "built", "page", "any"), entry["id"])
+            else:
+                self.assertNotIn("when", entry, entry["id"])
+
+    def test_every_fixture_problem_is_tested(self):
+        tested = {expected for _, expected, _, _ in FIXTURES.values()}
+        for entry in build.page_problems():
+            self.assertIn(entry["id"], tested, "add a made-up log for " + entry["id"])
+
+    def test_build_helper_skips_page_only_and_symptom_entries(self):
+        for name in ("overfull-hbox", "missing-character", "presubmission-hints"):
+            with self.subTest(name):
+                text = FIXTURES[name][0]
+                self.assertEqual(build.known_problem(text, "built") + build.known_problem(text, "failed"), [])
 
     def test_build_helper_prints_the_same_advice(self):
         advice = build.known_problem(FIXTURES["typo"][0], "failed")
@@ -174,7 +264,7 @@ class Page(unittest.TestCase):
     def setUpClass(cls):
         cls.browser = Chrome(find_chrome())
         cls.browser.evaluate((ROOT / "site/explain/core.js").read_text(encoding="utf-8"))
-        cls.problems = json.dumps(build.KNOWN_PROBLEMS)
+        cls.problems = json.dumps(build.page_problems())
 
     @classmethod
     def tearDownClass(cls):

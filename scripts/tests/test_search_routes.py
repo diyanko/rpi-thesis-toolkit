@@ -23,7 +23,7 @@ def first_row(message):
 class LogRoutes(unittest.TestCase):
     def test_missing_figure(self):
         self.assertEqual(first_row("! Package pdftex.def Error: File `figures/plot' not found: using draft setting."),
-                         "A figure file cannot be found")
+                         "LaTeX Error: File `figures/...' not found")
 
     def test_other_pdftex_def_errors_are_not_missing_files(self):
         self.assertIsNone(first_row("! Package pdftex.def Error: PDF inclusion: required page does not exist <3>."))

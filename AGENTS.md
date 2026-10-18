@@ -141,8 +141,10 @@ anything not done or marked TODO(verify).
 
 - **Answer a student's issue:** reproduce it with the starter; fix the guide
   or class if it is ours, else answer with the guide section that helps. When
-  a question could come up again, add a row to "Common messages" in
-  `docs/troubleshooting.md`.
+  a question could come up again, add an entry to `KNOWN_PROBLEMS` in
+  `scripts/build.py`: it makes the "Common messages" tables in
+  `docs/troubleshooting.md`, the "Explain my error" page, and the build
+  helper's advice.
 - **Add a recipe to the guide:** a short section in `docs/going-further.md`
   ("Recipes for common extras") with a snippet that compiles with this class;
   name the package in `preamble.tex`'s optional extras if it needs one.

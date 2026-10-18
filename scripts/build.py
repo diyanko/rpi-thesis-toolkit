@@ -300,9 +300,6 @@ def layout_warnings(log_text):
     return unique[:10]
 
 
-SEAL_PAGE = "https://itssc.rpi.edu/hc/en-us/articles/360010087512-Thesis-Preparation"
-
-
 def install_hint(missing):
     """One next step, for this operating system, when LaTeX tools are missing."""
     if sys.platform == "win32":
@@ -400,12 +397,6 @@ def presubmission_hints(root, output, sources=None, warnings=()):
     layout = layout_warnings(log_text)
     hints = list(warnings) + layout + biber_warnings(output)
     hints += known_problem(log_text, "built", root)
-    if "RPI seal not found" in log_text:
-        hints.append(
-            "The title page shows a placeholder box instead of the RPI seal. "
-            "Download the seal from RPI's Thesis Preparation page (" + SEAL_PAGE
-            + ") and save it as assets/rpi-seal.jpg; see assets/README.md."
-        )
     if "Missing character:" in log_text:
         messages = re.findall(r"Missing character:([^!]*)(?:!|$)", log_text)
         codes = sorted(set(re.findall(r"U\+[0-9A-F]+", " ".join(messages))))
@@ -414,12 +405,6 @@ def presubmission_hints(root, output, sources=None, warnings=()):
             "Some characters are missing from your PDF" + detail + ". Search for "
             "'Missing character:' in build/main.log and check those places in the PDF. "
             "A different compile engine or a font with those characters may be needed; see "
-            + guide(root, "troubleshooting") + "."
-        )
-    if "STIX Two Math font not found" in log_text:
-        hints.append(
-            "STIX Two Math font not found: some mathematical symbols may be blank. "
-            "Update your full TeX Live installation, recompile, and check your equations; see "
             + guide(root, "troubleshooting") + "."
         )
     for bib in student_files(root, "*.bib"):
@@ -457,18 +442,6 @@ def presubmission_hints(root, output, sources=None, warnings=()):
                     "different, short caption in the list of tables or figures. "
                     "The list must match the caption word for word: delete [...]."
                 )
-    if "You have requested release" in log_text:
-        hints.append(
-            "Your LaTeX is older than this class needs (TeX Live " + str(MIN_TEXLIVE)
-            + " or newer). Install a current TeX Live; see "
-            + guide(root, "get-started") + "."
-        )
-    if re.search(r"You have requested,.*?\n.*?document class rpi-thesis", log_text):
-        hints.append(
-            "Your rpi-thesis.cls is older than your other starter files expect. Copy "
-            "rpi-thesis.cls from the newest starter into this folder; see "
-            + guide(root, "going-further") + " (Update the formatting safely)."
-        )
     if hints:
         print(
             "\nPre-submission hints (your PDF was built; check these before submitting):"
@@ -520,40 +493,389 @@ def biber_errors(output, since, latexmk_text=""):
             if "ERROR - " in line][:10]
 
 
-# Known problems: the one table of LaTeX messages and their fixes. build.py
-# prints the matching ones after a build; the "Explain my error" page
-# (docs/explain-my-error.md, site/explain/) gets the same table as JSON from
-# scripts/build_site.py, so the two cannot drift. Each entry:
+# Known problems: the one table of LaTeX messages, symptoms, and their fixes.
+# Edit it here and nowhere else. build.py prints the matching ones after a
+# build; scripts/build_site.py makes from it the "Common messages" tables in
+# docs/troubleshooting.md (one per section below) and the table and JSON of
+# the "Explain my error" page (docs/explain-my-error.md, site/explain/). Each
+# entry:
 #   id        a short name, used by scripts/tests/test_explain.py
+#   section   the troubleshooting table it belongs to (a key of SECTIONS)
 #   pattern   a regular expression that Python and JavaScript read the same
-#             way (no (?P<...>), inline flags, \A or \Z)
+#             way (no (?P<...>), inline flags, \A or \Z); leave it out for a
+#             problem that shows no message, only a symptom
 #   when      where build.py looks: "failed" (a failed build's output),
-#             "built" (the log of a build that made a PDF), or "any";
-#             "page" for warnings only the page lists (build.py reports
-#             layout in its own words, see layout_warnings)
-#   message   the message as a student sees it, for the page's table
+#             "built" (the log of a build that made a PDF), "any", or "page"
+#             (only the Explain my error page: build.py has its own check, or
+#             the message is too common to print after every build)
+#   message   optional: the message as a student sees it
+#   symptom   optional: what the student sees instead of, or as well as, a
+#             message; plain words, joined to the message with ", or"
 #   means     what it means, in plain words
 #   fix       what to do, wherever you write
 #   editor    optional: the same on your computer, in an editor
 #   overleaf  optional: the same on Overleaf
-#   guide     (guide page, section anchor, section name) with the details
+#   guide     optional: (guide page, section anchor, section name) with the
+#             details; the default is the entry's own troubleshooting table
+# Pages show the entries in SECTIONS order, and in list order within a
+# section. Matching takes the first entry in list order.
 COMMON = "Common messages, "
+SECTIONS = {
+    "setup-and-files": "Setup and files",
+    "citations-and-references": "Citations and references",
+    "layout-and-the-pdf": "Layout and the PDF",
+    "tools-and-installs": "Tools and installs",
+    "rare": "Rare messages",
+}
+SETTINGS = ("going-further", "all-thesis-settings", "All thesis settings")
 KNOWN_PROBLEMS = [
+    # Setup and files
     {
-        "id": "biber-mac", "pattern": "biber[^\\n]*\\blipo\\b|\\blipo\\b[^\\n]*biber", "when": "any",
-        "message": "biber ... lipo (on a Mac)",
-        "means": "Biber, the bibliography tool, could not start: older Mac builds of Biber"
-                 " fail on newer macOS. Your thesis is fine.",
-        "fix": "Update TeX Live, then compile again.",
-        "editor": "On macOS (MacTeX), open TeX Live Utility and choose Update all packages,"
-                  " or run 'sudo tlmgr update --self --all'. On Linux with apt, update with"
-                  " your package manager, for example 'sudo apt update' then 'sudo apt upgrade'.",
-        "overleaf": "Overleaf installs Biber for you; this message comes from a LaTeX"
-                    " installation on a computer.",
-        "guide": ("troubleshooting", "common-messages", COMMON + "Rare messages"),
+        "id": "class-missing", "section": "setup-and-files",
+        "pattern": r"File `rpi-thesis\.cls' not found", "when": "failed",
+        "message": "File `rpi-thesis.cls' not found",
+        "means": "LaTeX cannot find the class file, so it is not compiling the starter's folder.",
+        "fix": "Extract the whole ZIP and open the folder that contains main.tex.",
+        "editor": "Open the folder itself (File, Open Folder in VS Code), not only main.tex.",
+        "overleaf": "main.tex and rpi-thesis.cls must be at the top of the file list, not inside a folder.",
     },
     {
-        "id": "biblatex-version", "pattern": "biblatex control file version", "when": "any",
+        "id": "missing-setting", "section": "setup-and-files",
+        "pattern": r"Missing \S+ in metadata\.tex", "when": "failed",
+        "message": "Missing title in metadata.tex (or author, department, ...)",
+        "means": "A required setting in metadata.tex is empty or missing.",
+        "fix": "Fill in that setting inside \\thesissetup{...} in metadata.tex, then compile again.",
+        "guide": SETTINGS,
+    },
+    {
+        "id": "committee-chair", "section": "setup-and-files",
+        "pattern": r"Committee chair is missing|No committee members in metadata\.tex", "when": "failed",
+        "message": "Committee chair is missing",
+        "means": "No \\committeemember line in metadata.tex has the role [Chair] or [Co-Chair],"
+                 " spelled exactly so.",
+        "fix": "Put [Chair] (or [Co-Chair]) on one \\committeemember line: [chair] is not recognized.",
+        "guide": SETTINGS,
+    },
+    {
+        "id": "class-version", "section": "setup-and-files",
+        "pattern": r"You have requested,[^\n]*\n[^\n]*document class rpi-thesis", "when": "any",
+        "message": "You have requested ... version ... of document class rpi-thesis",
+        "means": "Your rpi-thesis.cls is older than the rest of your starter files.",
+        "fix": "Copy rpi-thesis.cls from the newest starter into your thesis folder, replacing the old one.",
+        "guide": ("going-further", "update-the-formatting-safely", "Update the formatting safely"),
+    },
+    {
+        "id": "unknown-setting", "section": "setup-and-files",
+        "pattern": 'Unknown setting "', "when": "failed",
+        "message": "Unknown setting \"...\" in metadata.tex",
+        "means": "A setting name inside \\thesissetup{...} is misspelled or does not exist.",
+        "fix": "Correct its spelling; every setting is listed in All thesis settings.",
+        "guide": SETTINGS,
+    },
+    {
+        "id": "unknown-degree", "section": "setup-and-files",
+        "pattern": "Unknown degree choice", "when": "failed",
+        "message": "Unknown degree choice",
+        "means": "The degree setting in metadata.tex has a value the class does not know.",
+        "fix": "Use masters, doctoral, or engineering-doctorate, in lower case.",
+        "guide": SETTINGS,
+    },
+    {
+        "id": "unknown-month", "section": "setup-and-files",
+        "pattern": "Unknown graduation month", "when": "failed",
+        "message": "Unknown graduation month",
+        "means": "The graduation-month setting in metadata.tex has a value the class does not know.",
+        "fix": "Use May, August, or December, with a capital first letter.",
+        "guide": SETTINGS,
+    },
+    {
+        "id": "graduation-year", "section": "setup-and-files",
+        "pattern": "Graduation year must have four digits", "when": "failed",
+        "message": "Graduation year must have four digits",
+        "means": "The graduation-year setting in metadata.tex is not a four-digit year.",
+        "fix": "Write the year like 2027.",
+        "guide": SETTINGS,
+    },
+    {
+        "id": "seal-missing", "section": "setup-and-files",
+        "pattern": "RPI seal not found", "when": "built",
+        "message": "RPI seal not found",
+        "symptom": "a seal placeholder on the title page",
+        "means": "The seal belongs to RPI, so the starter does not include it; the title page"
+                 " keeps a box of the same size in its place.",
+        "fix": "Download the seal from RPI's Thesis Preparation page and save it as"
+               " assets/rpi-seal.jpg, then compile again.",
+        "overleaf": "Upload the seal into the assets folder in the file list.",
+        "guide": ("get-started", "add-the-rpi-seal-one-minute", "Add the RPI seal"),
+    },
+    {
+        "id": "class-option", "section": "setup-and-files",
+        "pattern": "Unsupported class option", "when": "failed",
+        "message": "Unsupported class option",
+        "means": "main.tex gives the class an option in square brackets, such as [11pt];"
+                 " this class takes none.",
+        "fix": "Use \\documentclass{rpi-thesis} with no options; settings go in metadata.tex.",
+        "guide": SETTINGS,
+    },
+    {
+        # A missing graphic; a missing .sty, .cls, or .tex is another problem.
+        "id": "figure-missing", "section": "setup-and-files",
+        "pattern": r"LaTeX Error: File `(?![^']*\.(?:sty|cls|tex)')[^']*' not found"
+                   r"|pdftex\.def Error: File `[^']*' not found",
+        "when": "failed",
+        "message": "LaTeX Error: File `figures/...' not found",
+        "means": "A figure file named in \\includegraphics is missing.",
+        "fix": "Check the file name, capital letters, extension, and folder (figures/...).",
+        "editor": "Compare the name in \\includegraphics with the file in the figures folder.",
+        "overleaf": "Upload the picture into the figures folder in the file list, then"
+                    " compare its name with the one in \\includegraphics.",
+    },
+    {
+        "id": "tex-missing", "section": "setup-and-files",
+        "pattern": r"LaTeX Error: File `[^']*\.tex' not found|I can't find file `",
+        "when": "failed",
+        "message": "LaTeX Error: File `chapters/....tex' not found",
+        "means": "A file named in \\include or \\input does not exist under that name.",
+        "fix": "Check the file name and folder in the \\include or \\input line in main.tex:"
+               " write it without .tex, with the same capital letters as the file.",
+    },
+    {
+        "id": "appendices", "section": "setup-and-files",
+        "pattern": "Could not set up appendices", "when": "failed",
+        "message": "Could not set up appendices",
+        "means": "A line above \\documentclass in main.tex, or an outdated LaTeX installation,"
+                 " changed \\chapter.",
+        "fix": "Remove lines added above \\documentclass, or update TeX Live.",
+    },
+    {
+        "id": "synced-folder", "section": "setup-and-files",
+        "symptom": "A file can't be found, and the folder is in OneDrive or iCloud or its path"
+                   " has non-English letters",
+        "means": "A synced folder may keep a file only online, and some LaTeX tools cannot"
+                 " read a path with non-English letters.",
+        "fix": "Set the folder to Always keep on this device, or move it to a short, plain"
+               " path such as C:\\thesis or ~/thesis.",
+    },
+    # Citations and references
+    {
+        "id": "alignment-tab", "section": "citations-and-references",
+        "pattern": "Misplaced alignment tab character &", "when": "failed",
+        "message": "Misplaced alignment tab character &",
+        "means": "An & is outside a table; most often a title in the .bib file contains &.",
+        "fix": "Write it as \\&.",
+    },
+    {
+        "id": "biber-not-run", "section": "citations-and-references",
+        "pattern": r"Please \(re\)run Biber", "when": "built",
+        "message": "Please (re)run Biber on the file",
+        "means": "The bibliography step has not run since your last change, so citations"
+                 " show as keys in bold.",
+        "fix": "Compile again.",
+        "editor": "VS Code with the starter's settings runs Biber for you; in other editors"
+                  " run the bibliography step yourself (Get started, Other editors).",
+        "overleaf": "Recompile; Overleaf runs Biber for you.",
+        "guide": ("get-started", "other-editors", "Other editors"),
+    },
+    {
+        "id": "undefined-reference", "section": "citations-and-references",
+        "pattern": r"Citation [`'][^']*' (?:on page \d+ )?undefined|Reference [`'][^']*'"
+                   r" (?:on page \d+ )?undefined|There were undefined (?:references|citations)",
+        "when": "built",
+        "message": "Citation `...' undefined, or Reference `...' undefined",
+        "symptom": "?? or a bold citation key in the PDF",
+        "means": "A citation or cross-reference is not known yet: it fills in on a later"
+                 " compile, or its key does not match.",
+        "fix": "Compile again. Still there? Check that the key in \\parencite or \\ref matches"
+               " references.bib or the \\label exactly, then compile again.",
+        "editor": "VS Code with the starter's settings runs the bibliography step for you; in"
+                  " other editors run it yourself (Get started, Other editors).",
+        "guide": ("how-it-works", "bold-citation-keys-and-question-marks",
+                  "Bold citation keys and question marks"),
+    },
+    {
+        "id": "empty-references", "section": "citations-and-references",
+        "symptom": "The reference list is empty",
+        "means": "The reference list shows only the entries you cite.",
+        "fix": "Cite at least one entry, for example with \\parencite{key}, then compile again.",
+    },
+    {
+        "id": "zotero-new-source", "section": "citations-and-references",
+        "symptom": "A new Zotero source doesn't appear",
+        "means": "The .bib file in your thesis folder does not have the new source yet,"
+                 " or its key differs from the one you cite.",
+        "fix": "Export again from Zotero, compile again, and check that the key in your citation"
+               " command matches the key in the .bib file exactly.",
+        "guide": ("citations", "step-2-collect-and-cite-sources-with-zotero",
+                  "Collect and cite sources with Zotero"),
+    },
+    # Layout and the PDF
+    {
+        "id": "undefined-command", "section": "layout-and-the-pdf",
+        "pattern": "Undefined control sequence", "when": "failed",
+        "message": "Undefined control sequence",
+        "means": "LaTeX does not know a command, usually because of a typo after a backslash,"
+                 " such as \\parencit for \\parencite.",
+        "fix": "Look at the end of the l. line: the last command there is the one LaTeX does"
+               " not know. Correct its spelling, or load the package it comes from.",
+        "guide": ("troubleshooting", "read-an-error-message", "Read an error message"),
+    },
+    {
+        "id": "missing-dollar", "section": "layout-and-the-pdf",
+        "pattern": r"Missing \$ inserted", "when": "failed",
+        "message": "Missing $ inserted",
+        "means": "A math-only character or command, often an underscore _ or ^, is outside $...$.",
+        "fix": "Write \\_ for an underscore in text, or put the math between $ signs.",
+    },
+    {
+        "id": "brace", "section": "layout-and-the-pdf",
+        "pattern": r"Runaway argument|File ended while scanning use of|Paragraph ended before \\\S+ was"
+                   r" complete|Missing \} inserted|Extra \}, or forgotten",
+        "when": "failed",
+        "message": "Runaway argument, or a brace error",
+        "means": "A { has no matching }, or there is one } too many.",
+        "fix": "Check your last edit near the line shown for a missing or extra }.",
+    },
+    {
+        "id": "environment", "section": "layout-and-the-pdf",
+        "pattern": r"Environment \S+ undefined|\\begin\{[^}]*\} on input line \d+ ended by \\end",
+        "when": "failed",
+        "message": "Environment ... undefined, or \\begin{...} ended by \\end{...}",
+        "means": "The name in \\begin{...} is misspelled, its package is not loaded, or a"
+                 " \\begin{...} and its \\end{...} do not match.",
+        "fix": "Check that each \\begin{name} has an \\end{name} with the same spelling,"
+               " in the right order.",
+        "guide": ("troubleshooting", "read-an-error-message", "Read an error message"),
+    },
+    {
+        # build.py lists the missing characters itself (presubmission_hints).
+        "id": "missing-character", "section": "layout-and-the-pdf",
+        "pattern": "Missing character: There is no", "when": "page",
+        "message": "Missing character: There is no ... in font ...",
+        "symptom": "a special character (such as an accented letter, or one from another"
+                   " alphabet) is missing or garbled",
+        "means": "The font or compile engine has no shape for that character.",
+        "fix": "Use a LaTeX accent command, such as \\'e for an e with an acute accent, or"
+               " try another compile engine.",
+        "guide": ("going-further", "choose-a-compile-engine", "Choose a compile engine"),
+    },
+    {
+        "id": "math-font", "section": "layout-and-the-pdf",
+        "pattern": "STIX Two Math font not found", "when": "built",
+        "message": "STIX Two Math font not found",
+        "means": "LuaLaTeX or XeLaTeX could not find a fallback math font, so a few symbols,"
+                 " such as \\bigstar, \\digamma, and \\subseteqq, may be blank.",
+        "fix": "Update your full LaTeX installation, do a clean recompile, then check the"
+               " affected math.",
+        "overleaf": "Choose the newest TeX Live version in Overleaf's Settings, then do a clean"
+                    " recompile.",
+    },
+    {
+        "id": "overfull-hbox", "section": "layout-and-the-pdf",
+        "pattern": r"Overfull \\hbox", "when": "page",
+        "message": "Overfull \\hbox",
+        "means": "Something is wider than the text area: a long URL, table, equation, or image.",
+        "fix": "Find it in the PDF and resize or break it.",
+        "guide": ("writing", "too-wide-for-the-page", "Too wide for the page?"),
+    },
+    {
+        # build.py reports the ones a figure or table causes (layout_warnings).
+        "id": "overfull-vbox", "section": "layout-and-the-pdf",
+        "pattern": r"Overfull \\vbox", "when": "page",
+        "message": "Overfull \\vbox",
+        "means": "Something is taller than the page: on the title page, usually the title or"
+                 " a committee line; elsewhere, a large figure or table.",
+        "fix": "On the title page, remove manual line breaks from the title and check long"
+               " names and committee lines. Elsewhere, make the largest figure or table on"
+               " that page smaller.",
+    },
+    {
+        "id": "figure-floats", "section": "layout-and-the-pdf",
+        "symptom": "A figure floats to a different page",
+        "means": "This is normal: LaTeX places figures and tables where they fit.",
+        "fix": "Use [htbp] after \\begin{figure} and write Figure~\\ref{...} in the text,"
+               " not \"below\".",
+        "guide": ("writing", "add-a-figure", "Add a figure"),
+    },
+    {
+        "id": "stale-pdf", "section": "layout-and-the-pdf",
+        "symptom": "An edit, the contents, or the references do not update",
+        "means": "You may be looking at an old copy of the PDF, or a scratch file from an"
+                 " earlier compile is in the way.",
+        "fix": "Save every file and check that you are viewing the new PDF. Still stale?"
+               " Do a clean recompile.",
+        "guide": ("how-it-works", "where-the-pdf-ends-up", "Where the PDF ends up"),
+    },
+    {
+        "id": "presubmission-hints", "section": "layout-and-the-pdf",
+        "pattern": "Pre-submission hints", "when": "page",
+        "message": "Pre-submission hints (your PDF was built; check these before submitting)",
+        "means": "Your PDF was built. The build helper found things to check before you"
+                 " submit, such as a web source with no access date.",
+        "fix": "Fix each listed line before submitting.",
+        "guide": ("going-further", "build-commands", "Build commands"),
+    },
+    # Tools and installs
+    {
+        "id": "tool-missing", "section": "tools-and-installs",
+        "pattern": r"(?:latexmk|pdflatex|xelatex|lualatex|biber)['\"]?(?::| is)? (?:command )?not"
+                   r" (?:found|recognized)|command not found: (?:latexmk|pdflatex|xelatex|lualatex|biber)"
+                   r"|spawn (?:latexmk|pdflatex|xelatex|lualatex|biber) ENOENT|Can't exec \"biber\"",
+        "when": "any",
+        "message": "latexmk, pdflatex, or biber not found, or spawn latexmk ENOENT",
+        "means": "A LaTeX tool (latexmk, the engine, or Biber, the bibliography tool) is not"
+                 " installed, or your editor started before the installation finished.",
+        "fix": "Finish installing the full LaTeX distribution, then quit your editor completely"
+               " and reopen it (on Windows, restart the computer if needed).",
+        "editor": "On Linux, use VS Code's .deb or .rpm, not the Flatpak. The optional build"
+                  " helper's setup check names the missing tool.",
+        "overleaf": "Overleaf has every tool; this message comes from a LaTeX installation on a computer.",
+    },
+    {
+        "id": "package-missing", "section": "tools-and-installs",
+        "pattern": r"LaTeX Error: File `[^']*\.sty' not found", "when": "failed",
+        "message": "LaTeX Error: File `....sty' not found",
+        "means": "A package named in \\usepackage is not installed, or its name is misspelled.",
+        "fix": "Check the spelling in \\usepackage; if it is right, install the full LaTeX"
+               " distribution or update it.",
+        "overleaf": "Overleaf has nearly every package: check the spelling in \\usepackage.",
+    },
+    {
+        "id": "miktex-perl", "section": "tools-and-installs",
+        "pattern": "script engine", "when": "any",
+        "message": "latexmk: could not find the script engine 'perl'",
+        "means": "latexmk needs Perl, which MiKTeX does not include.",
+        "fix": "Install TeX Live instead (https://tug.org/texlive/), or install Perl and restart.",
+    },
+    {
+        "id": "restricted-mode", "section": "tools-and-installs",
+        "symptom": "VS Code says Restricted Mode, or LaTeX Workshop does nothing",
+        "means": "VS Code turns off extensions such as LaTeX Workshop in a folder you have not"
+                 " trusted.",
+        "fix": "Click Restricted Mode in the status bar and choose Trust.",
+    },
+    {
+        "id": "overleaf-timeout", "section": "tools-and-installs",
+        "symptom": "Overleaf says the compile timed out",
+        "means": "The project took longer to compile than Overleaf allows; large images are a"
+                 " common cause.",
+        "fix": "Try Fast [draft] from the Recompile menu, shrink large photos, export plots as"
+               " PDF, or compile on your computer. Fast draft shows images as empty boxes, so"
+               " switch back to Normal and check every figure and the seal before you share or"
+               " submit.",
+    },
+    # Rare messages
+    {
+        "id": "old-latex", "section": "rare",
+        "pattern": "You have requested release", "when": "any",
+        "message": "You have requested release '...' of LaTeX",
+        "means": "Your LaTeX is older than this class needs (TeX Live " + str(MIN_TEXLIVE)
+                 + " or newer).",
+        "fix": "Install the current full TeX Live (https://tug.org/texlive/), or use Overleaf.",
+        "overleaf": "Choose the newest TeX Live version in Overleaf's Settings, then recompile.",
+    },
+    {
+        "id": "biblatex-version", "section": "rare",
+        "pattern": "biblatex control file version", "when": "any",
         "message": "Found biblatex control file version ..., expected version ...",
         "means": "This is most often a stale control file left by an earlier build.",
         "fix": "Do a clean recompile, then build again. If it still fails, Biber and"
@@ -565,108 +887,31 @@ KNOWN_PROBLEMS = [
         "guide": ("troubleshooting", "clean-recompile", "Clean recompile"),
     },
     {
-        "id": "miktex-perl", "pattern": "script engine", "when": "any",
-        "message": "latexmk: could not find the script engine 'perl'",
-        "means": "latexmk needs Perl, which MiKTeX does not include.",
-        "fix": "Install TeX Live instead (https://tug.org/texlive/), or install Perl and restart.",
-        "guide": ("troubleshooting", "tools-and-installs", COMMON + "Tools and installs"),
+        "id": "biber-mac", "section": "rare",
+        "pattern": "biber[^\\n]*\\blipo\\b|\\blipo\\b[^\\n]*biber", "when": "any",
+        "message": "biber ... lipo (on a Mac)",
+        "means": "Biber, the bibliography tool, could not start: older Mac builds of Biber"
+                 " fail on newer macOS. Your thesis is fine.",
+        "fix": "Update TeX Live, then compile again.",
+        "editor": "On macOS (MacTeX), open TeX Live Utility (Applications, TeX) and choose"
+                  " Update all packages, or run 'sudo tlmgr update --self --all'. On Linux"
+                  " with apt, update with your package manager, for example 'sudo apt update'"
+                  " then 'sudo apt upgrade'.",
+        "overleaf": "Overleaf installs Biber for you; this message comes from a LaTeX"
+                    " installation on a computer.",
     },
     {
-        "id": "old-latex", "pattern": "You have requested release", "when": "any",
-        "message": "You have requested release '...' of LaTeX",
-        "means": "Your LaTeX is older than this class needs (TeX Live " + str(MIN_TEXLIVE)
-                 + " or newer).",
-        "fix": "Install a current TeX Live.",
-        "overleaf": "Choose the newest TeX Live version in Overleaf's Settings, then recompile.",
-        "guide": ("troubleshooting", "common-messages", COMMON + "Rare messages"),
+        "id": "aux-not-written", "section": "rare",
+        "pattern": r"I can't write on file `[^']*\.aux'", "when": "failed",
+        "message": "I can't write on file `chapters/...aux'",
+        "means": "LaTeX cannot create a chapter's .aux file, because that chapter's folder"
+                 " does not exist where LaTeX writes its scratch files.",
+        "fix": "Do a clean recompile. If you typed your own build command, use one from the"
+               " build commands instead.",
+        "guide": ("going-further", "build-commands", "Build commands"),
     },
     {
-        "id": "tool-missing",
-        "pattern": r"(?:latexmk|pdflatex|xelatex|lualatex|biber)['\"]?(?::| is)? (?:command )?not"
-                   r" (?:found|recognized)|command not found: (?:latexmk|pdflatex|xelatex|lualatex|biber)"
-                   r"|spawn (?:latexmk|pdflatex|xelatex|lualatex|biber) ENOENT|Can't exec \"biber\"",
-        "when": "any",
-        "message": "latexmk, pdflatex, or biber not found, or spawn latexmk ENOENT",
-        "means": "A LaTeX tool (latexmk, the engine, or Biber, the bibliography tool) is not"
-                 " installed, or your editor started before the installation finished.",
-        "fix": "Finish installing the full LaTeX distribution, then quit your editor completely"
-               " and reopen it (on Windows, restart the computer if needed).",
-        "overleaf": "Overleaf has every tool; this message comes from a LaTeX installation on a computer.",
-        "guide": ("troubleshooting", "tools-and-installs", COMMON + "Tools and installs"),
-    },
-    {
-        "id": "class-missing", "pattern": r"File `rpi-thesis\.cls' not found", "when": "failed",
-        "message": "File `rpi-thesis.cls' not found",
-        "means": "LaTeX cannot find the class file, so it is not compiling the starter's folder.",
-        "fix": "Extract the whole ZIP and open the folder that contains main.tex.",
-        "editor": "Open the folder itself (File, Open Folder in VS Code), not only main.tex.",
-        "overleaf": "main.tex and rpi-thesis.cls must be at the top of the file list, not inside a folder.",
-        "guide": ("troubleshooting", "setup-and-files", COMMON + "Setup and files"),
-    },
-    # The class's own messages (rpi-thesis.cls, section 10): settings in metadata.tex.
-    {
-        "id": "thesis-required",
-        "pattern": r"rpi-thesis Error: (?:Missing \S+ in metadata\.tex|Blank committee member name"
-                   r"|No committee members|Graduation year must have four digits)",
-        "when": "failed",
-        "message": "Missing title in metadata.tex (or author, department, year, a committee name, ...)",
-        "means": "A required thesis setting in metadata.tex is empty or not in the expected form;"
-                 " the message names it.",
-        "fix": "Fill it in inside \\thesissetup{...} in metadata.tex: the year as four digits, such as"
-               " 2027, and a name inside the braces of each \\committeemember line. Save and compile"
-               " again. The Settings builder writes a complete block for you.",
-        "editor": "Open metadata.tex. The line the log shows, often \\begin{document} in main.tex,"
-                  " is only where LaTeX checked the settings.",
-        "overleaf": "Open metadata.tex in the file list. The line the log shows, often"
-                    " \\begin{document} in main.tex, is only where LaTeX checked the settings.",
-        "guide": ("settings-builder", "settings-reference", "Settings builder, Settings reference"),
-    },
-    {
-        "id": "thesis-chair", "pattern": "rpi-thesis Error: Committee chair is missing", "when": "failed",
-        "message": "Committee chair is missing",
-        "means": "No \\committeemember line is marked as the chair.",
-        "fix": "Put [Chair] (or [Co-Chair]) on one \\committeemember line, spelled exactly so:"
-               " [chair] is not recognized.",
-        "editor": "Open metadata.tex. The line the log shows, often \\begin{document} in main.tex,"
-                  " is only where LaTeX checked the settings.",
-        "overleaf": "Open metadata.tex in the file list. The line the log shows, often"
-                    " \\begin{document} in main.tex, is only where LaTeX checked the settings.",
-        "guide": ("troubleshooting", "setup-and-files", COMMON + "Setup and files"),
-    },
-    {
-        "id": "thesis-unknown",
-        "pattern": r"rpi-thesis Error: (?:Unknown setting|Unknown degree choice|Unknown graduation month"
-                   r"|Unsupported class option)",
-        "when": "failed",
-        "message": "Unknown setting \"...\", Unknown degree choice, or Unknown graduation month",
-        "means": "A setting name or choice in metadata.tex is misspelled, or in the wrong case.",
-        "fix": "Compare it with the settings table: names are lower case; degree is masters, doctoral,"
-               " or engineering-doctorate; the month is May, August, or December. Keep"
-               " \\documentclass{rpi-thesis} in main.tex without options.",
-        "editor": "Open metadata.tex. The line the log shows, often \\begin{document} in main.tex,"
-                  " is only where LaTeX checked the settings.",
-        "overleaf": "Open metadata.tex in the file list. The line the log shows, often"
-                    " \\begin{document} in main.tex, is only where LaTeX checked the settings.",
-        "guide": ("going-further", "all-thesis-settings", "Going further, All thesis settings"),
-    },
-    {
-        "id": "class-version", "pattern": r"version `[^']*' of document class rpi-thesis", "when": "any",
-        "message": "You have requested ... version ... of document class rpi-thesis",
-        "means": "Your rpi-thesis.cls is older than the rest of your starter files.",
-        "fix": "Copy rpi-thesis.cls from the newest starter into your thesis folder, replacing the old one.",
-        "guide": ("going-further", "update-the-formatting-safely", "Update the formatting safely"),
-    },
-    {
-        "id": "seal-missing", "pattern": "rpi-thesis Warning: RPI seal not found", "when": "built",
-        "message": "RPI seal not found, or a seal placeholder on the title page",
-        "means": "The title page has a box where the seal goes, because the seal file is not in the"
-                 " folder the settings name.",
-        "fix": "Download the seal from RPI and save it as assets/rpi-seal.jpg, or set seal-file in"
-               " metadata.tex to the file's name.",
-        "guide": ("get-started", "add-the-rpi-seal-one-minute", "Get started, Add the RPI seal"),
-    },
-    {
-        "id": "bbl-not-biblatex", "pattern": "not created by biblatex", "when": "any",
+        "id": "bbl-not-biblatex", "section": "citations-and-references", "pattern": "not created by biblatex", "when": "any",
         "message": "File 'main.bbl' not created by biblatex",
         "means": "A bibliography file left from an earlier build, often one that used BibTeX or"
                  " natbib, is still in the folder.",
@@ -677,76 +922,7 @@ KNOWN_PROBLEMS = [
         "guide": ("troubleshooting", "clean-recompile", "Clean recompile"),
     },
     {
-        # A missing graphic; a missing .sty, .cls, or .tex is another problem.
-        "id": "figure-missing",
-        "pattern": r"LaTeX Error: File `(?![^']*\.(?:sty|cls|tex)')[^']*' not found"
-                   r"|pdftex\.def Error: File `[^']*' not found",
-        "when": "failed",
-        "message": "LaTeX Error: File `figures/...' not found",
-        "means": "A figure file named in \\includegraphics is missing.",
-        "fix": "Check the file name, capital letters, extension, and folder (figures/...).",
-        "editor": "Compare the name in \\includegraphics with the file in the figures folder.",
-        "overleaf": "Upload the picture into the figures folder in the file list, then"
-                    " compare its name with the one in \\includegraphics.",
-        "guide": ("troubleshooting", "setup-and-files", COMMON + "Setup and files"),
-    },
-    {
-        "id": "package-missing", "pattern": r"LaTeX Error: File `[^']*\.sty' not found", "when": "failed",
-        "message": "LaTeX Error: File `....sty' not found",
-        "means": "A package named in \\usepackage is not installed, or its name is misspelled.",
-        "fix": "Check the spelling in \\usepackage; if it is right, install the full LaTeX"
-               " distribution or update it.",
-        "overleaf": "Overleaf has nearly every package: check the spelling in \\usepackage.",
-        "guide": ("troubleshooting", "tools-and-installs", COMMON + "Tools and installs"),
-    },
-    {
-        "id": "tex-missing", "pattern": r"LaTeX Error: File `[^']*\.tex' not found|I can't find file `",
-        "when": "failed",
-        "message": "LaTeX Error: File `chapters/....tex' not found",
-        "means": "A file named in \\include or \\input does not exist under that name.",
-        "fix": "Check the file name and folder in the \\include or \\input line in main.tex:"
-               " write it without .tex, with the same capital letters as the file.",
-        "guide": ("troubleshooting", "setup-and-files", COMMON + "Setup and files"),
-    },
-    {
-        "id": "undefined-command", "pattern": "Undefined control sequence", "when": "failed",
-        "message": "Undefined control sequence",
-        "means": "LaTeX does not know a command, usually because of a typo after a backslash,"
-                 " such as \\parencit for \\parencite.",
-        "fix": "Look at the end of the l. line: the last command there is the one LaTeX does"
-               " not know. Correct its spelling, or load the package it comes from.",
-        "guide": ("troubleshooting", "read-an-error-message", "Read an error message"),
-    },
-    {
-        "id": "missing-dollar", "pattern": r"Missing \$ inserted", "when": "failed",
-        "message": "Missing $ inserted",
-        "means": "A math-only character or command, often an underscore _ or ^, is outside $...$.",
-        "fix": "Write \\_ for an underscore in text, or put the math between $ signs.",
-        "guide": ("troubleshooting", "layout-and-the-pdf", COMMON + "Layout and the PDF"),
-    },
-    {
-        "id": "brace",
-        "pattern": r"Runaway argument|File ended while scanning use of|Paragraph ended before \\\S+ was"
-                   r" complete|Missing \} inserted|Extra \}, or forgotten",
-        "when": "failed",
-        "message": "Runaway argument, or a brace error",
-        "means": "A { has no matching }, or there is one } too many.",
-        "fix": "Check your last edit near the line shown for a missing or extra }.",
-        "guide": ("troubleshooting", "layout-and-the-pdf", COMMON + "Layout and the PDF"),
-    },
-    {
-        "id": "environment",
-        "pattern": r"Environment \S+ undefined|\\begin\{[^}]*\} on input line \d+ ended by \\end",
-        "when": "failed",
-        "message": "Environment ... undefined, or \\begin{...} ended by \\end{...}",
-        "means": "The name in \\begin{...} is misspelled, its package is not loaded, or a"
-                 " \\begin{...} and its \\end{...} do not match.",
-        "fix": "Check that each \\begin{name} has an \\end{name} with the same spelling,"
-               " in the right order.",
-        "guide": ("troubleshooting", "read-an-error-message", "Read an error message"),
-    },
-    {
-        "id": "unicode-char", "pattern": r"Unicode character [^\n]*\s+not set up for use with LaTeX",
+        "id": "unicode-char", "section": "layout-and-the-pdf", "pattern": r"Unicode character [^\n]*\s+not set up for use with LaTeX",
         "when": "failed",
         "message": "Unicode character ... not set up for use with LaTeX",
         "means": "pdfLaTeX cannot print one character in your text, often a symbol or letter pasted"
@@ -757,7 +933,7 @@ KNOWN_PROBLEMS = [
         "guide": ("going-further", "choose-a-compile-engine", "Going further, Choose a compile engine"),
     },
     {
-        "id": "font-missing", "pattern": r'The font "[^"]*" cannot be found', "when": "failed",
+        "id": "font-missing", "section": "tools-and-installs", "pattern": r'The font "[^"]*" cannot be found', "when": "failed",
         "message": "Package fontspec Error: The font \"...\" cannot be found",
         "means": "LuaLaTeX or XeLaTeX cannot find a font: the LaTeX installation is not the full one,"
                  " or a font name added in preamble.tex is misspelled.",
@@ -766,62 +942,16 @@ KNOWN_PROBLEMS = [
         "overleaf": "Choose the newest TeX Live version in Overleaf's Settings, then recompile.",
         "guide": ("troubleshooting", "tools-and-installs", COMMON + "Tools and installs"),
     },
-    {
-        "id": "alignment-tab", "pattern": "Misplaced alignment tab character &", "when": "failed",
-        "message": "Misplaced alignment tab character &",
-        "means": "An & is outside a table; most often a title in the .bib file contains &.",
-        "fix": "Write it as \\&.",
-        "guide": ("troubleshooting", "citations-and-references", COMMON + "Citations and references"),
-    },
-    {
-        "id": "biber-not-run", "pattern": r"Please \(re\)run Biber", "when": "built",
-        "message": "Please (re)run Biber on the file",
-        "means": "The bibliography step has not run since your last change, so citations"
-                 " show as keys in bold.",
-        "fix": "Compile again.",
-        "editor": "VS Code with the starter's settings runs Biber for you; in other editors"
-                  " run the bibliography step yourself (Get started, Other editors).",
-        "overleaf": "Recompile; Overleaf runs Biber for you.",
-        "guide": ("troubleshooting", "citations-and-references", COMMON + "Citations and references"),
-    },
-    {
-        "id": "undefined-reference",
-        "pattern": r"Citation [`'][^']*' (?:on page \d+ )?undefined|Reference [`'][^']*'"
-                   r" (?:on page \d+ )?undefined|There were undefined (?:references|citations)",
-        "when": "built",
-        "message": "Citation `...' undefined, or Reference `...' undefined",
-        "means": "A citation or cross-reference is undefined: the PDF shows ?? or a citation"
-                 " key in bold.",
-        "fix": "Check that the key in \\parencite or \\ref matches references.bib or the"
-               " \\label exactly, then build again.",
-        "guide": ("troubleshooting", "citations-and-references", COMMON + "Citations and references"),
-    },
     # Warnings the page lists under the first error (site/explain/core.js, NOTES).
     {
-        "id": "rerun", "pattern": r"Label\(s\) may have changed|Rerun to get [a-z -]+ right", "when": "page",
+        "id": "rerun", "section": "citations-and-references", "pattern": r"Label\(s\) may have changed|Rerun to get [a-z -]+ right", "when": "page",
         "message": "Label(s) may have changed. Rerun to get cross-references right",
         "means": "Numbers, references, or bookmarks changed in this run; the next compile settles them.",
         "fix": "Compile again.",
         "guide": ("troubleshooting", "citations-and-references", COMMON + "Citations and references"),
     },
     {
-        "id": "missing-character", "pattern": "Missing character: There is no", "when": "page",
-        "message": "Missing character: There is no ... in font ...",
-        "means": "The font has no such character, so it is left out of the PDF.",
-        "fix": "Use a LaTeX command for it (such as an accent command), or remove it. Check the"
-               " PDF where it should appear.",
-        "guide": ("troubleshooting", "layout-and-the-pdf", COMMON + "Layout and the PDF"),
-    },
-    {
-        "id": "overfull", "pattern": r"Overfull \\[hv]box", "when": "page",
-        "message": "Overfull \\hbox (...pt too wide)",
-        "means": "Something is wider than the text area and sticks out into the margin: a long URL,"
-                 " word, table, equation, or image.",
-        "fix": "Find it in the PDF at the lines the log names, then resize or break it.",
-        "guide": ("troubleshooting", "layout-and-the-pdf", COMMON + "Layout and the PDF"),
-    },
-    {
-        "id": "underfull", "pattern": r"Underfull \\[hv]box", "when": "page",
+        "id": "underfull", "section": "layout-and-the-pdf", "pattern": r"Underfull \\[hv]box", "when": "page",
         "message": "Underfull \\hbox (badness ...)",
         "means": "LaTeX stretched the spaces in a line or page, often after \\\\ or \\linebreak.",
         "fix": "Usually harmless. Look at those lines in the PDF; remove a manual line break if"
@@ -831,16 +961,33 @@ KNOWN_PROBLEMS = [
 ]
 
 
+def problem_guide(entry):
+    """(page, anchor, section name) of the guide section for a known problem."""
+    if "guide" in entry:
+        return entry["guide"]
+    section = entry["section"]
+    anchor = "common-messages" if section == "rare" else section
+    return ("troubleshooting", anchor, COMMON + SECTIONS[section])
+
+
+def page_problems():
+    """The known problems the Explain my error page looks for, as its JSON."""
+    fields = ("id", "pattern", "means", "fix", "editor", "overleaf")
+    return [{**{key: entry[key] for key in fields if key in entry}, "guide": problem_guide(entry)}
+            for entry in KNOWN_PROBLEMS if "pattern" in entry]
+
+
 def matching_problems(text, when="failed"):
     """The KNOWN_PROBLEMS entries whose pattern is in text, for one build stage."""
     return [entry for entry in KNOWN_PROBLEMS
-            if entry["when"] in (when, "any") and re.search(entry["pattern"], text)]
+            if "pattern" in entry and entry["when"] in (when, "any")
+            and re.search(entry["pattern"], text)]
 
 
 def known_problem(text, when="failed", root=ROOT):
     found = []
     for entry in matching_problems(text, when):
-        page, _, section = entry["guide"]
+        page, _, section = problem_guide(entry)
         parts = [entry["means"], entry["fix"], entry.get("editor", "")]
         found.append(" ".join(part for part in parts if part)
                      + f" See {guide(root, page)} ({section}).")

@@ -101,65 +101,29 @@ the whole PDF ([compile engines](going-further.md#choose-a-compile-engine)).
 
 ## Common messages
 
+The same table drives [Explain my error](explain-my-error.md) and the
+optional [build helper](going-further.md#build-commands), so all three give
+the same advice.
+
 ### Setup and files
 
-| What you see | What to try |
-| --- | --- |
-| `File rpi-thesis.cls not found` | Extract the whole ZIP and open the folder that contains `main.tex`. On Overleaf, `main.tex` must be at the top of the file list ([Overleaf route](get-started.md#step-3b-overleaf-route)). |
-| `Missing title in metadata.tex` (or author, department, ...) | Fill in that setting inside `\thesissetup{...}`. |
-| `Committee chair is missing` | Put `[Chair]` (or `[Co-Chair]`) on one `\committeemember` line, spelled exactly so: `[chair]` is not recognized. |
-| `You have requested ... version ... of document class rpi-thesis` | Your `rpi-thesis.cls` is older than the rest of your starter files. Copy `rpi-thesis.cls` from the newest starter ([update safely](going-further.md#update-the-formatting-safely)). |
-| `Unknown setting "..." in metadata.tex` | A setting name in `\thesissetup{...}` is misspelled. Compare it with [all thesis settings](going-further.md#all-thesis-settings). |
-| `Unknown degree choice` | Use `masters`, `doctoral`, or `engineering-doctorate`, in lower case. |
-| `Unknown graduation month` | Use `May`, `August`, or `December`, with a capital first letter. |
-| `Graduation year must have four digits` | Write the year like `2027`. |
-| `RPI seal not found`, or a seal placeholder on the title page | Save the seal as `assets/rpi-seal.jpg` ([add the RPI seal](get-started.md#add-the-rpi-seal-one-minute)). |
-| `Unsupported class option` | Use `\documentclass{rpi-thesis}` with no options; settings go in `metadata.tex`. |
-| A figure file cannot be found | The message reads ``LaTeX Error: File `figures/...' not found``. Check the file name, capital letters, extension, and the `figures/` path. |
-| `Could not set up appendices` | A line above `\documentclass` in `main.tex`, or an outdated LaTeX installation, changed `\chapter`. Remove lines added above `\documentclass`, or update TeX Live. |
-| A file can't be found, and the folder is in OneDrive or iCloud or its path has non-English letters | Set the folder to "Always keep on this device", or move it to a short, plain path such as `C:\thesis` or `~/thesis`. |
+{{common-messages:setup-and-files}}
 
 ### Citations and references
 
-| What you see | What to try |
-| --- | --- |
-| A citation key in **bold** | Compile again. VS Code with the starter's settings and Overleaf run the bibliography step for you; in other editors run it yourself ([other editors](get-started.md#other-editors)). Still bold? Check that the key is spelled the same in your citation command and in `references.bib`. |
-| **??** instead of a number | Compile again. Check the `\label` and `\ref` spelling. |
-| The reference list is empty | Cite at least one entry, for example with `\parencite{key}`, then compile again. |
-| A new Zotero source doesn't appear | Re-export, compile again, and check that the key in your citation command matches the key in the `.bib` file exactly. |
-| `Misplaced alignment tab character &` in the references | A title in the `.bib` file contains `&`. Write it as `\&`. |
-| `File 'main.bbl' not created by biblatex` | A bibliography file from an earlier build, often one that used BibTeX or `natbib`, is in the way. Do a [clean recompile](#clean-recompile). |
+{{common-messages:citations-and-references}}
 
 ### Layout and the PDF
 
-| What you see | What to try |
-| --- | --- |
-| `Missing $ inserted` | Look for an unescaped `_` or a math command outside `$...$`. Write `\_` for an underscore. |
-| `Runaway argument` or a brace error | Check your last edit for a missing `}`. |
-| A special character (such as an accented letter, or one from another alphabet) is missing or garbled | Use a LaTeX accent command, or try another engine ([compile engines](going-further.md#choose-a-compile-engine)). |
-| `STIX Two Math font not found` | On Overleaf, choose the newest available TeX Live version. On your computer, update your full LaTeX installation. Then do a [clean recompile](#clean-recompile) and inspect the affected math: a few symbols, such as `\bigstar`, `\digamma`, and `\subseteqq`, need this fallback font with LuaLaTeX or XeLaTeX. |
-| `Overfull \hbox` | Something is wider than the text area: a long URL, table, equation, or image. Find it in the PDF and resize or break it. |
-| `Overfull \vbox` on the title page | Remove manual line breaks from the title; check long names and committee lines. |
-| A figure floats to a different page | Normal. Use `[htbp]` after `\begin{figure}` and write "Figure~\ref{...}", not "below". |
-| An edit, the contents, or the references do not update | Save every file and check you are viewing the new PDF, not an old copy ([where it ends up](how-it-works.md#where-the-pdf-ends-up)). Still stale? Do a [clean recompile](#clean-recompile). |
-| The optional [build helper](going-further.md#build-commands) prints "Pre-submission hints" | Your PDF was built. Fix each listed line before submitting ([web sources](citations.md#web-sources-need-an-access-date), [short captions](writing.md#use-one-full-caption-not-a-short-one)). |
+{{common-messages:layout-and-the-pdf}}
 
 ### Tools and installs
 
-| What you see | What to try |
-| --- | --- |
-| `latexmk`, `pdflatex`, or `biber` not found, or `spawn latexmk ENOENT` | Finish installing the full LaTeX distribution, then quit your editor completely and reopen it (on Windows, restart the computer if needed). On Linux, use VS Code's `.deb` or `.rpm`, not the Flatpak. Optional: the build helper's setup check names the missing tool ([build commands](going-further.md#build-commands)). |
-| VS Code says **Restricted Mode**, or LaTeX Workshop does nothing | Click **Restricted Mode** in the status bar and choose **Trust**. LaTeX Workshop is off in untrusted folders. |
-| Overleaf says the compile timed out | Try **Fast [draft]** from the Recompile menu, shrink large photos, export plots as PDF, or compile on your computer. **Fast draft** shows images as empty boxes, so switch back to **Normal** and check every figure and the seal before you share or submit ([Overleaf: compile timeouts](https://docs.overleaf.com/troubleshooting-and-support/fixing-and-preventing-compile-timeouts)). |
+{{common-messages:tools-and-installs}}
 
-<details><summary>Rare messages: old TeX Live, a bibliography version mismatch, the bibliography step on a Mac, typed build commands</summary>
+<details><summary>Rare messages: an old LaTeX installation, version mismatches, the bibliography step on a Mac, typed build commands</summary>
 
-| What you see | What to try |
-| --- | --- |
-| `You have requested release '...' of LaTeX` | Your installed LaTeX is older than this starter needs. Install the current full [TeX Live from tug.org](https://tug.org/texlive/quickinstall.html), or use [Overleaf](get-started.md#step-3b-overleaf-route). |
-| `Found biblatex control file version ..., expected version ...` | Try a [clean recompile](#clean-recompile) first. If it persists, the bibliography step and biblatex probably come from different LaTeX installations: keep one distribution and update it fully. |
-| On a Mac, the bibliography step fails and the log mentions `biber` and `lipo` | An older Mac build of the bibliography program (Biber) that newer macOS can't start; your thesis is fine. Open **TeX Live Utility** (Applications → TeX), choose **Update all packages**, and compile again. |
-| `I can't write on file build/chapters/...aux` (or `chapters/...aux`, `appendices/...aux`) | The starter's settings create those folders for you. If you see this, do a [clean recompile](#clean-recompile). If you typed your own build command, use one from [build commands](going-further.md#build-commands) instead. |
+{{common-messages:rare}}
 
 </details>
 

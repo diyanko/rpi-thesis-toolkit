@@ -60,7 +60,7 @@
       what: "The title page shows a box where the RPI seal goes." },
     { kind: "character", problem: "missing-character", title: ["character missing", "characters missing"],
       what: "The font has no such character, so it is left out of the PDF." },
-    { kind: "overfull", problem: "overfull", title: ["line too wide", "lines too wide"],
+    { kind: "overfull", problem: "overfull-hbox", title: ["line too wide", "lines too wide"],
       what: "Something sticks out into the margin: often a long URL, word, table, or equation; the widest is listed first." },
     { kind: "underfull", problem: "underfull", title: ["loosely spaced line", "loosely spaced lines"],
       what: "LaTeX stretched the spaces, often after \\\\ or \\linebreak. Usually harmless; look if it shows in the PDF." }
