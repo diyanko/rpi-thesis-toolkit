@@ -53,7 +53,9 @@ jobs:
           apt-get install -y --no-install-recommends ca-certificates curl poppler-utils python3 python3-pip
           python3 -m pip install --break-system-packages --no-cache-dir pypdf
           v=$(sed -n "s/^  PANDOC_VERSION: '\(.*\)'/\1/p" .github/workflows/build.yml)
+          sum=$(sed -n "s/^  PANDOC_SHA256: *//p" .github/workflows/build.yml)
           curl -fsSL -o /tmp/pandoc.deb "https://github.com/jgm/pandoc/releases/download/$v/pandoc-$v-1-amd64.deb"
+          echo "$sum  /tmp/pandoc.deb" | sha256sum -c -
           dpkg -i /tmp/pandoc.deb
           pandoc --version | head -1
       - name: Verify on the newest TeX Live
