@@ -15,11 +15,11 @@ date and links its download and its code changes on GitHub, and the
 [requirements map](docs/project/requirements.md) records every formatting
 rule with its source.
 
-## Unreleased
+## 0.10.0 (beta), 18 Oct 2026
+
+Published as the pre-release `v0.10.0`.
 
 **Changes your PDF?** No.
-
-**Version:** minor
 
 - **Settings builder:** a title page sketch follows the form as you type
   (switch it off if you prefer), with your title, name, degree, committee,

@@ -135,7 +135,7 @@ OFFLINE_SCRIPTS = {"bring-your-work-in", "explain-my-error"}
 # from it; README.md and docs/get-started.md link the same files by hand, and the build
 # stops if they differ. --publish also requires the class version to match, so the site
 # never describes files the download does not contain (docs/project/maintenance.md).
-RELEASE_VERSION = "0.9.0"
+RELEASE_VERSION = "0.10.0"
 RELEASE_TAG = "v" + RELEASE_VERSION
 # Pictures the guide pages ask for; --publish fails without them.
 REQUIRED_PREVIEWS = ["compile-pass-1-chapter", "compile-pass-2-chapter", "class-demo-ams", "class-demo-ieee"]
