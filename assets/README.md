@@ -14,7 +14,7 @@ you add the seal.
    the OGE manual shows an older design; use the one from the Thesis
    Preparation page.)
 2. Rename the file to exactly **`rpi-seal.jpg`** (all lower case, with a
-   hyphen).
+   hyphen), or keep its name and set `seal-file` (below).
 3. Put it in this `assets/` folder, next to this README.
 4. Compile again. The seal replaces the placeholder box.
 
@@ -25,7 +25,7 @@ Then click **Recompile**.
 **If RPI provides a PNG file:** save it as **`rpi-seal.png`** instead. The
 class uses `assets/rpi-seal.png` automatically when `rpi-seal.jpg` is missing.
 
-<details><summary>For experienced users: a different file name or folder</summary>
+<details><summary>Optional: a different file name or folder</summary>
 
 Set `seal-file` in `metadata.tex`, for example
 `seal-file = assets/my-seal.png`. The title page prints the image 1.625 in

@@ -35,7 +35,8 @@ put `main.pdf` beside `main.tex`.
 <details id="your-computer-to-overleaf"><summary>Your computer to Overleaf</summary>
 
 1. ZIP your whole project folder, including your downloaded seal in
-   `assets/` (you can leave out `build/`).
+   `assets/` (you can leave out `build/`, `guide/`, `START-HERE.html`, and
+   the cheat sheet PDF).
 2. Upload it as a new Overleaf project, then set the main document and
    compiler as in [the Overleaf route](get-started.md#step-3b-overleaf-route).
 3. Recompile. Overleaf runs the bibliography step for you.
@@ -466,7 +467,7 @@ anything else confidential.
 I am setting up the RPI Thesis Toolkit, an unofficial, community-made LaTeX starter for RPI theses and dissertations. Its guide is https://diyanko.github.io/rpi-thesis-toolkit/guide/get-started.html. I use [Overleaf / my computer with Windows, macOS, or Linux]. Walk me through [installing LaTeX / opening the starter] one step at a time, following that guide. Do not change rpi-thesis.cls, and do not invent OGE rules: say when I should check OGE's own pages.
 ```
 
-**Convert to LaTeX:**
+**Convert a section with AI:**
 
 ```prompt
 I am using the RPI Thesis Toolkit, an unofficial LaTeX starter for RPI theses. Convert this [Word section / Markdown text / table / equation] into LaTeX for a chapter file of that starter: [paste it or attach the file]. Preserve every word, value, and symbol, and flag anything unclear instead of guessing. Use plain LaTeX commands, add no formatting packages, leave rpi-thesis.cls untouched, and do not invent OGE rules.
@@ -646,7 +647,7 @@ check glyphs and pagination. Other writing systems are untested.
   LuaLaTeX or XeLaTeX.
 - **VS Code:** open the Command Palette (Ctrl+Shift+P, or Cmd+Shift+P on
   macOS), run **LaTeX Workshop: Build with recipe**, and pick
-  **RPI Thesis Toolkit: LuaLaTeX + Biber** or **XeLaTeX + Biber**. Pick it
+  **RPI Thesis Toolkit: LuaLaTeX + Biber (Unicode)** or **XeLaTeX + Biber (Unicode)**. Pick it
   again after you reopen VS Code.
 
 Optional, with the build helper, from the folder containing `main.tex` (on

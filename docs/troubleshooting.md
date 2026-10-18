@@ -82,7 +82,7 @@ looks impossible. It never changes your writing.
 - **VS Code:** open the Command Palette (Ctrl+Shift+P, or Cmd+Shift+P on
   macOS), run **LaTeX Workshop: Clean up auxiliary files**, then compile again.
   To change the engine, run **LaTeX Workshop: Build with recipe** and pick
-  **RPI Thesis Toolkit: XeLaTeX + Biber** or **LuaLaTeX + Biber** (Biber is
+  **RPI Thesis Toolkit: XeLaTeX + Biber (Unicode)** or **LuaLaTeX + Biber (Unicode)** (Biber is
   the bibliography step). Saving keeps using that choice until you close
   VS Code; after you reopen it, pick it again the same way.
   <!-- TODO(verify): read from LaTeX Workshop 10.19 source (the last recipe is remembered in memory only); not hand-tested in VS Code. -->
