@@ -20,6 +20,8 @@ import build  # noqa: E402
 from chrome import Chrome  # noqa: E402
 from common import ROOT, find_chrome  # noqa: E402
 
+LOGS = {path.stem: path.read_text(encoding="utf-8") for path in (ROOT / "scripts/tests/explain_fixtures").glob("*.log")}
+
 TYPO = ("./chapters/01-introduction.tex:13: Undefined control sequence.\n"
         "l.13 example~\\parencit\n"
         "                      {lamport1994}. Replace it with literature relevant to\n")
@@ -83,11 +85,36 @@ FIXTURES = {
         "tool-missing", None, None),
     "latexmk-missing-vscode": ("spawn latexmk ENOENT\n", "tool-missing", None, None),
     "biber-mac": ("biber: lipo: can't figure out the architecture type of: biber\n", "biber-mac", None, None),
+    # The class's own messages about metadata.tex.
+    "thesis-title": (
+        "! Class rpi-thesis Error: Missing title in metadata.tex.\n\n"
+        "See the rpi-thesis class documentation for explanation.\n"
+        "Type  H <return>  for immediate help.\n ...\n\nl.5 \\begin{document}\n", "thesis-required", "", "5"),
+    "thesis-year": ("! Class rpi-thesis Error: Graduation year must have four digits.\n\nl.5 \\begin{document}\n",
+                    "thesis-required", "", "5"),
+    "thesis-chair": (
+        "./main.tex:5: Class rpi-thesis Error: Committee chair is missing: roles given in metadata.tex"
+        " were [chair], but the role must be written [Chair] or [Co-Chair].\n\nl.5 \\begin{document}\n",
+        "thesis-chair", "main.tex", "5"),
+    "thesis-degree": (
+        "! Class rpi-thesis Error: Unknown degree choice \"phd\" in metadata.tex.\n\nl.4 }\n",
+        "thesis-unknown", "", "4"),
+    "class-version": (
+        "LaTeX Warning: You have requested, on input line 1, version `2026/10/17' of document class"
+        " rpi-thesis, but only version `2026/01/01' is available.\n", "class-version", None, None),
+    "seal-missing": ("Class rpi-thesis Warning: RPI seal not found. Download it from RPI.\n",
+                     "seal-missing", None, None),
+    "bbl-not-biblatex": ("! Package biblatex Error: File 'main.bbl' not created by biblatex.\n\n"
+                         "l.20 \\begin{document}\n", "bbl-not-biblatex", "", "20"),
     # An error nobody listed: the page shows the generic reading steps.
     "unknown-error": ("./main.tex:9: Something nobody has seen before.\nl.9 \\weird\n", None, "main.tex", "9"),
     "only-emergency-stop": ("! Emergency stop.\n<*> main.tex\n*** (job aborted, no legal \\end found)\n",
                             None, "", ""),
     "no-error": ("Output written on build/main.pdf (12 pages, 345678 bytes).\n", None, None, None),
+    # Real logs (explain_fixtures/README.txt says how each was made).
+    "log-starter-failed": (LOGS["starter-failed"], "undefined-command", "chapters/02-research.tex", "28"),
+    "log-unicode": (LOGS["pdflatex-unicode"], "unicode-char", "c.tex", "3"),
+    "log-font-missing": (LOGS["xelatex-font-missing"], "font-missing", "e.tex", "4"),
 }
 
 
@@ -113,6 +140,14 @@ class SharedTable(unittest.TestCase):
                 found = [entry["id"] for entry in build.KNOWN_PROBLEMS if build.re.search(entry["pattern"], where)]
                 self.assertEqual(found[:1], [expected] if expected else [])
 
+    def test_warning_patterns_match_real_logs_in_python(self):
+        for log, ids in (("starter-built", ("undefined-reference", "seal-missing", "overfull", "underfull")),
+                         ("starter-failed", ("biber-not-run", "rerun")),
+                         ("lualatex-missing-character", ("missing-character",))):
+            found = [entry["id"] for entry in build.KNOWN_PROBLEMS if build.re.search(entry["pattern"], unwrap(LOGS[log]))]
+            for expected in ids:
+                self.assertIn(expected, found, log)
+
     def test_patterns_read_the_same_in_javascript(self):
         for entry in build.KNOWN_PROBLEMS:
             for python_only in ("(?P", "(?i", "(?m", "(?s", "(?x", "\\A", "\\Z", "(?#"):
@@ -124,7 +159,7 @@ class SharedTable(unittest.TestCase):
         for entry in build.KNOWN_PROBLEMS:
             page, anchor, _ = entry["guide"]
             self.assertTrue((ROOT / "docs" / (page + ".md")).is_file(), entry["id"])
-            self.assertIn(entry["when"], ("failed", "built", "any"), entry["id"])
+            self.assertIn(entry["when"], ("failed", "built", "any", "page"), entry["id"])
 
     def test_build_helper_prints_the_same_advice(self):
         advice = build.known_problem(FIXTURES["typo"][0], "failed")
@@ -158,15 +193,62 @@ class Page(unittest.TestCase):
                 else:
                     self.assertEqual((found["error"]["file"], found["error"]["line"]), (file, line))
 
+    def test_whole_failed_log_lists_the_rest(self):
+        found = self.explain(LOGS["starter-failed"])
+        self.assertEqual(found["error"]["read"], "The table shows \\textbff")
+        self.assertEqual(found["error"]["rest"], "{results}.")
+        notes = {note["kind"]: note for note in found["notes"]}
+        self.assertEqual(list(notes), ["error", "citation", "reference", "biber", "rerun", "seal", "overfull", "underfull"])
+        self.assertEqual(notes["error"]["title"], "2 more errors")
+        self.assertEqual([(item["file"], item["line"], item["problem"]["id"]) for item in notes["error"]["items"]],
+                         [("chapters/03-conclusion.tex", "11", "missing-dollar"), ("main.tex", "24", "missing-dollar")])
+        self.assertEqual([item["text"] for item in notes["citation"]["items"]], ["lamport1994", "smith2099", "rpi-submission"])
+        self.assertEqual(notes["citation"]["items"][1]["file"], "chapters/01-introduction.tex")
+        self.assertEqual(notes["citation"]["items"][1]["line"], "13")
+        self.assertEqual(notes["reference"]["count"], 8)
+        self.assertEqual(len(notes["reference"]["items"]), 5)   # the first few; the count says the rest
+        self.assertEqual(notes["reference"]["items"][2]["text"], "fig:nothere")
+        self.assertEqual(notes["overfull"]["items"], [{"text": "11.3 pt too wide", "file": "chapters/01-introduction.tex",
+                                                        "line": "23\u201326"}])
+        self.assertEqual(notes["biber"]["problem"]["id"], "biber-not-run")
+        self.assertEqual((notes["biber"]["count"], notes["biber"]["items"]), (0, []))
+
+    def test_whole_built_log_leads_with_the_warning_that_matters(self):
+        found = self.explain(LOGS["starter-built"])
+        self.assertIsNone(found["error"])
+        self.assertEqual(found["problem"]["id"], "undefined-reference")
+        titles = [note["title"] for note in found["notes"]]
+        self.assertEqual(titles, ["1 citation not found", "1 reference not found", "RPI seal not found",
+                                  "1 line too wide", "1 loosely spaced line"])
+        self.assertEqual(found["notes"][0]["items"][0]["text"], "smith2099")
+
+    def test_missing_characters_are_named_once(self):
+        found = self.explain(LOGS["lualatex-missing-character"])
+        self.assertEqual(found["problem"]["id"], "missing-character")
+        note = found["notes"][0]
+        self.assertEqual(note["title"], "2 characters missing")
+        self.assertEqual([item["text"] for item in note["items"]], ["\u10d0 (U+10D0)", "\u4e2d (U+4E2D)"])
+
+    def test_boxes_widest_first_and_file_from_the_log(self):
+        text = ("(./chapters/a.tex\nOverfull \\hbox (2.5pt too wide) in paragraph at lines 3--4\n[]\\T1/ntxtlf/m/n/12 (see\n\n"
+                "Overfull \\hbox (11.31158pt too wide) detected at line 9\n []\n\n)\n(./chapters/b.tex\n"
+                "Underfull \\hbox (badness 10000) in paragraph at lines 5--5\n []\n\n)\n")
+        notes = {note["kind"]: note for note in self.explain(text)["notes"]}
+        self.assertEqual([(item["file"], item["line"], item["text"]) for item in notes["overfull"]["items"]],
+                         [("chapters/a.tex", "9", "11.3 pt too wide"), ("chapters/a.tex", "3\u20134", "2.5 pt too wide")])
+        self.assertEqual([(item["file"], item["line"]) for item in notes["underfull"]["items"]], [("chapters/b.tex", "5")])
+
+    def test_file_comes_from_the_log_without_file_line_error(self):
+        found = self.explain("(./main.tex (./chapters/02-research.tex\n! Undefined control sequence.\nl.20 \\foo\n")
+        self.assertEqual((found["error"]["file"], found["error"]["line"], found["error"]["guessed"]),
+                         ("chapters/02-research.tex", "20", True))
+
     def test_same_first_error_as_the_build_helper(self):
         for name, (text, _, file, _) in FIXTURES.items():
             if file is not None:
                 with self.subTest(name):
                     self.assertEqual(self.explain(text)["error"]["block"], build.first_error(unwrap(text)))
 
-
-if __name__ == "__main__":
-    unittest.main()
 
 
 class FileNames(unittest.TestCase):
@@ -177,3 +259,7 @@ class FileNames(unittest.TestCase):
         pattern = next(p["pattern"] for p in build.KNOWN_PROBLEMS if p["id"] == "biber-mac")
         self.assertIsNone(re.search(pattern, "./chapters/liposomes.tex:13: Undefined control sequence."))
         self.assertTrue(re.search(pattern, "biber: error: lipo not found"))
+
+
+if __name__ == "__main__":
+    unittest.main()

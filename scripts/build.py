@@ -528,7 +528,9 @@ def biber_errors(output, since, latexmk_text=""):
 #   pattern   a regular expression that Python and JavaScript read the same
 #             way (no (?P<...>), inline flags, \A or \Z)
 #   when      where build.py looks: "failed" (a failed build's output),
-#             "built" (the log of a build that made a PDF), or "any"
+#             "built" (the log of a build that made a PDF), or "any";
+#             "page" for warnings only the page lists (build.py reports
+#             layout in its own words, see layout_warnings)
 #   message   the message as a student sees it, for the page's table
 #   means     what it means, in plain words
 #   fix       what to do, wherever you write
@@ -601,6 +603,79 @@ KNOWN_PROBLEMS = [
         "overleaf": "main.tex and rpi-thesis.cls must be at the top of the file list, not inside a folder.",
         "guide": ("troubleshooting", "setup-and-files", COMMON + "Setup and files"),
     },
+    # The class's own messages (rpi-thesis.cls, section 10): settings in metadata.tex.
+    {
+        "id": "thesis-required",
+        "pattern": r"rpi-thesis Error: (?:Missing \S+ in metadata\.tex|Blank committee member name"
+                   r"|No committee members|Graduation year must have four digits)",
+        "when": "failed",
+        "message": "Missing title in metadata.tex (or author, department, year, a committee name, ...)",
+        "means": "A required thesis setting in metadata.tex is empty or not in the expected form;"
+                 " the message names it.",
+        "fix": "Fill it in inside \\thesissetup{...} in metadata.tex: the year as four digits, such as"
+               " 2027, and a name inside the braces of each \\committeemember line. Save and compile"
+               " again. The Settings builder writes a complete block for you.",
+        "editor": "Open metadata.tex. The line the log shows, often \\begin{document} in main.tex,"
+                  " is only where LaTeX checked the settings.",
+        "overleaf": "Open metadata.tex in the file list. The line the log shows, often"
+                    " \\begin{document} in main.tex, is only where LaTeX checked the settings.",
+        "guide": ("settings-builder", "settings-reference", "Settings builder, Settings reference"),
+    },
+    {
+        "id": "thesis-chair", "pattern": "rpi-thesis Error: Committee chair is missing", "when": "failed",
+        "message": "Committee chair is missing",
+        "means": "No \\committeemember line is marked as the chair.",
+        "fix": "Put [Chair] (or [Co-Chair]) on one \\committeemember line, spelled exactly so:"
+               " [chair] is not recognized.",
+        "editor": "Open metadata.tex. The line the log shows, often \\begin{document} in main.tex,"
+                  " is only where LaTeX checked the settings.",
+        "overleaf": "Open metadata.tex in the file list. The line the log shows, often"
+                    " \\begin{document} in main.tex, is only where LaTeX checked the settings.",
+        "guide": ("troubleshooting", "setup-and-files", COMMON + "Setup and files"),
+    },
+    {
+        "id": "thesis-unknown",
+        "pattern": r"rpi-thesis Error: (?:Unknown setting|Unknown degree choice|Unknown graduation month"
+                   r"|Unsupported class option)",
+        "when": "failed",
+        "message": "Unknown setting \"...\", Unknown degree choice, or Unknown graduation month",
+        "means": "A setting name or choice in metadata.tex is misspelled, or in the wrong case.",
+        "fix": "Compare it with the settings table: names are lower case; degree is masters, doctoral,"
+               " or engineering-doctorate; the month is May, August, or December. Keep"
+               " \\documentclass{rpi-thesis} in main.tex without options.",
+        "editor": "Open metadata.tex. The line the log shows, often \\begin{document} in main.tex,"
+                  " is only where LaTeX checked the settings.",
+        "overleaf": "Open metadata.tex in the file list. The line the log shows, often"
+                    " \\begin{document} in main.tex, is only where LaTeX checked the settings.",
+        "guide": ("going-further", "all-thesis-settings", "Going further, All thesis settings"),
+    },
+    {
+        "id": "class-version", "pattern": r"version `[^']*' of document class rpi-thesis", "when": "any",
+        "message": "You have requested ... version ... of document class rpi-thesis",
+        "means": "Your rpi-thesis.cls is older than the rest of your starter files.",
+        "fix": "Copy rpi-thesis.cls from the newest starter into your thesis folder, replacing the old one.",
+        "guide": ("going-further", "update-the-formatting-safely", "Update the formatting safely"),
+    },
+    {
+        "id": "seal-missing", "pattern": "rpi-thesis Warning: RPI seal not found", "when": "built",
+        "message": "RPI seal not found, or a seal placeholder on the title page",
+        "means": "The title page has a box where the seal goes, because the seal file is not in the"
+                 " folder the settings name.",
+        "fix": "Download the seal from RPI and save it as assets/rpi-seal.jpg, or set seal-file in"
+               " metadata.tex to the file's name.",
+        "guide": ("get-started", "add-the-rpi-seal-one-minute", "Get started, Add the RPI seal"),
+    },
+    {
+        "id": "bbl-not-biblatex", "pattern": "not created by biblatex", "when": "any",
+        "message": "File 'main.bbl' not created by biblatex",
+        "means": "A bibliography file left from an earlier build, often one that used BibTeX or"
+                 " natbib, is still in the folder.",
+        "fix": "Do a clean recompile, then build again.",
+        "editor": "In VS Code, run LaTeX Workshop: Clean up auxiliary files; with the build"
+                  " helper, python3 scripts/build.py --fresh.",
+        "overleaf": "Open the Recompile menu and choose Recompile from scratch.",
+        "guide": ("troubleshooting", "clean-recompile", "Clean recompile"),
+    },
     {
         # A missing graphic; a missing .sty, .cls, or .tex is another problem.
         "id": "figure-missing",
@@ -671,6 +746,27 @@ KNOWN_PROBLEMS = [
         "guide": ("troubleshooting", "read-an-error-message", "Read an error message"),
     },
     {
+        "id": "unicode-char", "pattern": r"Unicode character [^\n]*\s+not set up for use with LaTeX",
+        "when": "failed",
+        "message": "Unicode character ... not set up for use with LaTeX",
+        "means": "pdfLaTeX cannot print one character in your text, often a symbol or letter pasted"
+                 " from Word or the web. The message names it, and the l. line ends with it.",
+        "fix": "Replace that character with a LaTeX command (for example $\\geq$ for the"
+               " greater-than-or-equal sign), or compile with LuaLaTeX and check the PDF: its font"
+               " must have the character.",
+        "guide": ("going-further", "choose-a-compile-engine", "Going further, Choose a compile engine"),
+    },
+    {
+        "id": "font-missing", "pattern": r'The font "[^"]*" cannot be found', "when": "failed",
+        "message": "Package fontspec Error: The font \"...\" cannot be found",
+        "means": "LuaLaTeX or XeLaTeX cannot find a font: the LaTeX installation is not the full one,"
+                 " or a font name added in preamble.tex is misspelled.",
+        "fix": "Install or update the full LaTeX distribution. If you named a font yourself,"
+               " check its exact name, or remove that line to use the class's font.",
+        "overleaf": "Choose the newest TeX Live version in Overleaf's Settings, then recompile.",
+        "guide": ("troubleshooting", "tools-and-installs", COMMON + "Tools and installs"),
+    },
+    {
         "id": "alignment-tab", "pattern": "Misplaced alignment tab character &", "when": "failed",
         "message": "Misplaced alignment tab character &",
         "means": "An & is outside a table; most often a title in the .bib file contains &.",
@@ -699,6 +795,38 @@ KNOWN_PROBLEMS = [
         "fix": "Check that the key in \\parencite or \\ref matches references.bib or the"
                " \\label exactly, then build again.",
         "guide": ("troubleshooting", "citations-and-references", COMMON + "Citations and references"),
+    },
+    # Warnings the page lists under the first error (site/explain/core.js, NOTES).
+    {
+        "id": "rerun", "pattern": r"Label\(s\) may have changed|Rerun to get [a-z -]+ right", "when": "page",
+        "message": "Label(s) may have changed. Rerun to get cross-references right",
+        "means": "Numbers, references, or bookmarks changed in this run; the next compile settles them.",
+        "fix": "Compile again.",
+        "guide": ("troubleshooting", "citations-and-references", COMMON + "Citations and references"),
+    },
+    {
+        "id": "missing-character", "pattern": "Missing character: There is no", "when": "page",
+        "message": "Missing character: There is no ... in font ...",
+        "means": "The font has no such character, so it is left out of the PDF.",
+        "fix": "Use a LaTeX command for it (such as an accent command), or remove it. Check the"
+               " PDF where it should appear.",
+        "guide": ("troubleshooting", "layout-and-the-pdf", COMMON + "Layout and the PDF"),
+    },
+    {
+        "id": "overfull", "pattern": r"Overfull \\[hv]box", "when": "page",
+        "message": "Overfull \\hbox (...pt too wide)",
+        "means": "Something is wider than the text area and sticks out into the margin: a long URL,"
+                 " word, table, equation, or image.",
+        "fix": "Find it in the PDF at the lines the log names, then resize or break it.",
+        "guide": ("troubleshooting", "layout-and-the-pdf", COMMON + "Layout and the PDF"),
+    },
+    {
+        "id": "underfull", "pattern": r"Underfull \\[hv]box", "when": "page",
+        "message": "Underfull \\hbox (badness ...)",
+        "means": "LaTeX stretched the spaces in a line or page, often after \\\\ or \\linebreak.",
+        "fix": "Usually harmless. Look at those lines in the PDF; remove a manual line break if"
+               " the spacing looks wrong.",
+        "guide": ("troubleshooting", "layout-and-the-pdf", COMMON + "Layout and the PDF"),
     },
 ]
 
