@@ -255,7 +255,7 @@ const styleSeen = {};
 function recordStyles(win, doc, page) {
   for (const selector of STYLED) {
     for (const el of doc.querySelectorAll(selector)) {
-      if (el.closest("[hidden], .visually-hidden, dialog:not([open]), .component-variant")) continue;
+      if (el.closest("[hidden], .visually-hidden, dialog:not([open])")) continue;
       const cs = win.getComputedStyle(el);
       if (cs.display === "none" || !el.getBoundingClientRect().width) continue;
       const look = LOOK.map((k) => cs[k]).join(" ");

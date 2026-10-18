@@ -614,7 +614,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .dd .w-terra  { fill: var(--terra-wash); }
 .dd .w-plum   { fill: var(--plum-wash); }
 .dd .f-card   { fill: var(--card); }
-.doodle .f-butter { fill: var(--butter-wash); stroke: none; }
 
 /* Cards: paper on paper, with an even edge all round. */
 .card {
@@ -680,13 +679,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .release-pdf-q { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: var(--c); }
 .release-pdf code { background: var(--card); }
 
-/* Margin note: Fraunces italic with a little squiggle */
-.margin-note {
-  font-family: var(--font-display);
-  font-style: italic;
-  line-height: 1.45;
-  color: var(--muted);
-}
 
 /* ---------- 6. Landing page --------------------------------------------- */
 .home-top .squiggle { position: relative; white-space: nowrap; }
@@ -766,7 +758,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 
 /* Short home page (#16): the message with the two ways to start, one
-   drawing, what is in the toolkit, three doors (Start, Tools, Help), then a
+   drawing, the "What's here" columns (Start, Tools, Help), then a
    "What's new" line and "Share this guide". Compact: the core fits in about
    one and a half laptop screens. */
 .home-top { max-width: var(--page-max); margin: 0 auto; padding: clamp(14px, 3vw, 36px) var(--gutter) 0; }
@@ -795,18 +787,9 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .home-figure.wide img { max-width: 57.5rem; }   /* 920px; grows with the type on very large screens */
 .section-title { font-size: clamp(1.35rem, 1.15rem + 0.8vw, 1.75rem); margin: 0 0 16px; }
 
-/* "What's in the toolkit": a quiet overview with small doodles, no links
-   (the doors below hold those). Variant B merges it into the doors (.here). */
-.toolkit { padding-top: clamp(22px, 3vw, 34px); }
-.toolkit-grid {
-  list-style: none; margin: 0; padding: 0;
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 28px;
-}
-.toolkit-grid li { display: flex; gap: 12px; align-items: flex-start; margin: 0; }
+/* Small doodles beside each line of "What's here" (below). */
 .tk-icon { width: 40px; height: 40px; flex: none; }
-.toolkit-grid p, .here-col li p { margin: 0; font-size: 0.95rem; line-height: 1.4; color: var(--ink-soft); }
-.toolkit-grid strong { display: block; color: var(--ink); font-size: 1rem; }
-.toolkit-grid p > span { display: block; }
+.here-col li p { margin: 0; font-size: 0.95rem; line-height: 1.4; color: var(--ink-soft); }
 .toolkit-isnt {
   margin: 18px 0 0; padding: 10px 16px;
   font-size: 0.95rem; line-height: 1.5; color: var(--ink-soft);
@@ -816,7 +799,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .toolkit-isnt strong { color: var(--ink); }
 
-.doors-section { padding: clamp(24px, 3vw, 36px) 0 clamp(24px, 3vw, 34px); }
 .doors { gap: 26px; isolation: isolate; }
 .doors .card, .here-col { box-shadow: 3px 3px 0 var(--line-strong); }   /* the pager's and result cards' offset */
 .doors .card { padding: clamp(18px, 2.2vw, 24px) clamp(18px, 2.4vw, 26px) clamp(10px, 1.4vw, 14px); }
@@ -826,12 +808,12 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .doors .help-card p { font-size: 0.98rem; margin-bottom: 0.7rem; }
 .doors .help-card ul { padding-top: 0.5rem; }
 .doors .help-card li a { padding: 7px 0; }
-:is(.door-start, .here-start) .kicker { color: var(--sage); }
-:is(.door-tools, .here-tools) .kicker { color: var(--blue); }
-:is(.door-help, .here-help) .kicker   { color: var(--terra); }
+.here-start .kicker { color: var(--sage); }
+.here-tools .kicker { color: var(--blue); }
+.here-help .kicker  { color: var(--terra); }
 .doors li a { white-space: normal; }   /* longer link names wrap at large text sizes */
 
-/* Variant B: "What's here", the doors with everything in the toolkit listed
+/* "What's here", the doors with everything in the toolkit listed
    under them; each line is an icon, a link and a few words. */
 .here { padding-top: clamp(22px, 3vw, 34px); }
 .here-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; isolation: isolate; }
@@ -874,7 +856,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   padding-top: 14px;
   border-top: 1.5px dashed var(--line-strong);
 }
-.toolkit + .doors-section, .here + .home-foot { margin-top: 0; }
 .here + .home-foot { margin-top: clamp(24px, 3vw, 34px); }
 .home-news { margin: 0; flex: 1 1 30rem; max-width: 60rem; color: var(--ink-soft); }
 .home-news .tag { margin-right: 0.4em; }
@@ -926,7 +907,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .share-status:empty { display: none; }
 @media (max-width: 1080px) {
   .guide-list.doors { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
-  .toolkit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 860px) {
   .guide-list.doors, .here-grid { grid-template-columns: minmax(0, 1fr); padding-right: 6px; gap: 20px; }
@@ -936,10 +916,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   .home-top .lead { margin-bottom: 0.7em; }
   .home-actions .button { flex: 1 1 100%; }   /* both ways to start, full width */
   .home-more .sep { display: block; height: 0; overflow: hidden; }   /* one link per line */
-  .toolkit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; }   /* phones: names only, two columns */
-  .toolkit-grid li { align-items: center; gap: 8px; }
-  .toolkit-grid p > span { display: none; }
-  .toolkit-grid strong { font-size: 0.92rem; line-height: 1.3; }
   .tk-icon { width: 32px; height: 32px; }
   .doors .help-card > svg { float: none; width: 40px; height: 40px; }
   .doors .help-card .help-text { clear: none; }
