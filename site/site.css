@@ -730,6 +730,22 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .help-card li { margin: 0; font-size: 1.02rem; line-height: 1.4; }
 .help-card li a { display: inline-block; padding: 9px 0; white-space: nowrap; }   /* the arrow never wraps alone; page names are short */
 .help-card li a::after { content: "→" / ""; display: inline-block; margin-left: 0.3em; }   /* inline-block: the arrow is not underlined, as with .text-link */
+/* A door with one action (the Contribute page): the button sits at the foot of each card. */
+/* Doors with one action each (the Contribute page): one row per way, what it
+   is on the left and its button on the right; stacked on phones. */
+.guide-content > .contribute-doors { grid-template-columns: minmax(0, 1fr); gap: 14px; max-width: none; margin: 1.6rem 0 2.2rem; padding: 0; }
+.guide-content .contribute-doors .help-card { display: flex; flex-direction: row; align-items: center; gap: 20px; padding: 12px 18px; }
+.contribute-doors .help-card h3 { margin: 0 0 2px; font-size: 1.15rem; }
+.contribute-doors .help-card .kicker { margin: 4px 0 0; font-size: 0.75rem; }
+.contribute-doors .help-text { flex: 1 1 auto; min-width: 0; }
+.contribute-doors .help-text > :last-child { margin-bottom: 0; }
+.contribute-doors .help-card p { margin-bottom: 0; }
+.contribute-doors .help-action { flex: none; margin: 0; }
+.contribute-doors .button { white-space: nowrap; }
+@media (max-width: 600px) {
+  .guide-content .contribute-doors .help-card { flex-direction: column; align-items: stretch; gap: 12px; }
+  .contribute-doors .button { width: 100%; }
+}
 
 /* Cards lift a little while you point at them or tab into them */
 .help-card:is(:hover, :focus-within) {

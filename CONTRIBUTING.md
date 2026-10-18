@@ -1,12 +1,15 @@
-# Help the next student
+# Make it better for everyone
 
-Just stuck or have an idea? Use the [form](docs/troubleshooting.md#ask-for-help):
-about a minute, no account.
+Made by students, for students. A question, a tip, or a fix you found the
+hard way makes it better for you and for everyone writing after you. None of
+these needs LaTeX or GitHub skills, and everyone taking part follows the
+[code of conduct](CODE_OF_CONDUCT.md).
 
-Every contribution helps the next student finish. A confusing sentence you
-noticed, a fix you found the hard way, or a test on a new computer is as
-welcome as a change to the class file. You do not need to know LaTeX or
-GitHub. Everyone taking part follows the [code of conduct](CODE_OF_CONDUCT.md).
+<ul class="guide-list doors contribute-doors" role="list">
+<li class="card help-card"><div class="help-text"><h3>Send a note</h3><p>A question, an idea, a tip, or how it went on your computer.</p><p class="kicker">About a minute, no account</p></div><p class="help-action"><a class="button" data-form href="docs/troubleshooting.md#ask-for-help">Open the form</a></p></li>
+<li class="card help-card"><div class="help-text"><h3>Open an issue</h3><p>A public note the maintainer answers: a bug or a suggestion.</p><p class="kicker">Free GitHub account</p></div><p class="help-action"><a class="button button-secondary" href="https://github.com/diyanko/rpi-thesis-toolkit/issues/new/choose">Open an issue</a></p></li>
+<li class="card help-card"><div class="help-text"><h3>Propose a change</h3><p>A fix to the guide or the class, prepared for review.</p><p class="kicker">With your AI assistant</p></div><p class="help-action"><a class="button button-secondary" href="#three-ways-to-help">See how</a></p></li>
+</ul>
 
 ## Three ways to help
 
@@ -22,7 +25,7 @@ GitHub account needed). Click **New issue** and pick **LaTeX help or bug** or
 screenshots welcome, and leave out private research and personal details. The
 maintainer replies on the issue and may turn it into a change.
 
-**3. Open a pull request, ideally with your own AI assistant.** A pull request
+**3. Propose a change (a pull request), ideally with your own AI assistant.** A pull request
 is a proposed change the maintainer reviews before it goes in. You do not have
 to know the steps: give an assistant that can edit files and use GitHub this
 prompt:

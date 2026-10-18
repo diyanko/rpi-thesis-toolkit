@@ -173,8 +173,9 @@ class file. Adjust the object instead, or ask for help.
 
 ## Ask for help
 
-Stuck on something odd? Every question helps the next student, and questions
-about LaTeX, Zotero, files, or "where does this go?" are all welcome.
+Stuck on something odd? You are probably not the first, and your question
+helps everyone writing after you. Questions about LaTeX, Zotero, files, or
+"where does this go?" are all welcome.
 
 1. **Make it easy to see.** On Overleaf, create a view-only link from the
    share menu. On your computer, make the smallest made-up example that still

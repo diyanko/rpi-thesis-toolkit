@@ -574,6 +574,10 @@ class Site:
             and SVG_SCHEME.search(source_path(source).read_text(encoding="utf-8"))
         }
         source, heading = FEEDBACK
+        # The form's address is written once, in that section; a link marked
+        # data-form elsewhere points there in Markdown and at the form here.
+        form = re.search(r"\[help and feedback form\]\((https://[^)\s]+)\)", (ROOT / source).read_text(encoding="utf-8"))
+        self.form_url = form[1] if form else ""
         self.feedback = self.pages[source]
         if re.search(rf"(?m)^#+ {re.escape(heading)}\s*$", (ROOT / source).read_text(encoding="utf-8")):
             self.feedback += "#" + slug(heading)
@@ -809,7 +813,9 @@ class Site:
             attrs = re.sub(r'\s+(?:target|rel)="[^"]*"', "", before + after)
             # The last word carries the new-tab arrow (site.css), so the arrow never wraps alone.
             last = re.search(r"(<code\b[^>]*>[^<]*</code>|[^\s<>]+)(\s*)$", text)
-            if last and len(last[1]) <= 30:  # a long address may wrap (site.css)
+            if re.search(r'class="[^"]*\bbutton\b', attrs):   # a button's label is one piece, its arrow after it
+                text = f'<span class="ext-last">{text}</span>'
+            elif last and len(last[1]) <= 30:  # a long address may wrap (site.css)
                 text = text[:last.start()] + f'<span class="ext-last">{last[1]}</span>' + last[2]
             return (f'<a{attrs} href="{href}" target="_blank" rel="noopener">{text}'
                     '<span class="visually-hidden"> (opens in a new tab)</span></a>')
@@ -971,6 +977,9 @@ class Site:
             text, problems, _ = rules.expand(text, source)
             self.errors.extend(problems)
             body = pandoc(["--from=gfm", "--to=html5", "--wrap=none", "--syntax-highlighting=none"], text)
+            if self.form_url:
+                body = re.sub(r'(<a\b[^>]*\bdata-form\b[^>]*\bhref=")[^"]*(")|(<a\b[^>]*\bhref=")[^"]*("[^>]*\bdata-form\b)',
+                              lambda m: (m[1] or m[3]) + escape(self.form_url, quote=True) + (m[2] or m[4]), body)
             body = self.rewrite(body, source, here, posixpath.dirname(source))
             if source == "docs/explain-my-error.md":
                 body = self.explain_page(body, source)
