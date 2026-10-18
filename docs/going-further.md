@@ -320,16 +320,11 @@ public.
 > is public, and GitHub doesn't let you make it private
 > ([GitHub: visibility of forks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-permissions-and-visibility-of-forks)).
 
-Use one of these private routes instead:
-
-- **A new private repository:** create one and choose **Private**
-  ([GitHub: creating a new repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository)).
-  Then add your starter's files with **Add file → Upload files**.
-- **Use this template:** if the toolkit's GitHub page shows a **Use this
-  template** button, click it, choose **Create a new repository**, and set
-  **Private**
-  ([GitHub: creating a repository from a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)).
-  <!-- TODO(verify): checked 14 Oct 2026 against the GitHub docs linked here. On that date the toolkit repository was not marked as a template, so the button does not appear yet. Enable "Template repository" in its settings, or remove this route. -->
+Instead, create a new repository and choose **Private**
+([GitHub: creating a new repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository)).
+Then add the files from the starter ZIP with **Add file → Upload files**.
+The toolkit's own repository holds scripts and website code that a thesis
+does not need.
 
 **Without a terminal:** to save later work, open the repository's page.
 GitHub's uploader puts each file in the folder you are viewing, so an
