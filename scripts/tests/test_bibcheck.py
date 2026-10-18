@@ -309,7 +309,8 @@ class BibCheck(unittest.TestCase):
                     BOOK.replace('date={2024}', 'year={2024-05-01}, date={2024}'),       # date already set
                     BOOK.replace('{An example}', '{A & B} # " more"'),                      # a joined value
                     BOOK.replace('key,', 'bad key,'),                                    # keys never change
-                    BOOK.replace('Alice Smith', 'Example Research Institute')):
+                    BOOK.replace('Alice Smith', 'Example Research Institute'),
+                    BOOK[:-1] + ', note={See \\ref{sec:method_v2}}}'):                 # a command's argument keeps its _
             with self.subTest(bib=bib):
                 self.assertEqual(self.fixed(bib)[0], [])
 

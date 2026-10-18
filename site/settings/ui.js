@@ -304,6 +304,12 @@
         loaded.textContent = name + " has no \\thesissetup block or committee lines; nothing was filled in.";
         return;
       }
+      // Start from a clean form, so nothing from earlier typing stays behind.
+      for (const [key, control] of controls) {
+        const spec = schema.keys[key];
+        if (control.type === "checkbox") control.checked = spec.default === "true";
+        else control.value = spec.default ?? "";
+      }
       for (const [key, value] of Object.entries(found.settings)) {
         const control = controls.get(key);
         if (!control) continue;

@@ -2218,7 +2218,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   color: var(--muted); font-size: calc(100cqw * 8 / 612);
 }
 .settings-page .tp-seal + p { margin-top: calc(100cqw * 20 / 612); }
-.settings-page-full[hidden] { display: none; }
+.settings-page[hidden], .settings-page-full[hidden] { display: none; }   /* the sketch switch hides it */
 .tool .settings-seal-pick { margin-top: 0.8rem; }   /* the shared file picker, as on every tool */
 .settings-preview .tool-switch { margin: 0 0 0.6rem; }
 .settings-preview.is-off figcaption { display: none; }

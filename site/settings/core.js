@@ -115,7 +115,8 @@ function plainValue(value) {
   // The form's own escapes become characters; any other command means "not plain".
   const marks = ["\u0001", "\u0002", "\u0003"];
   ["\\textbackslash{}", "\\textasciitilde{}", "\\textasciicircum{}"].forEach((code, i) => { text = text.split(code).join(marks[i]); });
-  if (/\\[A-Za-z@]/.test(text)) return null;
+  // Any other backslash (\'{e}, \alpha) or unescaped math ($, ^) is LaTeX the form would print as text.
+  if (/\\(?![&%_#${}])/.test(text) || /(^|[^\\])[$^]/.test(text)) return null;
   text = text.replace(/(^|[^\\])[{}]+/g, "$1").replace(/~/g, " ");  // protective braces, as in {Doe}; ~ is a space
   for (const [code, char] of UNESCAPE.slice(3)) text = text.split(code).join(char);
   ["\\", "~", "^"].forEach((char, i) => { text = text.split(marks[i]).join(char); });

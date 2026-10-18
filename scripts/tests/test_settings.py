@@ -319,6 +319,28 @@ class Browser(unittest.TestCase):
         self.assertEqual(found["unknown"], ["colour"])
         self.assertEqual(found["settings"]["author"], "A. B Doe")
         self.assertEqual(found["committee"], [{"name": "Ann & Co", "role": "Chair"}])
+        for value in (r"Jos\'{e} Example", r"The $H_2$ cycle", r"A^2 study"):
+            source = json.dumps("\\thesissetup{ author = {" + value + "} }")
+            found = self.browser.evaluate(f"""(async () => (await import('../settings/core.js')).readMetadata(
+              {source}, (await import('../settings/data.js')).default))()""")
+            self.assertEqual(found["skipped"], ["author"], value)
+
+    def test_load_starts_from_a_clean_form_and_the_sketch_hides(self):
+        self.browser.open(self.server.url + "/guide/settings-builder.html?clean")
+        self.wait_for_form()
+        result = self.browser.evaluate("""(async () => {
+          const name = document.getElementById('setting-degree-name');
+          name.value = 'Master of Engineering'; name.dispatchEvent(new Event('input', {bubbles: true}));
+          const input = document.getElementById('settings-load'), data = new DataTransfer();
+          data.items.add(new File(['\\\\thesissetup{ title = {T}, degree = doctoral }'], 'metadata.tex'));
+          input.files = data.files; input.dispatchEvent(new Event('change', {bubbles: true}));
+          for (let i = 0; i < 50 && !document.querySelector('[data-settings-loaded]').textContent; i++)
+            await new Promise(r => setTimeout(r, 20));
+          document.querySelector('[data-settings-sketch]').click();
+          return {name: name.value, shown: getComputedStyle(document.querySelector('.settings-page')).display};
+        })()""")
+        self.assertEqual(result["name"], "")
+        self.assertEqual(result["shown"], "none")
 
     def test_load_file_sketch_switch_and_download(self):
         self.browser.open(self.server.url + "/guide/settings-builder.html?load")

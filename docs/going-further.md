@@ -507,12 +507,8 @@ one working source; a Word review copy does not update your LaTeX chapter.
 
 ## Where customizations belong
 
-![Which file changes which part of the PDF. On the left, five project files; on the right, pages of main.pdf. metadata.tex points to the title page, with your title, name, and degree. main.tex points to the contents: it sets the order of the chapters. chapters/ points to a chapter page: these files hold your words. references.bib and preamble.tex point to the reference list: they set the citation style and the references. rpi-thesis.cls points to a dashed frame around the whole PDF: it sets the formatting of every page and is normally never edited.](diagrams/file-to-pdf.svg)
-
-*In words:* `metadata.tex` fills the title page, `main.tex` sets the
-order, `chapters/` hold your words, `references.bib` and `preamble.tex`
-make the citations and reference list, and `rpi-thesis.cls` formats every
-page.
+Which file changes which part of the PDF is drawn in
+[how it works](how-it-works.md#what-each-file-does).
 
 | You want to change… | Edit | Notes |
 | --- | --- | --- |

@@ -484,7 +484,8 @@ function fixFor(id, entry, field = id) {
   const span = entry.spans[field], inner = span && single(span);
   if (inner === null || inner === undefined) return {};
   let fix = null;
-  if (id === 'special' && !RULES.nameFields.includes(field) && !new RegExp(RULES.linkCommands).test(inner)) {
+  // Only plain text: inside a command's argument (\ref{sec:a_b}, \emph{...}) an escape could change its meaning.
+  if (id === 'special' && !RULES.nameFields.includes(field) && !/\\[A-Za-z@]/.test(inner)) {
     // Escape only the characters the check flagged: outside math, not escaped.
     const literal = literalText(inner);
     let out = '';
