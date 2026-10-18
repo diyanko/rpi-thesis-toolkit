@@ -31,16 +31,21 @@ prompt:
 Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its "Contributing as an agent" steps. If you cannot fork or push, stop and show me the diff. Do not push or open the pull request until I approve. What I'd like changed: [describe it].
 ```
 
-It makes a fork (your own copy of the project on GitHub), makes one focused
-change on a branch (a named set of changes kept apart from the main version),
-runs the checks, and shows you the result; nothing is posted until you
-approve. Prefer to do it by hand? Fork, branch, make one focused change, and
-fill in the short template. If you use a terminal,
-`python3 scripts/verify.py` (`py` instead of `python3` on Windows) gives a
-last line to paste into the pull request; checks it cannot run on your
-computer are skipped. Automated checks run on every pull request anyway, and
-a failure is fine: the maintainer helps finish. The guide is Markdown in
-`docs/`; edit the `.md` file only.
+The assistant then:
+
+1. makes a fork, your own copy of the project on GitHub;
+2. makes one focused change on a branch, a named set of changes kept apart
+   from the main version;
+3. runs the checks and shows you the result. Nothing is posted until you
+   approve.
+
+Prefer to do it by hand? Fork, branch, make one focused change, and fill in
+the short pull request template. The guide is Markdown in `docs/`; edit the
+`.md` file only. If you use a terminal, `python3 scripts/verify.py` (`py`
+instead of `python3` on Windows) prints a last line to paste into the pull
+request, and skips checks it cannot run on your computer. Automated checks
+run on every pull request anyway, and a failure is fine: the maintainer helps
+finish.
 
 Not sure how an issue should read? Ask any AI chat to help you write it, and
 leave out anything private from your thesis. Never include your own thesis
