@@ -151,8 +151,9 @@ The full guide: {guide_url}
 To update the formatting later, follow "Update the formatting safely" in the
 guide (Going further page). Before version 1.0, anything may change, and
 the changelog says what to do.
-This is a community project, not approved by RPI or the Office of Graduate
-Education. Check the current OGE requirements before you submit.
+This is an unofficial, community-made starter. It is not affiliated with or
+endorsed by Rensselaer Polytechnic Institute or its Office of Graduate
+Education (OGE). Check the current OGE requirements before you submit.
 """
 
 
