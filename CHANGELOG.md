@@ -52,8 +52,10 @@ rule with its source.
 - **Change log:** on the website, each version answers "Changes your PDF?"
   in a box you can spot at a glance, with links to download that version and
   to its code changes; the next version's changes are listed first.
-- **Website:** a simpler header (Get started, Guide and Tools menus, How do
-  I...?); buttons share one set of hand-drawn icons; the text, sidebar, and
+- **Website:** a warmer light palette and a deeper dark one, with button
+  outlines that stay visible; a simpler header (Get started, Guide and Tools
+  menus, How do I...?); buttons share one set of hand-drawn icons; long
+  reference pages, such as this change log, list their sections beside the text; the text, sidebar, and
   "On this page" sit together with even margins on wide screens; tool pages
   no longer flash "JavaScript is off" while loading; the offline guide says
   the Settings builder runs on the website; short names in code no longer
