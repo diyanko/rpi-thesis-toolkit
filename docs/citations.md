@@ -7,10 +7,9 @@ LaTeX builds the reference list for you.
 
 ## Try the sample citation
 
-Try it on the source already in the starter. Leave `references.bib` alone.
-The sample uses a numbered style. `\parencite{key}` is the command for a
-citation in parentheses (brackets in a numbered style), and `\textcite{key}`
-is for when the author is part of your sentence
+Try it on the source already in the starter; leave `references.bib` alone.
+`\parencite{key}` cites in brackets in this numbered style, and
+`\textcite{key}` puts the author in your sentence
 ([all the commands](#change-the-citation-style)).
 
 1. Open `chapters/01-introduction.tex`.
@@ -65,20 +64,13 @@ It is a convenience, not an OGE requirement.
    3. On Overleaf, upload the new file over the old one, and again whenever
       it changes. [Auto-export](#set-it-and-forget-it) keeps the file on your
       computer current; you still upload it to Overleaf.
-4. **Cite with `\parencite{your-key}`,** or `\textcite{your-key}` when the
-   author is part of the sentence; the style you agreed on in step 1 decides
-   what each prints. The key is the word after `@article{` (or `@book{`, ...)
-   in the exported entry. Better BibTeX also shows it in Zotero:
-
-   ```tex
-   An earlier account explains this approach~\parencite{your-key}.
-   \textcite{your-key} explain this approach in detail.
-   ```
+4. **Cite with `\parencite{your-key}`** (or `\textcite`). The key is the word
+   after `@article{` (or `@book{`, ...) in the exported entry; Better BibTeX
+   also shows it in Zotero.
 
 5. **Compile.** Only sources you cite appear in the reference list.
 
-A key in **bold** means the bibliography step has not run yet (compile again)
-or the key is not in the file
+A key in **bold**? Compile again, then check its spelling
 ([bold keys](how-it-works.md#bold-citation-keys-and-question-marks)). The
 style chosen inside Zotero does not affect your PDF.
 
@@ -139,8 +131,7 @@ Scholar. They are often slightly wrong, so check each one.
 
 2. Paste your source's entry into `references.bib`. The word after `@book{`
    is the **key**, here `lamport1994`. Every key must be unique.
-3. Cite it with `\parencite{key}` (or `\textcite{key}` when the author is
-   part of the sentence), using your entry's key, and compile.
+3. Cite it with `\parencite{key}`, using your entry's key, and compile.
 
 Wrap capitals that must stay capitalized in braces, like `{RPI}`. Two more
 things to get right in the `author` field:
@@ -249,7 +240,9 @@ If your style or a source does not print right, type the full reference into
 the caption or attribution by hand, copied from your reference list, in your
 style's wording.
 
-**Chicago author-date.** In `preamble.tex`, replace the `\usepackage[...]{biblatex}`
+<details><summary>If you use Chicago author-date: the setup for <code>\fullcite</code></summary>
+
+In `preamble.tex`, replace the `\usepackage[...]{biblatex}`
 line with the first line below (the class and the other lines stay), and put
 the rest under `\addbibresource{references.bib}`:
 
@@ -266,7 +259,11 @@ attribution, including a source already cited with `\parencite`. Not tested:
 Chicago notes-bibliography, thesis, report, and archival entries.
 `style=chicago-authordate` alone is not the tested route.
 
-**MLA.** Put this under `\addbibresource{references.bib}` in `preamble.tex`.
+</details>
+
+<details><summary>If you use MLA: the setup for <code>\fullcite</code></summary>
+
+Put this under `\addbibresource{references.bib}` in `preamble.tex`.
 It makes `\fullcite` print the full reference, with the author's name every
 time. The two `\csgundef` lines stop MLA from replacing a repeated author
 with a long dash in a caption or attribution, and stop that dash from leaking
@@ -286,6 +283,8 @@ repeatedly. Captions, the list of figures, and attributions kept the name,
 and the reference list kept MLA's own dash for a repeated author. Not tested:
 `mla-strict`, `mla7`, other entry types.
 <!-- TODO(verify): Chicago and MLA overrides were checked on a small fixture with pdfLaTeX and Biber only; entry types beyond article, book, and online, and other biblatex-mla variants, were not tested. -->
+
+</details>
 
 ## Check the output yourself
 
