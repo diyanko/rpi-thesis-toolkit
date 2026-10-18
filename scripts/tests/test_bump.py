@@ -76,6 +76,15 @@ class Bump(unittest.TestCase):
                             for name in self.files))
 
 
+    def test_release_leaves_out_the_version_line(self):
+        (self.root / "CHANGELOG.md").write_text("# Changes\n\n## Unreleased\n\n**Changes your PDF?** No.\n\n"
+                                                "**Version:** minor\n\n- A change.\n\n## 0.7.0 (beta), 16 Oct 2026\n",
+                                                encoding="utf-8")
+        with patch.object(bump, "ROOT", self.root):
+            _, prepared = bump.plan("0.8.0", date(2026, 10, 17))
+        self.assertNotIn("**Version:**", prepared["CHANGELOG.md"])
+        self.assertIn("**Changes your PDF?** No.\n\n- A change.", prepared["CHANGELOG.md"])
+
     def test_version_is_chosen_from_the_unreleased_section(self):
         cases = [("**Changes your PDF?** No.\n\n- Guide fix.", "0.7.1"),
                  ("**Changes your PDF?** **Yes**, spacing.", "0.8.0"),
@@ -94,7 +103,8 @@ class Bump(unittest.TestCase):
         self.assertIn("v0.7.1", (self.root / "rpi-thesis.cls").read_text(encoding="utf-8"))
 
     def test_no_argument_refuses_without_unreleased_or_pdf_line(self):
-        for log in ("# Changes\n\n## 0.7.0\n", "# Changes\n\n## Unreleased\n\n- Fix.\n"):
+        for log in ("# Changes\n\n## 0.7.0\n", "# Changes\n\n## Unreleased\n\n- Fix.\n",
+                    "# Changes\n\n## Unreleased\n\n**Changes your PDF?** No.\n\n## Unreleased\n\n- Fix.\n"):
             with self.subTest(log=log):
                 (self.root / "CHANGELOG.md").write_text(log, encoding="utf-8")
                 before = self.snapshot()

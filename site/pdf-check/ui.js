@@ -10,6 +10,11 @@
 // this file passes them to core.js and shows each rule's citation from them.
 // The offline guide has no checker: build_site.py leaves these files out.
 //
+// Results open with a count per state, then the points to look at. A point
+// that names pages has a "Show PDF page" button: one page view, drawn by
+// pdf.js from the chosen file, with core.js's measurements drawn over it
+// ("Seeing a page" below).
+//
 // One check runs at a time. Choosing another PDF replaces a running check,
 // and Cancel stops it; either way core.js releases the PDF reader and its
 // worker, and a stopped check never shows its results.
@@ -106,12 +111,7 @@
     return node;
   }
   function counts(found) {
-    var looks = found.filter(function (f) { return f.state === "check"; }).length;
-    var unsure = found.filter(function (f) { return f.state === "unknown"; }).length;
-    var differ = found.filter(function (f) { return f.state === "differs"; }).length;
-    return (looks ? looks + " point" + (looks > 1 ? "s" : "") + " to look at" : "Nothing to look at among these points") +
-      (differ ? "; " + differ + (differ > 1 ? " differ" : " differs") + " from the manual's wording" : "") +
-      (unsure ? "; " + unsure + " could not be told" : "") + ".";
+    return tally(found).map(function (t) { return t.text; }).join(", ") + ".";
   }
   var NOT_REVIEW = "These checks cover only what is listed here; they are not an OGE review, and a clean result does not mean OGE will accept the PDF.";
   // "§1.1 p. 1; FC; §2.2 p. 16": each rule's Manual cell, each piece once.
@@ -119,6 +119,8 @@
     var pieces = [];
     ids.forEach(function (id) {
       oge.rules[id].cite.split("; ").forEach(function (piece) {
+        // The requirements map's short names, spelled out for students.
+        piece = piece.replace(/^FC\b/, "OGE Formatting Checklist").replace(/^LT\b/, "OGE LaTeX Formatting Tips");
         if (pieces.indexOf(piece) < 0) pieces.push(piece);
       });
     });
@@ -143,41 +145,325 @@
     }
     return node;
   }
-  function show(found, name) {
-    results.textContent = "";
+  // Points that need a look come first, so the one that matters is not
+  // the tenth of thirteen cards: look at this, differs, could not tell; then
+  // looks right; then information. Within a group, the order of core.js.
+  var ORDER = ["check", "differs", "unknown", "ok", "info"];
+  var GROUPS = [{ title: "To look at first", states: ["check", "differs", "unknown"] },
+                { title: "Looks right", states: ["ok"] },
+                { title: "Information", states: ["info"] }];
+  function ordered(found) {
+    return found.slice().sort(function (a, b) {
+      return ORDER.indexOf(a.state) - ORDER.indexOf(b.state) || found.indexOf(a) - found.indexOf(b);
+    });
+  }
+  // "1 to look at", "9 look right", ...: one count per state that occurs.
+  var TALLY = { check: ["to look at", "to look at"], differs: ["differs from the manual's wording", "differ from the manual's wording"],
+                unknown: ["could not be told", "could not be told"], ok: ["looks right", "look right"], info: ["information", "information"] };
+  function tally(found) {
+    return ORDER.map(function (state) {
+      var n = found.filter(function (f) { return f.state === state; }).length;
+      return n ? { state: state, text: n + " " + TALLY[state][n === 1 ? 0 : 1] } : null;
+    }).filter(Boolean);
+  }
+  function item(f) {
+    var node = element("li", "pdf-check-item is-" + f.state);
+    var head = element("p", "pdf-check-head");
+    head.appendChild(element("span", "pdf-check-state", STATES[f.state]));
+    head.appendChild(element("strong", "", f.title));
+    node.appendChild(head);
+    node.appendChild(element("p", "", f.summary));
+    if (f.coverage) node.appendChild(element("p", "pdf-check-coverage", f.coverage));
+    if (f.pages.length) {
+      var details = element("details");
+      details.appendChild(element("summary", "", "Details (" + f.pages.length + ")"));
+      var pagesList = element("ul");
+      f.pages.slice(0, 50).forEach(function (text) { pagesList.appendChild(element("li", "", text)); });
+      if (f.pages.length > 50) pagesList.appendChild(element("li", "", "and " + (f.pages.length - 50) + " more (all are in the printout)"));
+      details.appendChild(pagesList);
+      node.appendChild(details);
+    }
+    if (f.shows && f.shows.length) {
+      var row = element("p", "pdf-check-show");
+      var open = element("button", "button button-secondary", f.shows.length === 1
+        ? "Show PDF page " + (f.shows[0].page + 1)
+        : "Show the " + f.shows.length + " pages, from PDF page " + (f.shows[0].page + 1));
+      open.type = "button";
+      open.setAttribute("data-icon", "eye");
+      open.setAttribute("aria-expanded", "false");
+      open.addEventListener("click", function () {
+        if (viewer.button === open) closeViewer(true);
+        else openViewer(node, open, f);
+      });
+      row.appendChild(open);
+      node.appendChild(row);
+    }
+    node.appendChild(source(f, true));
+    return node;
+  }
+  function showResults(found, name) {
+    clearResults();
     var heading = element("h3", "", "Results for " + name);
     heading.tabIndex = -1;
     results.appendChild(heading);
-    results.appendChild(element("p", "pdf-check-summary", NOT_REVIEW));
-    var list = element("ul", "pdf-check-list");
-    list.setAttribute("role", "list");
-    found.forEach(function (f) {
-      var item = element("li", "pdf-check-item is-" + f.state);
-      var head = element("p", "pdf-check-head");
-      head.appendChild(element("span", "pdf-check-state", STATES[f.state]));
-      head.appendChild(element("strong", "", f.title));
-      item.appendChild(head);
-      item.appendChild(element("p", "", f.summary));
-      if (f.pages.length) {
-        var details = element("details");
-        details.appendChild(element("summary", "", "Details (" + f.pages.length + ")"));
-        var pagesList = element("ul");
-        f.pages.slice(0, 50).forEach(function (text) { pagesList.appendChild(element("li", "", text)); });
-        if (f.pages.length > 50) pagesList.appendChild(element("li", "", "and " + (f.pages.length - 50) + " more (all are in the printout)"));
-        details.appendChild(pagesList);
-        item.appendChild(details);
-      }
-      item.appendChild(source(f, true));
-      list.appendChild(item);
+    var overview = element("div", "pdf-check-overview tool-card");
+    var counts = element("p", "pdf-check-tally");
+    tally(found).forEach(function (t, k) {
+      if (k) counts.appendChild(document.createTextNode(" "));
+      counts.appendChild(element("span", "pdf-check-state is-" + t.state, t.text));
     });
-    results.appendChild(list);
-    var actions = element("p");
-    var print = element("button", "button button-secondary", "Print or save the result");
+    overview.appendChild(counts);
+    overview.appendChild(element("p", "pdf-check-summary", NOT_REVIEW));
+    var actions = element("p", "tool-actions");
+    var print = element("button", "button button-secondary pdf-check-print-button", "Print or save the result");
     print.type = "button";
+    print.setAttribute("data-icon", "print");
     print.addEventListener("click", function () { printReport(found, name); });
     actions.appendChild(print);
-    results.appendChild(actions);
+    overview.appendChild(actions);
+    results.appendChild(overview);
+    GROUPS.forEach(function (group) {
+      var these = ordered(found).filter(function (f) { return group.states.indexOf(f.state) >= 0; });
+      if (!these.length) return;
+      results.appendChild(element("h4", "", group.title + " (" + these.length + ")"));
+      var list = element("ul", "pdf-check-list");
+      list.setAttribute("role", "list");
+      these.forEach(function (f) { list.appendChild(item(f)); });
+      results.appendChild(list);
+    });
     heading.focus();
+  }
+  function clearResults() {
+    closeViewer(false);
+    results.textContent = "";
+  }
+
+  // ---------- Seeing a page ----------------------------------------------------
+  // One viewer for the whole result: "Show PDF page N" moves it under that
+  // point and draws the page with pdf.js, with the checker's own
+  // measurements drawn over it. The PDF is opened again from the chosen file
+  // (still only in this tab) when the viewer opens, and released, with its
+  // worker, when it closes, when another PDF is chosen, or on Cancel.
+  var SVG = "http://www.w3.org/2000/svg";
+  var checked = null;   // {file, size} of the PDF the results are for
+  var viewer = { node: null, button: null, finding: null, at: 0, task: null, doc: null, drawing: null, run: 0 };
+  function inchText(id) {
+    var pt = oge.measures[id] && oge.measures[id].pt;
+    return String(Number((pt / 72).toFixed(2))) + " in";
+  }
+  function buildViewer() {
+    var node = element("div", "pdf-check-viewer");
+    node.id = "pdf-check-viewer";
+    node.setAttribute("role", "region");
+    node.setAttribute("aria-labelledby", "pdf-check-viewer-title");
+    var title = element("p", "pdf-check-viewer-title");
+    title.id = "pdf-check-viewer-title";
+    title.tabIndex = -1;
+    node.appendChild(title);
+    var body = element("div", "pdf-check-viewer-body");
+    body.appendChild(element("p", "pdf-check-viewer-note"));
+    var frame = element("div", "pdf-check-page");
+    var canvas = element("canvas");
+    canvas.setAttribute("role", "img");
+    frame.appendChild(canvas);
+    var marks = document.createElementNS(SVG, "svg");
+    marks.setAttribute("aria-hidden", "true");
+    marks.setAttribute("focusable", "false");
+    marks.setAttribute("preserveAspectRatio", "none");
+    frame.appendChild(marks);
+    body.appendChild(frame);
+    var said = element("p", "pdf-check-viewer-status");
+    said.setAttribute("role", "status");
+    body.appendChild(said);
+    body.appendChild(element("ul", "pdf-check-legend"));
+    node.appendChild(body);
+    var actions = element("p", "tool-actions");
+    [["prev", "Previous page"], ["next", "Next page"], ["close", "Close"]].forEach(function (b, k) {
+      var button = element("button", "button button-secondary pdf-check-viewer-" + b[0], b[1]);
+      button.type = "button";
+      button.setAttribute("data-icon", ["prev", "next", "remove"][k]);
+      if (k) actions.appendChild(document.createTextNode(" "));
+      actions.appendChild(button);
+    });
+    node.appendChild(actions);
+    node.querySelector(".pdf-check-viewer-prev").addEventListener("click", function () { step(-1); });
+    node.querySelector(".pdf-check-viewer-next").addEventListener("click", function () { step(1); });
+    node.querySelector(".pdf-check-viewer-close").addEventListener("click", function () { closeViewer(true); });
+    node.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") { event.preventDefault(); closeViewer(true); }
+    });
+    return node;
+  }
+  function openViewer(item, button, f) {
+    if (!checked) return;
+    if (viewer.button) viewer.button.setAttribute("aria-expanded", "false");
+    if (!viewer.node) viewer.node = buildViewer();
+    viewer.button = button;
+    viewer.finding = f;
+    viewer.at = 0;
+    button.setAttribute("aria-expanded", "true");
+    button.setAttribute("aria-controls", viewer.node.id);
+    button.parentNode.after(viewer.node);
+    draw();
+    viewer.node.querySelector(".pdf-check-viewer-title").focus();
+  }
+  function step(by) {
+    var shows = viewer.finding.shows;
+    viewer.at = Math.max(0, Math.min(shows.length - 1, viewer.at + by));
+    draw();
+  }
+  // Ends any drawing and releases the PDF reader and its worker; the canvas
+  // gives back its memory.
+  function release() {
+    viewer.run++;
+    if (viewer.drawing) { try { viewer.drawing.cancel(); } catch (error) { /* already done */ } }
+    if (viewer.task) viewer.task.destroy().catch(function () {});
+    viewer.task = viewer.doc = viewer.drawing = null;
+    if (viewer.node) {
+      var canvas = viewer.node.querySelector("canvas");
+      canvas.width = canvas.height = 0;
+      viewer.node.querySelector("svg").textContent = "";
+    }
+  }
+  function closeViewer(focus) {
+    release();
+    var button = viewer.button;
+    viewer.button = viewer.finding = null;
+    if (viewer.node) {
+      viewer.node.removeAttribute("data-drawn");
+      viewer.node.remove();
+    }
+    if (button) {
+      button.setAttribute("aria-expanded", "false");
+      if (focus && button.isConnected) button.focus();
+    }
+  }
+  function openDocument() {
+    if (viewer.doc) return viewer.doc;
+    var file = checked.file, size = checked.size;
+    viewer.doc = load().then(function (tools) {
+      return file.arrayBuffer().then(function (bytes) {
+        if (bytes.byteLength !== size) throw new Error("changed");
+        viewer.task = tools.pdfjs.getDocument({
+          data: new Uint8Array(bytes), isEvalSupported: false, disableFontFace: true, useSystemFonts: false,
+          enableXfa: false, stopAtErrors: false, verbosity: 0
+        });
+        return viewer.task.promise;
+      });
+    });
+    return viewer.doc;
+  }
+  function draw() {
+    var f = viewer.finding, shows = f.shows, at = viewer.at, shown = shows[at], node = viewer.node;
+    var mine = ++viewer.run;
+    if (viewer.drawing) { try { viewer.drawing.cancel(); } catch (error) { /* already done */ } }
+    var title = node.querySelector(".pdf-check-viewer-title");
+    title.textContent = "";
+    // "PDF page 5 (printed 12): text ..." -> the title, and the rest as the note.
+    var parts = /^(PDF page \d+(?: \(printed [^)]*\))?): (.+)$/.exec(shown.note);
+    var rest = parts ? parts[2].charAt(0).toUpperCase() + parts[2].slice(1) : shown.note;
+    title.appendChild(element("strong", "", parts ? parts[1] : "PDF page " + (shown.page + 1)));
+    if (shows.length > 1) title.appendChild(document.createTextNode(" (" + (at + 1) + " of " + shows.length + " for this point)"));
+    node.querySelector(".pdf-check-viewer-note").textContent = rest;
+    var prev = node.querySelector(".pdf-check-viewer-prev"), next = node.querySelector(".pdf-check-viewer-next");
+    prev.hidden = next.hidden = shows.length < 2;
+    var focused = document.activeElement;
+    prev.disabled = at === 0;
+    next.disabled = at === shows.length - 1;
+    if (focused === prev && prev.disabled) next.focus();
+    if (focused === next && next.disabled) prev.focus();
+    // The legend: only the marks this page has, in words.
+    var keys = [];
+    if (shown.box) keys.push(["box", "Solid box: the " + (shown.what || "text") + " this point is about, as the checker measured it."]);
+    if (shown.guides.indexOf("margin") >= 0) keys.push(["margin", "Dashed line: the " + inchText("margin") + " margins."]);
+    if (shown.guides.indexOf("number") >= 0) keys.push(["number", "Dotted lines: " + inchText("page-number-edge") +
+      " from the top and bottom edges, the page-number distance in the manual. The checker measures to the bottom of the number."]);
+    var legend = node.querySelector(".pdf-check-legend");
+    legend.textContent = "";
+    keys.forEach(function (k) {
+      var li = element("li");
+      li.appendChild(element("span", "pdf-check-key is-" + k[0]));
+      li.lastChild.setAttribute("aria-hidden", "true");
+      li.appendChild(document.createTextNode(k[1]));
+      legend.appendChild(li);
+    });
+    legend.hidden = !keys.length;
+    var canvas = node.querySelector("canvas"), marks = node.querySelector("svg");
+    canvas.setAttribute("aria-label", "Picture of PDF page " + (shown.page + 1) + " of your PDF. " + shown.note +
+      (keys.length ? " " + keys.map(function (k) { return k[1]; }).join(" ") : ""));
+    marks.textContent = "";
+    node.removeAttribute("data-drawn");
+    var said = node.querySelector(".pdf-check-viewer-status");
+    said.textContent = "Drawing PDF page " + (shown.page + 1) + "…";
+    openDocument().then(function (pdf) {
+      if (mine !== viewer.run) return null;
+      return pdf.getPage(shown.page + 1).then(function (page) {
+        if (mine !== viewer.run) return null;
+        var base = page.getViewport({ scale: 1 });
+        var frame = node.querySelector(".pdf-check-page");
+        var wide = Math.max(200, frame.clientWidth || 320);
+        var ratio = Math.min(window.devicePixelRatio || 1, 2);
+        var scale = Math.min(wide * ratio, 2000) / base.width;
+        var viewport = page.getViewport({ scale: scale });
+        canvas.width = Math.round(viewport.width);
+        canvas.height = Math.round(viewport.height);
+        frame.style.aspectRatio = base.width + " / " + base.height;
+        viewer.drawing = page.render({ canvas: canvas, viewport: viewport });
+        return viewer.drawing.promise.then(function () {
+          viewer.drawing = null;
+          if (mine !== viewer.run) return;
+          overlay(marks, page, base, shown);
+          page.cleanup();
+          said.textContent = "";
+          node.setAttribute("data-drawn", String(shown.page + 1));
+        });
+      });
+    }).catch(function (error) {
+      if (mine !== viewer.run || (error && error.name === "RenderingCancelledException")) return;
+      said.textContent = error && error.message === "changed"
+        ? "The file has changed since it was checked, so this page cannot be drawn. Choose it again to check the new version."
+        : "This page could not be drawn. The result above still stands; open the PDF in your PDF viewer to look at it.";
+      if (error && error.message === "changed") release();
+    });
+  }
+  // The checker's measurements, in points from the bottom-left corner of the
+  // page (core.js), turned into the drawn page's own coordinates; pdf.js does
+  // the turning for rotated pages.
+  function overlay(svg, page, base, shown) {
+    var view = page.view, unit = page.userUnit > 0 ? page.userUnit : 1;
+    function at(x, y) { return base.convertToViewportPoint(x / unit + view[0], y / unit + view[1]); }
+    var w = (view[2] - view[0]) * unit, h = (view[3] - view[1]) * unit;
+    svg.setAttribute("viewBox", "0 0 " + base.width + " " + base.height);
+    function add(kind, tag, attrs) {
+      ["pdf-check-halo", "pdf-check-mark is-" + kind].forEach(function (cls) {
+        var shape = document.createElementNS(SVG, tag);
+        shape.setAttribute("class", cls);
+        Object.keys(attrs).forEach(function (k) { shape.setAttribute(k, attrs[k]); });
+        svg.appendChild(shape);
+      });
+    }
+    function rect(kind, x0, y0, x1, y1) {
+      var a = at(x0, y0), b = at(x1, y1);
+      add(kind, "rect", { x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]),
+                          width: Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]) });
+    }
+    function line(kind, x0, y0, x1, y1) {
+      var a = at(x0, y0), b = at(x1, y1);
+      add(kind, "line", { x1: a[0], y1: a[1], x2: b[0], y2: b[1] });
+    }
+    if (shown.guides.indexOf("margin") >= 0) {
+      var m = oge.measures.margin.pt;
+      rect("margin", m, m, w - m, h - m);
+    }
+    if (shown.guides.indexOf("number") >= 0) {
+      var e = oge.measures["page-number-edge"].pt;
+      line("number", 0, e, w, e);
+      line("number", 0, h - e, w, h - e);
+    }
+    if (shown.box) {
+      var pad = 2, box = shown.box;
+      rect("box", box[0] - pad, box[1] - pad, box[2] + pad, box[3] + pad);
+    }
   }
 
   // ---------- The printout ----------------------------------------------------
@@ -218,10 +504,11 @@
       " with the RPI Thesis Toolkit's \"Check your PDF\" page" + (current ? " (toolkit v" + current + ")" : "") +
       ", an unofficial, community-made tool. " + counts(found)));
     sheet.appendChild(element("p", "note", NOT_REVIEW));
-    found.forEach(function (f) {
+    ordered(found).forEach(function (f) {
       var part = element("section");
       part.appendChild(element("h2", "", STATES[f.state] + ": " + f.title));
       part.appendChild(element("p", "", f.summary));
+      if (f.coverage) part.appendChild(element("p", "", f.coverage));
       if (f.pages.length) {
         var list = element("ul");
         f.pages.forEach(function (text) { list.appendChild(element("li", "", text)); });
@@ -260,7 +547,8 @@
     if (!file) return;
     stop();
     removePrintout();
-    results.textContent = "";
+    clearResults();
+    checked = null;
     if (names) names.textContent = "Chosen: " + file.name;
     if (!/\.pdf$/i.test(file.name) && file.type !== "application/pdf") {
       fail("That is not a PDF", file.name + " is not a PDF file. Choose the PDF your editor made, often main.pdf, next to main.tex or under Download PDF on Overleaf.",
@@ -295,10 +583,12 @@
       latest();
       var found = tools.checks.analyse(data, { current: current, rules: oge });
       say("Checked " + name + ": " + counts(found), "done");
-      show(found, name);
+      checked = { file: file, size: data.fileSize };
+      showResults(found, name);
     }).catch(function (error) {
       if (mine !== run) return;  // replaced or cancelled: the newer state stays
-      results.textContent = "";
+      clearResults();
+      checked = null;
       if (error && error.message === "reader") {
         fail("The PDF reader did not start", location.protocol === "file:"
           ? "This browser does not let a page opened from a file start the PDF reader. Open \"Check your PDF\" on the toolkit's website instead; your PDF still stays on your computer. Or check by eye with the"
@@ -322,14 +612,16 @@
   cancel.addEventListener("click", function () {
     stop();
     input.value = "";
-    results.textContent = "";
+    clearResults();
+    checked = null;
     say("Check cancelled. Choose a PDF to start again.");
     input.focus();
   });
   again.addEventListener("click", function () {
     stop();
     removePrintout();
-    results.textContent = "";
+    clearResults();
+    checked = null;
     if (names) names.textContent = "";
     say("");
     again.hidden = true;

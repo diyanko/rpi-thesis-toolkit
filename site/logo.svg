@@ -3,10 +3,10 @@
        wordmark (site/guide-template.html) and site/og-card.svg carry copies, so a
        new mark goes in all three places. -->
   <style>
-    .brace { fill: none; stroke: #2b2723; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .brace { fill: none; stroke: #2d2620; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
     .dot { fill: #c8102e; }
     @media (prefers-color-scheme: dark) {
-      .brace { stroke: #efe8dc; }
+      .brace { stroke: #f2ece2; }
       .dot { fill: #ff5a6e; }
     }
   </style>

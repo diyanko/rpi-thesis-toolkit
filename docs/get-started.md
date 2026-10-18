@@ -1,25 +1,20 @@
 # Get started
 
-No LaTeX experience needed. You will *compile* the sample thesis (turn its
-files into a PDF) with your name on it. This guide suggests one of two setups;
-both work the same way: edit, save, see the PDF.
+No LaTeX experience needed. By the end of this page you will *compile* the
+sample thesis (turn its files into a PDF) with your own name on its title
+page. Pick one of two setups; both work the same way: edit, save, see the PDF.
 
 - **An editor on your computer** (suggested): an editor with a LaTeX
   extension rebuilds the PDF each time you save and shows it beside your text.
   The one-time install takes an hour or more, mostly waiting for a download.
 - **Overleaf** (no install): the same in your browser, ready in minutes.
 
-Curious whether LaTeX suits you? See [why LaTeX](how-it-works.md#why-latex-for-a-thesis), or jump in.
 Have a draft? Do these steps first, then [bring your draft](bring-your-draft.md).
-Still drafting elsewhere? That is fine
-([the suggested workflow](how-it-works.md#the-suggested-workflow-and-why)).
+Not sure LaTeX suits you? Read [why LaTeX](how-it-works.md#why-latex-for-a-thesis).
 
 ## Step 1: Choose your LaTeX workspace
 
-This is where your thesis becomes a PDF. With the same files, engine,
-packages, and fonts, both make the same PDF, and your first checkpoint is the
-same: the sample PDF with your name on it ([Step 4](#step-4-check-your-first-pdf)
-and [Step 5](#step-5-make-it-yours)).
+With the same files, engine, packages, and fonts, both make the same PDF; choose the one that fits you.
 
 | | Your computer (an editor) | Overleaf (in your browser) |
 | --- | --- | --- |
@@ -31,9 +26,9 @@ and [Step 5](#step-5-make-it-yours)).
 | **Working with others** | Share the PDF, or Git | Real-time co-editing |
 
 Your own computer suits a full thesis: no compile limit, and the files stay
-with you. Overleaf suits you if you would rather install nothing or want to
-co-edit in real time. Either is your choice, not an OGE requirement, and you
-can [switch later](going-further.md#use-your-computer-and-overleaf).
+with you. Overleaf suits you if you would rather install nothing or co-edit in
+real time. It is your choice, not an OGE requirement, and you can
+[switch later](going-further.md#use-your-computer-and-overleaf).
 
 ## Step 2: Get the files
 
@@ -42,11 +37,12 @@ the Overleaf link in Step 3b to the new tag, and build_site.py stops if they
 do not match the release (maintenance.md, "Make a release"). The landing
 page's computer card opens this step. -->
 
-1. **[Download the starter (ZIP)](https://github.com/diyanko/rpi-thesis-toolkit/releases/download/v0.9.0/rpi-thesis-starter-v0.9.0.zip)**:
-   the thesis files, this guide for offline reading (open `START-HERE.html`),
-   and a cheat sheet. A ZIP is one compressed file that holds a folder. No
-   account needed. (Opened `START-HERE.html` from the starter ZIP? You
-   already have the files: continue to your route below.)
+<p class="tool-actions"><a class="button" data-icon="download" href="https://github.com/diyanko/rpi-thesis-toolkit/releases/download/v0.9.0/rpi-thesis-starter-v0.9.0.zip">Download the starter (ZIP)</a></p>
+
+1. **What's inside:** the thesis files, this guide for offline reading (open
+   `START-HERE.html`), and a cheat sheet. A ZIP is one compressed file that
+   holds a folder. No account needed. Reading this in `START-HERE.html`? You
+   already have the files: continue to your route below.
 2. **Your computer:** extract (unzip) it and move the folder that contains
    `main.tex` somewhere normal, such as `Documents`.
    - **Windows:** right-click the ZIP and choose **Extract All**. Opening it
@@ -72,8 +68,9 @@ On Overleaf? Skip to [Step 3b](#step-3b-overleaf-route).
 You need **LaTeX** (the programs that make the PDF) and **an editor with a
 LaTeX extension** (an add-on that compiles when you save and shows the PDF
 beside your text). This guide walks through VS Code with the LaTeX Workshop
-extension, which the starter's settings are made for. Any editor with a LaTeX
-extension works the same way ([other editors](#other-editors)).
+extension, a popular free editor the starter's settings are made for. Already
+happy with TeXstudio or another LaTeX editor? Keep it
+([other editors](#other-editors)).
 
 1. **Install a current, full LaTeX distribution.** Allow an hour or more.
    - **Windows:** [TeX Live for Windows](https://tug.org/texlive/windows.html).
@@ -107,7 +104,8 @@ extension works the same way ([other editors](#other-editors)).
 Compile failed? **View → Problems** lists the errors with their file and line;
 start with the first. "latexmk not found" or `spawn latexmk ENOENT` right
 after installing means VS Code can't see LaTeX yet: quit it completely and
-reopen it (on Windows, restart the computer). Then see
+reopen it (on Windows, restart the computer). For anything else, paste the
+error into [Explain my error](explain-my-error.md), or see
 [fixing problems](troubleshooting.md#common-messages).
 
 <details><summary>If you use Linux: install LaTeX and VS Code</summary>
@@ -158,7 +156,7 @@ For VS Code, use the `.deb` or `.rpm`, not the Flatpak, which
 
 </details>
 
-### Other editors
+<details id="other-editors"><summary>If you use another editor: TeXShop, TeXworks, TeXstudio, Vim, Emacs, or Sublime Text</summary>
 
 Any editor with a LaTeX extension can compile this starter, including AI
 assistants that can edit files and open a local folder. Open the folder that
@@ -195,6 +193,8 @@ BibTeX in its menus), then compiles twice more.
 
 </details>
 
+</details>
+
 Then go to [Step 4](#step-4-check-your-first-pdf).
 
 ## Step 3b: Overleaf route
@@ -218,7 +218,8 @@ Then go to [Step 4](#step-4-check-your-first-pdf).
    runs the bibliography step for you.
 
 Compile failed or timed out? Overleaf's log, the **Logs and output files**
-button beside **Recompile**, lists the errors; start with the first. Then see
+button beside **Recompile**, lists the errors; start with the first. Paste it
+into [Explain my error](explain-my-error.md), or see
 [fixing problems](troubleshooting.md#common-messages).
 <!-- TODO(verify): Overleaf's log button label ("Logs and output files") was not rechecked in the current editor. -->
 <!-- Checked 14 Oct 2026: the unchanged sample compiled on a free Overleaf
@@ -264,7 +265,9 @@ The seal belongs to RPI, so this unofficial starter doesn't include it.
 
 Open **`metadata.tex`** and replace the value after each `=`. Keep the
 setting names, braces, and commas. Check `degree`: write `masters` for a
-master's thesis.
+master's thesis. Prefer a form? The [Settings builder](settings-builder.md)
+writes the whole block for you and shows a sketch of the title page as you
+type.
 
 ![How metadata.tex fills the title page: numbered lines in metadata.tex (left) match places on a simplified title page (right). 1, title: the title in capitals at the top. 2, author: your name. 3, degree: doctoral gives DOCTOR OF PHILOSOPHY, masters gives MASTER OF SCIENCE, engineering-doctorate gives DOCTOR OF ENGINEERING. 4, each \committeemember line: one name under "Approved by", with ", Chair" after the chair. 5, department: the department name, above Rensselaer Polytechnic Institute, Troy, New York. 6, graduation month and year: the bracketed date at the bottom, such as [May 2027]. A dashed circle marks the seal's place.](diagrams/metadata-to-title-page.svg)
 
@@ -309,11 +312,9 @@ Save (or click **Recompile** on Overleaf) and check the title page. For an
 
 ### Stuck on something technical?
 
-An AI chat can explain an error or walk you through an install. It is
-optional, and for technical help only, never for writing your thesis. Give it
-your operating system and the first error, try one change at a time, keep
-your original, and don't paste confidential or unpublished material
-([more](going-further.md#use-ai-for-technical-help)).
+Paste the error into [Explain my error](explain-my-error.md), or ask an AI
+chat for technical help only, never for writing your thesis
+([how to ask well](going-further.md#use-ai-for-technical-help)).
 
 **Next step: [writing basics](writing.md)**, for chapters, figures, tables,
 and equations. Have a draft? [Bring one small section in](bring-your-draft.md)
@@ -321,3 +322,5 @@ first. Curious what just happened? See [how it works](how-it-works.md).
 
 Writing an undergraduate thesis or a poster? The writing and citation help
 works for you too, but the title page and layout follow RPI's graduate rules.
+For a proposal or qualifying exam, the starter makes a good model
+([how](going-further.md#write-a-proposal-or-qualifying-exam)).

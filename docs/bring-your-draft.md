@@ -29,11 +29,14 @@ and page numbers are built for you.
 In Google Docs, copy the text, or choose **File → Download → Microsoft
 Word**.
 
-1. **Copy the text** into a chapter file ([add a chapter](writing.md#chapters)).
-2. **Mark it up:** headings become `\chapter{...}`, `\section{...}`, or
-   `\subsection{...}`; footnotes become `\footnote{...}`; italics become
-   `\emph{...}`. Put a backslash before special characters: `%` → `\%`,
-   `&` → `\&`, `_` → `\_`, `$` → `\$`, `#` → `\#`.
+1. **Convert one section:** paste it into
+   [Bring your work in](bring-your-work-in.md). It turns headings, bold and
+   italics, lists, links, special characters, and tables into LaTeX, and
+   lists what it left for you. By hand instead: headings become
+   `\chapter{...}`, `\section{...}`, or `\subsection{...}`; footnotes become
+   `\footnote{...}`; italics become `\emph{...}`; and special characters get
+   a backslash: `%` → `\%`, `&` → `\&`, `_` → `\_`, `$` → `\$`, `#` → `\#`.
+2. **Paste the LaTeX** into a chapter file ([add a chapter](writing.md#chapters)).
 3. **Rebuild what doesn't paste** (quotations, equations, tables, figures,
    cross-references, citations) from [writing basics](writing.md) and
    `chapters/02-research.tex`. Use `\label` and `\ref`, not "see Figure 3".
@@ -51,7 +54,9 @@ uses commands, such as `\textbf{bold}` and `\section{Heading}`. Most of a
 Markdown draft carries over once each symbol becomes its command. Neither
 route below changes your original file.
 
-- **One short section, nothing to install:** [move it by hand](#move-a-section-by-hand).
+- **In your browser, nothing to install:** paste a section into
+  [Bring your work in](bring-your-work-in.md), which reads Markdown too.
+- **One short section by hand:** [move it by hand](#move-a-section-by-hand).
 - **A longer draft:** [use Pandoc](#convert-a-draft-with-pandoc-optional), then
   clean up its output.
 
@@ -81,7 +86,7 @@ route below changes your original file.
 | "see Figure 3" | `Figure~\ref{fig:my-plot}` | [Cross-references](writing.md#cross-references) |
 | `- item` lines | `itemize` with one `\item` per line | |
 
-### Convert a draft with Pandoc (optional)
+<details id="convert-a-draft-with-pandoc-optional"><summary>Optional: convert a long draft with Pandoc</summary>
 
 [Pandoc](https://pandoc.org/) is a free program that converts Markdown or
 Word (`.docx`) files. It saves typing but does not make a finished chapter.
@@ -175,6 +180,8 @@ document. More options: the [Pandoc manual](https://pandoc.org/MANUAL.html).
 
 *In words:* headings, bold, italics, and citations become LaTeX commands;
 a display equation goes in an `equation` environment so it gets a number.
+
+</details>
 
 </details>
 

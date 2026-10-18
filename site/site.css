@@ -80,26 +80,28 @@
 :root {
   color-scheme: light dark;
 
-  --paper:       #fbf7ef;  /* page background */
-  --paper-2:     #f3ecdf;  /* bands, code */
-  --footer:      #efe7d8;  /* footer band, a shade deeper than the page */
-  --card:        #fffdf8;
-  --ink:         #2b2723;  /* main text */
-  --ink-soft:    #463f38;
-  --muted:       #5d5349;  /* secondary text */
-  --line:        #e4dac8;
-  --line-strong: #c2b297;
-  --btn-edge:    #2b2723;  /* button outline (primary) */
-  --btn-edge-2:  #2b2723;  /* button outline (secondary) */
-  --btn-shadow:  #2b2723;  /* offset shadow under buttons */
+  --paper:       #faf5ea;  /* page background */
+  --paper-2:     #f1e8d6;  /* bands, code */
+  --footer:      #ede3d0;  /* footer band, a shade deeper than the page */
+  --card:        #fffcf5;
+  --ink:         #2d2620;  /* main text */
+  --ink-soft:    #4a4037;
+  --muted:       #625547;  /* secondary text */
+  --line:        #e3d6bf;
+  --line-strong: #c4ae8a;
+  --btn-edge:    #2d2620;  /* button outline (primary) */
+  --btn-edge-2:  #2d2620;  /* button outline (secondary) */
+  --btn-shadow:  #2d2620;  /* offset shadow under buttons */
 
-  --sage:  #46684b;  --sage-wash:  #e2ebd9;   /* tips */
-  --blue:  #1f4f8f;  --blue-wash:  #dfe7f2;   /* notes, links */
-  --terra: #9e4526;  --terra-wash: #f6e0d3;   /* warnings, accents */
-  --plum:  #6b4669;  --plum-wash:  #efe2ed;   /* important */
-  --butter-wash: #f7ebbd;
+  /* The light accents, named once: the page uses them, and print uses them in either theme. */
+  --light-sage: #4a6b42; --light-blue: #24518c; --light-terra: #a24a24; --light-plum: #70466a; --light-red: #c8102e;
+  --sage:  var(--light-sage);   --sage-wash:  #e4ecd2;   /* tips */
+  --blue:  var(--light-blue);   --blue-wash:  #e0e6ef;   /* notes, links */
+  --terra: var(--light-terra);  --terra-wash: #f6dfcd;   /* warnings, accents */
+  --plum:  var(--light-plum);   --plum-wash:  #f1e0ea;   /* important */
+  --butter-wash: #f7e8b3;
 
-  --rpi-red: #c8102e;   /* used sparingly: primary button, one squiggle */
+  --rpi-red: var(--light-red);   /* used sparingly: primary button, one squiggle */
   --on-red:  #ffffff;
   --link:    var(--blue);
   --scroll-hint: rgba(43, 39, 35, 0.22);   /* edge shadow on scrollable code and tables */
@@ -107,12 +109,17 @@
   --squiggle: var(--rpi-red);   /* the hero's hand-drawn underline */
   --logo-dot: #c8102e;          /* the dot in the header mark (site/logo.svg) */
   --select:  #f3dc8c;           /* highlighter yellow for selected text */
+  --page-paper: #fffdf8;   /* a printed page (title page sketch, PDF page view): paper in both themes */
+  --page-ink:   #2d2620;
+  --page-muted: #625547;
+  --overlay-ink: #f4efe6;   /* the picture viewer and search: always dark, in both themes */
+  --overlay-bg:  #181511;
   --card-shadow: 0 1px 2px rgba(43, 39, 35, 0.05), 0 10px 22px -16px rgba(43, 39, 35, 0.35);   /* home cards */
 
   --table-head: var(--paper-2);
   --control-edge: var(--muted);
-  --checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%2346684b' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 5.8 C 5 7.4, 6.6 9.2, 8.1 10.6 C 9.6 9, 11.2 7.3, 12.7 5.6' fill='none' stroke='%232b2723' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");   /* the arrow on select menus */
+  --checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%234a6b42' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 5.8 C 5 7.4, 6.6 9.2, 8.1 10.6 C 9.6 9, 11.2 7.3, 12.7 5.6' fill='none' stroke='%232d2620' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");   /* the arrow on select menus */
 
   /* LaTeX highlighting, shared by guide code blocks (built by scripts/build_site.py)
      and tool output (site/tools-highlight.js). Each is AA on --paper-2 in both themes. */
@@ -123,37 +130,37 @@
   --code-com:   var(--muted);   /* % comments, also italic */
 
   /* The dark palette is defined once; both System and Dark use it. */
-  --dark-paper: #1c1a17;
-  --dark-paper-2: #25221d;
-  --dark-footer: #161411;
-  --dark-card: #2c2822;
-  --dark-ink: #efe8dc;
-  --dark-ink-soft: #ddd4c6;
-  --dark-muted: #bcb1a0;
-  --dark-line: #494238;
-  --dark-line-strong: #756a58;
-  --dark-btn-edge: #0b0a08;
-  --dark-btn-edge-2: #8a7f70;
-  --dark-btn-shadow: #0b0a08;
-  --dark-sage: #a9c9a1;
-  --dark-sage-wash: #263226;
-  --dark-blue: #9fc2f5;
-  --dark-blue-wash: #222f44;
-  --dark-terra: #eda482;
-  --dark-terra-wash: #3a271e;
-  --dark-plum: #d8b6d3;
-  --dark-plum-wash: #33263a;
-  --dark-butter-wash: #3a3320;
+  --dark-paper: #181614;
+  --dark-paper-2: #211e1a;
+  --dark-footer: #121110;
+  --dark-card: #27231e;
+  --dark-ink: #f2ece2;
+  --dark-ink-soft: #ddd5c8;
+  --dark-muted: #b9ae9d;
+  --dark-line: #423b32;
+  --dark-line-strong: #776b5b;
+  --dark-btn-edge: #e9e1d4;
+  --dark-btn-edge-2: #a99d8b;
+  --dark-btn-shadow: #463e34;
+  --dark-sage: #a6d49a;
+  --dark-sage-wash: #273b27;
+  --dark-blue: #a2c8fb;
+  --dark-blue-wash: #1d2c43;
+  --dark-terra: #f6a57f;
+  --dark-terra-wash: #3b2418;
+  --dark-plum: #e0b6dc;
+  --dark-plum-wash: #34233a;
+  --dark-butter-wash: #3a3118;
   --dark-rpi-red: #d6223f;
   --dark-squiggle: #ff8d98;
   --dark-logo-dot: #ff5a6e;
   --dark-select: #5c4b1d;
   --dark-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 12px 24px -14px rgba(0, 0, 0, 0.7);
   --dark-scroll-hint: rgba(0, 0, 0, 0.6);
-  --dark-table-head: #353027;
-  --dark-control-edge: #8a7f70;
-  --dark-checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%23a9c9a1' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  --dark-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 5.8 C 5 7.4, 6.6 9.2, 8.1 10.6 C 9.6 9, 11.2 7.3, 12.7 5.6' fill='none' stroke='%23efe8dc' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --dark-table-head: #2e2a24;
+  --dark-control-edge: #958a78;
+  --dark-checkmark: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.2 8.4 C 4.4 9.4, 5.5 10.6, 6.6 12 C 8.4 8.6, 10.6 5.6, 13.4 3.4' fill='none' stroke='%23a6d49a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --dark-chevron: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.4 5.8 C 5 7.4, 6.6 9.2, 8.1 10.6 C 9.6 9, 11.2 7.3, 12.7 5.6' fill='none' stroke='%23f2ece2' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
 
   --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
   --font-body: "Plain Zero", "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -167,18 +174,18 @@
   --page-max: 1200px;
   --gutter: clamp(16px, 4vw, 40px);
 }
-/* Large screens: a wider frame, so the extra width goes to tables and
-   drawings instead of empty margins (text keeps its 68ch measure). One frame
-   for every page: header, sidebar and footer sit in the same place on the
-   home page, guide pages and tools. */
-@media (min-width: 1560px) { :root { --page-max: 1400px; } }
-@media (min-width: 1920px) { :root { --page-max: 1520px; } }
+/* Large screens: one frame just wide enough for the sidebar, the text and
+   "On this page" side by side (82rem); any extra width becomes even margins,
+   as on most documentation sites. Header, sidebar and footer sit in the same
+   place on the home page, guide pages and tools. The frame is in rem, so it
+   grows with the type on very large monitors below. */
+@media (min-width: 1440px) { :root { --page-max: 82rem; } }
 /* Very large monitors (2560 and up, 4K at 1x): everything scales a step, type
    and spacing together, so the page is not a narrow island in a wide void.
    Text keeps its measure because it is set in ch. */
-@media (min-width: 2560px) { html { font-size: 112.5%; } :root { --page-max: 1760px; } }
-@media (min-width: 3400px) { html { font-size: 125%; } :root { --page-max: 1980px; } }
-@media (min-width: 3800px) { html { font-size: 150%; } :root { --page-max: 2360px; } }   /* 4K at 1x */
+@media (min-width: 2560px) { html { font-size: 112.5%; } }
+@media (min-width: 3400px) { html { font-size: 125%; } }
+@media (min-width: 3800px) { html { font-size: 150%; } }   /* 4K at 1x */
 
 /* System follows the device; explicit choices also theme native controls and SVGs. */
 :root[data-theme="light"] { color-scheme: light; }
@@ -318,7 +325,7 @@ h4 { font-size: 1.15rem; margin: 1.6em 0 0.3em; }
 p { margin: 0 0 1.1em; text-wrap: pretty; }
 strong, b { font-weight: 700; }
 
-code, kbd, pre { font-family: var(--font-mono); }
+code, kbd, pre { font-family: var(--font-mono); font-variant-ligatures: none; }   /* -- stays two hyphens */
 code {
   font-size: 0.86em;
   background: var(--paper-2);
@@ -341,6 +348,9 @@ kbd {
 }
 mark { background: var(--butter-wash); color: inherit; border-radius: 4px; padding: 0 2px; }
 ::selection { background: var(--select); color: var(--ink); }
+/* One scrollbar look everywhere (it inherits): the page, text boxes, tool
+   output, code and tables, in the theme's colors. */
+:root { scrollbar-color: var(--line-strong) transparent; }
 
 /* A single solid underline stays clear on wrapped links and in Safari.
    Keep the sketch treatment on illustrations rather than changing link geometry. */
@@ -434,7 +444,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .appearance-menu .theme-icon { flex: none; width: 20px; height: 20px; color: var(--ink-soft); }
 .appearance-menu button { min-height: 48px; }
 .appearance-menu button:hover { background: var(--paper-2); }
-.appearance-menu button[aria-pressed="true"] { background: var(--blue-wash); font-weight: 700; }
+.appearance-menu button[aria-pressed="true"] { background: var(--sage-wash); font-weight: 700; }   /* selected: the one sage, as for the current page */
 .appearance-menu button:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
 .unofficial-tag {   /* "not an RPI resource", said calmly next to the name */
   display: inline-block;
@@ -447,13 +457,52 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   border-radius: 999px;
 }
 .site-nav { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 4px; margin-left: -10px; }   /* the first name lines up with the wordmark */
-@media (min-width: 1560px) {
+@media (min-width: 1024px) {   /* one row: the name, four entries, search and appearance */
   .site-header { grid-template-columns: auto minmax(0, 1fr) auto; gap: 12px 24px; }
   .header-tools { grid-column: 3; grid-row: 1; }
-  .site-nav { grid-column: 2; grid-row: 1; justify-self: center; }
+  .site-nav { grid-column: 2; grid-row: 1; justify-self: center; margin-left: 0; }
+}
+/* Guide and Tools: menus that open under their name, drawn like the
+   appearance menu. Native details, so they work without JavaScript. */
+.nav-menu { position: relative; }
+.nav-menu > summary {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; font-size: 1rem; color: var(--ink-soft);
+  list-style: none; cursor: pointer; border-radius: var(--sketch);
+}
+.nav-menu > summary::-webkit-details-marker { display: none; }
+.nav-menu > summary::after {
+  content: ""; width: 0.8em; height: 0.8em; background: currentColor;
+  -webkit-mask: var(--chevron) no-repeat center / contain; mask: var(--chevron) no-repeat center / contain;
+  transition: transform .15s ease;
+}
+.nav-menu[open] > summary::after { transform: rotate(180deg); }
+.nav-menu > summary:hover { color: var(--ink); text-decoration: underline; text-decoration-color: var(--line-strong); }
+.nav-menu > summary.is-current, .nav-menu[open] > summary { color: var(--ink); background: var(--sage-wash); text-decoration: none; }
+.nav-menu > summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.nav-menu-list {
+  position: absolute; top: calc(100% + 8px); left: -8px; z-index: 30;
+  width: max-content; min-width: 14rem; max-width: min(22rem, calc(100vw - 2 * var(--gutter)));
+  margin: 0; padding: 8px; list-style: none;
+  background: var(--card); border: 1.5px solid var(--control-edge); border-radius: 14px;
+  box-shadow: 0 8px 24px var(--scroll-hint);
+}
+.site-nav .nav-menu-list a { display: block; padding: 8px 12px; color: var(--ink); text-decoration: none; border-radius: 8px; }   /* not the header bar's link padding */
+.nav-menu-list a:hover { background: var(--paper-2); }
+.nav-menu-list a[aria-current="page"] { background: var(--sage-wash); font-weight: 700; }
+.nav-menu-list a:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
+.site-nav .nav-menu-tools .nav-menu-list a { display: flex; align-items: flex-start; gap: 12px; }
+.nav-menu-icon { width: 30px; height: 30px; flex: none; margin-top: 2px; }   /* the tool's doodle from the home page */
+.nav-menu-name { display: block; font-weight: 700; }
+.nav-menu-blurb { display: block; font-size: 0.85rem; color: var(--muted); }
+@media (max-width: 700px) {   /* phones: the menu opens across the header, under the links */
+  .nav-menu { position: static; }
+  .nav-menu-list { left: var(--gutter); right: var(--gutter); top: 100%; width: auto; max-width: none; }
 }
 /* Link states, the same in the header, the sidebar and the footer:
    hover underlines the text; the current page is the one sage pill. */
+.site-nav { align-items: center; }
+.site-nav > a { display: inline-flex; align-items: center; }   /* the same box as the menu names */
 .site-nav a {
   color: var(--ink-soft);
   text-decoration: none;
@@ -550,8 +599,13 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
      .ln   a softer, thinner line for "text" on a page
      .f-*  wash fill and ink line together */
 .doodle { color: var(--ink); overflow: visible; }
-.dd, .dd * { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-.dd .ln { stroke: var(--muted); stroke-width: 1.8; }
+/* Line weight follows the drawing's size (--dd-line): full on large drawings,
+   lighter on small icons, so the hand-drawn wobble reads as texture, not clutter. */
+.dd, .dd * { fill: none; stroke: currentColor; stroke-width: var(--dd-line, 2.2); stroke-linecap: round; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.dd .ln { stroke: var(--muted); stroke-width: calc(var(--dd-line, 2.2) * 0.8); }
+.tk-icon { --dd-line: 1.7; }
+.tool-mark { --dd-line: 1.8; }
+.nav-menu-icon { --dd-line: 1.35; }
 .dd .k { fill: var(--card); stroke: none; }
 .dd :is(.w-sage, .w-blue, .w-butter, .w-terra, .w-plum) { stroke: none; }
 .dd .w-sage   { fill: var(--sage-wash); }
@@ -576,9 +630,9 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .tag {
   --c: var(--muted); --w: var(--paper-2);
   display: inline-block;
-  padding: 0 8px;
+  padding: 1px 12px;
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.85rem;
   font-weight: 700;
   font-style: normal;
   letter-spacing: 0.01em;
@@ -596,6 +650,35 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .tag-stuck { --c: var(--terra); --w: var(--terra-wash); }
 .tag-later { --c: var(--plum);  --w: var(--plum-wash); }
 .tag-optional { border-style: dashed; }
+/* The change log (website copy): each release's PDF answer as a tag, its links under the heading. */
+.release-meta { margin: -0.3rem 0 0.9rem; font-size: 0.95rem; color: var(--ink-soft); }
+.release-meta .sep { margin: 0 0.6em; }
+/* "Changes your PDF?": the answer as a hand-drawn stamp, then what it means.
+   Colors from the callouts: No sage, Yes terra, Some plum, the first version blue. */
+.release-pdf {
+  --c: var(--sage); --w: var(--sage-wash);
+  display: flex; align-items: center; gap: 16px;
+  margin: 0 0 1.2rem; padding: 12px 18px 12px 12px;
+  background: var(--w);
+  border: 1.5px solid color-mix(in srgb, var(--c) 40%, transparent);
+  border-radius: 6px 18px 8px 16px / 16px 8px 18px 6px;
+}
+.release-pdf-yes   { --c: var(--terra); --w: var(--terra-wash); }
+.release-pdf-some  { --c: var(--plum);  --w: var(--plum-wash); }
+.release-pdf-first { --c: var(--blue);  --w: var(--blue-wash); }
+.release-pdf p { margin: 0; }
+.release-pdf > div { min-width: 0; }
+@media (max-width: 480px) { .release-pdf { flex-wrap: wrap; } }   /* large text on a phone: the stamp above the words */
+.release-pdf-word {
+  flex: none; display: grid; place-items: center;
+  width: 4.2rem; height: 4.2rem;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; color: var(--c);
+  background: var(--card);
+  border: 2px solid var(--c); border-radius: var(--wobble);
+  transform: rotate(-4deg);
+}
+.release-pdf-q { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: var(--c); }
+.release-pdf code { background: var(--card); }
 
 /* Margin note: Fraunces italic with a little squiggle */
 .margin-note {
@@ -647,6 +730,22 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .help-card li { margin: 0; font-size: 1.02rem; line-height: 1.4; }
 .help-card li a { display: inline-block; padding: 9px 0; white-space: nowrap; }   /* the arrow never wraps alone; page names are short */
 .help-card li a::after { content: "→" / ""; display: inline-block; margin-left: 0.3em; }   /* inline-block: the arrow is not underlined, as with .text-link */
+/* A door with one action (the Contribute page): the button sits at the foot of each card. */
+/* Doors with one action each (the Contribute page): one row per way, what it
+   is on the left and its button on the right; stacked on phones. */
+.guide-content > .action-rows { grid-template-columns: minmax(0, 1fr); gap: 14px; max-width: none; margin: 1.6rem 0 2.2rem; padding: 0; }
+.guide-content .action-rows .help-card { display: flex; flex-direction: row; align-items: center; gap: 20px; padding: 12px 18px; }
+.action-rows .help-card h3 { margin: 0 0 2px; font-size: 1.15rem; }
+.action-rows .help-card .kicker { margin: 4px 0 0; font-size: 0.75rem; }
+.action-rows .help-text { flex: 1 1 auto; min-width: 0; }
+.action-rows .help-text > :last-child { margin-bottom: 0; }
+.action-rows .help-card p { margin-bottom: 0; }
+.action-rows .help-action { flex: none; margin: 0; }
+.action-rows .button { white-space: nowrap; }
+@media (max-width: 600px) {
+  .guide-content .action-rows .help-card { flex-direction: column; align-items: stretch; gap: 12px; }
+  .action-rows .button { width: 100%; }
+}
 
 /* Cards lift a little while you point at them or tab into them */
 .help-card:is(:hover, :focus-within) {
@@ -689,7 +788,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .home-more { margin: 0 0 12px; font-size: 1rem; color: var(--ink-soft); }
 .home-more a { display: inline-block; padding: 6px 0; }
-.home-more .sep { margin: 0 0.7em; color: var(--muted); }
+.home-more .sep, .home-news .sep { margin: 0 0.7em; color: var(--muted); }
 .home-note { max-width: 44rem; margin: 0; font-size: 0.9rem; line-height: 1.5; color: var(--muted); }
 .home-figure { max-width: var(--page-max); margin: clamp(14px, 2.4vw, 26px) auto 0; padding: 0 var(--gutter); }
 .home-figure img { display: block; width: 100%; height: auto; margin: 0 auto; }
@@ -751,6 +850,22 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .here-col .tk-icon { width: 36px; height: 36px; }
 .here-col li :is(a, strong) { display: inline-block; font-weight: 700; font-size: 1rem; }
 .here-col li p > span { display: block; }
+/* Phones: each part is a small tile with its icon and name, two to a row; the
+   page it opens explains the rest, so the one-line descriptions stay for laptops. */
+@media (max-width: 600px) {
+  .here-col { padding: 16px 14px 14px; }
+  .here-col ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+  .here-col li, .here-col li:first-child {
+    align-items: center; gap: 8px; padding: 10px;
+    background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px 14px 9px 13px / 13px 9px 14px 10px;
+  }
+  .here-col .tk-icon { width: 26px; height: 26px; }
+  .here-col li p { font-size: 0.95rem; line-height: 1.25; }
+  .here-col li p > span { display: none; }
+  .here-col li { position: relative; }
+  .here-col li a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }   /* the whole tile opens it */
+  .here-col li:has(a:hover) { border-color: var(--line-strong); background: var(--card); }
+}
 
 .home-foot {
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
@@ -763,7 +878,48 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .here + .home-foot { margin-top: clamp(24px, 3vw, 34px); }
 .home-news { margin: 0; flex: 1 1 30rem; max-width: 60rem; color: var(--ink-soft); }
 .home-news .tag { margin-right: 0.4em; }
+.home-news a { white-space: nowrap; }   /* "All changes" and "How to update" stay whole */
+@media (max-width: 480px) { .home-news a { white-space: normal; } }   /* except where even two words may not fit */
 .home-share { margin: 0; display: flex; align-items: center; gap: 12px; }
+/* Icons for actions, drawn by hand like the callout icons: a button, file
+   picker or quiet button opts in with data-icon="copy" (or download, add,
+   remove, clear, search, bulb, eye, file, print, again, prev, next, check,
+   undo). The icon is a mask in
+   the text color, so it follows every state, theme and forced colors. One set
+   for every tool: use these, never a new drawing for the same action. */
+[data-icon]::before {
+  content: ""; flex: none; width: 1.15em; height: 1.15em;
+  background: currentColor;
+  -webkit-mask: var(--icon) no-repeat center / contain;
+          mask: var(--icon) no-repeat center / contain;
+}
+.tool-file-button[data-icon] { gap: 10px; }
+[data-icon="next"]::before { order: 2; }   /* the arrow points the way: after the words */
+.button-quiet[data-icon]::before { width: 20px; height: 20px; }
+[data-icon="copy"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M8.6 8.3C11.9 8.1 15.9 8.2 19.2 8.4C19.4 12.2 19.3 16.1 19.1 19.8C15.6 20 12.1 20 8.6 19.8C8.4 16 8.4 12.1 8.6 8.3Z%27/%3E%3Cpath d=%27M15.6 8.1C15.6 6.9 15.5 5.7 15.4 4.6C11.8 4.4 8.2 4.5 4.6 4.7C4.4 8.5 4.5 12.3 4.7 16C5.8 16.1 6.9 16.2 8.3 16.1%27/%3E%3C/svg%3E"); }
+[data-icon="download"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M12 4.2C12.1 7.7 12 11.4 12 15M7.6 10.6C9 12.1 10.5 13.6 12 15C13.6 13.6 15 12.1 16.4 10.5M5 19.6C9.6 19.3 14.4 19.4 19 19.5%27/%3E%3C/svg%3E"); }
+[data-icon="add"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M12 5.1C12.2 9.7 12.1 14.3 12 18.9M5.1 12.1C9.7 11.9 14.3 12 18.9 11.9%27/%3E%3C/svg%3E"); }
+[data-icon="remove"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M6.5 6.8C9.6 10 14.4 14.6 17.4 17.6M17.3 6.4C14.2 9.8 9.8 14.2 6.6 17.5%27/%3E%3C/svg%3E"); }
+[data-icon="clear"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M4.6 15.4C7.7 12.3 10.8 9.2 13.9 6.1C14.7 5.3 16 5.3 16.8 6.1L18.9 8.2C19.7 9 19.7 10.3 18.9 11.1C16.6 13.4 14.3 15.7 12 18H7.2Z%27/%3E%3Cpath d=%27M9.4 10.6C11 12.2 12.7 13.9 14.3 15.5M7 18.1C11 18 15 18 19 18.2%27/%3E%3C/svg%3E"); }
+[data-icon="search"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M16.4 10.6C16.5 13.8 13.8 16.5 10.6 16.5C7.4 16.6 4.7 14 4.6 10.8C4.5 7.6 7.1 4.8 10.4 4.7C13.6 4.6 16.3 7.2 16.4 10.4%27/%3E%3Cpath d=%27M15 15.1C16.7 16.7 18.3 18.4 19.9 20%27/%3E%3C/svg%3E"); }
+[data-icon="bulb"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M9.2 18.2C11.1 18.1 13 18.1 14.9 18.2M10.2 21.1C11.4 21 12.6 21 13.8 21.1%27/%3E%3Cpath d=%27M9.6 15.8C9.4 14.5 8.6 13.6 7.8 12.6C6.2 10.6 6.4 7.4 8.4 5.6C10.5 3.7 13.9 3.8 15.8 5.9C17.6 7.8 17.6 10.8 16.1 12.7C15.3 13.7 14.5 14.6 14.4 15.8C12.8 15.9 11.2 15.9 9.6 15.8Z%27/%3E%3C/svg%3E"); }
+[data-icon="eye"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M2.8 12.1C5 8.2 8.4 5.8 12 5.8C15.7 5.8 19.1 8.3 21.2 12C19 15.8 15.6 18.2 12 18.2C8.3 18.2 4.9 15.9 2.8 12.1Z%27/%3E%3Cpath d=%27M14.6 12C14.6 13.5 13.4 14.6 12 14.6C10.5 14.6 9.4 13.4 9.4 12C9.4 10.6 10.6 9.4 12 9.4C13.5 9.4 14.6 10.6 14.6 12.1%27/%3E%3C/svg%3E"); }
+[data-icon="file"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M7.1 3.6C9.4 3.5 11.7 3.5 14 3.6L18.1 7.7C18.2 11.9 18.2 16.2 18 20.4C14.4 20.6 10.7 20.5 7.1 20.4C6.9 14.8 6.9 9.2 7.1 3.6Z%27/%3E%3Cpath d=%27M13.9 3.7C13.9 5 13.9 6.4 14 7.7C15.4 7.8 16.7 7.8 18 7.7M12.5 17C12.6 15 12.5 13 12.5 11M10.1 13.4C10.9 12.6 11.7 11.8 12.5 11C13.3 11.8 14.1 12.6 14.9 13.4%27/%3E%3C/svg%3E"); }
+[data-icon="print"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M7.1 8.8C7 7.2 7 5.6 7.1 4C10.4 3.9 13.7 3.9 17 4C17.1 5.6 17.1 7.2 17 8.8%27/%3E%3Cpath d=%27M6.2 16.9C5.6 16.9 5 16.9 4.5 16.8C4.4 14.8 4.4 12.7 4.5 10.6C4.6 9.7 5.2 9.1 6.1 9C10 8.9 14 8.9 17.9 9C18.8 9.1 19.4 9.7 19.5 10.6C19.6 12.7 19.6 14.8 19.5 16.8C19 16.9 18.4 16.9 17.8 16.9%27/%3E%3Cpath d=%27M7.1 13.9C10.4 13.8 13.7 13.8 17 13.9C17.1 15.9 17.1 17.9 17 19.9C13.7 20.1 10.4 20.1 7.1 19.9C7 17.9 7 15.9 7.1 13.9Z%27/%3E%3C/svg%3E"); }
+[data-icon="again"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M19.1 12.2C19 16.1 15.8 19.2 11.9 19.1C8 19 4.9 15.8 5 11.9C5.1 8 8.3 4.9 12.2 5C14.2 5.1 15.9 5.9 17.1 7.2%27/%3E%3Cpath d=%27M18.9 4.4C18.9 5.8 18.9 7.2 18.8 8.5C17.4 8.6 16.1 8.6 14.7 8.5%27/%3E%3C/svg%3E"); }
+[data-icon="prev"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M14.6 5.6C12.4 7.8 10.2 9.9 8 12.1C10.2 14.2 12.4 16.3 14.7 18.5%27/%3E%3C/svg%3E"); }
+[data-icon="next"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M9.4 5.6C11.6 7.8 13.8 9.9 16 12.1C13.8 14.2 11.6 16.3 9.3 18.5%27/%3E%3C/svg%3E"); }
+[data-icon="check"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M4.8 12.8C6.4 14.2 8.1 15.8 9.6 17.6C12.4 13.1 15.6 9.1 19.3 5.6%27/%3E%3C/svg%3E"); }
+[data-icon="undo"] { --icon: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27black%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M9.2 9.8C11.5 9.6 13.7 9.6 15.9 9.9C18.4 10.3 19.9 12.4 19.6 14.8C19.4 17 17.4 18.6 15.2 18.5C13 18.5 10.8 18.5 8.6 18.4%27/%3E%3Cpath d=%27M8.6 5.9C7.3 7.2 6 8.5 4.7 9.8C6 11.1 7.3 12.4 8.6 13.7%27/%3E%3C/svg%3E"); }
+/* A quiet button: a small icon action beside a field (remove a row); no edge
+   until you point at it. 44 px square for touch. */
+.button-quiet {
+  display: inline-grid; place-items: center; width: 44px; height: 44px; padding: 0;
+  color: var(--ink-soft); background: transparent; border: 1.5px solid transparent; border-radius: var(--wobble);
+  cursor: pointer;
+}
+.button-quiet:is(:hover, :focus-visible) { color: var(--terra); border-color: currentColor; background: var(--terra-wash); }
+.button-quiet:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .button-small { min-height: 44px; padding: 8px 16px; font-size: 0.98rem; gap: 8px; box-shadow: 2px 2px 0 var(--btn-shadow); }
 .button-small svg { width: 18px; height: 18px; }
 .share-status { font-weight: 700; font-size: 0.95rem; color: var(--sage); }
@@ -785,7 +941,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   .toolkit-grid p > span { display: none; }
   .toolkit-grid strong { font-size: 0.92rem; line-height: 1.3; }
   .tk-icon { width: 32px; height: 32px; }
-  .here-col li p > span { display: inline; }
   .doors .help-card > svg { float: none; width: 40px; height: 40px; }
   .doors .help-card .help-text { clear: none; }
   .home-foot { justify-content: flex-start; }
@@ -925,7 +1080,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1.2rem; color: var(--ink-soft); line-height: 1.6; }
 .guide-content > h1:first-child:has(+ .page-tag) { margin-bottom: 0.25em; }
 .page-tag { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 1.1rem; }   /* several tags wrap with a gap (component gallery) */
-.page-tag .tag { font-size: 0.85rem; padding: 1px 12px; }
+/* .tag sets one size for every tag: page tags, the home page's "What's new". */
 .guide-content :is(h2, h3, h4) { scroll-margin-top: 20px; }
 
 /* h2: a short hand-drawn underline */
@@ -959,7 +1114,9 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 @media (min-width: 1180px) {
   /* Every guide page keeps the same text column; the right rail stays empty
      on pages without "On this page", so text never jumps between pages. */
-  .guide-frame { grid-template-columns: var(--sidebar) minmax(0, 1fr) 11rem; gap: 44px; }
+  /* The text column grows only a little past the 68ch measure, so
+     "On this page" stays next to the text. */
+  .guide-frame { grid-template-columns: var(--sidebar) minmax(0, 74ch) 11rem; gap: 44px; }
   .guide-sidebar { grid-column: 1; grid-row: 1; }
   .guide-content { grid-column: 2; grid-row: 1; }
   .has-toc .guide-content .page-toc { display: none; }
@@ -982,7 +1139,8 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
    forms, the converter's two panes and results use the whole main column.
    Prose keeps its 68ch measure. */
 @media (min-width: 1180px) {
-  .page-tool .guide-frame { grid-template-columns: var(--sidebar) minmax(0, 1fr); gap: 56px; }
+  /* Tools use the text and "On this page" columns together. */
+  .page-tool .guide-frame { grid-template-columns: var(--sidebar) minmax(0, 1fr); gap: 44px; }
 }
 .tool-mark { display: inline-block; width: 1.1em; height: 1.1em; margin-right: 0.3em; vertical-align: -0.18em; }   /* the tool's doodle from the home page */
 @media (max-width: 600px) { .tool-mark { width: 0.85em; height: 0.85em; margin-right: 0.2em; vertical-align: -0.1em; } }
@@ -1120,8 +1278,8 @@ dialog.viewer {
   width: 100%; height: 100%; max-width: none; max-height: none;
   margin: 0; padding: 64px clamp(12px, 4vw, 48px) clamp(12px, 3vw, 32px);
   border: 0;
-  color: #f4efe6;
-  background: #181511;   /* underlying page text must not compete with the picture */
+  color: var(--overlay-ink);
+  background: var(--overlay-bg);   /* underlying page text must not compete with the picture */
   overflow: auto;
 }
 dialog.viewer::backdrop { background: transparent; }
@@ -1141,19 +1299,19 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   width: 100%; max-height: calc(100vh - 96px); max-height: calc(100dvh - 96px);
   overflow: auto;
 }
-.viewer-pan:focus-visible { outline: 3px solid #f4efe6; outline-offset: 2px; }
+.viewer-pan:focus-visible { outline: 3px solid var(--overlay-ink); outline-offset: 2px; }
 .viewer img[src$=".svg"] { width: min(100%, 1400px); object-fit: contain; padding: clamp(8px, 2vw, 20px); }
 .viewer-close {
   display: inline-flex; align-items: center; min-height: 44px;
   position: fixed; top: 14px; right: clamp(12px, 3vw, 28px);
   padding: 6px 16px;
-  color: #f4efe6; font-weight: 700; text-decoration: none;
+  color: var(--overlay-ink); font-weight: 700; text-decoration: none;
   background: rgb(0 0 0 / 0.35);
-  border: 1.5px solid rgb(244 239 230 / 0.7);
+  border: 1.5px solid color-mix(in srgb, var(--overlay-ink) 70%, transparent);
   border-radius: 999px;
 }
-.viewer-close:hover { background: rgb(0 0 0 / 0.6); border-color: #f4efe6; }
-.viewer-close:focus-visible { outline: 2px solid #f4efe6; outline-offset: 3px; }
+.viewer-close:hover { background: rgb(0 0 0 / 0.6); border-color: var(--overlay-ink); }
+.viewer-close:focus-visible { outline: 2px solid var(--overlay-ink); outline-offset: 3px; }
 @media (max-width: 600px) {   /* phones: each table row becomes a small card, nothing hidden off to the side */
   .guide-content .table-wrap { overflow: visible; }
   .guide-content .table-wrap :is(table, tbody, tr, td) { display: block; width: auto; }
@@ -1161,6 +1319,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content .table-wrap tr { padding: 12px 16px; border-top: 1px solid var(--line); }
   .guide-content .table-wrap tbody tr:first-child { border-top: 0; }
   .guide-content .table-wrap td { padding: 2px 0; border: 0; }
+  .guide-content .table-wrap td:empty { display: none; }   /* no label over nothing */
   .guide-content .table-wrap td:first-child { padding-bottom: 4px; font-weight: 700; color: var(--ink); }
   .guide-content .table-wrap td[data-label]::before {
     content: attr(data-label);
@@ -1180,8 +1339,8 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
     top: 64px; left: 12px; right: 12px;
     margin: 0;
     padding: 6px 10px;
-    color: #f4efe6;
-    background: #181511;
+    color: var(--overlay-ink);
+    background: var(--overlay-bg);
     border-radius: 6px;
     font-size: 0.9rem;
     text-align: left;
@@ -1286,7 +1445,6 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
     radial-gradient(farthest-side at 100% 50%, var(--scroll-hint), transparent) right / 12px 100% no-repeat scroll,
     var(--fill);
   scrollbar-width: thin;
-  scrollbar-color: var(--line-strong) transparent;
 }
 :is(.guide-content pre, .table-wrap)::-webkit-scrollbar { height: 8px; }
 :is(.guide-content pre, .table-wrap)::-webkit-scrollbar-track { background: transparent; }
@@ -1382,15 +1540,21 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .guide-content td { padding: 10px 14px; border-top: 1px solid var(--line); vertical-align: top; }
 .guide-content tr:first-child td { border-top: 0; }
 .guide-content code.keep { white-space: nowrap; }   /* short names stay whole (build_site.py) */
+.guide-content :not(pre) > code { -webkit-box-decoration-break: clone; box-decoration-break: clone; }   /* a wrapped chip keeps its edges */
 .guide-content code.keep-path .nowrap { white-space: nowrap; }   /* a path breaks only after a slash */
 .guide-content td code { overflow-wrap: break-word; }   /* "style=numeric,sorting=none" stays whole */
 .guide-content td:first-child code:not(.phrase, .long) { white-space: nowrap; }   /* keys and file names; messages wrap */
 .guide-content td code.long { overflow-wrap: anywhere; }
-.page-project .guide-content td code { white-space: normal; overflow-wrap: anywhere; }   /* maintainer tables carry long identifiers */   /* a 50-character \includegraphics line */
+.page-project .guide-content td code { white-space: normal; overflow-wrap: anywhere; }   /* maintainer tables carry long identifiers */
 .guide-content th:empty { padding: 0; }
 @media (max-width: 640px) {   /* narrow screens or large text: a long name wraps rather than widening the page */
-  .guide-content code.keep, .guide-content code.keep-path .nowrap,
-  .guide-content td code, .guide-content td:first-child code:not(.phrase, .long) { white-space: normal; overflow-wrap: anywhere; }
+  /* A short name moves to the next line whole, and breaks inside only when
+     it is wider than the whole line (large text on a phone). */
+  .guide-content code.keep, .guide-content td:first-child code.keep {
+    display: inline-block; max-width: 100%; white-space: normal; overflow-wrap: anywhere; vertical-align: bottom;
+  }
+  .guide-content code.keep-path .nowrap,
+  .guide-content td code:not(.keep), .guide-content td:first-child code:not(.phrase, .long, .keep) { white-space: normal; overflow-wrap: anywhere; }
 }
 
 /* ---------- 9. Footer ---------------------------------------------------- */
@@ -1662,7 +1826,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .class-demo > label + input + label { border-left-width: 0; border-radius: 0 10px 10px 0; }
 .class-demo > label:first-of-type { border-radius: 10px 0 0 10px; }
 .class-demo > label:hover { background: var(--paper-2); }
-.class-demo > input:checked + label { background: var(--blue-wash); font-weight: 700; }
+.class-demo > input:checked + label { background: var(--sage-wash); font-weight: 700; }
 @media (max-width: 400px) { .class-demo { padding: 12px; } }
 .class-demo > input:focus-visible + label { outline: 3px solid var(--focus); outline-offset: 2px; position: relative; z-index: 1; }
 .class-demo-panels { grid-column: 1 / -1; min-width: 0; margin-top: 8px; }
@@ -1689,7 +1853,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 }
 
 @media print {
-  .site-header, .guide-sidebar, .guide-topics, .pager, .guide-end, .skip-link, .site-footer, .hero-actions, .diagram-open, .viewer, .page-toc, .page-toc-wide, .code-toolbar { display: none !important; }
+  .site-header, .nav-menu-list, .guide-sidebar, .guide-topics, .pager, .guide-end, .skip-link, .site-footer, .hero-actions, .diagram-open, .viewer, .page-toc, .page-toc-wide, .code-toolbar { display: none !important; }
   .code-block { border: 0; background: none; }
   .guide-content .code-block > pre { padding-top: 16px; }
   :root, :root[data-theme], :root:not([data-theme]) {
@@ -1698,9 +1862,9 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
     --ink: #000; --ink-soft: #111; --muted: #333;
     --line: #bbb; --line-strong: #888;
     --btn-edge: #000; --btn-edge-2: #000; --btn-shadow: transparent;
-    --sage: #46684b; --blue: #1f4f8f; --terra: #9e4526; --plum: #6b4669;   /* light-theme accents, for markers and rules */
+    --sage: var(--light-sage); --blue: var(--light-blue); --terra: var(--light-terra); --plum: var(--light-plum);   /* light-theme accents, for markers and rules */
     --sage-wash: #fff; --blue-wash: #fff; --terra-wash: #fff; --plum-wash: #fff; --butter-wash: #fff;
-    --rpi-red: #c8102e; --on-red: #fff;
+    --rpi-red: var(--light-red); --on-red: #fff;
     --link: #000; --focus: #000; --scroll-hint: transparent;
   }
   html, body { background: #fff !important; color: #000; }
@@ -1756,16 +1920,20 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content summary::before { display: none; }
 }
 
-/* Clickable concept pictures use the existing optional image viewer. */
+/* Picture cards: each shows its drawing small and opens it in the optional
+   image viewer (How it works, "Why LaTeX for a thesis"). */
 .benefit-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 1.4em 0; }
 .guide-content .benefit-card { display: block; min-width: 0; padding: 17px 19px; color: var(--ink); text-decoration: none; border: 1.8px solid var(--ink-soft); border-radius: 11px 14px 10px 13px / 14px 10px 13px 11px; background: var(--card); }
 .benefit-card strong { display: block; color: var(--link); font-size: 1.08em; line-height: 1.35; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
 .benefit-card span { display: block; margin-top: 7px; line-height: 1.45; }
 .guide-content .benefit-card:hover { background: var(--paper-2); }
 .guide-content .benefit-card:focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
+.guide-content .benefit-card { display: flex; flex-direction: column; }
+.guide-content img.benefit-thumb { display: block; width: 100%; height: auto; aspect-ratio: 720 / 430; object-fit: contain; object-position: center top; margin: 0 0 12px; padding: 0; border: 0; background: none; }
 @media (max-width: 600px) {
   .benefit-cards { grid-template-columns: minmax(0, 1fr); gap: 12px; }
-  .guide-content .benefit-card { padding: 14px 16px; }
+  .guide-content .benefit-card { display: grid; grid-template-columns: 124px minmax(0, 1fr); column-gap: 14px; align-items: start; padding: 12px 14px; }
+  .guide-content img.benefit-thumb { grid-row: span 2; margin: 0; aspect-ratio: 4 / 3; }
 }
 @media print {
   .benefit-cards { display: block; }
@@ -1799,6 +1967,13 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
      .tool-nojs     the no-JavaScript note, a quiet dashed box
    A tool's own rules below add layout only, never new colors or sizes. */
 .tool[hidden], .tool-nojs[hidden] { display: none; }
+/* With scripts on, wait before showing the note: the tool's script hides it as
+   soon as it runs, so a slow load does not flash "JavaScript is off". Browsers
+   that cannot animate display show the note at once, as before. */
+@media (scripting: enabled) {
+  .tool-nojs:not([hidden], .tool-offline) { animation: tool-nojs-wait 2.5s step-end; }
+}
+@keyframes tool-nojs-wait { from, to { display: none; } }
 .guide-content > .tool { max-width: none; margin: 1.8rem 0; }
 .guide-content .tool-privacy {   /* drawn like a tip: an even edge all round, no colored bar */
   margin: 1.2rem 0;
@@ -1807,7 +1982,8 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   border: 1.5px solid color-mix(in srgb, var(--sage) 40%, transparent);
   border-radius: 6px 18px 8px 16px / 16px 8px 18px 6px;
 }
-.page-tool .guide-content > .tool-privacy { max-width: none; }   /* boxes line up with the tool below */
+.page-tool .guide-content > .tool-privacy { max-width: none; }   /* the privacy box lines up with the tool */
+.guide-content > .guide-end { max-width: none; }   /* previous / next span the column on every page */
 .guide-content .tool-nojs {
   padding: 12px 16px;
   background: var(--paper-2);
@@ -1896,6 +2072,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 }
 .tool-switch:hover input, .tool-switch:hover input::before { border-color: var(--ink); }
 .tool-switch input:checked { background: var(--sage); border-color: var(--sage); }
+.tool-switch input:not(:checked)::before { background: var(--line-strong); }   /* off: a knob you can see in both themes */
 .tool-switch input:checked::before { left: calc(100% - 1.2em); border-color: var(--sage); }
 .tool-switch input:focus-visible { outline-offset: 3px; }
 
@@ -1953,6 +2130,10 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   white-space: pre-wrap; overflow-wrap: anywhere; overflow: auto; resize: vertical;
 }
 .guide-content .tool-actions { display: flex; flex-wrap: wrap; gap: 10px 14px; margin: 1rem 0 0; }
+.guide-content > .tool-actions { margin: 1rem 0 1.4rem; }   /* a button in the text keeps room below it */
+@media (max-width: 480px) {   /* phones: a row of actions becomes full-width buttons of one size */
+  .guide-content .tool-actions > .button:not(.button-small) { flex: 1 1 100%; }
+}
 .tool-hint { margin: 6px 0 0; font-size: 0.92rem; color: var(--muted); }
 /* States (docs/project/components.md, "Tool states"; ToolState in
    site/tools-highlight.js). The status line keeps one line of room even when
@@ -1993,12 +2174,74 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 
 /* Settings builder: two fieldsets; short fields side by side on wide screens. */
 .settings-builder fieldset > p { margin: 0.6rem 0 0; color: var(--muted); }
-.settings-builder fieldset .button { margin-top: 1rem; }
 .settings-switches { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 4px 36px; margin-top: 1rem; }
-@media (min-width: 700px) {
-  .settings-builder [data-settings-fields] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 18px; }
-  .settings-builder [data-settings-fields] > div:has(> :is(#setting-title, #setting-author, #setting-department)) { grid-column: 1 / -1; }
+.settings-layout > form { container-type: inline-size; min-width: 0; }
+@container (min-width: 600px) {   /* the form's own width, so the sketch beside it never squeezes the fields */
+  .settings-builder [data-settings-fields] { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 18px; align-items: start; }
+  .settings-builder [data-settings-fields] > div:has(> :is(#setting-title, #setting-author, #setting-department, #setting-seal-file)) { grid-column: 1 / -1; }
 }
+/* The form and its title page sketch: side by side when the column is wide,
+   the sketch under the form otherwise. The sketch is a US letter page with
+   1 in margins, drawn in points of the page's width (1pt = 100cqw / 612), so
+   the class's gaps (20, 20, 10, 40, 20, 12 pt) and 12 pt text keep their
+   proportions at any size. A Times-like face, as in the PDF. */
+.settings-layout { display: grid; gap: 1.5rem; margin-top: 1.4rem; }
+@media (min-width: 1440px) {
+  .settings-layout { grid-template-columns: minmax(0, 1fr) minmax(260px, 340px); align-items: start; }
+  .settings-preview { position: sticky; top: 1.5rem; }
+}
+.guide-content .settings-preview { container-type: inline-size; width: 100%; max-width: 340px; margin: 0.5rem 0 0; }
+.settings-preview figcaption { margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted); }
+.settings-page {   /* 100cqw is the page's width: its figure is the container */
+  box-sizing: border-box;
+  display: flex; flex-direction: column; align-items: center;
+  aspect-ratio: 8.5 / 11;
+  padding: calc(100cqw * 72 / 612);
+  background: var(--page-paper); color: var(--page-ink);
+  border: 1.5px solid var(--line-strong); border-radius: 4px;
+  box-shadow: 4px 4px 0 var(--line);
+  font-family: "Times New Roman", "STIX Two Text", Times, serif;
+  text-align: center; line-height: 1.2; overflow-wrap: anywhere;
+}
+.settings-page p { margin: 0; max-width: 100%; font-size: calc(100cqw * 12 / 612); }
+.settings-page .tp-large { font-size: calc(100cqw * 14.4 / 612); font-weight: 700; }
+.settings-page .tp-italic { font-style: italic; }
+.settings-page .tp-gap-10 { margin-top: calc(100cqw * 10 / 612); }
+.settings-page .tp-gap-12 { margin-top: calc(100cqw * 12 / 612); }
+.settings-page .tp-gap-20 { margin-top: calc(100cqw * 20 / 612); }
+.settings-page .tp-gap-40 { margin-top: calc(100cqw * 40 / 612); }
+.settings-page .is-empty { color: var(--page-muted); opacity: 0.7; }
+.settings-page .tp-seal {   /* 0.25 of the text width, the seal's shape; pushed down like \vfill */
+  display: grid; place-items: center;
+  width: 25%; aspect-ratio: 605 / 608; margin-top: auto;
+  border: 1px dashed var(--line-strong); border-radius: 50%;
+  color: var(--muted); font-size: calc(100cqw * 8 / 612);
+}
+.settings-page .tp-seal + p { margin-top: calc(100cqw * 20 / 612); }
+.settings-page[hidden], .settings-page-full[hidden] { display: none; }   /* the sketch switch hides it */
+.tool .settings-seal-pick { margin-top: 0.8rem; }   /* the shared file picker, as on every tool */
+.settings-preview .tool-switch { margin: 0 0 0.6rem; }
+.settings-preview.is-off figcaption { display: none; }
+.settings-builder .tool-hint { margin: 6px 0 0; }
+/* Title and department: one line that grows with the text, in the field font. */
+.tool textarea.settings-grow { font: inherit; padding: 10px 14px; min-height: 48px; field-sizing: content; resize: none; overflow: hidden; }
+/* The committee: a quiet list. One line per member (name, role, a small x);
+   "Another role" opens a box under the menu. Column names show once, on wide forms. */
+.settings-member-head { display: none; }
+.settings-member {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 10px; align-items: center;
+  grid-template-areas: "n x" "r r" "o o";
+  padding: 10px 0; border-bottom: 1.5px dashed var(--line);
+}
+.settings-member .m-name { grid-area: n; } .settings-member .m-role { grid-area: r; }
+.settings-member .m-other { grid-area: o; } .settings-member .m-remove { grid-area: x; }
+.settings-member [hidden] { display: none; }
+@container (min-width: 600px) {
+  .settings-member-head, .settings-member { grid-template-columns: minmax(0, 1fr) minmax(10rem, 14rem) 44px; column-gap: 12px; }
+  .settings-member-head { display: grid; margin: 1rem 0 -4px; font-weight: 700; }
+  .settings-member { grid-template-areas: "n r x" ". o ."; }
+}
+.settings-builder [data-settings-add] { margin-top: 0.9rem; }
 .guide-content .settings-errors { margin: 0.6rem 0 0; padding: 10px 16px 10px 2.2rem; background: var(--paper-2); border-radius: 10px; color: var(--muted); }
 .guide-content .settings-errors:empty { display: none; }
 .guide-content .settings-errors li { margin: 0.15rem 0; }
@@ -2009,40 +2252,150 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .convert-options legend { padding: 0; margin: 0 0 6px; font-family: var(--font-body); font-size: 1rem; font-weight: 700; }
 .convert-panes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
 .convert-pane { min-width: 0; display: flex; flex-direction: column; }
-.tool .convert-label { display: block; margin: 0 0 6px; font-weight: 700; line-height: 1.5; }
+.tool .convert-label { display: block; margin: 0; font-weight: 700; }
+.convert-head {   /* the same height over both panes, so the boxes line up */
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 14px;
+  min-height: 44px; margin: 0 0 6px;
+}
 .convert-source { font-weight: 400; color: var(--muted); }
-.tool .convert-input, .guide-content .tool .convert-output { height: 22rem; }
-.guide-content .tool-output:empty::before { content: attr(data-empty); font-family: var(--font-body); color: var(--muted); }
+/* LaTeX or Preview: a segmented control, as in the class demo. The native
+   radios stay (keyboard, arrow keys) but are visually hidden; each label is a segment. */
+.tool fieldset.convert-view { display: flex; min-width: 0; margin: 0; padding: 0; background: none; border: 0; border-radius: 0; }
+.convert-view > input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
+.tool .convert-view > label {
+  display: flex; align-items: center; min-height: 44px; margin: 0; padding: 6px 16px;
+  font-weight: 400; color: var(--ink); background: var(--card); cursor: pointer;
+  border: 1.5px solid var(--line-strong);
+}
+.convert-view > label:first-of-type { border-radius: 10px 0 0 10px; }
+.convert-view > label:last-of-type { border-left-width: 0; border-radius: 0 10px 10px 0; }
+.convert-view > label:hover { background: var(--paper-2); }
+.convert-view > input:checked + label { background: var(--sage-wash); font-weight: 700; }
+.convert-view > input:focus-visible + label { outline: 3px solid var(--focus); outline-offset: 2px; position: relative; z-index: 1; }
+.tool .convert-input, .guide-content .tool .convert-output, .guide-content .tool .convert-preview { height: 22rem; }
+.guide-content .tool-output:empty::before, .convert-preview:empty::before { content: attr(data-empty); font-family: var(--font-body); color: var(--muted); }
+.guide-content .tool :is(.convert-output, .convert-preview)[hidden] { display: none; }
+/* Marked by "Show where": every place of the note, the current one outlined. */
+.convert-output .is-marked { background: var(--butter-wash); border-radius: 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.convert-output .is-current { background: var(--select); outline: 2px solid var(--terra); outline-offset: 1px; }
+.convert-preview .is-marked { background: var(--butter-wash); border-radius: 4px; box-shadow: 0 0 0 4px var(--butter-wash); }
+.convert-preview tr.is-marked > * { background: var(--butter-wash); }
+.convert-preview .is-current { outline: 2px solid var(--terra); outline-offset: 4px; }
+.convert-results .convert-where { margin: 6px 0 0.8rem; }
+/* The preview: the LaTeX drawn as a page would show it, roughly, in a
+   Times-like face as in the PDF. Headings are paragraphs, not page headings. */
+.guide-content .tool .convert-preview {
+  box-sizing: border-box; width: 100%; padding: 14px 18px; overflow: auto; resize: vertical;
+  font-family: "Times New Roman", "STIX Two Text", Times, serif; line-height: 1.5; color: var(--ink);
+  background: var(--card);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--sketch);
+  overflow-wrap: anywhere;
+}
+.guide-content .convert-preview > * { max-width: none; }
+.guide-content .convert-preview p, .guide-content .convert-preview :is(ul, ol, blockquote) { margin: 0 0 0.8em; }
+.guide-content .convert-preview .convert-preview-note {
+  margin: 0 0 1em; padding-bottom: 8px; border-bottom: 1.5px dashed var(--line-strong);
+  font-family: var(--font-body); font-size: 0.85rem; color: var(--muted);
+}
+.guide-content .convert-preview .convert-heading { margin: 1.2em 0 0.5em; font-weight: 700; }
+.convert-heading .convert-number { margin-right: 0.8em; }
+.convert-preview .convert-chapter { text-align: center; font-size: 1.15rem; }
+.convert-chapter .convert-number { margin-right: 0.4em; }
+.convert-preview .convert-section { font-size: 1.05rem; }
+.convert-preview .convert-subsubsection { font-weight: 400; font-style: italic; }
+.convert-preview .convert-math { color: var(--code-math); }
+.guide-content .convert-preview blockquote { margin-left: 1.5em; font-style: normal; color: var(--ink); }
+.guide-content .convert-preview li { margin: 0.2em 0; }
+.guide-content .convert-preview .convert-code { margin: 0 0 0.8em; padding: 10px 14px; white-space: pre-wrap; }
+.convert-equation { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: baseline; gap: 1em; margin: 0 0 0.8em; }
+.convert-equation > .convert-math { grid-column: 2; }
+.convert-equation > .convert-number { grid-column: 3; justify-self: end; }
+.convert-preview .convert-picture { font-family: var(--font-body); font-size: 0.92rem; color: var(--muted); }
+.guide-content .convert-preview p.convert-picture { padding: 8px 14px; border: 1.5px dashed var(--line-strong); border-radius: 10px; }
+.convert-preview .convert-placeholder { font-weight: 400; font-style: italic; color: var(--muted); }
+/* Tables as booktabs draws them: caption above, a heavy rule at the top and
+   the bottom, a light one under the heading row, no lines between columns. */
+.convert-table { margin: 0 0 1em; overflow-x: auto; }
+.guide-content .convert-preview table {
+  width: auto; margin: 0 auto; border-collapse: collapse; font-size: 1rem; line-height: 1.4;
+  border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink);
+  overflow-wrap: normal;   /* words stay whole; a wide table scrolls sideways in .convert-table */
+}
+.convert-preview caption { caption-side: top; padding: 0 0 6px; text-align: left; font-weight: 700; }
+.guide-content .convert-preview :is(th, td) {
+  padding: 4px 12px; text-align: left; vertical-align: top;
+  font: inherit; font-weight: 400; background: none; border: 0;
+}
+.guide-content .convert-preview thead th { border-bottom: 1px solid var(--ink); }
+.guide-content .convert-preview .is-number { text-align: right; }
 .convert-results { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
 .convert-results section { padding: 12px 18px; background: var(--card); border: 1.5px solid var(--line-strong); border-radius: var(--sketch); box-shadow: 3px 3px 0 var(--line-strong); }
 .convert-results h3 { margin-top: 0.2rem; font-size: 1.05rem; }
 .convert-results ol, .convert-results ul { margin: 0 0 0.4rem; padding-left: 1.3rem; }
 @media (max-width: 1100px) {   /* below about 360px a pane is too narrow: stack (tablets in landscape too) */
   .convert-panes, .convert-results { grid-template-columns: minmax(0, 1fr); }
-  .tool .convert-input, .guide-content .tool .convert-output { height: 15rem; }
+  .tool .convert-input, .guide-content .tool .convert-output, .guide-content .tool .convert-preview { height: 15rem; }
 }
 
 /* Check your references: a drop zone for files, then the text fields. */
-.tool input[type="file"]:not(.visually-hidden) { width: 100%; max-width: 100%; color: var(--muted); font: inherit; }
-.tool input[type="file"]:not(.visually-hidden)::file-selector-button {
-  margin-right: 12px; padding: 8px 16px; min-height: 40px;
-  font: inherit; font-weight: 700; color: var(--ink);
-  background: var(--card);
-  border: 2px solid var(--btn-edge-2); border-radius: var(--sketch);
-  box-shadow: 3px 3px 0 var(--btn-shadow);
-  cursor: pointer;
-}
-.tool input[type="file"]:not(.visually-hidden):focus-visible { outline: 3px solid var(--focus); outline-offset: 4px; }
 .guide-content .bibcheck details { margin: 1.2rem 0 0; }
 .bibcheck details label:has(input) { margin: 1rem 0 0.4rem; font-weight: 600; }
+/* Results: each point names its line as a link-like button that selects the
+   place in the box; a safe fix shows the field now and after, then a button. */
+.bibcheck .bibcheck-line {
+  display: inline; min-height: 0; margin: 0; padding: 0 2px;
+  font: inherit; color: var(--link); background: none; border: 0; border-radius: 4px;
+  text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 0.22em;
+  text-decoration-color: color-mix(in srgb, var(--link) 45%, transparent);
+  cursor: pointer;
+}
+.bibcheck .bibcheck-line:hover { text-decoration-color: currentColor; text-decoration-thickness: 2px; }
+.bibcheck .bibcheck-line:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.bibcheck .tool-results h4 .bibcheck-line { font-family: var(--font-body); font-weight: 400; }
+.guide-content .bibcheck .tool-results ul { padding-left: 1.3rem; }
+.bibcheck .bibcheck-item { margin: 0 0 0.8rem; }
+.bibcheck-change {
+  margin: 0.45rem 0 0.2rem; padding: 8px 14px 12px;
+  background: var(--paper-2); border: 1.5px solid var(--line); border-radius: 10px;
+}
+.bibcheck-change p { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; margin: 0.25rem 0; }
+.bibcheck-change code { flex: 1 1 18em; min-width: 0; background: var(--card); }   /* under its label on phones */
+.bibcheck-change-label { flex: 0 0 7.5em; font-weight: 700; }
+@media (max-width: 480px) {   /* phones: the points use the card's width */
+  .bibcheck .tool-results.tool-card { padding: 6px 14px 14px; }
+  .guide-content .bibcheck .tool-results ul { padding-left: 1.1rem; }
+  .bibcheck-change { padding: 6px 10px 10px; }
+}
+.bibcheck-change .button { margin-top: 0.4rem; }
+.bibcheck-fixbar { margin: 1rem 0; padding: 10px 18px 14px; background: var(--sage-wash); border: 1.5px solid color-mix(in srgb, var(--sage) 40%, transparent); border-radius: 6px 18px 8px 16px / 16px 8px 18px 6px; }
+.bibcheck-fixbar p { margin: 0.4rem 0 0; }
+.guide-content .bibcheck-fixbar .tool-actions { margin-top: 0.7rem; }
+.bibcheck .bibcheck-view { margin: 1.2rem 0 0; }
 
-/* Explain my error: one big paste area. */
+/* Explain my error: one big paste area, the shared file picker under it, and
+   "Also in the log" closed under the first error. */
 .tool .explain-input { min-height: 14rem; }
+.tool .explain-pick { margin-top: 0.8rem; }
+.guide-content .explain-result details { margin: 1.2rem 0 0.6rem; }
+.explain-more > ul { padding-left: 1.3rem; }
+.explain-more ul ul { margin: 0.2rem 0 0.4rem; padding-left: 1.3rem; }
+.explain-more li > p { margin: 0 0 0.2rem; }
 
-/* Check your PDF: the drop zone holds the primary button; one card per point. */
+/* Check your PDF: the drop zone holds the primary button; a summary card
+   with a count per result, then one card per point, those to look at first.
+   One page view (.pdf-check-viewer) opens under the point that asked for it:
+   the PDF page drawn by pdf.js on its own white paper, with the checker's
+   measurements drawn over it. Each mark has a --card halo, so it shows on
+   the white page in light and dark, and its own line style, so the legend
+   does not rely on color. */
 .pdf-check-actions button[hidden] { display: none; }
 .pdf-check-actions:not(:has(button:not([hidden]))) { display: none; }
-.guide-content .pdf-check-list { list-style: none; padding: 0; margin: 1rem 0 0; }
+.pdf-check-results .tool-card { margin: 0.6rem 0 0.4rem; padding: 12px 18px; }
+.pdf-check-tally { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0 0 0.5rem; }
+.pdf-check-results .pdf-check-summary { margin: 0; color: var(--muted); }
+.pdf-check-results .tool-card .tool-actions { margin-top: 0.7rem; }
+.guide-content .pdf-check-list { list-style: none; padding: 0; margin: 0.6rem 0 0; }
 .guide-content .pdf-check-list > li { margin: 0 0 14px; }
 .pdf-check-item {   /* an even edge; the state label says the status in words */
   --c: var(--muted); --w: var(--paper-2);
@@ -2051,14 +2404,60 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   border: 1.5px solid var(--line-strong);
   border-radius: var(--sketch);
 }
-.pdf-check-item.is-ok { --c: var(--sage); --w: var(--sage-wash); }
-.pdf-check-item.is-check { --c: var(--terra); --w: var(--terra-wash); }
-.pdf-check-item.is-differs { --c: var(--blue); --w: var(--blue-wash); }
+.pdf-check-tally .pdf-check-state { --c: var(--muted); --w: var(--paper-2); }
+:is(.pdf-check-item, .pdf-check-tally .pdf-check-state).is-ok { --c: var(--sage); --w: var(--sage-wash); }
+:is(.pdf-check-item, .pdf-check-tally .pdf-check-state).is-check { --c: var(--terra); --w: var(--terra-wash); }
+:is(.pdf-check-item, .pdf-check-tally .pdf-check-state).is-differs { --c: var(--blue); --w: var(--blue-wash); }
 .pdf-check-item p { margin: 0 0 0.4em; }
 .pdf-check-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
 .pdf-check-state {
   font-size: 0.85rem; font-weight: 700; color: var(--c);
   padding: 1px 8px; background: var(--w); border: 1px solid color-mix(in srgb, var(--c) 35%, transparent); border-radius: 999px;
 }
-.pdf-check-source { font-size: 0.92rem; color: var(--muted); }
+.pdf-check-source, .pdf-check-item .pdf-check-coverage { font-size: 0.92rem; color: var(--muted); }
 .guide-content .pdf-check-item details { margin: 0.5rem 0; padding: 0 14px; }
+.pdf-check-item .pdf-check-show { margin: 0.6rem 0; }
+.pdf-check-viewer {
+  container-type: inline-size;
+  margin: 0.6rem 0 0.8rem; padding: 10px 14px 14px;
+  background: var(--paper-2);
+  border: 1.5px solid var(--line-strong);
+  border-radius: var(--sketch);
+}
+.pdf-check-viewer-title:focus { outline: none; }
+.pdf-check-viewer-title:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.pdf-check-page {   /* its aspect ratio is the page's own, set by ui.js */
+  position: relative; box-sizing: content-box;
+  width: 100%; max-width: 32rem; aspect-ratio: 8.5 / 11; margin: 0.4rem 0 0.6rem;
+  background: var(--page-paper);
+  border: 1px solid var(--line-strong);
+  box-shadow: 3px 3px 0 var(--line);
+}
+.pdf-check-page canvas, .pdf-check-page svg { position: absolute; inset: 0; display: block; width: 100%; height: 100%; }
+.pdf-check-page svg { overflow: visible; pointer-events: none; }
+.pdf-check-halo, .pdf-check-mark { fill: none; vector-effect: non-scaling-stroke; }
+.pdf-check-halo { stroke: var(--card); stroke-width: 5; }
+.pdf-check-mark { stroke-width: 2; }
+.pdf-check-mark.is-margin { stroke: var(--blue); stroke-dasharray: 7 4; }
+.pdf-check-mark.is-number { stroke: var(--sage); stroke-dasharray: 2 3; }
+.pdf-check-mark.is-box { stroke: var(--terra); stroke-width: 2.5; }
+.pdf-check-viewer-status:empty { display: none; }
+.guide-content .pdf-check-legend { list-style: none; margin: 0 0 0.4rem; padding: 0; font-size: 0.92rem; }
+.pdf-check-legend[hidden], .pdf-check-viewer button[hidden] { display: none; }
+.guide-content .pdf-check-legend li { display: flex; align-items: baseline; gap: 10px; margin: 0 0 0.3rem; }
+.pdf-check-key { flex: none; display: inline-block; box-sizing: border-box; width: 1.6em; height: 0.75em; }
+.pdf-check-key.is-box { border: 2.5px solid var(--terra); }
+.pdf-check-key.is-margin { height: 0.4em; border-bottom: 2px dashed var(--blue); }
+.pdf-check-key.is-number { height: 0.4em; border-bottom: 2px dotted var(--sage); }
+.pdf-check-viewer .tool-actions { margin-top: 0.4rem; }
+.pdf-check-viewer p { margin: 0 0 0.4em; }
+@container (min-width: 44rem) {   /* the page on the left, what it shows beside it */
+  .pdf-check-viewer-body {
+    display: grid; grid-template-columns: minmax(0, 32rem) minmax(12rem, 1fr); column-gap: 20px;
+    grid-template-areas: "page note" "page status" "page legend" "page ."; grid-template-rows: auto auto auto 1fr;
+  }
+  .pdf-check-viewer-note { grid-area: note; }
+  .pdf-check-viewer-status { grid-area: status; }
+  .pdf-check-viewer-body .pdf-check-legend { grid-area: legend; }
+  .pdf-check-page { grid-area: page; }
+}

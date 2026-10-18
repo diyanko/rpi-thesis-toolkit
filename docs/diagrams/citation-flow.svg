@@ -2,13 +2,13 @@
   <title id="t">How a citation travels</title>
   <desc id="d">How a citation travels, and three things that are not the same. The record: a source saved in a citation manager such as Zotero, with its author, title, and year. The citation key: a short, stable name for that source, here lamport1994, pinned with Better BibTeX and exported with the entry into references.bib; you can also paste an entry into references.bib by hand. In a chapter you write only the key, as \parencite{lamport1994}; the keys must match. When you compile, Biber matches the key and formats the citation in your chosen style: [1] in the text, and the full entry under REFERENCES in your PDF. The record, the key, and the formatted citation are different things, and only the key goes in your chapter.</desc>
   <style>
-    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
-      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
-      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    svg { --bg: #faf5ea; --card: #fffcf5; --ink: #2d2620; --muted: #625547;
+      --terra: #a24a24; --sage: #4a6b42; --plum: #70466a; --blue: #24518c; --red: #c8102e;
+      --terra-w: #f6dfcd; --sage-w: #e4ecd2; --plum-w: #f1e0ea; --blue-w: #e0e6ef; --butter-w: #f7e8b3; }
     @media (prefers-color-scheme: dark) {
-      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
-        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
-        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+      svg { --bg: #181614; --card: #27231e; --ink: #f2ece2; --muted: #b9ae9d;
+        --terra: #f6a57f; --sage: #a6d49a; --plum: #e0b6dc; --blue: #a2c8fb; --red: #ff8d98;
+        --terra-w: #3b2418; --sage-w: #273b27; --plum-w: #34233a; --blue-w: #1d2c43; --butter-w: #3a3118; }
     }
     .bg { fill: var(--bg); }
     .card { fill: var(--card); }
@@ -24,13 +24,19 @@
     text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
     .h { font-size: 22px; font-weight: 700; }
     .s { fill: var(--muted); }
-    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
-    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-size: 16px; fill: var(--muted); }
     .k { fill: var(--terra); font-weight: 700; }
     .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
     .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
     .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
   </style>
   <defs>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -53,7 +59,8 @@
   <text x="82" y="128" style="font-size:15px">1994</text>
   <path class="ln thin mut dot" d="M28 148 H184"/>
   <text class="s" x="30" y="172" style="font-size:14px">Citation Key</text>
-  <text class="m" x="30" y="196" style="font-size:15.5px"><tspan class="k">lamport1994</tspan></text>
+  <rect class="w-butter" x="28.0" y="180.5" width="106.8" height="22.9" rx="3"/>
+  <text class="m" x="30" y="196" style="font-size:15.5px">lamport1994</text>
   <text class="hand mid" x="106" y="244" style="font-size:16.5px">key pinned with</text>
   <text class="hand mid" x="106" y="264" style="font-size:16.5px">Better BibTeX</text>
   <text class="hand mid" x="386" y="32" style="font-size:18px">its key, exported</text>
@@ -61,10 +68,11 @@
   <path class="card" d="M244 46 H506 L522 62 V214 H244 Z"/>
   <path class="ln" d="M242.2 45.7C249.6 46.1 257 46.3 264.4 46.4S279.1 46.2 286.5 46.1S301.3 45.7 308.7 45.8S323.4 46.4 330.8 46.5S345.6 46.3 353 46.2S367.7 45.7 375.1 45.7S389.9 46.3 397.2 46.3S412 46.1 419.4 46.1S434.2 45.9 441.5 45.9S456.3 46.1 463.7 46.1S478.5 46.3 485.8 46.2S500.6 45.8 508 45.8M506 45.5C508.7 48.4 511.8 51 514.5 53.8S519.8 59.7 522.6 62.5M522.3 61.4C521.9 74.2 522.3 86.9 522.3 99.7S522 125.2 521.8 137.9S521.2 163.5 521.2 176.2S520.9 201.7 521.4 214.5M522.5 213.3C516.3 213.3 510.1 213.5 503.9 213.6S491.5 213.8 485.3 213.9S472.9 213.8 466.7 213.9S454.3 213.9 448.1 214.1S435.7 214.9 429.5 215S417.1 215 410.9 214.8S398.6 214 392.4 213.9S380 214.1 373.8 214.2S361.4 214.2 355.2 214.1S342.8 213.6 336.6 213.6S324.2 213.7 318 213.9S305.6 214.7 299.4 214.8S287.1 214.3 280.9 214.1S268.5 213.4 262.3 213.3S249.9 213.1 243.7 213.4M244.8 215.3C244.3 207.2 243.8 199 243.5 190.8S243.1 174.5 243.2 166.3S243.6 150 243.8 141.8S244.2 125.4 244.3 117.2S244.1 100.9 244.2 92.7S244.8 76.3 244.7 68.2S243.9 51.8 243.7 43.7M506.3 45.8C506.1 51.3 506.2 56.8 506.1 62.3M506 62C511.4 61.9 516.9 62.2 522.3 62.2"/>
   <text class="m" x="260" y="76" style="font-size:16.5px">references.bib</text>
-  <text class="code" x="260" y="108.5" style="font-size:14.5px">@book{<tspan class="k">lamport1994</tspan>,</text>
-  <text class="code" x="260" y="133.5" style="font-size:14.5px" xml:space="preserve">  author = {Leslie Lamport},</text>
-  <text class="code" x="260" y="158.5" style="font-size:14.5px" xml:space="preserve">  title  = {LaTeX: …},</text>
-  <text class="code" x="260" y="183.5" style="font-size:14.5px" xml:space="preserve">  …}</text>
+  <rect class="w-butter" x="310.4" y="94.0" width="100.1" height="21.5" rx="3"/>
+  <text class="code c-bib" x="260" y="108.5" style="font-size:14.5px" xml:space="preserve"><tspan class="c-cmd">@book</tspan><tspan class="c-brace">{</tspan>lamport1994,</text>
+  <text class="code c-bib" x="260" y="133.5" style="font-size:14.5px" xml:space="preserve">  <tspan class="c-opt">author</tspan> = <tspan class="c-brace">{</tspan>Leslie Lamport<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-bib" x="260" y="158.5" style="font-size:14.5px" xml:space="preserve">  <tspan class="c-opt">title</tspan>  = <tspan class="c-brace">{</tspan>LaTeX: …<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-bib" x="260" y="183.5" style="font-size:14.5px" xml:space="preserve">  …<tspan class="c-brace">}</tspan></text>
   <path class="ln" d="M203 127.9C208.2 124.8 214.4 122.4 220.3 122.1S232.7 123.7 238.2 126.2" marker-end="url(#a)"/>
   <text class="hand mid" x="220" y="108" style="font-size:16px">export</text>
   <rect class="w-butter" x="28" y="306" width="168" height="62" rx="12"/>
@@ -78,8 +86,9 @@
   <path class="card" d="M244 302 H506 L522 318 V406 H244 Z"/>
   <path class="ln" d="M241.7 302.1C246.6 302 251.6 302 256.5 302S266.3 302 271.2 302.1S281 302.3 286 302.3S295.8 302.1 300.7 302S310.5 301.6 315.5 301.5S325.3 301.3 330.2 301.4S340 301.9 344.9 302.1S354.8 302.2 359.7 302.3S369.5 302.6 374.4 302.7S384.3 302.4 389.2 302.3S399 302.1 403.9 302.1S413.8 302.1 418.7 302.2S428.5 302.2 433.4 302.2S443.3 302.2 448.2 302.1S458 301.8 462.9 301.8S472.8 301.9 477.7 302S487.5 302.3 492.4 302.2S502.3 301.8 507.2 301.7M506.3 301.6C511.8 306.9 517.3 312.2 522.5 317.8M522.3 316.6C521.9 326.6 522.5 336.6 522.6 346.6S523.1 366.6 523.2 376.6S523.2 396.6 522.9 406.6M525.1 405.9C517.2 406.1 509.4 406.3 501.6 406.4S485.9 406.4 478.1 406.3S462.4 406.1 454.6 405.9S438.9 405.3 431.1 405.3S415.4 405.4 407.6 405.5S391.9 406.1 384.1 406.1S368.4 406 360.6 406S344.9 406 337.1 406S321.4 406.4 313.6 406.4S297.9 405.9 290.1 405.9S274.4 406.4 266.6 406.4S250.9 406.2 243.1 405.7M243.7 406.6C244.5 394.9 245 383.1 244.8 371.4S243.2 347.9 243 336.2S243.3 312.6 244 300.9M506.4 301.7C506.1 307.2 506 312.8 505.9 318.3M505.8 318.1C511.3 317.9 516.7 317.6 522.2 317.5"/>
   <text class="m" x="260" y="330" style="font-size:14px">chapters/01-introduction.tex</text>
-  <text class="code" x="260" y="360" style="font-size:14.5px">…as in this example</text>
-  <text class="code" x="260" y="386" style="font-size:14.5px">~\parencite{<tspan class="k">lamport1994</tspan>}.</text>
+  <text class="code c-tex" x="260" y="360" style="font-size:14.5px" xml:space="preserve">…as in this example</text>
+  <rect class="w-butter" x="362.9" y="371.5" width="100.1" height="21.5" rx="3"/>
+  <text class="code c-tex" x="260" y="386" style="font-size:14.5px" xml:space="preserve">~<tspan class="c-cmd">\parencite</tspan><tspan class="c-brace">{</tspan>lamport1994<tspan class="c-brace">}</tspan>.</text>
   <text class="hand hb mid" x="386" y="438" style="font-size:18px">you write only the key</text>
   <text class="hand mid" x="633" y="132" style="font-size:17px">when you compile</text>
   <rect class="w-plum" x="566" y="154" width="146" height="96" rx="16"/>

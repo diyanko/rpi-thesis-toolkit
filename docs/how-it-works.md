@@ -15,15 +15,15 @@ Keep your attention on the chapter you are writing. Let shared rules handle
 the repetition.
 
 <div class="benefit-cards">
-<a class="benefit-card" id="benefit-chapter" href="diagrams/one-chapter-at-a-time.svg" data-viewer="view-benefit-chapter"><strong>One chapter at a time</strong><span>Small files. One connected thesis.</span></a>
-<a class="benefit-card" id="benefit-numbers" href="diagrams/move-a-chapter.svg" data-viewer="view-benefit-numbers"><strong>Let the numbers follow</strong><span>Move chapters. Keep references linked.</span></a>
-<a class="benefit-card" id="benefit-formatting" href="diagrams/class-swap.svg" data-viewer="view-benefit-formatting"><strong>Shared formatting</strong><span>One class sets the shared rules.</span></a>
-<a class="benefit-card" id="benefit-reuse" href="diagrams/one-source-many-outputs.svg" data-viewer="view-benefit-reuse"><strong>Reuse your source</strong><span>Adapt text and figures for another format.</span></a>
-<a class="benefit-card" id="benefit-paste" href="diagrams/plain-text-shared-style.svg" data-viewer="view-benefit-paste"><strong>Leave stray styles behind</strong><span>Keep the words, without imported fonts.</span></a>
-<a class="benefit-card" id="benefit-citations" href="diagrams/citation-flow.svg" data-viewer="view-benefit-citations"><strong>Keep citations connected</strong><span>Cite by key. Let the reference list follow.</span></a>
+<a class="benefit-card" id="benefit-chapter" href="diagrams/one-chapter-at-a-time.svg" data-viewer="view-benefit-chapter"><img class="benefit-thumb" src="diagrams/one-chapter-at-a-time.svg" alt="" width="720" height="420" loading="lazy"><strong>One chapter at a time</strong><span>Small files. One connected thesis.</span></a>
+<a class="benefit-card" id="benefit-numbers" href="diagrams/move-a-chapter.svg" data-viewer="view-benefit-numbers"><img class="benefit-thumb" src="diagrams/move-a-chapter.svg" alt="" width="720" height="456" loading="lazy"><strong>Let the numbers follow</strong><span>Move chapters. Keep references linked.</span></a>
+<a class="benefit-card" id="benefit-formatting" href="diagrams/class-swap.svg" data-viewer="view-benefit-formatting"><img class="benefit-thumb" src="diagrams/class-swap.svg" alt="" width="720" height="430" loading="lazy"><strong>Shared formatting</strong><span>One class sets the shared rules.</span></a>
+<a class="benefit-card" id="benefit-reuse" href="diagrams/one-source-many-outputs.svg" data-viewer="view-benefit-reuse"><img class="benefit-thumb" src="diagrams/one-source-many-outputs.svg" alt="" width="720" height="600" loading="lazy"><strong>Reuse your source</strong><span>Adapt text and figures for another format.</span></a>
+<a class="benefit-card" id="benefit-paste" href="diagrams/plain-text-shared-style.svg" data-viewer="view-benefit-paste"><img class="benefit-thumb" src="diagrams/plain-text-shared-style.svg" alt="" width="720" height="400" loading="lazy"><strong>Leave stray styles behind</strong><span>Keep the words, without imported fonts.</span></a>
+<a class="benefit-card" id="benefit-citations" href="diagrams/citation-flow.svg" data-viewer="view-benefit-citations"><img class="benefit-thumb" src="diagrams/citation-flow.svg" alt="" width="720" height="612" loading="lazy"><strong>Keep citations connected</strong><span>Cite by key. Let the reference list follow.</span></a>
 </div>
 
-<dialog class="viewer benefit-preview" id="view-benefit-chapter" aria-label="One chapter at a time"><a class="viewer-close" href="#benefit-chapter">Close<span class="visually-hidden"> the picture</span></a><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/one-chapter-at-a-time-narrow.svg"><img src="diagrams/one-chapter-at-a-time.svg" alt="A chapter file, chapters/02-research.tex, is open with your latest edit highlighted. Compiling places it as the Research chapter of the whole thesis, between Introduction and Conclusion. Edit one file; compile the whole project." width="640" height="400" loading="lazy"></picture></div></dialog>
+<dialog class="viewer benefit-preview" id="view-benefit-chapter" aria-label="One chapter at a time"><a class="viewer-close" href="#benefit-chapter">Close<span class="visually-hidden"> the picture</span></a><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/one-chapter-at-a-time-narrow.svg"><img src="diagrams/one-chapter-at-a-time.svg" alt="A chapter file, chapters/02-research.tex, is open with your latest edit highlighted. Compiling places it as the Research chapter of the whole thesis, between Introduction and Conclusion. Edit one file; compile the whole project." width="720" height="420" loading="lazy"></picture></div></dialog>
 <dialog class="viewer benefit-preview" id="view-benefit-numbers" aria-label="Let the numbers follow"><a class="viewer-close" href="#benefit-numbers">Close<span class="visually-hidden"> the picture</span></a><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/move-a-chapter-narrow.svg"><img src="diagrams/move-a-chapter.svg" alt="Before and after swapping two include lines in main.tex: after one compile, Results becomes chapter 2 and Methods chapter 3, and the contents, page numbers, figure numbers and the text see Figure 2.1 all update by themselves." width="720" height="456" loading="lazy"></picture></div></dialog>
 <dialog class="viewer benefit-preview" id="view-benefit-formatting" aria-label="Shared formatting"><a class="viewer-close" href="#benefit-formatting">Close<span class="visually-hidden"> the picture</span></a><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/class-swap-narrow.svg"><img src="diagrams/class-swap.svg" alt="Your files stay exactly as they are. Replacing rpi-thesis.cls with a newer version and recompiling gives the same words in updated formatting." width="720" height="430" loading="lazy"></picture></div></dialog>
 <dialog class="viewer benefit-preview benefit-caption" id="view-benefit-reuse" aria-label="Reuse your source"><a class="viewer-close" href="#benefit-reuse">Close<span class="visually-hidden"> the picture</span></a><p class="viewer-hint">Other formats need adaptation, conversion and review.</p><div class="viewer-pan" role="region" aria-label="Concept picture, scroll if needed"><picture><source media="(max-width: 600px)" srcset="diagrams/one-source-many-outputs-narrow.svg"><img src="diagrams/one-source-many-outputs.svg" alt="Your chapters, figures and references.bib can feed the thesis PDF through rpi-thesis.cls, and, with adaptation, a paper in a venue's class, Beamer slides, a Word copy through Pandoc, or a web page." width="720" height="600" loading="lazy"></picture></div></dialog>
@@ -196,8 +196,9 @@ it does not remove the need to revise the argument for its audience.
   a line ([read an error message](troubleshooting.md#read-an-error-message)).
 - **Advisors who prefer Word.** Send a PDF to comment on, or a Word copy, and
   apply their edits by hand ([common situations](going-further.md#common-situations)).
-- **Tables take a bit more effort.** Copy the sample chapters' example and
-  adapt it.
+- **Tables take a bit more effort.** Paste spreadsheet cells into
+  [Bring your work in](bring-your-work-in.md), or adapt the sample chapters'
+  example.
 - **The Office of Graduate Education (OGE) can't debug LaTeX.** Its staff
   review your formatting, not your code
   ([ask for help](troubleshooting.md#ask-for-help)).
@@ -248,6 +249,13 @@ type your headings and decide where each caption goes.
 
 ## What each file does
 
+![Which file changes which part of the PDF. On the left, five project files; on the right, pages of main.pdf. metadata.tex points to the title page, with your title, name, and degree. main.tex points to the contents: it sets the order of the chapters. chapters/ points to a chapter page: these files hold your words. references.bib and preamble.tex point to the reference list: they set the citation style and the references. rpi-thesis.cls points to a dashed frame around the whole PDF: it sets the formatting of every page and is normally never edited.](diagrams/file-to-pdf.svg)
+
+*In words:* `metadata.tex` fills the title page, `main.tex` sets the
+order, `chapters/` hold your words, `references.bib` and `preamble.tex`
+make the citations and reference list, and `rpi-thesis.cls` formats every
+page.
+
 | File or folder | What it is | Do you edit it? |
 | --- | --- | --- |
 | `main.tex` | The file you compile; lists the pieces in order | To add or remove chapters |
@@ -295,18 +303,10 @@ files (`.aux`, `.bbl`, `.toc`, ...) are scratch notes you never edit; the
 
 ## Bold citation keys and question marks
 
-These are LaTeX saying "I haven't finished filling this in yet". Start with
-your editor's compile ([your computer](get-started.md#step-3a-your-computer-route)
-or [Overleaf](get-started.md#step-3b-overleaf-route));
-if it does not clear, try a [clean recompile](troubleshooting.md#clean-recompile);
-in TeXShop, TeXworks, or TeXstudio, follow the
-[other-editor steps](get-started.md#other-editors).
-
-| You see | It means | Fix |
-| --- | --- | --- |
-| A citation key in **bold**, like **lamport1994** | Not in the reference list yet | Compile again. If it stays bold, check the key's spelling in your citation command and in `references.bib` |
-| **??** where a number should be | The `\ref{}` label is not known yet | Compile again. If it stays, check `\label{}` and `\ref{}` |
-| An empty or outdated contents page | Written on one pass, read on the next | Compile again |
+A citation key in **bold**, **??** where a number should be, or an empty
+contents page is LaTeX saying "I haven't finished filling this in yet": the
+notes from one pass are read on the next. Compile again; if it stays, the
+[fixes are in fixing problems](troubleshooting.md#citations-and-references).
 
 ## Where the PDF ends up
 

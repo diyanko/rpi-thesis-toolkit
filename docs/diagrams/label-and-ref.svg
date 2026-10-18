@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 436" width="720" height="436" role="img" aria-labelledby="t d">
+  <title id="t">Label it, then refer to it by name</title>
+  <desc id="d">A chapter file, chapters/02-research.tex, has the sentence As Figure~\ref{fig:my-plot} shows, the yields level off. Below it is a figure: \begin{figure}[htbp], \includegraphics{figures/my-plot}, \caption{Plot of yields.}, \label{fig:my-plot}, \end{figure}. The name fig:my-plot is marked in both \ref and \label: the same name links them. After compiling, the PDF page reads As Figure 2.1 shows, the yields level off, with the figure and its caption, Figure 2.1: Plot of yields. Never type the number: LaTeX fills it in, and renumbers it when chapters or figures move.</desc>
+  <style>
+    svg { --bg: #faf5ea; --card: #fffcf5; --ink: #2d2620; --muted: #625547;
+      --terra: #a24a24; --sage: #4a6b42; --plum: #70466a; --blue: #24518c; --red: #c8102e;
+      --terra-w: #f6dfcd; --sage-w: #e4ecd2; --plum-w: #f1e0ea; --blue-w: #e0e6ef; --butter-w: #f7e8b3; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #181614; --card: #27231e; --ink: #f2ece2; --muted: #b9ae9d;
+        --terra: #f6a57f; --sage: #a6d49a; --plum: #e0b6dc; --blue: #a2c8fb; --red: #ff8d98;
+        --terra-w: #3b2418; --sage-w: #273b27; --plum-w: #34233a; --blue-w: #1d2c43; --butter-w: #3a3118; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; font-variant-ligatures: none; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); font-variant-ligatures: none; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="436" rx="18"/>
+  <text class="hand" x="20" y="30" style="font-size:19px">label it once, refer to it by name</text>
+  <path class="w-blue" transform="translate(6 6)" d="M40 50 H396 L416 70 V328 H40 Z"/>
+  <path class="card" d="M40 50 H396 L416 70 V328 H40 Z"/>
+  <path class="ln" d="M38.8 49.9C44.7 49.9 50.7 50.1 56.7 50.1S68.6 50.2 74.6 50.1S86.5 50 92.5 50S104.4 50 110.4 50S122.3 49.9 128.3 49.8S140.2 49.8 146.2 49.9S158.1 50.4 164 50.5S176 50.6 181.9 50.6S193.9 50.2 199.8 50S211.8 49.5 217.7 49.4S229.6 49.4 235.6 49.5S247.5 50 253.5 50.1S265.4 50.3 271.4 50.3S283.3 50.2 289.3 50.1S301.2 50 307.2 50S319.1 50.2 325.1 50.2S337 50.2 343 50.1S354.9 49.9 360.9 49.8S372.8 49.7 378.8 49.7S390.7 49.9 396.7 50M395.5 49.6C402.6 56.4 409.5 63.2 416.3 70.2M416.1 69.3C415.9 75.1 415.7 80.9 415.7 86.7S415.6 98.2 415.7 104S416.2 115.6 416.3 121.4S416.6 133 416.6 138.8S416.5 150.3 416.4 156.1S416.2 167.7 416.1 173.5S416.1 185.1 416.1 190.9S416.2 202.4 416.2 208.2S416.1 219.8 416 225.6S415.6 237.2 415.6 243S415.5 254.5 415.5 260.3S415.8 271.9 415.8 277.7S415.8 289.3 415.8 295.1S415.6 306.6 415.6 312.4S415.8 324 415.9 329.8M417 328.3C411.2 328.4 405.5 328.4 399.8 328.4S388.4 328.4 382.7 328.4S371.2 328.6 365.5 328.7S354.1 328.7 348.4 328.7S336.9 328.6 331.2 328.5S319.8 328.5 314.1 328.5S302.7 328.5 296.9 328.5S285.5 328.4 279.8 328.4S268.4 328.2 262.7 328.1S251.2 328 245.5 328S234.1 327.8 228.4 327.8S216.9 327.9 211.2 328S199.8 328.4 194.1 328.4S182.6 328.3 176.9 328.1S165.5 327.6 159.8 327.5S148.4 327.4 142.7 327.5S131.2 327.7 125.5 327.8S114.1 327.9 108.4 327.9S96.9 327.9 91.2 327.8S79.8 327.5 74.1 327.4S62.6 327.4 56.9 327.5S45.5 327.8 39.8 327.9M40.3 329C40.5 322.7 40.5 316.5 40.4 310.3S40.3 297.8 40.2 291.6S39.8 279.2 39.8 272.9S39.8 260.5 39.9 254.3S40.4 241.8 40.5 235.6S40.7 223.2 40.7 216.9S40.3 204.5 40.1 198.3S39.7 185.8 39.7 179.6S39.8 167.2 39.9 160.9S40.3 148.5 40.4 142.3S40.6 129.8 40.5 123.6S40.1 111.1 40 104.9S39.7 92.5 39.8 86.2S40.1 73.8 40.1 67.6S40.3 55.1 40.2 48.9"/>
+  <path class="ln" d="M395.9 50C395.8 56.7 395.8 63.4 395.8 70.1M395.6 69.9C402.4 69.9 409.2 69.9 416.1 70"/>
+  <text class="m" x="56" y="78" style="font-size:14px">chapters/02-research.tex</text>
+  <path class="ln thin mut" d="M39.7 89.7C46.7 89.9 53.7 90.2 60.6 90.3S74.5 90.5 81.5 90.4S95.4 90 102.4 89.9S116.3 89.6 123.3 89.6S137.2 89.7 144.2 89.8S158.1 89.8 165 89.8S179 89.7 185.9 89.7S199.8 89.9 206.8 90S220.7 90.1 227.7 90.1S241.6 89.8 248.6 89.7S262.5 89.8 269.5 89.9S283.4 90.3 290.3 90.4S304.3 90.3 311.2 90.3S325.2 90.3 332.1 90.2S346 89.9 353 89.8S366.9 89.7 373.9 89.8S387.8 90.1 394.8 90.1S408.7 90.1 415.7 90.1"/>
+  <rect class="w-plum" x="191.0" y="106.0" width="103.0" height="21.0" rx="3"/>
+  <text class="code c-tex" x="58" y="120" style="font-size:15px" xml:space="preserve">As Figure~<tspan class="c-cmd">\ref</tspan><tspan class="c-brace">{</tspan>fig:my-plot<tspan class="c-brace">}</tspan> shows,</text>
+  <text class="code c-tex" x="58" y="146" style="font-size:15px" xml:space="preserve">the yields level off.</text>
+  <text class="code c-tex" x="58" y="190" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\begin</tspan><tspan class="c-brace">{</tspan>figure<tspan class="c-brace">}</tspan><tspan class="c-opt">[</tspan><tspan class="c-opt">htbp</tspan><tspan class="c-opt">]</tspan></text>
+  <text class="code c-tex" x="58" y="216" style="font-size:15px" xml:space="preserve">  <tspan class="c-cmd">\includegraphics</tspan><tspan class="c-brace">{</tspan>figures/my-plot<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="58" y="242" style="font-size:15px" xml:space="preserve">  <tspan class="c-cmd">\caption</tspan><tspan class="c-brace">{</tspan>Plot of yields.<tspan class="c-brace">}</tspan></text>
+  <rect class="w-plum" x="137.0" y="254.0" width="103.0" height="21.0" rx="3"/>
+  <text class="code c-tex" x="58" y="268" style="font-size:15px" xml:space="preserve">  <tspan class="c-cmd">\label</tspan><tspan class="c-brace">{</tspan>fig:my-plot<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="58" y="294" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\end</tspan><tspan class="c-brace">{</tspan>figure<tspan class="c-brace">}</tspan></text>
+  <path class="ln plum" d="M50.4 114.1C42.9 113.9 35.4 113.5 28 113.3M28.1 112.2C28.3 119.4 28.4 126.6 28.5 133.8S28.4 148.3 28.3 155.5S28.1 170 28.1 177.2S28.3 191.6 28.4 198.9S28.8 213.3 28.7 220.5S28.5 235 28.3 242.2S28.1 256.7 28 263.9M27.9 262.3C35.2 262.4 42.4 262.4 49.7 262.4" marker-end="url(#ap)"/>
+  <text class="hand hp" x="56" y="356" style="font-size:18px">the same name links them</text>
+  <path class="ln blue" d="M424.1 196.7C427.7 194 431.5 191.4 435.5 189.5S443.9 185.9 448.3 185.3S457.4 184.8 461.8 185.6S470.5 188 474.5 190" marker-end="url(#ab)"/>
+  <text class="hand hb mid" x="450" y="172" style="font-size:18px">compile</text>
+  <path class="w-blue" transform="translate(6 6)" d="M486 50 H702 V328 H486 Z"/>
+  <path class="card" d="M486 50 H702 V328 H486 Z"/>
+  <path class="ln" d="M484.6 50.2C491.8 50.2 499.1 49.9 506.4 49.9S521 50.1 528.2 50.1S542.8 50.1 550.1 50S564.6 49.5 571.9 49.5S586.4 49.8 593.7 49.9S608.3 50.2 615.5 50.2S630.1 50.2 637.4 50.2S651.9 50 659.2 50S673.7 50.3 681 50.3S695.6 50.1 702.8 49.9M702 49.2C702.2 55.4 702.2 61.7 702.2 67.9S702 80.4 701.9 86.6S702 99.1 702 105.4S702 117.9 702 124.1S701.9 136.6 701.9 142.8S702.3 155.3 702.4 161.5S702.6 174 702.5 180.3S702.2 192.7 702 199S701.5 211.4 701.4 217.7S701.4 230.2 701.5 236.4S702 248.9 702.2 255.1S702.7 267.6 702.7 273.8S702.5 286.3 702.3 292.5S701.8 305 701.7 311.3S701.5 323.7 701.6 330M702.9 328.5C695.6 328.6 688.3 328.6 681 328.5S666.4 327.9 659.2 327.7S644.6 327.4 637.3 327.5S622.7 327.7 615.4 327.8S600.8 328.1 593.6 328.1S579 327.9 571.7 327.8S557.1 327.8 549.8 327.9S535.2 327.9 528 328S513.4 328.1 506.1 328.2S491.5 328.4 484.2 328.5M485.6 329.9C485.6 320.5 485.7 311.2 485.8 301.8S486.3 283.2 486.4 273.8S486.5 255.2 486.4 245.8S486.4 227.2 486.4 217.8S486.5 199.1 486.5 189.8S486.4 171.1 486.3 161.8S486 143.1 485.9 133.8S485.8 115.1 485.7 105.8S485.5 87.1 485.5 77.7S485.6 59.1 485.6 49.7"/>
+  <text x="504" y="88" style="font-size:15px">As Figure <tspan class="hp" font-weight="700">2.1</tspan> shows,</text>
+  <text x="504" y="112" style="font-size:15px">the yields level off.</text>
+  <rect class="w-sage" x="522" y="134" width="144" height="104" opacity=".7"/>
+  <path class="ln thin" d="M520.8 133.5C527.7 133.5 534.7 133.5 541.7 133.6S555.6 133.9 562.6 134.1S576.5 134.3 583.5 134.3S597.4 134 604.4 133.9S618.3 133.8 625.3 133.8S639.2 133.9 646.2 133.9S660.1 133.5 667.1 133.4M665.6 132.1C665.6 139.3 665.9 146.5 666 153.6S666.2 168 666.1 175.2S665.9 189.5 665.9 196.7S666 211 666 218.2S665.9 232.6 665.9 239.7M667 238.3C660.8 238.4 654.7 238.3 648.6 238.2S636.4 237.8 630.3 237.7S618 237.8 611.9 237.9S599.7 238.3 593.6 238.4S581.4 238.6 575.2 238.5S563 238.1 556.9 238S544.7 237.8 538.6 237.8S526.3 238 520.2 238.1M521.9 239.5C521.8 227.6 521.4 215.7 521.4 203.8S521.5 180 521.6 168.1S521.8 144.3 521.9 132.4"/>
+  <path class="ln thin sage" d="M531.9 223.7C538.8 216.5 545.8 209.4 552.6 202.2S566.1 187.7 572.9 180.4M571.9 180.7C576.9 185 582 189.3 587 193.7S596.7 202.8 601.6 207.3M600.9 207.5C605 201.9 609.1 196.4 613.3 190.9S621.9 180.2 626.2 174.8M625.1 174.3C630.3 182.7 635.5 191.1 640.7 199.4S651.2 216.1 656.3 224.5"/>
+  <path class="ln thin terra" d="M557.3 164.8C557.3 164.9 557.3 165.6 557.3 165.9S557.2 166.7 557.1 167S556.8 167.8 556.7 168.1S556.4 168.8 556.2 169.1S555.7 169.7 555.5 170S554.9 170.5 554.6 170.7S554 171.1 553.7 171.3S553 171.6 552.7 171.8S552 172 551.6 172S550.9 172.1 550.5 172.1S549.8 172.1 549.4 172.1S548.7 171.9 548.3 171.8S547.6 171.6 547.3 171.4S546.6 171.1 546.3 170.9S545.7 170.4 545.4 170.1S544.9 169.6 544.7 169.3S544.3 168.7 544.1 168.4S543.8 167.7 543.7 167.3S543.5 166.6 543.4 166.3S543.3 165.5 543.3 165.1S543.4 164.4 543.4 164S543.6 163.3 543.7 163S544 162.3 544.2 161.9S544.6 161.3 544.8 161S545.3 160.4 545.6 160.2S546.1 159.7 546.4 159.5S547.1 159.1 547.4 158.9S548.1 158.6 548.4 158.5S549.2 158.4 549.5 158.3S550.3 158.3 550.6 158.3S551.4 158.3 551.7 158.4S552.5 158.6 552.8 158.7S553.5 159 553.8 159.2S554.4 159.6 554.7 159.9S555.3 160.4 555.5 160.6S556 161.2 556.2 161.5S556.6 162.2 556.7 162.5S557 163.2 557.1 163.6S557.2 164.3 557.2 164.7S557.3 165.8 557.3 165.8S557.3 164.8 557.3 164.8"/>
+  <text x="504" y="268" style="font-size:14px"><tspan font-weight="700">Figure <tspan class="hp">2.1</tspan>:</tspan> Plot of yields.</text>
+  <path class="ln thin mut" d="M504.2 295.9C511.7 295.7 519.2 295.7 526.7 295.7S541.7 296.1 549.2 296.1S564.2 295.9 571.7 295.8S586.7 295.7 594.2 295.8S609.2 296.4 616.7 296.5S631.7 296.4 639.2 296.3S654.2 296 661.7 295.9S676.7 295.7 684.2 295.7"/>
+  <path class="ln thin mut" d="M503.9 314C511.4 313.8 519 313.7 526.5 313.6S541.6 313.8 549.1 313.8S564.2 313.6 571.8 313.6S586.9 313.9 594.4 313.9S609.5 314.2 617 314.2S632.1 314 639.7 313.8"/>
+  <text class="hand hp mid" x="594" y="356" style="font-size:18px">the number, filled in</text>
+  <text class="mid" x="360" y="398" style="font-size:18px" font-weight="700">Never type the number: LaTeX fills it in.</text>
+  <text class="s mid" x="360" y="422" style="font-size:15px">It renumbers by itself when chapters or figures move.</text>
+</svg>

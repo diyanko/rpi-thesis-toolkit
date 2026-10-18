@@ -2,13 +2,13 @@
   <title id="t">Paste words without importing stray formatting</title>
   <desc id="d">Three views of the same teaching text: Research question, Compare the samples., and Describe the result. On the left, copied formatting mixes fonts, sizes and colors. In the middle, pasting as plain text keeps the words without those styles. On the right, the words use one shared thesis style, with Research question marked as a heading. Keep the words. Leave stray styles behind. Add headings and emphasis in LaTeX.</desc>
   <style>
-    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
-      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
-      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    svg { --bg: #faf5ea; --card: #fffcf5; --ink: #2d2620; --muted: #625547;
+      --terra: #a24a24; --sage: #4a6b42; --plum: #70466a; --blue: #24518c; --red: #c8102e;
+      --terra-w: #f6dfcd; --sage-w: #e4ecd2; --plum-w: #f1e0ea; --blue-w: #e0e6ef; --butter-w: #f7e8b3; }
     @media (prefers-color-scheme: dark) {
-      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
-        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
-        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+      svg { --bg: #181614; --card: #27231e; --ink: #f2ece2; --muted: #b9ae9d;
+        --terra: #f6a57f; --sage: #a6d49a; --plum: #e0b6dc; --blue: #a2c8fb; --red: #ff8d98;
+        --terra-w: #3b2418; --sage-w: #273b27; --plum-w: #34233a; --blue-w: #1d2c43; --butter-w: #3a3118; }
     }
     .bg { fill: var(--bg); }
     .card { fill: var(--card); }
@@ -24,9 +24,8 @@
     text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
     .h { font-size: 22px; font-weight: 700; }
     .s { fill: var(--muted); }
-    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
-    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
-    .k { fill: var(--terra); font-weight: 700; }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-size: 16px; fill: var(--muted); }
     .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
     .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
@@ -37,11 +36,17 @@
     .arrow { fill: none; stroke: var(--blue); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
     .title { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; fill: var(--terra); }
     .label { font-weight: 700; }
-    .plain { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; }
+    .plain { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-size: 16px; }
     .thesis { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; }
     .note { fill: var(--muted); font-size: 16px; }
     .chapter { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .selected { fill: var(--blue); font-weight: 700; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
   </style>
   <rect class="bg" width="720" height="400" rx="18"/>
   <text class="title" x="20" y="33" style="font-size:20px">pasting without stray formatting</text>

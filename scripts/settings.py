@@ -56,6 +56,11 @@ def load(root=ROOT):
         if kind == "choice:":
             item["choices"] = re.findall(rf"{key} / ([\w-]+) \.code:n", block)
             item["choices"].remove("unknown")
+            # What the title page prints for each choice, for the builder's preview.
+            item["names"] = {choice: plain(name) for choice, name in re.findall(
+                rf"{key} / ([\w-]+) \.code:n =\s*\{{ \\tl_gset:Nn \\g_rpi_\w+_tl \{{([^{{}}]+)\}} \}}", block)}
+            if set(item["names"]) != set(item["choices"]):
+                raise ValueError(f"settings: could not read the printed name of every {key} choice")
         if kind == "bool_gset:N":
             item["choices"] = ["true", "false"]
         if "choices" in item and set(re.findall(r"`([^`]+)`", row["values"])) != set(item["choices"]):
@@ -106,7 +111,15 @@ def load(root=ROOT):
     roles = re.findall(r"\{([^{}]+)\} \{ \\int_gincr:N \\g_rpi_chairs_int \}", role_block)
     if not roles:
         raise ValueError("settings: could not read chair roles from the class")
-    return {"keys": keys, "required": required, "errors": errors, "chairRoles": roles, "table": table}
+    # The title page's fixed lines, for the builder's preview; stop if the class changes them.
+    title_page = cls.split(r"\RenewDocumentCommand \maketitle", 1)[1].split(r"\clearpage", 1)[0]
+    fixed = ["Submitted in Partial Fulfillment of the Requirements", "for the Degree of", "Approved by:",
+             "Rensselaer Polytechnic Institute", "Troy, New York"]
+    for line in fixed:
+        if line.replace(" ", "~") not in title_page:
+            raise ValueError(f"settings: the title page no longer says \"{line}\"; update the builder's preview")
+    return {"keys": keys, "required": required, "errors": errors, "chairRoles": roles, "titlePage": fixed,
+            "table": table}
 
 
 def javascript(data):

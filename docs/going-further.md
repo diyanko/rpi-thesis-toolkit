@@ -6,30 +6,11 @@ the task you need; Git, AI, and the extra packages are optional. Still setting
 up? [Get started](get-started.md). For the bigger picture, see
 [the suggested workflow](how-it-works.md#the-suggested-workflow-and-why).
 
-**Sharing, backups, and help:** [common situations](#common-situations) ·
-[back up your work](#back-up-your-work) ·
-[private GitHub repository](#use-a-private-github-repository) ·
-[update the formatting](#update-the-formatting-safely) ·
-[AI for technical help](#use-ai-for-technical-help)
-
-**Settings and extras:** [where customizations belong](#where-customizations-belong) ·
-[all thesis settings](#all-thesis-settings) ·
-[build commands](#build-commands) ·
-[chapter-title case](#use-another-case-for-chapter-titles) ·
-[recipes for common extras](#recipes-for-common-extras)
-
 ## Common situations
 
-- [Move from Overleaf to your computer](#overleaf-to-your-computer), or [the other way](#your-computer-to-overleaf)
-- [Use both](#use-your-computer-and-overleaf) (keep one source of truth)
-- [Get comments on paper or in a PDF](#an-advisor-reviews-a-pdf)
-- [Have an advisor who wants Word](#an-advisor-wants-word-with-track-changes)
-- [Show what changed](#show-what-changed-between-drafts) with a changes PDF
-- [Bring in a draft written elsewhere](bring-your-draft.md)
-- [Write with co-authors or lab-mates](#co-authors-and-lab-mates)
-- [Turn a chapter into a paper](#turn-a-chapter-into-a-paper) or [make slides](#make-slides)
+Pick the situation; each opens with its steps. Bringing in a draft written elsewhere? See [Bring your draft](bring-your-draft.md).
 
-### Overleaf to your computer
+<details id="overleaf-to-your-computer"><summary>Overleaf to your computer</summary>
 
 1. In Overleaf, download the project **source** as a ZIP, not just the PDF
    ([Overleaf: downloading a project](https://docs.overleaf.com/managing-projects-and-files/downloading-a-project)).
@@ -49,7 +30,9 @@ up? [Get started](get-started.md). For the bigger picture, see
 With the copied settings, VS Code writes `build/main.pdf`. Other editors may
 put `main.pdf` beside `main.tex`.
 
-### Your computer to Overleaf
+</details>
+
+<details id="your-computer-to-overleaf"><summary>Your computer to Overleaf</summary>
 
 1. ZIP your whole project folder, including your downloaded seal in
    `assets/` (you can leave out `build/`).
@@ -57,7 +40,9 @@ put `main.pdf` beside `main.tex`.
    compiler as in [the Overleaf route](get-started.md#step-3b-overleaf-route).
 3. Recompile. Overleaf runs the bibliography step for you.
 
-### Use your computer and Overleaf
+</details>
+
+<details id="use-your-computer-and-overleaf"><summary>Use your computer and Overleaf</summary>
 
 The one rule: **only one copy is the source of truth at a time.** Edit there;
 treat the other as a backup.
@@ -76,7 +61,9 @@ Overleaf, and edit in only one place.
 On some plans, Overleaf's [Git and GitHub sync](https://docs.overleaf.com/integrations-and-add-ons/git-integration-and-github-synchronization)
 can skip the ZIPs.
 
-### An advisor reviews a PDF
+</details>
+
+<details id="an-advisor-reviews-a-pdf"><summary>An advisor reviews a PDF</summary>
 
 ![Review loop. You send a dated PDF to your advisor, who marks it up and sends it back. You make each change in your .tex files, recompile, and send the next dated PDF, until the draft is ready.](diagrams/review-loop.svg)
 
@@ -90,7 +77,9 @@ recompile → repeat.
 4. Recompile and send the next dated PDF. After big revisions, add a
    [changes PDF](#show-what-changed-between-drafts).
 
-### An advisor wants Word with track changes
+</details>
+
+<details id="an-advisor-wants-word-with-track-changes"><summary>An advisor wants Word with track changes</summary>
 
 A Word copy is for review only: it loses the title page, margins, numbering,
 cross-references, and reference formatting.
@@ -134,7 +123,9 @@ chapters/01-introduction.tex with Pandoc, and tell me what to check."
 
 </details>
 
-### Show what changed between drafts
+</details>
+
+<details id="show-what-changed-between-drafts"><summary>Show what changed between drafts</summary>
 
 `latexdiff`, included in full TeX Live, makes a PDF with additions and
 deletions marked, handy when your committee rereads a revision.
@@ -194,7 +185,9 @@ folder names, and the goal, and ask for the exact commands and what to check.
 
 </details>
 
-### Co-authors and lab-mates
+</details>
+
+<details id="co-authors-and-lab-mates"><summary>Co-authors and lab-mates</summary>
 
 1. Share **one** project: invite them to your Overleaf project (check
    [Overleaf's plans](https://docs.overleaf.com/getting-started/free-and-premium-plans)
@@ -204,7 +197,9 @@ folder names, and the goal, and ask for the exact commands and what to check.
 3. Prefer comments for suggestions; it is your thesis. Word-using colleagues
    can still [share sources](citations.md#if-co-authors-use-word).
 
-### Turn a chapter into a paper
+</details>
+
+<details id="turn-a-chapter-into-a-paper"><summary>Turn a chapter into a paper</summary>
 
 1. Start from the venue's own template (for example `IEEEtran` or `acmart`,
    from Overleaf's gallery or the publisher's author page).
@@ -226,7 +221,9 @@ silently disappear. To fix this:
   see [the citation commands](citations.md#change-the-citation-style)), then
   check the reference list.
 
-### Make slides
+</details>
+
+<details id="make-slides"><summary>Make slides</summary>
 
 Reuse the images in `figures/` in any slide or poster tool. To stay in LaTeX,
 start from a **Beamer** template or a poster template (Overleaf's gallery has
@@ -237,6 +234,40 @@ Optional: to turn Markdown slides into PowerPoint, run
 ([Pandoc](https://pandoc.org/) is a free converter). It starts a new slide at
 each top-level heading (`# Slide title`); lower-level headings stay on that
 slide.
+
+</details>
+
+<details id="write-a-proposal-or-qualifying-exam"><summary>Write a proposal or qualifying exam</summary>
+
+Other long documents, such as a thesis or candidacy proposal or a research or
+doctoral qualifying exam report, can use the starter as a model: the same
+chapters, citations, figures, and page layout. OGE does not review them, so
+follow what your department or committee asks for.
+
+Copy the starter into a new folder. Keep `metadata.tex` filled in (the class
+still checks it), and in `main.tex` replace `\maketitle` with a simple title
+page of your own, whose lines you can change freely:
+
+```latex
+\pagenumbering{roman}
+\begin{titlepage}
+  \centering
+  \MakeUppercase{Your proposal title}\par
+  \vspace{2\baselineskip}
+  Your Full Name\par
+  \vspace{2\baselineskip}
+  Doctoral Candidacy Proposal\par
+  Department of Your Department\par
+  Rensselaer Polytechnic Institute\par
+  \vspace{2\baselineskip}
+  May 2027\par
+\end{titlepage}
+\setcounter{page}{2}
+```
+
+Delete the front-matter lines you do not need, such as the acknowledgment.
+
+</details>
 
 ## Back up your work
 
@@ -385,12 +416,12 @@ Before version 1.0, anything may change, and the changelog says what to do.
 4. **Recompile and look** at your PDF, especially the title page, contents,
    and page numbers.
 
-Which version do you have? Your compile log has a line of the form
-`rpi-thesis YYYY/MM/DD vX.Y.Z`, and your PDF shows it under **Creator** in its
-document properties; the website's footer shows the newest. The
-[online changelog](https://github.com/diyanko/rpi-thesis-toolkit/blob/main/CHANGELOG.md)
-lists what each version changed, starting with **Changes your PDF?** (the copy
-in your download is frozen at that version).
+Which version do you have? The quickest way: drop your PDF into
+[Check your PDF](check-pdf.md); it names the version that made it and says
+whether a newer one exists. Your compile log also has a line of the form
+`rpi-thesis YYYY/MM/DD vX.Y.Z`, and the website's footer shows the newest. The
+[changelog](../CHANGELOG.md) lists what each version changed, starting with
+**Changes your PDF?**
 
 Close to a deadline, update only if a change fixes something that affects
 you. To hear about updates, use **Watch → Custom → Releases** on the toolkit's
@@ -430,21 +461,14 @@ backup, keep the task small, and review every change.
 
 ### Prompts to copy
 
-Use the setup, error, and conversion prompts in an AI chat or an assistant
-that can edit files. The contribution prompt needs an assistant with file
-and GitHub access. Replace the parts in [brackets], and leave out unpublished
-data, participant details, and anything else confidential.
+Use these in an AI chat or an assistant that can edit files. Replace the
+parts in [brackets], and leave out unpublished data, participant details, and
+anything else confidential.
 
 **Set up:**
 
 ```prompt
 I am setting up the RPI Thesis Toolkit, an unofficial, community-made LaTeX starter for RPI theses and dissertations. Its guide is https://diyanko.github.io/rpi-thesis-toolkit/guide/get-started.html. I use [Overleaf / my computer with Windows, macOS, or Linux]. Walk me through [installing LaTeX / opening the starter] one step at a time, following that guide. Do not change rpi-thesis.cls, and do not invent OGE rules: say when I should check OGE's own pages.
-```
-
-**Fix an error:**
-
-```prompt
-I am using the RPI Thesis Toolkit, an unofficial LaTeX starter for RPI theses. Here is the first error from my compile, with its file and line: [paste the error and the few lines around it]. I use [Overleaf / my computer with Windows, macOS, or Linux]. Explain the cause and suggest the smallest fix. Keep my text, data, and citations unchanged, do not change rpi-thesis.cls or any formatting setting, and do not invent OGE rules.
 ```
 
 **Convert to LaTeX:**
@@ -453,12 +477,11 @@ I am using the RPI Thesis Toolkit, an unofficial LaTeX starter for RPI theses. H
 I am using the RPI Thesis Toolkit, an unofficial LaTeX starter for RPI theses. Convert this [Word section / Markdown text / table / equation] into LaTeX for a chapter file of that starter: [paste it or attach the file]. Preserve every word, value, and symbol, and flag anything unclear instead of guessing. Use plain LaTeX commands, add no formatting packages, leave rpi-thesis.cls untouched, and do not invent OGE rules.
 ```
 
-**Suggest a change to the toolkit** (for an AI assistant that can edit files;
-see [CONTRIBUTING.md](../CONTRIBUTING.md)):
-
-```prompt
-Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its "Contributing as an agent" steps. If you cannot fork or push, stop and show me the diff. Do not push or open the pull request until I approve. What I'd like changed: [describe it].
-```
+The prompt for **an error** is in [fixing problems](troubleshooting.md#ask-an-ai-chat-to-explain-it),
+and the one for **suggesting a change to the toolkit** is on the
+[Contribute page](../CONTRIBUTING.md#three-ways-to-help). For a section or a
+table, try [Bring your work in](bring-your-work-in.md) first: it converts in
+your browser.
 
 ### Ask for a file conversion
 
@@ -483,6 +506,9 @@ Routes without AI: [bring a draft into LaTeX](bring-your-draft.md),
 one working source; a Word review copy does not update your LaTeX chapter.
 
 ## Where customizations belong
+
+Which file changes which part of the PDF is drawn in
+[how it works](how-it-works.md#what-each-file-does).
 
 | You want to change… | Edit | Notes |
 | --- | --- | --- |
@@ -552,7 +578,8 @@ Other class commands:
   appendix.
 
 `degree-name` does not make the toolkit suitable for undergraduate theses or
-other document types; those need their own requirements check.
+other document types; those need their own requirements check. For a proposal
+or qualifying exam, see [write a proposal or qualifying exam](#write-a-proposal-or-qualifying-exam).
 
 ## Build commands
 
@@ -653,13 +680,7 @@ has not reviewed these recipes; where the OGE *Dissertation and Thesis Manual*
 says nothing, the [requirements map](project/requirements.md#needs-oge-confirmation)
 lists the point under "Needs OGE confirmation".
 
-Pick a task: [parts (a), (b)](#show-a-figure-in-parts-a-b) ·
-[theorems and proofs](#add-theorems-and-proofs) ·
-[an algorithm](#add-an-algorithm) ·
-[code in an appendix](#add-code-to-an-appendix) ·
-[a list of symbols](#add-a-list-of-symbols-or-abbreviations)
-
-### Show a figure in parts (a), (b)
+<details id="show-a-figure-in-parts-a-b"><summary>Show a figure in parts (a), (b)</summary>
 
 For one figure with several panels. Uncomment the `subcaption` line in
 `preamble.tex` and use your own image names. The manual asks for only the
@@ -686,7 +707,9 @@ Each empty `\caption{}` prints only its letter, and `\ref{fig:sample-side}`
 prints a number such as "2.1b". Only the main caption appears in the list of
 figures.
 
-### Add theorems and proofs
+</details>
+
+<details id="add-theorems-and-proofs"><summary>Add theorems and proofs</summary>
 
 *Caveat:* the manual does not specify theorem formatting; see the
 [requirements map](project/requirements.md#needs-oge-confirmation).
@@ -708,7 +731,9 @@ Use induction on $n$. \ldots
 \end{proof}
 ```
 
-### Add an algorithm
+</details>
+
+<details id="add-an-algorithm"><summary>Add an algorithm</summary>
 
 *Caveat:* the manual does not mention algorithm format; see the
 [requirements map](project/requirements.md#needs-oge-confirmation).
@@ -735,7 +760,9 @@ Put this in your chapter file:
 \end{algorithm}
 ```
 
-### Add code to an appendix
+</details>
+
+<details id="add-code-to-an-appendix"><summary>Add code to an appendix</summary>
 
 *Caveat:* the manual does not mention code listings and the typewriter font
 is unconfirmed; see the
@@ -762,7 +789,9 @@ checklist asks for one font throughout. If OGE asks you to avoid the
 typewriter font, change `\ttfamily` to `\rmfamily` in `preamble.tex` and add
 `columns=fullflexible,keepspaces=true` to the second `\lstset` line.
 
-### Add a list of symbols or abbreviations
+</details>
+
+<details id="add-a-list-of-symbols-or-abbreviations"><summary>Add a list of symbols or abbreviations</summary>
 
 The manual calls this optional section a nomenclature (§1.6). It goes after the
 list of figures and before any preface or acknowledgment, appears in the
@@ -787,6 +816,8 @@ FEM   & Finite element method \\
 
 Packages that sort entries for you, such as `nomencl` or `glossaries`, need an
 extra program run that the build helper does not do.
+
+</details>
 
 ## Use another case for chapter titles
 

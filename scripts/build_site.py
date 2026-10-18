@@ -34,6 +34,7 @@ import subprocess
 import sys
 import tempfile
 from urllib.parse import quote, unquote, urlsplit
+from xml.etree import ElementTree
 
 import settings
 import rules  # scripts/rules.py: the OGE rules in docs/project/requirements.md
@@ -47,7 +48,7 @@ SITE = ROOT / "site"
 NAME = "RPI Thesis Toolkit"
 HOME_TITLE = NAME + " · LaTeX thesis and dissertation starter for RPI"
 HOME_DESCRIPTION = (
-    "Unofficial, community-made LaTeX starter and plain-language guide for RPI "
+    "Unofficial, community-made LaTeX starter, plain-language guide, and browser tools for RPI "
     "master's theses and doctoral dissertations. Not affiliated with or endorsed by RPI."
 )
 
@@ -83,6 +84,11 @@ GUIDE = [page for _, pages in NAV for page in pages]  # the same pages, in one l
 # Quick answers: a guide page outside the stages and the previous/next chain.
 # It sits above the stages in the sidebar, last in the header, and in the
 # Help card on the landing page.
+GROUP_OF = {name: group for group, pages in NAV for name, _, _ in pages}
+# Tool page -> the guide page that sends students to it (its "Back to" link).
+TOOL_HOME = {"settings-builder": "get-started", "bring-your-work-in": "bring-your-draft",
+             "check-references": "citations", "explain-my-error": "troubleshooting",
+             "check-pdf": "submission"}
 QUICK = ("how-do-i", "How do I…?", True)
 # When a student needs each page, shown as a small tag under the page title.
 # The sidebar lists pages without tags (SIDEBAR_TAGS is empty): its numbers and
@@ -311,6 +317,53 @@ def size_attrs(size):
     return f' width="{size[0]}" height="{size[1]}"' if size else ""
 
 
+# Known problems (KNOWN_PROBLEMS in scripts/build.py) as HTML table rows. The
+# fields are plain text, also printed by build.py and shown by site/explain/;
+# here commands, file names, and addresses become code and links.
+PROBLEM_CODE = re.compile(
+    r"https?://[^\s)]+[^\s).,]"                                    # an address
+    r"|[A-Z]:\\\w+|~/\w+"                                            # C:\thesis, ~/thesis
+    r"|\\[A-Za-z@]+(?:\{[^{}\s]*\})?|\\[_&$%#{}']\w?"                  # \ref{...}, \_, \'e
+    r"|\$\.\.\.\$|\[(?:Co-)?[Cc]hair\]|\[htbp\]"
+    r"|\b(?:figures|chapters|assets|build)/[\w./-]*"
+    r"|\b[\w-]+(?:\.[\w-]+)*\.(?:tex|cls|sty|bib|jpg|png|deb|rpm)\b")
+
+
+def problem_text(text):
+    out = []
+    for piece in re.split(f"({PROBLEM_CODE.pattern})", text):
+        if not piece:
+            continue
+        if piece.startswith("http") and PROBLEM_CODE.fullmatch(piece):
+            out.append(f'<a href="{escape(piece)}">{escape(piece)}</a>')
+        elif PROBLEM_CODE.fullmatch(piece):
+            out.append(f"<code>{escape(piece)}</code>")
+        else:
+            out.append(escape(piece))
+    return "".join(out)
+
+
+def problem_rows(entries, href, skip=()):
+    """One row per entry: what you see; what it means and what to try. href(page,
+    anchor) makes a guide link; links to an anchor in skip are left out."""
+    rows = []
+    for entry in entries:
+        seen = [f"<code>{escape(entry['message'])}</code>"] if entry.get("message") else []
+        if entry.get("symptom"):
+            seen.append(problem_text(entry["symptom"]))
+        steps = [problem_text(entry["means"]) + " " + problem_text(entry["fix"])]
+        if entry.get("editor"):
+            steps.append("In an editor on your computer: " + problem_text(entry["editor"]))
+        if entry.get("overleaf"):
+            steps.append("On Overleaf: " + problem_text(entry["overleaf"]))
+        page, anchor, section = build_helper.problem_guide(entry)
+        if (page, anchor) not in skip:
+            steps.append(f'More: <a href="{href(page, anchor)}">{escape(section)}</a>.')
+        rows.append(f"<tr><td>{', or '.join(seen)}</td><td>{'<br>'.join(steps)}</td></tr>")
+    return ("<table>\n<thead>\n<tr><th>What you see</th><th>What it means and what to try</th></tr>\n"
+            "</thead>\n<tbody>\n" + "\n".join(rows) + "\n</tbody>\n</table>")
+
+
 def responsive_tables(body):
     """A scroll box lets wide tables scroll on phones without losing table semantics.
     In a table, code with spaces (a whole error message) is marked so it may wrap,
@@ -423,6 +476,18 @@ def highlight_latex(text, bibtex=False):
             span("brace", brace)
     plain(text[pos:])
     return "".join(out)
+
+
+def home_tool(name):
+    """(doodle, one-line description) of a tool from the home page's list
+    (site/index.html), so the header's Tools menu says what the home page says."""
+    home = (ROOT / "site/index.html").read_text(encoding="utf-8")
+    found = re.search(r'<li>(<svg class="doodle tk-icon"(?:(?!</svg>).)*</svg>)<p><a href="docs/'
+                      + re.escape(name) + r'\.md">[^<]*</a> <span>([^<]*)</span>', home, flags=re.S)
+    if not found:
+        raise SystemExit(f"site/index.html: the toolkit list has no entry for docs/{name}.md; "
+                         "add it there (its doodle and one line), so the header's Tools menu can show it.")
+    return found[1].replace('class="doodle tk-icon"', 'class="doodle nav-menu-icon"', 1), found[2]
 
 
 def tool_mark(body, name):
@@ -562,6 +627,10 @@ class Site:
             and SVG_SCHEME.search(source_path(source).read_text(encoding="utf-8"))
         }
         source, heading = FEEDBACK
+        # The form's address is written once, in that section; a link marked
+        # data-form elsewhere points there in Markdown and at the form here.
+        form = re.search(r"\[help and feedback form\]\((https://[^)\s]+)\)", (ROOT / source).read_text(encoding="utf-8"))
+        self.form_url = form[1] if form else ""
         self.feedback = self.pages[source]
         if re.search(rf"(?m)^#+ {re.escape(heading)}\s*$", (ROOT / source).read_text(encoding="utf-8")):
             self.feedback += "#" + slug(heading)
@@ -797,7 +866,9 @@ class Site:
             attrs = re.sub(r'\s+(?:target|rel)="[^"]*"', "", before + after)
             # The last word carries the new-tab arrow (site.css), so the arrow never wraps alone.
             last = re.search(r"(<code\b[^>]*>[^<]*</code>|[^\s<>]+)(\s*)$", text)
-            if last and len(last[1]) <= 30:  # a long address may wrap (site.css)
+            if re.search(r'class="[^"]*\bbutton\b', attrs):   # a button's label is one piece, its arrow after it
+                text = f'<span class="ext-last">{text}</span>'
+            elif last and len(last[1]) <= 30:  # a long address may wrap (site.css)
                 text = text[:last.start()] + f'<span class="ext-last">{last[1]}</span>' + last[2]
             return (f'<a{attrs} href="{href}" target="_blank" rel="noopener">{text}'
                     '<span class="visually-hidden"> (opens in a new tab)</span></a>')
@@ -834,26 +905,45 @@ class Site:
 
         return re.sub(r"<h[1-6]\b[^>]*>.*?</h[1-6]>|<tr\b[^>]*>.*?</tr>", row, body, flags=re.S)
 
-    def explain_page(self, body, source):
+    def known_problems(self, text, source):
         """Put the known problems (KNOWN_PROBLEMS in scripts/build.py) into the
-        "Explain my error" page twice: as the table everyone sees, with or
-        without JavaScript, and as JSON for site/explain/ui.js."""
-        marker = '<div class="explain-known" data-explain-known></div>'
-        if marker not in body:
-            self.errors.append(f"{source}: keep the line {marker}; the table of known messages goes there.")
-            return body
-        rows = []
-        for entry in build_helper.KNOWN_PROBLEMS:
-            page, anchor, section = entry["guide"]
-            rows.append(f"<tr><td><code>{escape(entry['message'])}</code></td><td>{escape(entry['means'])}</td>"
-                        f"<td>{escape(entry['fix'])} More: <a href=\"{page}.html#{anchor}\">{escape(section)}</a>.</td></tr>")
-        table = ("<table>\n<thead>\n<tr><th>What you see</th><th>What it means</th><th>What to try</th></tr>\n"
-                 "</thead>\n<tbody>\n" + "\n".join(rows) + "\n</tbody>\n</table>")
-        fields = ("id", "pattern", "means", "fix", "editor", "overleaf", "guide")
-        payload = json.dumps([{key: entry[key] for key in fields if key in entry}
-                              for entry in build_helper.KNOWN_PROBLEMS],
-                             ensure_ascii=True, separators=(",", ":"))
-        return (body.replace(marker, table, 1) + '\n<script type="application/json" id="explain-problems">'
+        Markdown before Pandoc reads it, so their links are checked like any
+        other: the whole table on "Explain my error", where the marker line
+        is, and one table per section on the troubleshooting page, where
+        {{common-messages:SECTION}} is."""
+        sections = {key: [entry for entry in build_helper.KNOWN_PROBLEMS if entry["section"] == key]
+                    for key in build_helper.SECTIONS}
+        if source == "docs/explain-my-error.md":
+            marker = '<div class="explain-known" data-explain-known></div>'
+            if marker not in text:
+                self.errors.append(f"{source}: keep the line {marker}; the table of known messages goes there.")
+                return text
+            known = [entry for entries in sections.values() for entry in entries if "pattern" in entry]
+            return text.replace(marker, problem_rows(known, lambda page, anchor: f"{page}.md#{anchor}"), 1)
+
+        def table(match):
+            key = match[1]
+            if key not in sections:
+                self.errors.append(f"{source}: {{{{common-messages:{key}}}}} names no section; use one of "
+                                   + ", ".join(sections) + " (SECTIONS in scripts/build.py).")
+                return match[0]
+            placed.append(key)
+            here = [("troubleshooting", "common-messages")] + [("troubleshooting", name) for name in sections]
+            return problem_rows(sections[key], lambda page, anchor: (
+                f"#{anchor}" if page == "troubleshooting" else f"{page}.md#{anchor}"), here)
+
+        placed = []
+        text = re.sub(r"\{\{common-messages:([\w-]+)\}\}", table, text)
+        for key in sections:
+            if placed.count(key) != 1:
+                self.errors.append(f"{source}: put {{{{common-messages:{key}}}}} on its own line exactly once; "
+                                   "the known problems of that section (scripts/build.py) go there.")
+        return text
+
+    def explain_page(self, body):
+        """Give site/explain/ui.js the known problems as JSON."""
+        payload = json.dumps(build_helper.page_problems(), ensure_ascii=True, separators=(",", ":"))
+        return (body + '\n<script type="application/json" id="explain-problems">'
                 + payload.replace("<", "\\u003c") + "</script>\n")
 
     def offline_checker(self, body, source):
@@ -867,7 +957,7 @@ class Site:
                                "site/site.json); keep both, or update offline_checker in scripts/build_site.py.")
             return body
         link = escape(self.site_url + "/guide/check-pdf.html", quote=True)
-        note = ('<p class="pdf-check-nojs tool-nojs">The checker runs on the toolkit\'s website, not in this offline copy '
+        note = ('<p class="pdf-check-nojs tool-nojs tool-offline">The checker runs on the toolkit\'s website, not in this offline copy '
                 f'of the guide: open <a href="{link}">Check your PDF</a> there. Your PDF still stays on your '
                 'computer.')
         return intro.sub(lambda _: note, widget.sub("", body, count=1), count=1)
@@ -885,6 +975,63 @@ class Site:
                 'Your files stay in your browser; nothing is uploaded.</p>')
         return interactive.sub(lambda _: note, body, count=1)
 
+    def offline_settings(self, body, source):
+        """The offline guide has no settings form: say where it runs, not that JavaScript is off."""
+        intro = re.compile(r'<p class="tool-nojs" data-settings-nojs>The form needs JavaScript[^.]*\.')
+        if not self.site_url or not intro.search(body):
+            self.errors.append(f"{source}: the offline guide replaces the sentence starting \"The form needs "
+                               "JavaScript\" with a link to the website (site_url in site/site.json); keep it, "
+                               "or update offline_settings in scripts/build_site.py.")
+            return body
+        link = escape(self.site_url + "/guide/settings-builder.html", quote=True)
+        note = ('<p class="tool-nojs tool-offline" data-settings-nojs>The form runs on the toolkit\'s website, not in this offline '
+                f'copy of the guide: open <a href="{link}">Settings builder</a> there.')
+        return intro.sub(lambda _: note, body, count=1)
+
+    def changelog_page(self, body):
+        """The change log on the website: each release's "Changes your PDF?" answer
+        as a tag students can scan, and under each heading its download and its
+        code changes on GitHub, for anyone who wants the detail."""
+        versions = re.findall(r'<h2 id="[^"]*">(\d+\.\d+\.\d+) \(beta\)', body)
+        def meta(match):
+            # During the beta, many versions share a day: the heading is just the
+            # version (a short "On this page" list); its date leads the line under it.
+            anchor, version, date = match[1], match[2], match[3]
+            later = versions.index(version) + 1
+            links = [escape(date), f'Pre-release <code>v{version}</code>']
+            if self.repo:
+                links.append(f'<a href="{self.repo}/releases/download/v{version}/rpi-thesis-starter-v{version}.zip">'
+                             'Download</a>')
+                if later < len(versions):
+                    links.append(f'<a href="{self.repo}/compare/v{versions[later]}...v{version}">Code changes</a>')
+                else:
+                    links.append(f'<a href="{self.repo}/tree/v{version}">Code</a>')
+            return (f'<h2 id="{anchor}">{version}</h2><p class="release-meta">'
+                    + '<span class="sep" aria-hidden="true">·</span>'.join(links) + '</p>')
+        body = re.sub(r'<h2 id="([^"]*)">(\d+\.\d+\.\d+) \(beta\), ([^<]*)</h2>\s*'
+                      r'<p>Published as the pre-release <code[^>]*>v\2</code>\.</p>', meta, body)
+        def answer(match):
+            text = match[1].strip()
+            if re.match(r"No\b", text):   # "No." alone, or "No visible change." kept as written
+                kind, word, rest = "no", "No", re.sub(r"^No(?:[.,:]\s*|\s*$)", "", text)
+                rest = rest or "Only the guide, the website, scripts, or examples changed; your thesis looks the same."
+            elif re.match(r"Yes\b", text):
+                kind, word, rest = "yes", "Yes", re.sub(r"^Yes[.,:]?\s*", "", text)
+            elif text.startswith("Not applicable"):
+                kind, word, rest = "first", "New", "The first version."
+            else:   # "Only if ...": some theses
+                kind, word, rest = "some", "Some", text
+            rest = rest[:1].upper() + rest[1:]
+            return (f'<div class="release-pdf release-pdf-{kind}"><p class="release-pdf-word" aria-hidden="true">{word}</p>'
+                    f'<div><p class="release-pdf-q">Changes your PDF?<span class="visually-hidden"> {word}.</span></p>'
+                    f'<p>{rest}</p></div></div>')
+        body = re.sub(r'<p><strong>Changes your PDF\?</strong> (?!<)(.*?)</p>', answer, body, flags=re.S)
+        # Unreleased work: say what it means; "**Version:**" only steers scripts/bump.py.
+        body = re.sub(r'<p><strong>Version:</strong>[^<]*</p>\s*', "", body)
+        return re.sub(r'(<h2 id="unreleased">)Unreleased(</h2>)',
+                      r'\1Coming next\2<p class="release-meta">Guide and website changes are already live;'
+                      r' changes to the starter files arrive with the next download.</p>', body)
+
     def render(self, source):
         here = self.pages[source]
         if source == "site/index.html":
@@ -899,12 +1046,19 @@ class Site:
                 title = PROJECT[source][1]
             # {{rule:id}} and {{cite:id}} name a row of the requirements map (scripts/rules.py).
             text = text.replace("{{settings-table}}", self.settings["table"])
+            if source in ("docs/explain-my-error.md", "docs/troubleshooting.md"):
+                text = self.known_problems(text, source)
             text, problems, _ = rules.expand(text, source)
             self.errors.extend(problems)
             body = pandoc(["--from=gfm", "--to=html5", "--wrap=none", "--syntax-highlighting=none"], text)
+            if self.form_url:
+                body = re.sub(r'(<a\b[^>]*\bdata-form\b[^>]*\bhref=")[^"]*(")|(<a\b[^>]*\bhref=")[^"]*("[^>]*\bdata-form\b)',
+                              lambda m: (m[1] or m[3]) + escape(self.form_url, quote=True) + (m[2] or m[4]), body)
             body = self.rewrite(body, source, here, posixpath.dirname(source))
             if source == "docs/explain-my-error.md":
-                body = self.explain_page(body, source)
+                body = self.explain_page(body)
+            if source == "CHANGELOG.md":
+                body = self.changelog_page(body)
             if source == "docs/troubleshooting.md":
                 body = self.search_messages(body, here, title)
             if source == f"docs/{QUICK[0]}.md":
@@ -926,6 +1080,8 @@ class Site:
                 body = self.offline_checker(body, source)
             if Path(source).stem == "check-references" and self.offline:
                 body = self.offline_bibcheck(body, source)
+            if Path(source).stem == "settings-builder" and self.offline:
+                body = self.offline_settings(body, source)
             # The PDF checker compares a PDF's class version with the release the website links.
             body = body.replace('data-pdf-check data-version=""', f'data-pdf-check data-version="{RELEASE_VERSION}"')
             # Keyboard users must also be able to pan long code lines without
@@ -937,6 +1093,8 @@ class Site:
             if kind == "guide":
                 body = search_disclosures(body)
                 self.search.extend(SearchSections(body, here, title).entries)
+                body, toc = self.page_top(body, Path(source).stem)
+            elif kind == "project":   # long reference pages (change log, requirements map) get the same list
                 body, toc = self.page_top(body, Path(source).stem)
 
         def item(path, label, name=None):
@@ -959,6 +1117,17 @@ class Site:
         header = [entry for entry, (_, _, top) in zip(nav, chain) if top]
         if quick and QUICK[2]:
             header.append(quick)
+        # The header: Get started, a Guide menu, a Tools menu, How do I...?
+        groups_by_name = dict(NAV)
+        start = guide_item(*groups_by_name["Core path"][0][:2])
+        guide_menu = [entry for entry in (guide_item(name, label) for name, label, _ in
+                      groups_by_name["Core path"][1:] + groups_by_name["Go further"]) if entry]
+        tools_menu = []
+        for name, label, _ in groups_by_name["Tools"]:
+            entry = guide_item(name, label)
+            if entry:
+                icon, blurb = home_tool(name)
+                tools_menu.append({**entry, "icon": icon, "blurb": blurb})
         values = {
             "lang": "en",
             "kind": kind,
@@ -970,6 +1139,12 @@ class Site:
             "nav": nav + ([quick] if quick else []),
             "navgroups": groups,
             "header": header,
+            "menu_start": start,
+            "menu_guide": guide_menu,
+            "menu_guide_current": any(entry.get("current") for entry in guide_menu),
+            "menu_tools": tools_menu,
+            "menu_tools_current": any(entry.get("current") for entry in tools_menu),
+            "menu_quick": quick,
             "project": [
                 item(self.pages[path], label)
                 for path, (_, label) in PROJECT.items()
@@ -1004,9 +1179,15 @@ class Site:
             names = [name for name, _, _ in chain]
             if Path(source).stem in names:
                 index = names.index(Path(source).stem)
-                if index > 0:
+                group = GROUP_OF.get(names[index])
+                # Previous and next stay inside one part of the guide; a tool
+                # page links back to the guide page that sends you to it.
+                if names[index] in TOOL_HOME:
+                    values["prev"] = nav[names.index(TOOL_HOME[names[index]])]
+                    values["prev_label"] = "Back to"
+                elif index > 0 and GROUP_OF.get(names[index - 1]) == group:
                     values["prev"] = nav[index - 1]
-                if index + 1 < len(nav):
+                if names[index] not in TOOL_HOME and index + 1 < len(nav) and GROUP_OF.get(names[index + 1]) == group:
                     values["next"] = nav[index + 1]
                     next_tag = PAGE_TAGS[chain[index + 1][0]][0]
                     if next_tag == "If you have a draft":
@@ -1024,6 +1205,8 @@ class Site:
                 values["toc"] = toc
             if Path(source).stem in PAGE_SCRIPTS and (not self.offline or Path(source).stem in OFFLINE_SCRIPTS):
                 values["page_script"] = PAGE_SCRIPTS[Path(source).stem]
+        if kind == "project" and toc:   # long reference pages: the same "On this page" list
+            values["toc"] = toc
         if kind == "notfound":
             values["notfound"] = True
         else:  # every indexed page needs its own title and description
@@ -1240,11 +1423,136 @@ def build_site(destination=None, offline=False, previews=False, cheatsheet=False
     return destination
 
 
+def drawing_colors():
+    """Every color in the drawings (docs/diagrams, site/art, the logo and the
+    link-preview card) must be a color of site/site.css, so a palette change
+    there cannot leave a drawing behind."""
+    tokens = {h.lower() for h in re.findall(r"#[0-9a-fA-F]{6}\b", (SITE / "site.css").read_text(encoding="utf-8"))}
+    errors = []
+    drawings = sorted((ROOT / "docs/diagrams").glob("*.svg")) + sorted((SITE / "art").glob("*.svg")) + \
+        [SITE / "logo.svg", SITE / "og-card.svg"]
+    for path in drawings:
+        stray = sorted({h.lower() for h in re.findall(r"#[0-9a-fA-F]{6}\b", path.read_text(encoding="utf-8"))} - tokens)
+        if stray:
+            errors.append(f"{path.relative_to(ROOT)}: {', '.join(stray)} is not a color in site/site.css; "
+                          "use the matching token's color (section 2) so the drawing follows the palette.")
+    return errors
+
+
+def drawing_code_style():
+    """The code classes every drawing's <style> carries: the LaTeX colors of
+    site/site.css (the --code-* tokens and tok-* rules), c-cmd for tok-cmd."""
+    css = (SITE / "site.css").read_text(encoding="utf-8")
+    lines = ["    .c-tex, .c-bib, .c-md { fill: var(--ink); }"]
+    for name, token in re.findall(r"--code-(\w+):\s*var\(--([\w-]+)\)", css):
+        rule = re.search(r"\.tok-" + name + r"\s*\{\s*color:\s*var\(--code-" + name + r"\);\s*([^}]*?)\s*\}", css)
+        lines.append(f"    .c-{name} {{ fill: var(--{token}); {rule[1] + ' ' if rule and rule[1] else ''}}}")
+    return "\n".join(lines) + "\n"
+
+
+def drawing_code(text, bibtex=False):
+    """One line of LaTeX (or BibTeX) as the tspans a drawing draws it with:
+    highlight_latex's coloring, so a drawing matches the website's code."""
+    return highlight_latex(text, bibtex).replace('<span class="tok-', '<tspan class="c-').replace("</span>", "</tspan>")
+
+
+def drawing_code_colors():
+    """Code in the drawings is colored as on the website. A line or bit of code
+    is a <text> or <tspan> with class c-tex (LaTeX), c-bib (BibTeX) or c-md
+    (Markdown) holding only plain text and c-* tspans; for LaTeX and BibTeX the
+    pieces must be exactly drawing_code's."""
+    style = drawing_code_style()
+    kinds = {"c-tex", "c-bib", "c-md"}
+    colors = {"c-cmd", "c-brace", "c-opt", "c-math", "c-com"}
+
+    def classes(element):
+        return set(element.get("class", "").split())
+
+    def pieces(element):
+        """[(color or "", text)] of a code element, or None if a child is not a bare c-* tspan."""
+        out = [("", element.text or "")]
+        for child in element:
+            if child.tag.rpartition("}")[2] != "tspan" or set(child.attrib) != {"class"} or len(child) \
+                    or not classes(child) <= colors or len(classes(child)) != 1:
+                return None
+            out += [(child.get("class"), child.text or ""), ("", child.tail or "")]
+        merged = []
+        for color, text in out:
+            if merged and merged[-1][0] == color:
+                merged[-1] = (color, merged[-1][1] + text)
+            elif text:
+                merged.append((color, text))
+        return merged
+
+    errors = []
+    drawings = sorted((ROOT / "docs/diagrams").glob("*.svg")) + sorted((SITE / "art").glob("*.svg"))
+    for path in drawings:
+        svg, name = path.read_text(encoding="utf-8"), path.relative_to(ROOT)
+        if style not in svg:
+            errors.append(f"{name}: its <style> lacks the code classes; paste these lines before </style> "
+                          f"(made from the LaTeX colors in site/site.css):\n{style}")
+        for rule in re.findall(r"[^{}]*\{[^{}]*monospace[^{}]*\}|style=\"[^\"]*monospace[^\"]*\"", svg):
+            if "font-variant-ligatures: none" not in rule:
+                errors.append(f"{name}: {rule.strip()[:60]}... sets a code font; add font-variant-ligatures: none "
+                              "so code shows the characters typed, as on the website.")
+        try:
+            root = ElementTree.fromstring(svg)
+        except ElementTree.ParseError as problem:
+            errors.append(f"{name}: not well-formed SVG ({problem}); fix the markup there.")
+            continue
+        inside = set()
+        for element in root.iter():
+            kind = classes(element) & kinds
+            if not kind:
+                continue
+            inside.update(element.iter())
+            code = "".join(element.itertext())
+            found = pieces(element)
+            if found is None:
+                errors.append(f"{name}: in the code {code!r}, use only plain text and "
+                              '<tspan class="c-cmd|c-brace|c-opt|c-math|c-com"> with no other attributes.')
+            elif kind != {"c-md"}:
+                expected = drawing_code(code, kind == {"c-bib"})
+                if found != pieces(ElementTree.fromstring(f"<t>{expected}</t>")):
+                    errors.append(f"{name}: the code {code!r} is not colored as on the website; "
+                                  f"write it as {expected}")
+        for element in root.iter():
+            if element in inside:
+                continue
+            if classes(element) & colors:
+                errors.append(f"{name}: {element.text!r} has a c-* code color outside a <text> or <tspan> "
+                              "with class c-tex, c-bib or c-md.")
+            elif classes(element) & {"code", "m"} and re.search(r"\\[A-Za-z]", "".join(element.itertext())):
+                errors.append(f"{name}: the code {''.join(element.itertext())!r} needs class c-tex and the "
+                              "website's colors on its tspans (scripts/build_site.py, drawing_code).")
+    return errors
+
+
+def stylesheet_colors():
+    """Colors live in one place: the tokens before "3. Base" in site/site.css.
+    After it, a rule may use a token, or neutral black, white or gray (print,
+    shadows); any other color there is an error, so the palette cannot split."""
+    css = (SITE / "site.css").read_text(encoding="utf-8")
+    start = css.index("/* ---------- 3. Base")
+    errors = []
+    for match in re.finditer(r"#([0-9a-fA-F]{3,8})\b", css[start:]):
+        digits = match[1].lower()
+        rgb = [digits[i] * 2 for i in range(3)] if len(digits) in (3, 4) else [digits[i:i + 2] for i in (0, 2, 4)]
+        if len(set(rgb)) > 1:   # not a gray
+            line = css[:start + match.start()].count("\n") + 1
+            errors.append(f"site/site.css line {line}: {match[0]} is a color outside the tokens; "
+                          "add or use a token in section 2 instead.")
+    return errors
+
+
 def build_into(destination, final, offline, previews, cheatsheet, publish, complete=False):
     """Write and check the site in `destination` (the staging folder); `final` is
     where it will end up."""
     site = Site(offline)
     site.errors.extend(checker_ids())
+    site.errors.extend(drawing_colors())
+    site.errors.extend(drawing_code_colors())
+    site.errors.extend(stylesheet_colors())
     checks = (SITE / "pdf-check/core.js").read_text(encoding="utf-8")
     pinned = re.search(r'PDFJS_VERSION = "([^"]+)"', checks)
     for name in PDF_CHECK[3:]:

@@ -277,6 +277,141 @@ class Browser(unittest.TestCase):
         self.wait_for_form()
         self.assertEqual(self.browser.evaluate("document.getElementById('setting-title').value"), "")
 
+    def test_title_page_sketch_and_form_messages(self):
+        self.browser.open(self.server.url + "/guide/settings-builder.html?sketch")
+        self.wait_for_form()
+        empty = self.browser.evaluate("[...document.querySelectorAll('.settings-page p')].map(p => p.textContent)")
+        self.assertEqual(empty[0], "YOUR THESIS TITLE")
+        errors = self.browser.evaluate("[...document.querySelectorAll('[data-settings-errors] li')].map(li => li.textContent)")
+        self.assertTrue(errors[0].startswith("Still empty: Thesis or dissertation title, Your full name"), errors)
+        self.assertFalse(any("Unknown graduation month" in error or "four digits" in error for error in errors), errors)
+        self.assertFalse(any("metadata.tex" in error for error in errors), errors)
+        lines = self.browser.evaluate("""(() => {
+          const set = (id, value) => { document.getElementById(id).value = value; };
+          set('setting-title', 'Heat & mass'); set('setting-author', 'A. Student');
+          set('setting-degree', 'masters'); set('setting-department', 'Department of Physics');
+          set('setting-graduation-month', 'May'); set('setting-graduation-year', '2027');
+          document.querySelector('[data-member-name]').value = 'C. Chair';
+          document.querySelector('form').dispatchEvent(new Event('input'));
+          return [...document.querySelectorAll('.settings-page p')].map(p => p.textContent);
+        })()""")
+        for line in ("HEAT & MASS", "A. Student", "MASTER OF SCIENCE", "C. Chair, Chair", "Department of Physics",
+                     *settings.load()["titlePage"], "[May 2027]"):
+            self.assertIn(line, lines)
+        self.assertEqual(self.browser.evaluate("document.getElementById('setting-degree').selectedOptions[0].text"),
+                         "Master of Science")
+
+    def test_read_metadata_round_trip_and_plain_values_only(self):
+        source = (ROOT / "metadata.tex").read_text(encoding="utf-8")
+        found = self.browser.evaluate(f"""(async () => {{
+          const core = await import('../settings/core.js'), schema = (await import('../settings/data.js')).default;
+          const found = core.readMetadata({json.dumps(source)}, schema);
+          return {{found, again: core.generate(found.settings, found.committee, schema)}};
+        }})()""")
+        self.assertEqual(found["found"]["settings"]["degree"], "doctoral")
+        self.assertEqual([m["role"] for m in found["found"]["committee"]], ["Chair", "", ""])
+        self.assertEqual(found["again"]["errors"], [])
+        tricky = (r"\thesissetup{ title = {With \texorpdfstring{$\alpha$}{alpha} and 50\%}, author = {A.~B {Doe}},"
+                  r" colour = red } \committeemember[Chair]{Ann \& Co} % \committeemember{Commented out}")
+        found = self.browser.evaluate(f"""(async () => (await import('../settings/core.js')).readMetadata(
+          {json.dumps(tricky)}, (await import('../settings/data.js')).default))()""")
+        self.assertEqual(found["skipped"], ["title"])
+        self.assertEqual(found["unknown"], ["colour"])
+        self.assertEqual(found["settings"]["author"], "A. B Doe")
+        self.assertEqual(found["committee"], [{"name": "Ann & Co", "role": "Chair"}])
+        # Every block counts, in order, as in LaTeX: a later block's override is kept.
+        later = json.dumps((ROOT / "metadata.tex").read_text(encoding="utf-8")
+                           + "\n\\thesissetup{copyright-page=true}\n\\thesissetup{ title = {Old}, title = {$x$} }\n")
+        found = self.browser.evaluate(f"""(async () => (await import('../settings/core.js')).readMetadata(
+          {later}, (await import('../settings/data.js')).default))()""")
+        self.assertEqual(found["settings"]["copyright-page"], "true")
+        self.assertNotIn("title", found["settings"])
+        self.assertEqual(found["skipped"], ["title"])
+        for value in (r"Jos\'{e} Example", r"The $H_2$ cycle", r"A^2 study"):
+            source = json.dumps("\\thesissetup{ author = {" + value + "} }")
+            found = self.browser.evaluate(f"""(async () => (await import('../settings/core.js')).readMetadata(
+              {source}, (await import('../settings/data.js')).default))()""")
+            self.assertEqual(found["skipped"], ["author"], value)
+
+    def test_load_starts_from_a_clean_form_and_the_sketch_hides(self):
+        self.browser.open(self.server.url + "/guide/settings-builder.html?clean")
+        self.wait_for_form()
+        result = self.browser.evaluate("""(async () => {
+          const name = document.getElementById('setting-degree-name');
+          name.value = 'Master of Engineering'; name.dispatchEvent(new Event('input', {bubbles: true}));
+          const input = document.getElementById('settings-load'), data = new DataTransfer();
+          data.items.add(new File(['\\\\thesissetup{ title = {T}, degree = doctoral }'], 'metadata.tex'));
+          input.files = data.files; input.dispatchEvent(new Event('change', {bubbles: true}));
+          for (let i = 0; i < 50 && !document.querySelector('[data-settings-loaded]').textContent; i++)
+            await new Promise(r => setTimeout(r, 20));
+          document.querySelector('[data-settings-sketch]').click();
+          return {name: name.value, shown: getComputedStyle(document.querySelector('.settings-page')).display};
+        })()""")
+        self.assertEqual(result["name"], "")
+        self.assertEqual(result["shown"], "none")
+
+    def test_seal_name_with_special_characters_round_trips(self):
+        found = self.browser.evaluate(f"""(async () => {{
+          const core = await import('../settings/core.js'), schema = (await import('../settings/data.js')).default;
+          const settings = {{...{json.dumps(VALID)}, "seal-file": "assets/Seal#1.jpg"}};
+          const made = core.generate(settings, {json.dumps(COMMITTEE)}, schema);
+          return core.readMetadata(made.text, schema);
+        }})()""")
+        self.assertEqual(found["settings"]["seal-file"], "assets/Seal#1.jpg")
+        self.assertEqual(found["settings"]["title"], VALID["title"])
+        self.assertEqual(found["skipped"], [])
+
+    def test_load_never_drops_what_it_cannot_read(self):
+        self.browser.open(self.server.url + "/guide/settings-builder.html?keep")
+        self.wait_for_form()
+        odd = json.dumps("\\thesissetup{ title = {T}, degree-name = {M\\'{a}ster} }"
+                         " \\committeemember[Chair]{Ann} \\committeemember{Jos\\'{e} X}")
+        none = json.dumps("\\thesissetup{ title = {T} }")
+        result = self.browser.evaluate("""(async () => {
+          const input = document.getElementById('settings-load');
+          const load = async text => {
+            const data = new DataTransfer(), note = document.querySelector('[data-settings-loaded]');
+            note.textContent = '';
+            data.items.add(new File([text], 'metadata.tex'));
+            input.files = data.files; input.dispatchEvent(new Event('change', {bubbles: true}));
+            for (let i = 0; i < 50 && !note.textContent; i++) await new Promise(r => setTimeout(r, 20));
+            const rows = [...document.querySelectorAll('.settings-member [data-member-name]')].map(i => i.value);
+            return {rows, copy: document.querySelector('[data-settings-copy]').disabled,
+                    errors: document.querySelector('[data-settings-errors]').textContent};
+          };
+          return {odd: await load(ODD), none: await load(NONE)};
+        })()""".replace("ODD", odd).replace("NONE", none))
+        self.assertEqual(result["odd"]["rows"], ["Ann", ""])
+        self.assertIn("Other degree name (optional): your file uses LaTeX", result["odd"]["errors"])
+        self.assertTrue(result["odd"]["copy"])
+        self.assertEqual(result["none"]["rows"], [""])
+        self.assertTrue(result["none"]["copy"])
+
+    def test_load_file_sketch_switch_and_download(self):
+        self.browser.open(self.server.url + "/guide/settings-builder.html?load")
+        self.wait_for_form()
+        result = self.browser.evaluate(f"""(async () => {{
+          const input = document.getElementById('settings-load'), data = new DataTransfer();
+          data.items.add(new File([{json.dumps((ROOT / "metadata.tex").read_text(encoding="utf-8"))}], 'metadata.tex'));
+          input.files = data.files; input.dispatchEvent(new Event('change', {{bubbles: true}}));
+          for (let i = 0; i < 50 && !document.querySelector('[data-settings-loaded]').textContent; i++)
+            await new Promise(r => setTimeout(r, 20));
+          const sw = document.querySelector('[data-settings-sketch]');
+          sw.click(); const hidden = document.querySelector('.settings-page').hidden; sw.click();
+          let saved = null;
+          URL.createObjectURL = blob => {{ saved = blob; return 'blob:test'; }};
+          HTMLAnchorElement.prototype.click = function () {{ this.dataset.clicked = this.download; }};
+          document.querySelector('[data-settings-download]').click();
+          return {{loaded: document.querySelector('[data-settings-loaded]').textContent, hidden,
+                   shown: !document.querySelector('.settings-page').hidden,
+                   file: saved ? await saved.text() : ''}};
+        }})()""")
+        self.assertIn("3 committee members", result["loaded"])
+        self.assertTrue(result["hidden"])
+        self.assertTrue(result["shown"])
+        self.assertIn("\\committeemember[Chair]{Your committee chair}", result["file"])
+        self.assertTrue(result["file"].startswith("% !TEX root = main.tex"))
+
     @unittest.skipUnless(shutil.which("pdflatex"), "no TeX Live (pdflatex)")
     def test_messages_match_class_errors(self):
         cases = [({**VALID, "degree": "Doctoral"}, COMMITTEE),

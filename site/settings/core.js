@@ -79,3 +79,115 @@ export function generate(settings, committee, schema) {
     `\\committeemember${member.role ? `[${escapeText(member.role).replace(/[\[\]]/g, char => `{${char}}`)}]` : ""}{${escapeText(member.name)}}`);
   return {errors: [], text: `${setup}\n\n${members.join("\n")}\n`};
 }
+
+// Reading an existing metadata.tex back into the form. Only plain values are
+// taken: a value that still holds a LaTeX command after the form's own escapes
+// are undone (math in a title, for example) is left out and named, because the
+// form would print its backslashes as text.
+const UNESCAPE = [["\\textbackslash{}", "\\"], ["\\textasciitilde{}", "~"], ["\\textasciicircum{}", "^"],
+  ["\\&", "&"], ["\\%", "%"], ["\\_", "_"], ["\\#", "#"], ["\\$", "$"], ["\\{", "{"], ["\\}", "}"]];
+
+function stripComments(text) {
+  return text.split(/\r?\n/).map(line => {
+    for (let i = 0; i < line.length; i++) {
+      if (line[i] === "\\") { i++; continue; }
+      if (line[i] === "%") return line.slice(0, i);
+    }
+    return line;
+  }).join("\n");
+}
+
+// The text of the brace group that starts at text[start], and the offset after it.
+function braceGroup(text, start) {
+  if (text[start] !== "{") return null;
+  let depth = 0;
+  for (let i = start; i < text.length; i++) {
+    if (text[i] === "\\") { i++; continue; }
+    if (text[i] === "{") depth++;
+    else if (text[i] === "}" && --depth === 0) return [text.slice(start + 1, i), i + 1];
+  }
+  return null;
+}
+
+// A seal path as the form writes it: characters such as # as \csname char_generate:nn\endcsname{35}{12}.
+function sealValue(value) {
+  let text = value.trim();
+  while (text.startsWith("{") && braceGroup(text, 0)?.[1] === text.length) text = text.slice(1, -1).trim();
+  text = text.replace(/\\csname char_generate:nn\\endcsname\{(\d+)\}\{12\}/g, (_, code) => String.fromCharCode(Number(code)));
+  return /[\\{}]/.test(text) ? null : text;
+}
+
+function plainValue(value) {
+  let text = value.trim();
+  while (text.startsWith("{") && braceGroup(text, 0)?.[1] === text.length) text = text.slice(1, -1).trim();
+  // The form's own escapes become characters; any other command means "not plain".
+  const marks = ["\u0001", "\u0002", "\u0003"];
+  ["\\textbackslash{}", "\\textasciitilde{}", "\\textasciicircum{}"].forEach((code, i) => { text = text.split(code).join(marks[i]); });
+  // Any other backslash (\'{e}, \alpha) or unescaped math ($, ^) is LaTeX the form would print as text.
+  if (/\\(?![&%_#${}])/.test(text) || /(^|[^\\])[$^]/.test(text)) return null;
+  text = text.replace(/(^|[^\\])[{}]+/g, "$1").replace(/~/g, " ");  // protective braces, as in {Doe}; ~ is a space
+  for (const [code, char] of UNESCAPE.slice(3)) text = text.split(code).join(char);
+  ["\\", "~", "^"].forEach((char, i) => { text = text.split(marks[i]).join(char); });
+  return text.replace(/\s+/g, " ");
+}
+
+export function readMetadata(source, schema) {
+  const text = stripComments(String(source || ""));
+  const found = {settings: {}, committee: [], skipped: [], unknown: []};
+  // Every \thesissetup block, in order: as in LaTeX, a later value replaces an earlier one.
+  const groups = [];
+  for (let at = text.indexOf("\\thesissetup"); at >= 0; at = text.indexOf("\\thesissetup", at + 1)) {
+    const group = braceGroup(text, text.indexOf("{", at));
+    if (group) groups.push(group);
+  }
+  for (const group of groups) {
+    // Split at commas outside braces.
+    const parts = [];
+    let depth = 0, from = 0;
+    let body = group[0];
+    // A block the form wrote for an unusual seal filename wraps the text settings in \unexpanded{...}.
+    const wrapped = body.trimStart().startsWith("\\unexpanded") ? body.indexOf("\\unexpanded") : -1;
+    if (wrapped >= 0) {
+      const inner = braceGroup(body, body.indexOf("{", wrapped));
+      if (inner) body = body.slice(0, wrapped) + inner[0] + "," + body.slice(inner[1]);
+    }
+    for (let i = 0; i < body.length; i++) {
+      if (body[i] === "\\") { i++; continue; }
+      if (body[i] === "{") depth++;
+      else if (body[i] === "}") depth--;
+      else if (body[i] === "," && depth === 0) { parts.push(body.slice(from, i)); from = i + 1; }
+    }
+    parts.push(body.slice(from));
+    for (const part of parts) {
+      const eq = part.indexOf("=");
+      if (eq < 0) continue;
+      const key = part.slice(0, eq).trim();
+      if (!key) continue;
+      if (!Object.hasOwn(schema.keys, key)) { found.unknown.push(key); continue; }
+      const value = (key === "seal-file" ? sealValue : plainValue)(part.slice(eq + 1));
+      if (value === null) { found.skipped.push(key); delete found.settings[key]; }
+      else { found.settings[key] = value; found.skipped = found.skipped.filter(name => name !== key); }
+    }
+  }
+  const member = /\\committeemember\s*(?:\[([^\]]*)\])?\s*/g;
+  let match;
+  while ((match = member.exec(text))) {
+    const name = braceGroup(text, member.lastIndex);
+    if (!name) continue;
+    const plainName = plainValue("{" + name[0] + "}"), plainRole = plainValue(match[1] || "");
+    // A name the form cannot keep stays as an empty row to fill in, never dropped.
+    if (plainName === null || plainRole === null) {
+      found.skipped.push("committee member");
+      found.committee.push({name: "", role: plainRole ?? "", unreadable: true});
+    } else found.committee.push({name: plainName, role: plainRole});
+    member.lastIndex = name[1];
+  }
+  found.ok = groups.length > 0 || found.committee.length > 0;
+  return found;
+}
+
+// A whole metadata.tex for download: a short header, then the block.
+export function metadataFile(block) {
+  return "% !TEX root = main.tex\n% Your details for the title page, written by the Settings builder.\n" +
+    "% Every setting: the guide, Going further, \"All thesis settings\".\n" + block;
+}

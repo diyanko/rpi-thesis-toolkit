@@ -32,25 +32,29 @@ result. Check the finished PDF as well.
 - [ ] **Contents and lists:** {{rule:contents-match}}; the lists of tables
   and figures use the full captions, appendix objects included. Optional
   short arguments such as `\section[Short]{Long}` and `\caption[Short]{Long}`
-  break this ({{cite:contents-match,lists}}).
+  break this.\
+  *Manual:* {{cite:contents-match,lists}}
 - [ ] **Figures and tables:** {{rule:captions}}. Each is legible and stays
-  inside the margins on every page, long tables included. {{rule:lettered-parts}}
-  ({{cite:captions,lettered-parts,page-size}}).
+  inside the margins on every page, long tables included. {{rule:lettered-parts}}.\
+  *Manual:* {{cite:captions,lettered-parts,page-size}}
 - [ ] **Landscape pages:** caption reads with the table; the class keeps the
   page number top right, a placement awaiting
-  [OGE confirmation](project/requirements.md#needs-oge-confirmation)
-  ({{cite:landscape}}).
+  [OGE confirmation](project/requirements.md#needs-oge-confirmation).\
+  *Manual:* {{cite:landscape}}
   <!-- TODO(verify): landscape page-number placement awaits OGE confirmation; see requirements.md "Needs OGE confirmation". -->
-- [ ] **Equations:** {{rule:equations}}. {{rule:unnumbered-displays}}
-  ({{cite:equations,unnumbered-displays}}).
+- [ ] **Equations:** {{rule:equations}}. {{rule:unnumbered-displays}}.\
+  *Manual:* {{cite:equations,unnumbered-displays}}
 - [ ] **Citation style:** {{rule:citation-style}}. {{rule:sequential-numbering}}.
-  {{rule:access-dates}} ({{cite:citation-style,sequential-numbering,access-dates}}).
-- [ ] **Copyright permissions:** {{rule:reproduced}} ({{cite:reproduced}}).
+  {{rule:access-dates}}.\
+  *Manual:* {{cite:citation-style,sequential-numbering,access-dates}}
+- [ ] **Copyright permissions:** {{rule:reproduced}}.\
+  *Manual:* {{cite:reproduced}}
 - [ ] **Attributions:** {{rule:attribution}}. Every reused paper needs one,
-  sole-authored too ({{cite:attribution,attribution-reuse}}).
+  sole-authored too.\
+  *Manual:* {{cite:attribution,attribution-reuse}}
 - [ ] **Wording:** consistent heading and caption case, full department and
-  committee names, no figures or references in the abstract
-  ({{cite:headings,department-name,abstract}}).
+  committee names, no figures or references in the abstract.\
+  *Manual:* {{cite:headings,department-name,abstract}}
 
 ## Where students record exceptions
 

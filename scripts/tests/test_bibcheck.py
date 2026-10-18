@@ -226,8 +226,116 @@ class BibCheck(unittest.TestCase):
         order = ['break', 'wrong', 'advice', 'tidy']
         self.assertEqual([order.index(f['severity']) for f in report['findings']], sorted(order.index(f['severity']) for f in report['findings']))
         for finding in report['findings']:
-            self.assertTrue(all(finding[field] for field in ('key', 'field', 'fix', 'severity')))
-            self.assertTrue(finding['href'].startswith('citations.html#'))
+            self.assertTrue(all(finding[field] for field in ('key', 'field', 'fix', 'severity', 'guide')))
+            self.assertRegex(finding['href'], r'^(citations|check-references)\.html#')
+
+    def test_guide_links_point_at_existing_sections(self):
+        guides = self.browser.evaluate('api.RULES.guides')
+        for name, (href, text) in guides.items():
+            with self.subTest(guide=name):
+                page, anchor = href.split('#')
+                source = (ROOT / 'docs' / page.replace('.html', '.md')).read_text()
+                self.assertTrue('id="' + anchor + '"' in source or self.heading_id(source, anchor), href)
+                self.assertTrue(text)
+
+    @staticmethod
+    def heading_id(source, anchor):
+        for line in source.splitlines():
+            if line.startswith('#'):
+                slug = re.sub(r'[^a-z0-9 -]', '', line.lstrip('#').strip().lower()).replace(' ', '-')
+                if slug == anchor:
+                    return True
+        return False
+
+    def test_findings_name_their_line_and_the_other_entry(self):
+        bib = BOOK + '\n\n' + BOOK.replace('Alice Smith', 'Bob Jones').replace('An example', 'Other')
+        duplicate = next(f for f in self.check(bib)['findings'] if f['id'] == 'duplicate')
+        self.assertEqual(duplicate['line'], 3)
+        self.assertEqual(duplicate['related']['line'], 1)
+        self.assertEqual(bib[duplicate['start']:duplicate['start'] + 5], '@book')
+        self.assertEqual(bib[duplicate['related']['start']:duplicate['related']['end']], BOOK)
+        # A field finding points at the field itself.
+        special = next(f for f in self.check(BOOK.replace('An example', 'A & B'))['findings'] if f['id'] == 'special')
+        self.assertTrue(BOOK.replace('An example', 'A & B')[special['start']:special['end']].startswith('title='))
+        self.assertEqual(special['entry']['line'], 1)
+
+    def test_one_unclosed_entry_does_not_hide_the_next(self):
+        bib = '@book{first, title={Open, date={2020}, publisher={P}\n\n@book{second, author={A B}, date={2021}}\n'
+        report = self.check(bib)
+        syntax = [f for f in report['findings'] if f['id'] == 'syntax']
+        self.assertEqual(len(syntax), 1)
+        self.assertEqual((syntax[0]['key'], syntax[0]['line']), ('first', 1))
+        self.assertIn('line 3', syntax[0]['fix'])
+        self.assertEqual(report['entries'], 2)
+        # The second entry is still checked on its own: it has no title.
+        self.assertIn(('second', 'title'), {(f['key'], f['field']) for f in report['findings'] if f['id'] == 'required'})
+        # The broken entry gets no missing-field claims.
+        self.assertNotIn('first', {f['key'] for f in report['findings'] if f['id'] == 'required'})
+        self.assertIn('extra closing brace', ' '.join(f['fix'] for f in self.check('@book{k, title={T}}, date={2020}}')['findings']))
+
+    def fixed(self, bib, **options):
+        """Apply every offered fix once; return (fixes, new text)."""
+        report = self.check(bib, **options)
+        fixes = [f['edit'] for f in report['findings'] if f.get('edit')]
+        result = self.browser.evaluate('api.applyFixes(' + json.dumps(bib) + ', ' + json.dumps(fixes) + ')')
+        return fixes, result['text']
+
+    def test_safe_fixes_change_only_what_they_show(self):
+        cases = [
+            (BOOK.replace('An example', 'Fish & chips, 50% off_now #1'), 'special', 'title={Fish \\& chips, 50\\% off\\_now \\#1}'),
+            (BOOK.replace('An example', r'The $L_p$ & more'), 'special', r'title={The $L_p$ \& more}'),
+            (BOOK[:-1] + ', doi={https://doi.org/10.1234/a.b}}', 'doi', 'doi={10.1234/a.b}'),
+            (BOOK[:-1] + ', doi="doi:10.1234/x"}', 'doi', 'doi="10.1234/x"'),
+            (BOOK[:-1] + ', month={January}}', 'month', 'month={1}'),
+            (BOOK[:-1] + ', month={Sept.}}', 'month', 'month={9}'),
+            (BOOK.replace('date={2024}', 'year={2024-05-01}'), 'year', 'date={2024-05-01}'),
+            (BOOK.replace(', date=', ' date='), 'syntax', 'title={An example}, date={2024}'),
+        ]
+        for bib, kind, expected in cases:
+            with self.subTest(bib=bib):
+                fixes, text = self.fixed(bib)
+                self.assertEqual(len(fixes), 1)
+                self.assertIn(expected, text)
+                self.assertNotIn(kind, self.ids(text))
+                self.assertTrue(fixes[0]['before'] and fixes[0]['after'] and fixes[0]['label'])
+                self.assertTrue(text.startswith('@book{key,'))
+
+    def test_uncertain_points_stay_advice(self):
+        for bib in (BOOK.replace('Alice Smith', 'Alice Smith & Bob Jones'),             # a separator or a company
+                    BOOK[:-1] + ', note={See \\url{https://x.org/?a=1&b=2}}}',         # a link keeps its characters
+                    BOOK[:-1] + ', url={http://example.org}}',                           # https is not always available
+                    BOOK[:-1] + ', doi={https://doi.org/10.1234%2Fx}}',                  # an encoded DOI
+                    BOOK[:-1] + ', month={Spring}}',
+                    BOOK.replace('date={2024}', 'year={2024-05-01}, date={2024}'),       # date already set
+                    BOOK.replace('{An example}', '{A & B} # " more"'),                      # a joined value
+                    BOOK.replace('key,', 'bad key,'),                                    # keys never change
+                    BOOK.replace('Alice Smith', 'Example Research Institute'),
+                    BOOK[:-1] + ', note={See \\ref{sec:method_v2}}}'):                 # a command's argument keeps its _
+            with self.subTest(bib=bib):
+                self.assertEqual(self.fixed(bib)[0], [])
+
+    def test_apply_fixes_skips_overlaps_and_stale_text(self):
+        bib = BOOK.replace('An example', 'A & B')
+        fix = next(f['edit'] for f in self.check(bib)['findings'] if f.get('edit'))
+        result = self.browser.evaluate('api.applyFixes(' + json.dumps(bib) + ', ' + json.dumps([fix, fix]) + ')')
+        self.assertEqual(result['applied'], 1)
+        self.assertEqual(self.browser.evaluate('api.applyFixes("changed", ' + json.dumps([fix]) + ').applied'), 0)
+
+    def test_several_files_keep_their_names_and_lines(self):
+        files = [{'name': 'a.bib', 'text': BOOK + '\n'}, {'name': 'b.bib', 'text': '\r\n' + BOOK.replace('An example', 'A & B')}]
+        joined = self.browser.evaluate('api.joinSources(' + json.dumps(files) + ')')
+        special = next(f for f in self.check(joined)['findings'] if f['id'] == 'special')
+        self.assertEqual(self.browser.evaluate('api.sourceLine(' + json.dumps(joined) + ', ' + str(special['line']) + ')'), {'name': 'b.bib', 'line': 2})
+        parts = self.browser.evaluate('api.splitSources(' + json.dumps(joined) + ')')
+        self.assertEqual([p['name'] for p in parts], ['a.bib', 'b.bib'])
+        self.assertEqual(parts[1]['text'], '\n' + BOOK.replace('An example', 'A & B') + '\n')
+        self.assertEqual(self.browser.evaluate('api.joinSources([{name: "x.bib", text: "abc"}])'), 'abc')
+
+    def test_inline_code_is_not_a_citation_and_lines_are_kept(self):
+        tex = 'Text \\verb|\\cite{ghost}| and \\verb*+50% \\cite{ghost2}+ then \\cite{key}.\n\\lstinline!\\cite{ghost3}!\n\\begin{verbatim}\n\\cite{ghost4}\n\\end{verbatim}\n\\cite{absent}'
+        missing = [f for f in self.check(tex=[{'name': 'ch.tex', 'text': tex}])['findings'] if f['id'] == 'missing']
+        self.assertEqual([(f['key'], f['file'], f['line']) for f in missing], [('absent', 'ch.tex', 6)])
+        self.assertIn('ghost', {f['key'] for f in self.check(tex=[{'text': '\\cite{ghost} \\verb|x|'}])['findings']})
 
 
 @unittest.skipUnless(find_chrome(), 'no Chrome or Chromium')
@@ -321,6 +429,76 @@ class PageControls(unittest.TestCase):
         self.assertIn('Choose .bib and .tex files', self.js("document.querySelector('[role=status]').textContent"))
         self.run_check()
         self.assertIn('Paste references.bib', self.js("document.querySelector('[role=status]').textContent"))
+
+    def paste(self, bib):
+        self.js("document.querySelector('[data-bib]').value = " + json.dumps(bib) + '; true')
+
+    def status(self):
+        return self.js("document.querySelector('[role=status]').textContent")
+
+    def test_line_control_selects_the_entry_in_the_box(self):
+        filler = '\n'.join('% filler line ' + str(n) for n in range(80))
+        bib = BOOK + '\n' + filler + '\n' + BOOK.replace('Alice Smith', 'Bob Jones').replace('An example', 'Other')
+        self.paste(bib)
+        self.run_check()
+        self.assertIn('line 82', self.text())
+        self.js("document.querySelector('[data-results] .bibcheck-line').click(); true")
+        self.assertTrue(self.js("document.activeElement === document.querySelector('[data-bib]')"))
+        start = self.js("document.querySelector('[data-bib]').selectionStart")
+        end = self.js("document.querySelector('[data-bib]').selectionEnd")
+        self.assertEqual(bib[start:end], BOOK.replace('Alice Smith', 'Bob Jones').replace('An example', 'Other'))
+        self.assertGreater(self.js("document.querySelector('[data-bib]').scrollTop"), 0)
+        # The control is a real button with a name that includes its text.
+        self.assertEqual(self.js("document.querySelector('.bibcheck-line').tagName"), 'BUTTON')
+        self.assertIn('line 82', self.js("document.querySelector('.bibcheck-line').getAttribute('aria-label')"))
+
+    def test_fix_one_fix_all_download_and_undo(self):
+        bib = BOOK.replace('An example', 'A & B')[:-1] + ', month={March}, doi={doi:10.1234/x}}'
+        self.paste(bib)
+        self.run_check()
+        self.assertIn('title = {A \\& B}', self.text())
+        self.assertEqual(self.js("document.querySelectorAll('[data-fix]').length"), 3)
+        self.js("document.querySelector('[data-fix]').click(); true")
+        self.assertEqual(self.js("document.querySelectorAll('[data-fix]').length"), 2)
+        self.assertTrue(self.js("document.activeElement.hasAttribute('data-fix')"))
+        self.assertIn('Fixed in key', self.status())
+        self.js("document.querySelector('[data-fix-all]').click(); true")
+        box = self.js("document.querySelector('[data-bib]').value")
+        self.assertIn('month={3}', box)
+        self.assertIn('doi={10.1234/x}', box)
+        self.assertIn(r'title={A \& B}', box)
+        self.assertEqual(self.js("document.querySelectorAll('[data-fix]').length"), 0)
+        self.assertTrue(self.js("document.activeElement.hasAttribute('data-download')"))
+        self.assertIn('Download references.bib', self.text())
+        saved = self.js("""new Promise(resolve => {
+            const make = URL.createObjectURL;
+            URL.createObjectURL = blob => { blob.text().then(resolve); return make(blob); };
+            HTMLAnchorElement.prototype.click = function () { window.savedName = this.download; };
+            document.querySelector('[data-download]').click();
+        })""")
+        self.assertEqual(saved, box)
+        self.assertEqual(self.js('window.savedName'), 'references.bib')
+        self.js("document.querySelector('[data-undo]').click(); true")
+        self.assertEqual(self.js("document.querySelector('[data-bib]').value"), bib)
+        self.assertEqual(self.js("document.querySelectorAll('[data-fix]').length"), 3)
+
+    def test_several_files_name_the_file_and_download_each(self):
+        self.choose([('a.bib', BOOK + '\n'), ('b.bib', BOOK.replace('key,', 'other,').replace('An example', 'C & D'))])
+        self.assertIn('% From the file b.bib', self.js("document.querySelector('[data-bib]').value"))
+        self.run_check()
+        self.assertIn('b.bib, line 1', self.text())
+        self.js("document.querySelector('[data-fix-all]').click(); true")
+        self.assertEqual(self.js("[...document.querySelectorAll('[data-download]')].map(b => b.textContent)"), ['Download b.bib'])
+
+    def test_by_entry_view_groups_points_under_each_entry(self):
+        self.paste(BOOK.replace('An example', 'A & B')[:-1] + ', month={Spring}}\n' + BOOK.replace('key,', 'second,').replace('date={2024}', 'date={May 2024}'))
+        self.run_check()
+        self.js("document.querySelector('input[value=entry]').click(); true")
+        headings = self.js("[...document.querySelectorAll('[data-groups] h4')].map(h => h.textContent)")
+        self.assertEqual(headings, ['key (line 1)', 'second (line 2)'])
+        self.assertIn('May print wrong', self.text())
+        self.js("document.querySelector('input[value=severity]').click(); true")
+        self.assertIn('May print wrong (', self.js("document.querySelector('[data-groups] h4').textContent"))
 
     def test_javascript_disabled_leaves_checklist_route(self):
         self.browser.call('Emulation.setScriptExecutionDisabled', value=True)

@@ -14,7 +14,7 @@ $-- Suggested setup first (the ZIP for an editor with a LaTeX extension), Overle
 <section class="home-top center" aria-labelledby="hero-title">
   <p class="eyebrow">For RPI master's theses and doctoral dissertations</p>
   <h1 id="hero-title">Write where you like. <br>Let LaTeX handle the <span class="squiggle">formatting</span>.</h1>
-  <p class="lead">A free starter and a plain-language guide, even if you have never used LaTeX.</p>
+  <p class="lead">A free starter, a plain-language guide, and tools that check your work in your browser. No LaTeX experience needed.</p>
   <div class="hero-actions home-actions">
 $if(offline)$
     <a class="button" href="docs/get-started.md#step-3a-your-computer-route">Set up these files</a>
@@ -80,7 +80,7 @@ $endif$
       </ul>
     </div>
   </div>
-  <p class="toolkit-isnt"><strong>What it isn't:</strong> not official, and not approved by RPI or OGE. It doesn't write your thesis, and nothing you paste or check is uploaded.</p>
+  <p class="toolkit-isnt"><strong>Good to know:</strong> it doesn't write your thesis for you, and nothing you paste or check is uploaded; the tools run in your browser.</p>
 </section>
 
 $-- ============ What's new and Share ============
@@ -89,7 +89,7 @@ $-- (RELEASE_VERSION), its date, and the start of its first item.
 $-- Share: an e-mail link; site/share.js turns it into share or copy. No tracking.
 <section class="home-foot" aria-label="News and sharing">
 $if(whats_new)$
-  <p class="home-news"><span class="tag tag-now">What's new</span> Version $whats_new.version$, $whats_new.date$: $whats_new.highlight$. <a href="CHANGELOG.md">All changes</a></p>
+  <p class="home-news"><span class="tag tag-now">What's new</span> Version $whats_new.version$, $whats_new.date$: $whats_new.highlight$. <a href="CHANGELOG.md">All changes</a><span class="sep" aria-hidden="true">·</span><a href="docs/going-further.md#update-the-formatting-safely">How to update</a></p>
 $endif$
 $if(share_url)$
   <p class="home-share"><a class="button button-secondary button-small" href="$share_url$" data-share="$share_link$"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/></svg>Share this guide</a><span class="share-status" role="status"></span></p>

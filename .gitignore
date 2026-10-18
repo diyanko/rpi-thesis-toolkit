@@ -17,6 +17,8 @@
 *.lof
 *.lot
 *.log
+# Real LaTeX logs kept as test fixtures for "Explain my error".
+!scripts/tests/explain_fixtures/*.log
 *.out
 *.run.xml
 *.synctex.gz

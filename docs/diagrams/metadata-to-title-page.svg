@@ -2,13 +2,13 @@
   <title id="t">From metadata.tex to the title page</title>
   <desc id="d">How the lines in metadata.tex fill the title page. Pin 1: title = {Your thesis title} becomes the title, printed in capitals at the top of the page. Pin 2: author = {Your full name} becomes your name below the title. Pin 3: degree = doctoral becomes DOCTOR OF PHILOSOPHY under the fixed words Submitted in Partial Fulfillment of the Requirements for the Degree of (masters gives Master of Science, engineering-doctorate gives Doctor of Engineering). Pin 4: each committeemember line becomes one name in the list under Approved by, and the chair's name is followed by Chair. Pin 5: department becomes the department name near the bottom of the page, above Rensselaer Polytechnic Institute, Troy, New York. Pin 6: graduation-month and graduation-year become the bracketed date at the bottom, such as [May 2027]. The RPI seal, drawn as an empty dashed circle, is added by the class. A handwritten note says the fixed wording and layout come from the class file.</desc>
   <style>
-    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
-      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
-      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    svg { --bg: #faf5ea; --card: #fffcf5; --ink: #2d2620; --muted: #625547;
+      --terra: #a24a24; --sage: #4a6b42; --plum: #70466a; --blue: #24518c; --red: #c8102e;
+      --terra-w: #f6dfcd; --sage-w: #e4ecd2; --plum-w: #f1e0ea; --blue-w: #e0e6ef; --butter-w: #f7e8b3; }
     @media (prefers-color-scheme: dark) {
-      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
-        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
-        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+      svg { --bg: #181614; --card: #27231e; --ink: #f2ece2; --muted: #b9ae9d;
+        --terra: #f6a57f; --sage: #a6d49a; --plum: #e0b6dc; --blue: #a2c8fb; --red: #ff8d98;
+        --terra-w: #3b2418; --sage-w: #273b27; --plum-w: #34233a; --blue-w: #1d2c43; --butter-w: #3a3118; }
     }
     .bg { fill: var(--bg); }
     .card { fill: var(--card); }
@@ -24,13 +24,18 @@
     text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
     .h { font-size: 22px; font-weight: 700; }
     .s { fill: var(--muted); }
-    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
-    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
-    .k { fill: var(--terra); font-weight: 700; }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-size: 16px; fill: var(--muted); }
     .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
     .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
     .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
   </style>
   <defs>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -53,19 +58,19 @@
   <path class="ln thin mut" d="M14 74 H424"/>
   <text class="m" x="28" y="63" style="font-size:14px">metadata.tex</text>
   <text class="hand end" x="410" y="63" style="font-size:15px">you edit this</text>
-  <text class="code" x="54" y="97" style="font-size:12.5px" xml:space="preserve">\thesissetup{</text>
-  <text class="code" x="54" y="120" style="font-size:12.5px" xml:space="preserve">  title = <tspan style="fill:var(--ink)" font-weight="700">{Your thesis title},</tspan></text>
-  <text class="code" x="54" y="143" style="font-size:12.5px" xml:space="preserve">  author = <tspan style="fill:var(--ink)" font-weight="700">{Your full name},</tspan></text>
-  <text class="code" x="54" y="166" style="font-size:12.5px" xml:space="preserve">  degree = <tspan style="fill:var(--ink)" font-weight="700">doctoral,</tspan></text>
-  <text class="code" x="54" y="189" style="font-size:12.5px" xml:space="preserve">  department = <tspan style="fill:var(--ink)" font-weight="700">{Department of Your</tspan></text>
-  <text class="code" x="54" y="212" style="font-size:12.5px" xml:space="preserve">    <tspan style="fill:var(--ink)" font-weight="700">Full Department Name},</tspan></text>
-  <text class="code" x="54" y="235" style="font-size:12.5px" xml:space="preserve">  graduation-month = <tspan style="fill:var(--ink)" font-weight="700">May,</tspan></text>
-  <text class="code" x="54" y="258" style="font-size:12.5px" xml:space="preserve">  graduation-year = <tspan style="fill:var(--ink)" font-weight="700">{2027},</tspan></text>
-  <text class="code" x="54" y="281" style="font-size:12.5px" xml:space="preserve">  …</text>
-  <text class="code" x="54" y="304" style="font-size:12.5px" xml:space="preserve">}</text>
-  <text class="code" x="54" y="337" style="font-size:12.5px" xml:space="preserve">\committeemember[Chair]<tspan style="fill:var(--ink)" font-weight="700">{Your committee chair}</tspan></text>
-  <text class="code" x="54" y="360" style="font-size:12.5px" xml:space="preserve">\committeemember<tspan style="fill:var(--ink)" font-weight="700">{Committee member two}</tspan></text>
-  <text class="code" x="54" y="383" style="font-size:12.5px" xml:space="preserve">\committeemember<tspan style="fill:var(--ink)" font-weight="700">{Committee member three}</tspan></text>
+  <text class="code c-tex" x="54" y="97" style="font-size:13px" xml:space="preserve"><tspan class="c-cmd">\thesissetup</tspan><tspan class="c-brace">{</tspan></text>
+  <text class="code c-tex" x="54" y="120" style="font-size:13px" xml:space="preserve">  title = <tspan class="c-brace">{</tspan>Your thesis title<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-tex" x="54" y="143" style="font-size:13px" xml:space="preserve">  author = <tspan class="c-brace">{</tspan>Your full name<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-tex" x="54" y="166" style="font-size:13px" xml:space="preserve">  degree = doctoral,</text>
+  <text class="code c-tex" x="54" y="189" style="font-size:13px" xml:space="preserve">  department = <tspan class="c-brace">{</tspan>Department of Your</text>
+  <text class="code c-tex" x="54" y="212" style="font-size:13px" xml:space="preserve">    Full Department Name<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-tex" x="54" y="235" style="font-size:13px" xml:space="preserve">  graduation-month = May,</text>
+  <text class="code c-tex" x="54" y="258" style="font-size:13px" xml:space="preserve">  graduation-year = <tspan class="c-brace">{</tspan>2027<tspan class="c-brace">}</tspan>,</text>
+  <text class="code c-tex" x="54" y="281" style="font-size:13px" xml:space="preserve">  …</text>
+  <text class="code c-tex" x="54" y="304" style="font-size:13px" xml:space="preserve"><tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="54" y="337" style="font-size:13px" xml:space="preserve"><tspan class="c-cmd">\committeemember</tspan><tspan class="c-opt">[</tspan><tspan class="c-opt">Chair</tspan><tspan class="c-opt">]</tspan><tspan class="c-brace">{</tspan>Your committee chair<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="54" y="360" style="font-size:13px" xml:space="preserve"><tspan class="c-cmd">\committeemember</tspan><tspan class="c-brace">{</tspan>Committee member two<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="54" y="383" style="font-size:13px" xml:space="preserve"><tspan class="c-cmd">\committeemember</tspan><tspan class="c-brace">{</tspan>Committee member three<tspan class="c-brace">}</tspan></text>
   <circle class="w-butter" cx="34" cy="115.625" r="10"/>
   <path class="ln" d="M40.3 123C39.3 124.1 37.8 124.8 36.5 125S33.4 125.1 32.1 124.7S29.3 123.5 28.2 122.5S26.2 120.3 25.5 119S24.4 116.2 24.3 114.8S24.4 111.7 24.9 110.4S26.4 107.7 27.5 106.8S30 105.1 31.4 104.8S34.4 104.6 35.8 104.9S38.6 105.9 39.8 106.8S41.9 108.9 42.7 110.1S44 112.8 44.3 114.3S44.5 117.3 44.2 118.7S42.9 121.4 42 122.5S39.8 124.5 38.6 125.3"/>
   <text class="n mid" x="34" y="120.175" style="font-size:13px">1</text>

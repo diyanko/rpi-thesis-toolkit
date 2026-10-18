@@ -17,6 +17,11 @@ What it does:
     intentional scroll boxes, images that failed to load, tables that scroll on
     wide screens, clipped code at phone widths, duplicate ids, and a 200% root
     font size pass at 390 px. Image loading is checked in light and dark mode.
+    It also catches the small things a screenshot shows: text cut off in a
+    menu, field or button; an edge or shadow cut by its container; fields side
+    by side in a form that do not line up; and one component (STYLED: buttons,
+    file pickers, tags, tool parts, callouts) measuring differently on two
+    pages at 1280 px.
   * With --shots, saves PNG screenshots (390 and 1280 px, light and dark; the
     pages in WIDE_SHOTS also at 820, 2560 and 3840 px) to
     _local/shots/<timestamp>/ of the main checkout (ignored by git; worktrees
@@ -109,6 +114,90 @@ async function checkImages(doc, problems, add) {
     if (!url || !(await probe(url))) add("image failed to load: " + (i.getAttribute("src") || "(no src)"));
   }
 }
+// The offsets a box-shadow adds on each side: "3px 3px 0 color, ...".
+function shadowExtent(value) {
+  const out = { l: 0, r: 0, t: 0, b: 0 };
+  if (!value || value === "none") return out;
+  for (const part of value.split(/,(?![^(]*\))/)) {
+    if (/inset/.test(part)) continue;
+    const n = (part.replace(/rgba?\([^)]*\)|#[0-9a-f]+|[a-z-]+\([^)]*\)/gi, "").match(/-?[\d.]+px/g) || []).map(parseFloat);
+    const [x = 0, y = 0, blur = 0, spread = 0] = n;
+    out.r = Math.max(out.r, x + blur + spread); out.l = Math.max(out.l, -x + blur + spread);
+    out.b = Math.max(out.b, y + blur + spread); out.t = Math.max(out.t, -y + blur + spread);
+  }
+  return out;
+}
+// The small things a screenshot shows and a overflow check misses: text cut off
+// inside controls and buttons, edges and shadows cut by a container, and two
+// fields in one form row whose boxes do not line up.
+function details(win, doc, add) {
+  const ctx = doc.createElement("canvas").getContext("2d");
+  const found = [];
+  const note = (m) => { if (found.length < 4) found.push(m); else found.push(null); };
+  const shown = (el, cs) => cs.display !== "none" && cs.visibility !== "hidden" && !el.closest("[hidden], .visually-hidden, dialog:not([open])");
+  for (const el of doc.querySelectorAll("button, .button, input, select, textarea, .pager a, .tag, summary")) {
+    const cs = win.getComputedStyle(el);
+    if (!shown(el, cs)) continue;
+    const r = el.getBoundingClientRect();
+    if (r.width < 2 || r.height < 2) continue;
+    // At 200% text a phone has room for about 15 characters in a box; long
+    // values and choices are cut there in every browser, so only report them at 100%.
+    const big = doc.documentElement.style.fontSize === "200%";
+    if (el.tagName === "SELECT") {
+      if (big) continue;
+      const text = (el.options[el.selectedIndex] || {}).text || "";
+      ctx.font = cs.font;
+      const room = el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      if (ctx.measureText(text).width > room + 1) note("select text cut off: " + describe(el) + ' "' + text + '"');
+    } else if (el.tagName === "INPUT" && /^(text|search|email|url|)$/.test(el.type) && el.value) {
+      if (big) continue;
+      if (el.scrollWidth > el.clientWidth + 1) note("input text cut off: " + describe(el));
+    } else if (!/^(INPUT|TEXTAREA)$/.test(el.tagName) && el.scrollWidth > el.clientWidth + 1 && cs.overflowX !== "visible") {
+      note("text cut off: " + describe(el));
+    }
+    // The edge and shadow must fit inside the nearest container that clips,
+    // unless that container scrolls (its content is meant to move).
+    const sh = shadowExtent(cs.boxShadow);
+    for (let p = el.parentElement; p && p !== doc.body; p = p.parentElement) {
+      const pc = win.getComputedStyle(p);
+      if (pc.overflowX === "visible" && pc.overflowY === "visible") continue;
+      if (p.scrollWidth > p.clientWidth + 1 || p.scrollHeight > p.clientHeight + 1) break;
+      const pr = p.getBoundingClientRect();
+      const inner = { l: pr.left + p.clientLeft, t: pr.top + p.clientTop };
+      inner.r = inner.l + p.clientWidth; inner.b = inner.t + p.clientHeight;
+      if (r.left - sh.l < inner.l - 0.5 || r.right + sh.r > inner.r + 0.5 ||
+          r.top - sh.t < inner.t - 0.5 || r.bottom + sh.b > inner.b + 0.5) {
+        note("edge or shadow clipped by " + describe(p) + ": " + describe(el));
+      }
+      break;
+    }
+  }
+  // Fields side by side in a form grid: their boxes start at the same height.
+  for (const grid of doc.querySelectorAll("form *")) {
+    const cs = win.getComputedStyle(grid);
+    if (cs.display !== "grid" || !shown(grid, cs)) continue;
+    // One row: cells whose boxes overlap vertically (cells may be aligned to the top or bottom).
+    const cells = [];
+    for (const cell of grid.children) {
+      const control = cell.querySelector(":scope > :is(input:not([type=checkbox]):not([type=radio]):not([type=file]), select, textarea)");
+      if (control && control.getBoundingClientRect().width) cells.push([cell.getBoundingClientRect(), control]);
+    }
+    cells.sort((a, b) => a[0].top - b[0].top);
+    const rows = [];
+    for (const [box, control] of cells) {
+      const row = rows[rows.length - 1];
+      if (row && box.top < row.bottom - 1) { row.controls.push(control); row.bottom = Math.max(row.bottom, box.bottom); }
+      else rows.push({ bottom: box.bottom, controls: [control] });
+    }
+    for (const { controls } of rows) {
+      const tops = controls.map((c) => c.getBoundingClientRect().top);
+      if (Math.max(...tops) - Math.min(...tops) > 2) note("fields in one row do not line up: " + controls.map(describe).join(" / "));
+    }
+  }
+  const extra = found.filter((m) => m === null).length;
+  for (const m of found.filter(Boolean)) add(m);
+  if (extra) add("... and " + extra + " more detail problem(s)");
+}
 function measure(win, doc, width, opts, add) {
   const de = doc.documentElement;
   const vw = de.clientWidth;
@@ -119,6 +208,7 @@ function measure(win, doc, width, opts, add) {
   const bad = [];
   for (const el of doc.body.querySelectorAll("*")) {
     if (el.closest(EXEMPT)) continue;
+    if (el.closest("details:not([open])") && !el.closest("summary")) continue;   // hidden until opened
     const cs = win.getComputedStyle(el);
     if (cs.display === "none" || cs.position === "fixed") continue;
     const r = el.getBoundingClientRect();
@@ -137,6 +227,7 @@ function measure(win, doc, width, opts, add) {
     }
   }
   if (n) add(n + " element(s) past viewport " + vw + ": " + bad.join("; "));
+  details(win, doc, add);
   if (width >= 1024) {
     doc.querySelectorAll(".table-wrap").forEach((w) => {
       if (w.scrollWidth > w.clientWidth + 1) add("table scrolls at wide width: " + describe(w));
@@ -149,6 +240,28 @@ function measure(win, doc, width, opts, add) {
         add("code clipped (overflow-x " + o + "): " + describe(p));
       }
     });
+  }
+}
+// Components that must look the same wherever they appear (measured at one width).
+const STYLE_WIDTH = 1280;
+const STYLED = [".button:not(.button-small)", ".button-small", ".tool-file", ".tool-file-button", ".tool-status",
+  ".tool-privacy", ".tool-results", ".tool-hint", ".tool-label", ".tool-switch", ".tool select",
+  ".tool :is(input[type=text], textarea.settings-grow)", ".tool textarea:not(.tool-drop, .settings-grow)", ".tool textarea.tool-drop", ".tool-output", ".tag:not(.tag-optional)", ".tag-optional",
+  ".pager a", ".guide-content > h2", ".guide-content > h3", ".action-rows .help-card", ".button-quiet", ".nav-menu-list a:not([aria-current])", ".release-pdf", ".table-wrap", ".tip", ".note", ".warning", ".important"];
+// Measured on each; height is left out because boxes for text are sized to their purpose.
+const LOOK = ["paddingTop", "paddingRight", "paddingBottom", "paddingLeft", "fontSize", "fontWeight",
+  "borderTopWidth", "borderTopStyle", "lineHeight"];
+const styleSeen = {};
+function recordStyles(win, doc, page) {
+  for (const selector of STYLED) {
+    for (const el of doc.querySelectorAll(selector)) {
+      if (el.closest("[hidden], .visually-hidden, dialog:not([open]), .component-variant")) continue;
+      const cs = win.getComputedStyle(el);
+      if (cs.display === "none" || !el.getBoundingClientRect().width) continue;
+      const look = LOOK.map((k) => cs[k]).join(" ");
+      ((styleSeen[selector] = styleSeen[selector] || new Map()).get(look) ||
+        styleSeen[selector].set(look, new Set()).get(look)).add(page);
+    }
   }
 }
 async function main() {
@@ -169,8 +282,18 @@ async function main() {
         const win = f.contentWindow, doc = f.contentDocument;
         if (doc.fonts && doc.fonts.ready) await doc.fonts.ready;
         await sleep(30);
+        // Tool pages: wait for their scripts to show the tool.
+        for (let i = 0; i < 40 && doc.querySelector(".tool[hidden]"); i++) await sleep(50);
         if (CONFIG.mode === "full") {
+          if (w === STYLE_WIDTH) recordStyles(win, doc, page);
           measure(win, doc, w, { code: true }, add);
+          // The header menus, each opened in turn, must fit the screen too.
+          for (const menu of doc.querySelectorAll(".nav-menu")) {
+            menu.open = true;
+            await sleep(20);
+            measure(win, doc, w, { code: false }, (m) => add("with the " + menu.querySelector("summary").textContent + " menu open: " + m));
+            menu.open = false;
+          }
           if (!dupDone.has(page)) {
             dupDone.add(page);
             const seen = {}, dups = [];
@@ -191,6 +314,12 @@ async function main() {
     }
   }
   await Promise.all(Array.from({ length: 6 }, worker));
+  // One component, one look: the same selector must measure the same on every page.
+  for (const [selector, looks] of Object.entries(styleSeen)) {
+    if (looks.size < 2) continue;
+    const parts = [...looks.entries()].map(([look, pages]) => look + " on " + [...pages].slice(0, 2).join(", "));
+    out.problems.push({ page: "all", width: String(STYLE_WIDTH), issue: "\"" + selector + "\" differs between pages: " + parts.join(" | ") });
+  }
   out.done = true;
   document.getElementById("out").textContent = JSON.stringify(out).replace(/</g, "\\u003c");
 }

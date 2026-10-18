@@ -88,7 +88,7 @@ class SearchSections(HTMLParser):
         self.entries, self.words, self.heading = [], [], []
         self.page, self.title = page, title
         self.anchor, self.label = "", title
-        self.level, self.parents, self.skip = 0, {}, 0
+        self.level, self.parents, self.skip, self.skipped = 0, {}, 0, []
         self.details, self.summary = [], None
         self.feed(body)
         self.flush()
@@ -112,8 +112,10 @@ class SearchSections(HTMLParser):
         self.words = []
 
     def handle_starttag(self, tag, attrs):
-        if tag in {"script", "style", "svg"}:
+        # Picture-viewer controls ("View larger", the dialog's Close and hint) are not section text.
+        if tag in {"script", "style", "svg", "dialog"} or (tag == "a" and dict(attrs).get("data-viewer")):
             self.skip += 1
+            self.skipped.append(tag)
         if self.skip:
             return
         if tag == "details":
@@ -131,7 +133,8 @@ class SearchSections(HTMLParser):
             self.words.append(" ")
 
     def handle_endtag(self, tag):
-        if tag in {"script", "style", "svg"}:
+        if self.skipped and tag == self.skipped[-1]:
+            self.skipped.pop()
             self.skip = max(0, self.skip - 1)
         elif not self.skip and tag == "summary" and self.summary is not None:
             self.label = " ".join("".join(self.summary).split())

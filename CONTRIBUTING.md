@@ -1,12 +1,15 @@
-# Help the next student
+# Make it better for everyone
 
-Just stuck or have an idea? Use the [form](docs/troubleshooting.md#ask-for-help):
-about a minute, no account.
+Made by students, for students. A question, a tip, or a fix you found the
+hard way makes it better for you and for everyone writing after you. None of
+these needs LaTeX or GitHub skills, and everyone taking part follows the
+[code of conduct](CODE_OF_CONDUCT.md).
 
-Every contribution helps the next student finish. A confusing sentence you
-noticed, a fix you found the hard way, or a test on a new computer is as
-welcome as a change to the class file. You do not need to know LaTeX or
-GitHub. Everyone taking part follows the [code of conduct](CODE_OF_CONDUCT.md).
+<ul class="guide-list doors action-rows" role="list">
+<li class="card help-card"><div class="help-text"><h3>Send a note</h3><p>A question, an idea, a tip, or how it went on your computer.</p><p class="kicker">About a minute, no account</p></div><p class="help-action"><a class="button" data-form href="docs/troubleshooting.md#ask-for-help">Open the form</a></p></li>
+<li class="card help-card"><div class="help-text"><h3>Open an issue</h3><p>A public note the maintainer answers: a bug or a suggestion.</p><p class="kicker">Free GitHub account</p></div><p class="help-action"><a class="button button-secondary" href="https://github.com/diyanko/rpi-thesis-toolkit/issues/new/choose">Open an issue</a></p></li>
+<li class="card help-card"><div class="help-text"><h3>Propose a change</h3><p>A fix to the guide or the class, prepared for review.</p><p class="kicker">With your AI assistant</p></div><p class="help-action"><a class="button button-secondary" href="#three-ways-to-help">See how</a></p></li>
+</ul>
 
 ## Three ways to help
 
@@ -22,7 +25,7 @@ GitHub account needed). Click **New issue** and pick **LaTeX help or bug** or
 screenshots welcome, and leave out private research and personal details. The
 maintainer replies on the issue and may turn it into a change.
 
-**3. Open a pull request, ideally with your own AI assistant.** A pull request
+**3. Propose a change (a pull request), ideally with your own AI assistant.** A pull request
 is a proposed change the maintainer reviews before it goes in. You do not have
 to know the steps: give an assistant that can edit files and use GitHub this
 prompt:
@@ -31,16 +34,21 @@ prompt:
 Read AGENTS.md in https://github.com/diyanko/rpi-thesis-toolkit and follow its "Contributing as an agent" steps. If you cannot fork or push, stop and show me the diff. Do not push or open the pull request until I approve. What I'd like changed: [describe it].
 ```
 
-It makes a fork (your own copy of the project on GitHub), makes one focused
-change on a branch (a named set of changes kept apart from the main version),
-runs the checks, and shows you the result; nothing is posted until you
-approve. Prefer to do it by hand? Fork, branch, make one focused change, and
-fill in the short template. If you use a terminal,
-`python3 scripts/verify.py` (`py` instead of `python3` on Windows) gives a
-last line to paste into the pull request; checks it cannot run on your
-computer are skipped. Automated checks run on every pull request anyway, and
-a failure is fine: the maintainer helps finish. The guide is Markdown in
-`docs/`; edit the `.md` file only.
+The assistant then:
+
+1. makes a fork, your own copy of the project on GitHub;
+2. makes one focused change on a branch, a named set of changes kept apart
+   from the main version;
+3. runs the checks and shows you the result. Nothing is posted until you
+   approve.
+
+Prefer to do it by hand? Fork, branch, make one focused change, and fill in
+the short pull request template. The guide is Markdown in `docs/`; edit the
+`.md` file only. If you use a terminal, `python3 scripts/verify.py` (`py`
+instead of `python3` on Windows) prints a last line to paste into the pull
+request, and skips checks it cannot run on your computer. Automated checks
+run on every pull request anyway, and a failure is fine: the maintainer helps
+finish.
 
 Not sure how an issue should read? Ask any AI chat to help you write it, and
 leave out anything private from your thesis. Never include your own thesis

@@ -25,6 +25,7 @@ on a Mac) and type a word.
 - [Add the RPI seal](get-started.md#add-the-rpi-seal-one-minute)
 - [Change the title, my name, degree, or committee](get-started.md#put-your-name-on-it)
 - [Fill in my title page settings with a form](settings-builder.md)
+- [Update to the newest formatting file (`rpi-thesis.cls`)](going-further.md#update-the-formatting-safely)
 - [Find my PDF](how-it-works.md#where-the-pdf-ends-up)
 
 ## Write
@@ -40,6 +41,7 @@ on a Mac) and type a word.
 - [Quote a source, short or long](writing.md#quote-a-source)
 - [Credit a chapter based on my published paper](writing.md#chapters-based-on-published-papers)
 - [Compile only one chapter](going-further.md#compile-selected-chapters)
+- [Use the format for a proposal or qualifying exam](going-further.md#write-a-proposal-or-qualifying-exam)
 
 ## Figures, tables, and equations
 
@@ -75,7 +77,6 @@ on a Mac) and type a word.
 
 ## Submit
 
-- [Update the formatting file](going-further.md#update-the-formatting-safely)
 - [See the steps to graduation](submission.md#the-path-to-graduation)
 - [Run a final check of my PDF](submission.md#final-pdf-checklist)
 - [Check my PDF's page size, margins, page numbers, and contents](check-pdf.md)

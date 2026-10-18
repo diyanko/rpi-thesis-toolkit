@@ -2,13 +2,13 @@
   <title id="t">From a drawn symbol to its LaTeX command</title>
   <desc id="d">You draw a symbol by hand, here a downward triangle, in Detexify. It returns the matching command, \nabla; check the package it lists, if any. Type it inside dollar signs in a sentence, $\nabla f = 0$. The PDF shows the symbol in the sentence: Set nabla f = 0 and solve.</desc>
   <style>
-    svg { --bg: #fbf7ef; --card: #fffdf8; --ink: #2b2723; --muted: #574e45;
-      --terra: #9e4526; --sage: #46684b; --plum: #6b4669; --blue: #2b4d7a; --red: #c8102e;
-      --terra-w: #f6e0d3; --sage-w: #e2ebd9; --plum-w: #efe2ed; --blue-w: #dfe7f2; --butter-w: #f7ebbd; }
+    svg { --bg: #faf5ea; --card: #fffcf5; --ink: #2d2620; --muted: #625547;
+      --terra: #a24a24; --sage: #4a6b42; --plum: #70466a; --blue: #24518c; --red: #c8102e;
+      --terra-w: #f6dfcd; --sage-w: #e4ecd2; --plum-w: #f1e0ea; --blue-w: #e0e6ef; --butter-w: #f7e8b3; }
     @media (prefers-color-scheme: dark) {
-      svg { --bg: #1c1a17; --card: #282420; --ink: #efe8dc; --muted: #c3b8a8;
-        --terra: #eda482; --sage: #a9c9a1; --plum: #d8b6d3; --blue: #a3c0ea; --red: #ff8d98;
-        --terra-w: #3a271e; --sage-w: #263226; --plum-w: #33263a; --blue-w: #222f44; --butter-w: #3a3320; }
+      svg { --bg: #181614; --card: #27231e; --ink: #f2ece2; --muted: #b9ae9d;
+        --terra: #f6a57f; --sage: #a6d49a; --plum: #e0b6dc; --blue: #a2c8fb; --red: #ff8d98;
+        --terra-w: #3b2418; --sage-w: #273b27; --plum-w: #34233a; --blue-w: #1d2c43; --butter-w: #3a3118; }
     }
     .bg { fill: var(--bg); }
     .card { fill: var(--card); }
@@ -24,13 +24,18 @@
     text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
     .h { font-size: 22px; font-weight: 700; }
     .s { fill: var(--muted); }
-    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; }
-    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); }
-    .k { fill: var(--terra); font-weight: 700; }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-weight: 700; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-variant-ligatures: none; font-size: 16px; fill: var(--muted); }
     .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
     .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
     .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
     .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
   </style>
   <defs>
     <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
@@ -48,9 +53,9 @@
   <text class="mid" x="104" y="272" style="font-size:15px;font-weight:700">You supply</text>
   <text class="s mid" x="104" y="292" style="font-size:13.5px">the symbol, drawn by hand</text>
   <rect class="w-blue" x="233" y="97" width="228" height="150" rx="4"/><rect class="card" x="228" y="92" width="228" height="150" rx="4"/><path class="ln" d="M228.3 141.3C228.3 139.8 228.3 138.4 228.3 136.9S228.3 134 228.3 132.5S228.4 129.6 228.4 128.2S228.4 125.2 228.5 123.8S228.6 120.9 228.6 119.4S228.7 116.5 228.8 115S228.9 112.1 228.9 110.7S228.9 107.8 228.9 106.3S228.8 103.4 228.8 101.9S228.5 99 228.7 97.6S229.1 94.4 229.9 93.5S232.5 92.4 233.9 92.1S236.8 92 238.3 92S241.2 91.9 242.7 91.9S245.6 91.7 247 91.7S249.9 91.6 251.4 91.6S254.3 91.5 255.8 91.5S258.7 91.5 260.1 91.6S263 91.7 264.5 91.7S267.4 91.8 268.9 91.9S271.8 91.9 273.2 91.9S276.2 92 277.6 92S280.5 92.2 282 92.2S284.9 92.4 286.3 92.4S289.3 92.5 290.7 92.5S293.6 92.6 295.1 92.6S298 92.5 299.5 92.4S302.4 92.4 303.8 92.3S306.7 92.3 308.2 92.3S311.1 92.3 312.6 92.3S315.5 92.2 316.9 92.2S319.9 92.3 321.3 92.3S324.2 92.4 325.7 92.4S328.6 92.5 330.1 92.5S333 92.5 334.4 92.5S337.3 92.4 338.8 92.4S341.7 92.3 343.2 92.2S346.1 92 347.5 91.9S350.4 91.6 351.9 91.6S354.8 91.5 356.3 91.5S359.2 91.6 360.6 91.6S363.5 91.7 365 91.7S367.9 91.7 369.4 91.7S372.3 91.7 373.7 91.7S376.7 91.7 378.1 91.8S381 91.9 382.5 92S385.4 92.1 386.8 92.2S389.8 92.3 391.2 92.3S394.1 92.3 395.6 92.2S398.5 92.2 400 92.2S402.9 92.1 404.3 92.1S407.2 92 408.7 92S411.6 92.1 413.1 92.1S416 92.1 417.4 92.2S420.4 92.2 421.8 92.2S424.7 92.2 426.2 92.2S429.1 92.2 430.6 92.1S433.5 92.1 434.9 92.1S437.9 92.1 439.3 92.1S442.2 91.9 443.7 91.9S446.6 91.8 448 91.8S451.1 91.5 452.4 91.9S455 93.4 455.7 94.6S455.9 97.5 456 98.9S456.1 101.8 456.1 103.3S456.1 106.2 456.2 107.7S456.2 110.6 456.2 112S456.3 114.9 456.3 116.4S456.3 119.3 456.3 120.8S456.3 123.7 456.3 125.1S456.3 128.1 456.3 129.5S456.2 132.4 456.2 133.9S456 136.8 455.9 138.2S455.8 141.2 455.8 142.6S455.8 145.5 455.8 147S455.8 149.9 455.8 151.4S455.7 154.3 455.7 155.7S455.6 158.6 455.6 160.1S455.7 163 455.7 164.5S455.6 167.4 455.6 168.8S455.5 171.8 455.5 173.2S455.6 176.1 455.6 177.6S455.6 180.5 455.6 182S455.6 184.9 455.6 186.3S455.8 189.2 455.8 190.7S456 193.6 456 195.1S456.1 198 456.2 199.4S456.3 202.3 456.4 203.8S456.6 206.7 456.7 208.2S456.8 211.1 456.9 212.5S457 215.4 457 216.9S457 219.8 457 221.3S456.9 224.2 456.9 225.6S456.8 228.6 456.8 230S456.8 232.9 456.7 234.4S457 237.5 456.5 238.7S454.6 241.1 453.4 241.6S450.5 241.9 449 242.1S446.1 242.3 444.7 242.4S441.8 242.6 440.3 242.6S437.4 242.7 436 242.7S433 242.8 431.6 242.8S428.7 242.9 427.2 243S424.3 243.1 422.8 243.1S419.9 243.1 418.5 243.1S415.6 242.9 414.1 242.8S411.2 242.6 409.7 242.5S406.8 242.4 405.4 242.3S402.5 242.3 401 242.3S398.1 242.3 396.6 242.2S393.7 242.2 392.3 242.2S389.4 242.3 387.9 242.3S385 242.4 383.5 242.4S380.6 242.4 379.2 242.3S376.2 242.3 374.8 242.2S371.9 242.2 370.4 242.2S367.5 242.3 366 242.3S363.1 242.4 361.7 242.3S358.8 242.3 357.3 242.3S354.4 242.2 352.9 242.1S350 242.1 348.6 242S345.6 242 344.2 241.9S341.3 241.6 339.8 241.5S336.9 241.3 335.5 241.2S332.6 241.1 331.1 241.1S328.2 241.1 326.7 241.1S323.8 241.1 322.4 241.1S319.4 241.2 318 241.3S315.1 241.6 313.6 241.7S310.7 241.8 309.3 241.9S306.4 242.1 304.9 242.2S302 242.3 300.5 242.4S297.6 242.4 296.2 242.5S293.3 242.5 291.8 242.5S288.9 242.5 287.4 242.5S284.5 242.5 283.1 242.5S280.1 242.6 278.7 242.6S275.8 242.5 274.3 242.5S271.4 242.4 269.9 242.3S267 242.2 265.6 242.2S262.7 242.1 261.2 242.1S258.3 241.9 256.8 241.9S253.9 241.7 252.5 241.7S249.6 241.7 248.1 241.6S245.2 241.6 243.7 241.6S240.8 241.6 239.4 241.6S236.4 241.7 235 241.7S231.7 242.1 230.7 241.5S228.8 239.3 228.5 238S228.5 235.1 228.6 233.6S228.6 230.7 228.7 229.3S228.8 226.4 228.8 224.9S228.9 222 228.8 220.5S228.7 217.6 228.6 216.2S228.4 213.3 228.3 211.8S228.1 208.9 228 207.4S227.8 204.5 227.7 203.1S227.5 200.2 227.5 198.7S227.3 195.8 227.2 194.4S227.1 191.4 227 190S226.8 187.1 226.7 185.6S226.5 182.7 226.5 181.3S226.5 178.3 226.5 176.9S226.4 174 226.5 172.5S226.5 169.6 226.6 168.1S226.7 165.2 226.7 163.8S226.9 160.9 226.9 159.4S227.1 156.5 227.1 155S227.1 152.1 227.2 150.7S227.3 147.8 227.3 146.3S227.4 143.4 227.4 141.9S227.4 139 227.4 137.6S227.5 134.6 227.5 133.2S227.5 130.3 227.6 128.8S227.6 125.9 227.6 124.4"/>
-  <text class="code mid" x="342" y="161" style="font-size:26px"><tspan class="k">\nabla</tspan></text>
+  <text class="code mid c-tex" x="342" y="161" style="font-size:26px" xml:space="preserve"><tspan class="c-cmd">\nabla</tspan></text>
   <path class="ln thin mut dot" d="M258 181 H426"/>
-  <text class="code mid" x="342" y="211" style="font-size:15px" xml:space="preserve"><tspan style="fill:var(--ink)">$</tspan><tspan class="k">\nabla</tspan><tspan style="fill:var(--ink)"> f = 0$</tspan></text>
+  <text class="code mid c-tex" x="342" y="211" style="font-size:15px" xml:space="preserve"><tspan class="c-math">$\nabla f = 0$</tspan></text>
   <text class="mid" x="342" y="272" style="font-size:15px;font-weight:700">LaTeX</text>
   <text class="s mid" x="342" y="292" style="font-size:13.5px">check the package it lists</text>
   <path class="w-sage" transform="translate(5 5)" d="M488 92 H690 L708 110 V242 H488 Z"/><path class="card" d="M488 92 H690 L708 110 V242 H488 Z"/><path class="ln" d="M485.7 92.3C491.4 92.3 497.1 92 502.9 91.9S514.3 91.9 520.1 92S531.5 92.3 537.2 92.3S548.7 92 554.4 91.9S565.9 91.6 571.6 91.6S583.1 91.8 588.8 91.8S600.2 91.6 606 91.5S617.4 91.1 623.2 91.2S634.6 92 640.3 92.1S651.8 92.2 657.5 92.2S669 92.2 674.7 92.2S686.2 91.9 691.9 92M690 91.6C696.1 97.9 702.3 104.1 708.2 110.6M707.9 108.8C708 120.2 708.2 131.5 708.4 142.8S709.1 165.4 709 176.8S707.7 199.4 707.4 210.7S707.1 233.3 707.6 244.6M709.5 242.5C702 242.5 694.6 242 687.2 241.9S672.3 242.3 664.9 242.3S650.1 242.2 642.6 242S627.8 241.1 620.3 241.2S605.5 242 598.1 242.3S583.2 243 575.8 242.9S561 242 553.6 241.8S538.7 241.9 531.3 241.9S516.4 242.3 509 242.2S494.1 241.7 486.7 241.2M488.5 243.4C488.5 238.3 488.4 233.2 488.4 228.1S488.5 217.8 488.5 212.7S488.5 202.5 488.6 197.4S488.8 187.2 488.8 182.1S488.6 171.9 488.5 166.8S488.3 156.5 488.1 151.4S487.9 141.2 487.8 136.1S487.9 125.9 487.8 120.8S487.5 110.6 487.4 105.5S487.5 95.2 487.4 90.1M690.3 92C690.4 97.9 690.4 103.8 690.3 109.8M690.1 109.5C696.1 109.4 702 109.9 707.9 110.3"/>

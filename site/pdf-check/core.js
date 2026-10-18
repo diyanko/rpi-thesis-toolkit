@@ -9,6 +9,9 @@
 //   analyse(data, {current: "0.7.0", rules: RULES}) -> one result per check.
 //       RULES is the page's <script type="application/json" id="oge-rules">
 //       block (scripts/rules.py), parsed: ui.js passes it in.
+//       Each result: {id, title, state, summary, pages: the detail lines,
+//       shows: the pages it names, with what to draw on them (see show()),
+//       coverage: which pages it measured, or "", rules or info}.
 //
 // Every check measures only what is on the page, whatever program made the
 // PDF; only the toolkit-version line reads this class's own wording. A check
@@ -261,6 +264,38 @@
     return keys.map(function (key) { return key + ": " + pageList(by[key]); });
   }
 
+  // ---------- Pages to show and coverage ----------------------------------------
+  // A result that names PDF pages also lists them in `shows`, for ui.js to
+  // draw the page: {page: 0-based index, note: that page's detail line,
+  // box: [left, bottom, right, top] of the text the point is about, in points
+  // as above, or null; what: "page number", "heading" or "text"; guides:
+  // "margin" for the 1 in margins, "number" for the lines at the
+  // page-number distance from the top and bottom edges}. A box is the text's
+  // width by its type size, from a little below the baseline: close to the
+  // letters, not their exact outline.
+  function textBox(x, right, y, size) { return [x, y - 0.25 * size, right, y + 0.75 * size]; }
+  function show(index, note, thing, what, guides) {
+    var box = null;
+    if (thing && typeof thing.left === "number") box = [thing.left, thing.bottom, thing.right, thing.top];
+    else if (thing && typeof thing.x === "number") box = textBox(thing.x, thing.right, thing.y, thing.size || 0);
+    return { page: index, note: note, box: box, what: box ? what : "", guides: guides || [] };
+  }
+  function byPage(list) {
+    return list.slice().sort(function (a, b) { return a.page - b.page; });
+  }
+  // Which pages a check measured: "Measured on 11 of 12 pages after the
+  // title page; not measured: PDF page 7 (no page number was found as text)."
+  // `after` is "" or " after the title page"; `missing` is [[indexes, reason], ...].
+  function coverage(measured, eligible, after, missing) {
+    if (!eligible) return "";
+    if (measured === eligible) return "Measured on " + (eligible === 1 ? "the only page" : "all " + eligible + " pages") + after + ".";
+    var gaps = missing.filter(function (m) { return m[0].length; }).map(function (m) {
+      return pageList(m[0]) + " (" + m[1] + ")";
+    });
+    return "Measured on " + measured + " of " + plural(eligible, "page") + after +
+      (gaps.length ? "; not measured: " + gaps.join("; ") : "") + ".";
+  }
+
   // ---------- Preparing pages --------------------------------------------------
   // Each page: text in the top and bottom margins (the page number), the
   // lines of the text block, top first, and the span of any sideways text.
@@ -467,7 +502,8 @@
       summary: !count ? "The PDF has no pages."
         : wrong.length ? wrong.length + " of " + plural(count, "page") + " are not " + LETTER + "."
         : every(count, "page", "is", "are") + " " + LETTER + ".",
-      pages: groups(wrong)
+      pages: groups(wrong),
+      shows: wrong.map(function (p) { return show(p.index, "PDF page " + (p.index + 1) + ": " + size(p.width, p.height) + "."); })
     });
 
     // The same page size throughout (upright and sideways pages count alike).
@@ -486,7 +522,10 @@
         : every(count, "page", "is", "are") + " " + order[0] + ".",
       pages: order.length > 1 ? order.slice(1).map(function (key) {
         return key + ": " + pageList(sizes[key]);
-      }) : []
+      }) : [],
+      shows: byPage([].concat.apply([], order.slice(1).map(function (key) {
+        return sizes[key].map(function (index) { return show(index, "PDF page " + (index + 1) + ": " + key + "; most pages are " + order[0] + "."); });
+      })))
     });
 
     var numbers = pages.map(function (page) { return pageNumber(page, limits); });
@@ -521,8 +560,12 @@
     };
 
     // Numbering: title page unnumbered, then ii, iii, ... and 1, 2, ...
-    var numbering = [], notes = [];
-    if (numbers[0] && numbers[0].text) numbering.push("PDF page 1 (title page) shows \"" + numbers[0].text + "\" in the margin; the title page counts as i but shows no number.");
+    var numbering = [], notes = [], numberShows = [];
+    var NUMBER = ["number"];
+    if (numbers[0] && numbers[0].text) {
+      numbering.push("PDF page 1 (title page) shows \"" + numbers[0].text + "\" in the margin; the title page counts as i but shows no number.");
+      numberShows.push(show(0, numbering[0], numbers[0].side || numbers[0], "page number", NUMBER));
+    }
     if (body < 0) numbering.push("No page is numbered 1, so the start of Chapter 1 was not found.");
     if (body >= 0 && body <= tocStart) numbering.push(where(body) + " is numbered 1, but the contents starts on or after it; the front matter, contents included, is numbered ii, iii, ...");
     for (i = 1; i < count; i++) {
@@ -535,9 +578,16 @@
         // note, not a point to look at.
         if (i === count - 1 && i > 1 && numbers[i - 1] && numbers[i - 1].text) {
           notes.push(absent + " It is the last page; a notice page that a library or ProQuest adds has no number, but a page of your thesis needs one.");
-        } else numbering.push(absent);
+          numberShows.push(show(i, notes[notes.length - 1], null, "", NUMBER));
+        } else {
+          numbering.push(absent);
+          numberShows.push(show(i, absent, null, "", NUMBER));
+        }
       }
-      else if (n.text !== label(i)) numbering.push("PDF page " + (i + 1) + ": shows \"" + n.text + "\", expected " + label(i) + ".");
+      else if (n.text !== label(i)) {
+        numbering.push("PDF page " + (i + 1) + ": shows \"" + n.text + "\", expected " + label(i) + ".");
+        numberShows.push(show(i, numbering[numbering.length - 1], n.side || n, "page number", NUMBER));
+      }
     }
     found.push({
       id: "numbering", title: "Page numbering: roman front matter, then 1 at Chapter 1",
@@ -548,7 +598,8 @@
         : numbering.length ? plural(numbering.length, "point") + " to look at."
         : "Title page unnumbered; front matter " + (body > 1 ? "ii to " + roman(body) : "none") + "; Chapter 1 starts on PDF page " + (body + 1) + " as page 1." +
           (notes.length ? " The last page has no number: see the details." : ""),
-      pages: anyText ? numbering.concat(notes) : []
+      pages: anyText ? numbering.concat(notes) : [],
+      shows: anyText ? byPage(numberShows) : []
     });
 
     // Level-1 openings, from three sources: a heading in capitals at the top
@@ -620,12 +671,15 @@
     // Page-number position: bottom center on front matter and level-1
     // openings, top right elsewhere.
     var placed = [], positioned = 0, away = {}, awayOrder = [], farOff = [];
+    var placedShows = [], distanceShows = [], unnumbered = [], turned = [], offPage = [];
     for (i = 1; i < count; i++) {
       n = numbers[i];
-      if (!n || !n.text) continue;
+      if (!n || !n.text) { unnumbered.push(i); continue; }
       positioned++;
       if (n.place === "sideways") {
         placed.push(where(i) + ": the number is turned sideways (a landscape page); check its position by eye.");
+        placedShows.push(show(i, placed[placed.length - 1], n.side, "page number", NUMBER));
+        turned.push(i);
         continue;
       }
       var want = (body < 0 || i < body || opening[i]) ? "bottom center" : "top right";
@@ -633,18 +687,23 @@
       if (n.place !== want) {
         placed.push(where(i) + ": expected " + want + " (" + why + "), found " + n.place +
           (n.place === "outside the page" ? "." : ", " + inches(n.distance) + " from the " + n.place.split(" ")[0] + " edge."));
+        placedShows.push(show(i, placed[placed.length - 1], n, "page number", NUMBER));
       }
       // The distance from the nearer edge, measured wherever the number is.
-      if (n.place === "outside the page" || n.edgeOk) continue;
+      if (n.place === "outside the page") { offPage.push(i); continue; }
+      if (n.edgeOk) continue;
       var edge = n.place.split(" ")[0];
+      var distanceNote = where(i) + ": " + inches(n.distance) + " from the " + edge + " edge; the manual asks for " + inches(limits.edge) + ".";
+      distanceShows.push(show(i, distanceNote, n, "page number", NUMBER));
       if (n.distance < limits.near || n.distance > limits.far) {
-        farOff.push(where(i) + ": " + inches(n.distance) + " from the " + edge + " edge; the manual asks for " + inches(limits.edge) + ".");
+        farOff.push(distanceNote);
       } else {
         var at = inches(n.distance) + " from the " + edge + " edge";
         if (!away[at]) { away[at] = []; awayOrder.push(at); }
         away[at].push(i);
       }
     }
+    var NO_NUMBER = "no page number was found as text";
     found.push({
       id: "position", title: "Page-number position", rules: ["page-number-position"],
       state: !anyText || !positioned ? "unknown" : placed.length ? "check" : "ok",
@@ -652,7 +711,9 @@
         : !positioned ? "No page numbers were found as text after the title page, so their position could not be measured."
         : placed.length ? plural(placed.length, "page") + " with the number somewhere else."
         : "Bottom center on front matter and level-1 openings, top right on other pages.",
-      pages: placed
+      pages: placed,
+      shows: placedShows,
+      coverage: anyText && positioned ? coverage(positioned, count - 1, " after the title page", [[unnumbered, NO_NUMBER]]) : ""
     });
     var awayPages = awayOrder.map(function (at) { return at + ": " + pageList(away[at]) + "."; });
     found.push({
@@ -664,20 +725,24 @@
         : awayOrder.length ? "The manual asks for " + inches(limits.edge) + " from the edge; this PDF has " +
           awayOrder.join(", ") + ". " + CONFIRM
         : every(positioned, "page number", "is", "are") + " " + inches(limits.edge) + " from the edge.",
-      pages: farOff.concat(awayPages)
+      pages: farOff.concat(awayPages),
+      shows: distanceShows,
+      coverage: anyText && positioned ? coverage(positioned - turned.length - offPage.length, count - 1, " after the title page",
+        [[unnumbered, NO_NUMBER], [turned, "the number is turned sideways"], [offPage, "the number is outside the page"]]) : ""
     });
 
     // Level-1 headings start at the top margin. On a PDF this class made,
     // at the class's own baseline; on any other PDF (other fonts and
     // settings), no lower than heading-limit. TODO(verify): heading-limit and
     // heading-tolerance are this project's choices, not numbers from the manual.
-    var low = [], lower = [], deepest = 0, measured = 0;
+    var low = [], lower = [], deepest = 0, measured = 0, headingShows = [];
     openings.forEach(function (index) {
       var p = pages[index];
       if (!p.lines.length) return;
       measured++;
       var depth = p.height - p.lines[0].y;
       var start = where(index) + ": \"" + p.lines[0].text.slice(0, 60) + "\" starts " + inches(depth) + " from the top edge";
+      var before = low.length + lower.length;
       if (version && Math.abs(depth - limits.baseline) > limits.baselineTolerance) {
         low.push(start + "; this class puts it " + inches(limits.baseline) + " from the top edge.");
       } else if (!version && depth > limits.headingFar) {
@@ -685,6 +750,9 @@
       } else if (!version && depth > limits.heading) {
         lower.push(start + ".");
         deepest = Math.max(deepest, depth);
+      }
+      if (low.length + lower.length > before) {
+        headingShows.push(show(index, (low.length > before ? low[low.length - 1] : lower[lower.length - 1]), p.lines[0], "heading", ["margin"]));
       }
     });
     found.push({
@@ -697,28 +765,33 @@
           " start a little lower, down to " + inches(deepest) + " from the top edge. " + CONFIRM
         : every(measured, "page", "that starts", "that start") + " with a level-1 heading " + (measured === 1 ? "starts" : "start") + " it at the top margin" +
           (version ? ", where this class puts it." : "."),
-      pages: low.concat(lower)
+      pages: low.concat(lower),
+      shows: headingShows
     });
 
     // Text inside the side margins. Pictures and drawings are not measured.
     // Running headers and footers count too; only the page number is left out.
-    var outside = [], slight = [], widest = 0;
+    var outside = [], slight = [], widest = 0, marginShows = [], textless = [];
     pages.forEach(function (p) {
-      var worst = 0, number = numbers[p.index] || {};
+      var worst = 0, worstRun = null, number = numbers[p.index] || {};
+      if (!p.text) textless.push(p.index);
       p.lines.concat(p.margin).forEach(function (line) {
         line.runs.forEach(function (run) {
           if ((number.runs || []).indexOf(run) >= 0) return;
-          worst = Math.max(worst, limits.margin - run.x, run.x + run.width - (p.width - limits.margin));
+          var over = Math.max(limits.margin - run.x, run.x + run.width - (p.width - limits.margin));
+          if (over > worst) { worst = over; worstRun = { x: run.x, right: run.x + run.width, y: run.y, size: run.size }; }
         });
       });
       p.sideways.forEach(function (run) {
         if (run === number.side) return; // the page number of a landscape page
-        worst = Math.max(worst, limits.margin - run.left, run.right - (p.width - limits.margin));
+        var over = Math.max(limits.margin - run.left, run.right - (p.width - limits.margin));
+        if (over > worst) { worst = over; worstRun = run; }
       });
       if (worst <= limits.over) return;
       var point = where(p.index) + ": text reaches " + inches(worst) + " into the side margin.";
       if (worst > limits.overrun) outside.push(point);
       else { slight.push(point); widest = Math.max(widest, worst); }
+      marginShows.push(show(p.index, point, worstRun, "text", ["margin"]));
     });
     found.push({
       id: "margins", title: "Text inside the " + String(Number((limits.margin / INCH).toFixed(2))) + " in side margins",
@@ -730,11 +803,13 @@
           plural(slight.length, "page") + " text reaches slightly into one, up to " + inches(widest) +
           ", usually a long line, equation, or URL. " + CONFIRM
         : "No text crosses the left or right margin. Figures and pictures were not measured; check them by eye.",
-      pages: outside.concat(slight).sort(function (a, b) { return parseInt(a.slice(9), 10) - parseInt(b.slice(9), 10); })
+      pages: outside.concat(slight).sort(function (a, b) { return parseInt(a.slice(9), 10) - parseInt(b.slice(9), 10); }),
+      shows: marginShows,
+      coverage: anyText ? coverage(count - textless.length, count, "", [[textless, "no text on the page: it may be blank, a picture, or a scan"]]) : ""
     });
 
     // Contents entries identical to the headings they point to.
-    var mismatch = [];
+    var mismatch = [], contentShows = [];
     entries.forEach(function (entry) {
       var p = pages[entry.target];
       if (!p) {
@@ -749,6 +824,8 @@
       if (!ok) {
         mismatch.push("\"" + entry.title + "\" (page " + entry.label + "): " +
           (entry.level1 ? "that page starts with \"" + (text[0] || "").slice(0, 60) + "\"." : "not found on that page."));
+        contentShows.push(show(entry.target, "Contents entry " + mismatch[mismatch.length - 1],
+          entry.level1 ? p.lines[0] : null, "heading", ["margin"]));
       }
     });
     var NO_TOC = "No page starting with CONTENTS or TABLE OF CONTENTS was found in the first 40 pages.";
@@ -760,7 +837,8 @@
         : !entries.length ? "The contents page was found, but no entries could be read."
         : mismatch.length ? mismatch.length + " of " + plural(entries.length, "entry", "entries") + " differ from the page they point to."
         : every(entries.length, "entry", "matches", "match", "entries") + " the text on the page " + (entries.length === 1 ? "it points" : "they point") + " to.",
-      pages: mismatch
+      pages: mismatch,
+      shows: byPage(contentShows)
     });
 
     // Every level-1 heading after the contents is listed in it.
@@ -776,9 +854,10 @@
         (title.slice(-head.length) === head && /^(?:[0-9]+|[a-z])$/.test(title.slice(0, -head.length))));
     }
     var after = Object.keys(own).map(Number).filter(function (index) { return index > tocEnd; }).sort(function (a, b) { return a - b; });
-    var unlisted = after.filter(function (index) {
+    var unlistedPages = after.filter(function (index) {
       return !entries.some(function (entry) { return lists(entry, index); });
-    }).map(function (index) {
+    });
+    var unlisted = unlistedPages.map(function (index) {
       return where(index) + ": \"" + String(own[index]).slice(0, 60) + "\" has no contents entry pointing to this page.";
     });
     found.push({
@@ -790,7 +869,8 @@
         : !after.length ? "No level-1 headings after the contents were recognized (headings in capitals or PDF bookmarks)."
         : unlisted.length ? unlisted.length + " of " + plural(after.length, "level-1 heading") + " are not in the contents."
         : every(after.length, "level-1 heading", "after the contents has", "after the contents have") + " an entry. Lower-level headings were not checked.",
-      pages: unlisted
+      pages: unlisted,
+      shows: unlistedPages.map(function (index, k) { return show(index, unlisted[k], pages[index].lines[0], "heading", ["margin"]); })
     });
 
     // Fonts embedded in the PDF. TODO(verify): no row of the requirements
@@ -816,7 +896,10 @@
         : fontsUnread.length || unsure.length ? "Some fonts could not be read, so this could not be told for every page."
         : fontOrder.length ? every(fontOrder.length, "font", "is", "are") + " embedded."
         : "The PDF uses no fonts.",
-      pages: fontPages
+      pages: fontPages,
+      shows: byPage([].concat.apply([], missing.map(function (f) {
+        return f.pages.map(function (index) { return show(index, "PDF page " + (index + 1) + " uses " + f.name + ", which is not embedded."); });
+      })))
     });
 
     // Blank pages: no text and nothing drawn.
@@ -832,7 +915,8 @@
       summary: blank.length ? pageList(blank) + (blank.length === 1 ? " has" : " have") + " no text and nothing drawn on it. A blank page is often left over from a page break; check that you meant it."
         : blankUnknown.length ? "Whether " + pageList(blankUnknown) + " " + (blankUnknown.length === 1 ? "is" : "are") + " blank could not be told."
         : "No blank pages.",
-      pages: []
+      pages: [],
+      shows: blank.map(function (index) { return show(index, "PDF page " + (index + 1) + ": no text and nothing drawn."); })
     });
 
     // File size, for information. TODO(verify): the requirements map sets no
@@ -862,6 +946,8 @@
     });
     var known = (options.rules && options.rules.rules) || {};
     found.forEach(function (f) {
+      f.shows = f.shows || [];
+      f.coverage = f.coverage || "";
       (f.rules || []).forEach(function (id) {
         if (RULE_IDS.indexOf(id) < 0) throw new Error("PdfCheckCore: the rule " + id + " is not in RULE_IDS.");
         if (!known[id]) throw new Error("PdfCheckCore: the rule " + id + " is not in the rules data (docs/project/requirements.md).");

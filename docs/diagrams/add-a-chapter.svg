@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 500" width="720" height="500" role="img" aria-labelledby="t d">
+  <title id="t">Add a chapter</title>
+  <desc id="d">Three steps. 1: create a new file, chapters/04-discussion.tex, containing \chapter{DISCUSSION}, \label{chap:discussion}, and your first paragraph. 2: add one line to main.tex, \include{chapters/04-discussion}, where the chapter belongs: here after \include{chapters/02-research} and before \include{chapters/03-conclusion}. 3: compile. The contents now list 1 INTRODUCTION, 2 RESEARCH, 3 DISCUSSION, 4 CONCLUSION: the order of the lines in main.tex sets the chapter numbers, not the file names.</desc>
+  <style>
+    svg { --bg: #faf5ea; --card: #fffcf5; --ink: #2d2620; --muted: #625547;
+      --terra: #a24a24; --sage: #4a6b42; --plum: #70466a; --blue: #24518c; --red: #c8102e;
+      --terra-w: #f6dfcd; --sage-w: #e4ecd2; --plum-w: #f1e0ea; --blue-w: #e0e6ef; --butter-w: #f7e8b3; }
+    @media (prefers-color-scheme: dark) {
+      svg { --bg: #181614; --card: #27231e; --ink: #f2ece2; --muted: #b9ae9d;
+        --terra: #f6a57f; --sage: #a6d49a; --plum: #e0b6dc; --blue: #a2c8fb; --red: #ff8d98;
+        --terra-w: #3b2418; --sage-w: #273b27; --plum-w: #34233a; --blue-w: #1d2c43; --butter-w: #3a3118; }
+    }
+    .bg { fill: var(--bg); }
+    .card { fill: var(--card); }
+    .ln { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .thin { stroke-width: 1.6; }
+    .dash { stroke-dasharray: 7 7; }
+    .dot { stroke-dasharray: 1 7; }
+    .terra { stroke: var(--terra); } .sage { stroke: var(--sage); } .plum { stroke: var(--plum); }
+    .blue { stroke: var(--blue); } .red { stroke: var(--red); } .mut { stroke: var(--muted); }
+    .w-terra { fill: var(--terra-w); } .w-sage { fill: var(--sage-w); } .w-plum { fill: var(--plum-w); }
+    .w-blue { fill: var(--blue-w); } .w-butter { fill: var(--butter-w); }
+    .f-terra { fill: var(--terra); } .f-red { fill: var(--red); }
+    text { fill: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 18px; }
+    .h { font-size: 22px; font-weight: 700; }
+    .s { fill: var(--muted); }
+    .m { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-weight: 700; font-variant-ligatures: none; }
+    .code { font-family: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 16px; fill: var(--muted); font-variant-ligatures: none; }
+    .n { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-size: 20px; font-weight: 700; }
+    .hand { font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; font-style: italic; font-size: 20px; fill: var(--terra); }
+    .hb { fill: var(--blue); } .hs { fill: var(--sage); } .hp { fill: var(--plum); }
+    .mid { text-anchor: middle; } .end { text-anchor: end; }
+    .c-tex, .c-bib, .c-md { fill: var(--ink); }
+    .c-cmd { fill: var(--blue); }
+    .c-brace { fill: var(--terra); font-weight: 700; }
+    .c-opt { fill: var(--plum); }
+    .c-math { fill: var(--sage); }
+    .c-com { fill: var(--muted); font-style: italic; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="at" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln terra" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="as" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln sage" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ab" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln blue" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ap" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln plum" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+    <marker id="ar" viewBox="0 0 14 14" refX="10" refY="7" markerWidth="15" markerHeight="15" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path class="ln red" d="M3 2.5 L11 7 L3.5 11.5"/></marker>
+  </defs>
+  <rect class="bg" width="720" height="500" rx="18"/>
+  <circle class="w-butter" cx="54" cy="30" r="11"/>
+  <path class="ln" d="M65.1 28.5C65.1 28.5 65.1 29.6 65.1 30.2S65 31.4 64.8 32S64.6 33.2 64.4 33.7S63.9 34.8 63.6 35.3S63 36.4 62.6 36.8S61.9 37.7 61.5 38.1S60.6 38.9 60.1 39.3S59.1 39.9 58.5 40.2S57.4 40.6 56.9 40.8S55.7 41.1 55.1 41.1S53.9 41.2 53.3 41.2S52.2 41 51.6 40.9S50.4 40.6 49.9 40.4S48.8 39.8 48.3 39.5S47.3 38.9 46.9 38.5S46 37.7 45.6 37.2S44.9 36.3 44.6 35.8S44 34.7 43.8 34.2S43.4 33 43.3 32.5S43.1 31.3 43.1 30.7S43.1 29.5 43.1 28.9S43.3 27.7 43.5 27.2S43.9 26 44.1 25.5S44.7 24.4 45 24S45.7 23 46.1 22.6S47 21.7 47.4 21.4S48.4 20.7 48.9 20.4S50 19.9 50.6 19.7S51.7 19.3 52.3 19.2S53.5 19 54 19S55.2 19 55.8 19.1S57 19.3 57.6 19.4S58.7 19.8 59.2 20.1S60.3 20.7 60.7 21S61.7 21.8 62.1 22.2S62.9 23.1 63.2 23.6S63.8 24.6 64.1 25.1S64.5 26.2 64.7 26.8S64.9 28 65 28.5S65 30.2 65.1 30.2S65.1 28.5 65.1 28.5"/>
+  <text class="n mid" x="54" y="35" style="font-size:14px">1</text>
+  <text class="hand" x="74" y="36" style="font-size:19px">create a new file</text>
+  <path class="w-sage" transform="translate(6 6)" d="M40 54 H356 L376 74 V204 H40 Z"/>
+  <path class="card" d="M40 54 H356 L376 74 V204 H40 Z"/>
+  <path class="ln" d="M39.4 53.8C46.4 53.8 53.5 54.1 60.6 54.1S74.7 54.1 81.7 54.1S95.9 54.1 102.9 54.1S117.1 54 124.1 53.9S138.2 53.9 145.3 54S159.4 54.5 166.5 54.6S180.6 54.6 187.7 54.4S201.8 53.9 208.8 53.7S223 53.3 230 53.4S244.1 53.8 251.2 53.9S265.3 54.3 272.4 54.3S286.5 54.2 293.6 54.2S307.7 54.2 314.8 54.2S328.9 54.2 335.9 54.1S350.1 53.9 357.1 53.8M355.7 53.6C362.5 60.3 369.3 67.1 376 73.9M375.7 72.8C375.8 81.6 375.9 90.4 376 99.2S376.3 116.9 376.3 125.7S376 143.4 375.9 152.2S375.5 169.9 375.5 178.7S375.8 196.3 375.9 205.2M377.3 203.9C371.6 204 366 204.1 360.4 204.1S349.1 203.9 343.4 203.8S332.1 203.6 326.5 203.7S315.2 203.9 309.6 204S298.3 204.1 292.7 204.1S281.4 203.8 275.7 203.8S264.4 203.7 258.8 203.8S247.5 204 241.9 204.1S230.6 204.5 224.9 204.5S213.7 204.4 208 204.3S196.7 203.9 191.1 203.8S179.8 203.5 174.2 203.5S162.9 203.7 157.2 203.8S146 204 140.3 204S129 203.9 123.4 203.9S112.1 203.8 106.5 203.9S95.2 204.3 89.5 204.4S78.3 204.6 72.6 204.5S61.3 204.2 55.7 204S44.4 203.7 38.8 203.6M40.3 204.1C40.1 196.9 39.8 189.7 39.7 182.5S39.8 168.1 39.9 160.8S40.4 146.4 40.4 139.2S40.5 124.8 40.4 117.6S39.8 103.1 39.8 95.9S39.9 81.5 40 74.3S40.3 59.9 40.2 52.6"/>
+  <path class="ln" d="M355.9 53.8C356 60.4 356.1 67.1 356.1 73.7M355.9 73.5C362.5 73.4 369.1 73.4 375.7 73.6"/>
+  <text class="m" x="56" y="82" style="font-size:14px">chapters/04-discussion.tex</text>
+  <path class="ln thin mut" d="M39.7 93.7C46.7 93.9 53.7 94.2 60.7 94.4S74.8 94.5 81.8 94.5S95.8 94 102.8 93.9S116.8 93.6 123.8 93.6S137.8 93.8 144.8 93.8S158.8 93.8 165.8 93.8S179.8 93.7 186.8 93.7S200.8 94 207.9 94S221.9 94.3 228.9 94.2S242.9 93.9 249.9 93.8S263.9 93.9 270.9 94S284.9 94.2 291.9 94.2S305.9 94.1 312.9 94.1S326.9 94.3 333.9 94.2S348 93.9 355 93.8S369 93.7 376 93.8"/>
+  <text class="code c-tex" x="58" y="126" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\chapter</tspan><tspan class="c-brace">{</tspan>DISCUSSION<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="58" y="152" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\label</tspan><tspan class="c-brace">{</tspan>chap:discussion<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="58" y="186" style="font-size:15px" xml:space="preserve">Your first paragraph.</text>
+  <circle class="w-butter" cx="54" cy="244" r="11"/>
+  <path class="ln" d="M65.4 242.5C65.4 242.5 65.4 243.7 65.4 244.3S65.3 245.5 65.2 246.1S64.9 247.3 64.7 247.9S64.2 249 63.9 249.5S63.3 250.5 62.9 251S62.1 251.9 61.6 252.3S60.7 253.1 60.2 253.4S59.1 254 58.6 254.2S57.4 254.7 56.9 254.8S55.7 255.1 55.1 255.1S53.9 255.2 53.3 255.2S52.1 255 51.5 254.9S50.3 254.6 49.8 254.3S48.7 253.8 48.2 253.5S47.2 252.8 46.7 252.4S45.9 251.5 45.5 251.1S44.8 250.1 44.5 249.5S44 248.5 43.8 247.9S43.4 246.7 43.3 246.1S43.2 244.9 43.2 244.3S43.2 243.1 43.3 242.5S43.5 241.3 43.7 240.8S44.1 239.6 44.3 239.1S44.9 238 45.2 237.5S45.9 236.5 46.4 236.1S47.2 235.2 47.7 234.8S48.7 234.1 49.2 233.8S50.3 233.3 50.9 233.1S52 232.8 52.6 232.7S53.8 232.5 54.4 232.5S55.6 232.6 56.2 232.7S57.4 232.9 58 233.2S59.1 233.6 59.6 233.9S60.6 234.5 61.1 234.9S62 235.7 62.4 236.2S63.2 237.1 63.5 237.6S64.2 238.6 64.4 239.2S64.9 240.3 65 240.9S65.3 242.1 65.3 242.7S65.4 244.4 65.4 244.3S65.4 242.5 65.4 242.5"/>
+  <text class="n mid" x="54" y="249" style="font-size:14px">2</text>
+  <text class="hand" x="74" y="250" style="font-size:19px">add one line to main.tex</text>
+  <path class="w-blue" transform="translate(6 6)" d="M40 268 H372 L392 288 V430 H40 Z"/>
+  <path class="card" d="M40 268 H372 L392 288 V430 H40 Z"/>
+  <path class="ln" d="M38.8 268.5C45.8 268.5 52.7 268.5 59.7 268.4S73.6 268 80.6 267.9S94.5 267.5 101.5 267.4S115.4 267.4 122.4 267.4S136.3 267.7 143.3 267.8S157.2 268 164.2 268.1S178.1 268.3 185.1 268.3S199 268.3 206 268.4S219.9 268.5 226.9 268.5S240.9 268.6 247.8 268.6S261.8 268.6 268.7 268.5S282.7 268.2 289.6 268S303.6 267.5 310.5 267.3S324.5 267.1 331.4 267.1S345.3 267.6 352.3 267.7S366.3 267.9 373.2 267.8M372.2 267.5C379 274.2 385.7 281 392.4 287.9M392.3 286.6C392.2 293.5 391.9 300.4 391.9 307.3S391.8 321.1 391.9 328S392 341.8 391.9 348.7S391.5 362.5 391.5 369.4S391.6 383.1 391.7 390S392.3 403.8 392.4 410.7S392.6 424.5 392.5 431.4M393.3 429.9C385.9 430.2 378.6 430.3 371.2 430.3S356.5 429.9 349.1 429.8S334.4 429.9 327 429.9S312.3 430 305 430S290.2 429.8 282.9 429.9S268.2 430.3 260.8 430.3S246.1 430.4 238.7 430.3S224 430.3 216.6 430.3S201.9 430.2 194.5 430.1S179.8 429.8 172.5 429.8S157.7 429.7 150.4 429.7S135.7 429.8 128.3 429.7S113.6 429.5 106.2 429.4S91.5 429.3 84.1 429.2S69.4 429.2 62 429.2S47.3 429.3 40 429.5M40.4 430.1C40.3 421 40 412 39.9 402.9S39.5 384.8 39.5 375.8S39.6 357.7 39.8 348.6S40.4 330.5 40.4 321.5S40.4 303.4 40.3 294.3S39.8 276.2 39.7 267.2"/>
+  <path class="ln" d="M372.5 267.8C372.4 274.6 372.1 281.4 372 288.2M371.9 288C378.7 288 385.5 287.9 392.3 287.8"/>
+  <text class="m" x="56" y="296" style="font-size:14px">main.tex</text>
+  <path class="ln thin mut" d="M40.4 308C46.3 308 52.1 307.7 58 307.7S69.7 307.5 75.6 307.5S87.3 307.8 93.1 308S104.9 308.2 110.7 308.3S122.4 308.4 128.3 308.3S140 308 145.8 307.9S157.6 307.7 163.4 307.8S175.1 308.1 181 308.1S192.7 308.2 198.6 308.1S210.3 307.8 216.1 307.8S227.8 307.9 233.7 307.9S245.4 307.9 251.3 307.9S263 307.9 268.9 308S280.6 308.3 286.4 308.3S298.1 308.2 304 308.1S315.7 307.8 321.6 307.8S333.3 308 339.1 308.1S350.8 308.3 356.7 308.4S368.4 308.6 374.3 308.6S386 308.5 391.8 308.4"/>
+  <text class="code c-tex" x="58" y="338" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\include</tspan><tspan class="c-brace">{</tspan>chapters/01-introduction<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="58" y="364" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\include</tspan><tspan class="c-brace">{</tspan>chapters/02-research<tspan class="c-brace">}</tspan></text>
+  <rect class="w-sage" x="56.0" y="376.0" width="292.0" height="21.0" rx="3"/>
+  <text class="code c-tex" x="58" y="390" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\include</tspan><tspan class="c-brace">{</tspan>chapters/04-discussion<tspan class="c-brace">}</tspan></text>
+  <text class="code c-tex" x="58" y="416" style="font-size:15px" xml:space="preserve"><tspan class="c-cmd">\include</tspan><tspan class="c-brace">{</tspan>chapters/03-conclusion<tspan class="c-brace">}</tspan></text>
+  <path class="ln dash sage" d="M35.9 185.7C33.3 191.9 31.5 198.5 29.9 205S27.2 218.2 26.1 224.9S24.1 238.2 23.5 244.9S22.4 258.4 22.3 265.1S22.3 278.6 22.7 285.3S23.6 298.8 24.3 305.5S25.5 318.9 26.4 325.6S28.3 339 29.9 345.5S33.4 358.6 36 364.8S41.6 377.1 45.6 382.5" marker-end="url(#as)"/>
+  <text class="hand hs mid" x="216" y="458" style="font-size:17px">where it belongs: the order here</text>
+  <text class="hand hs mid" x="216" y="480" style="font-size:17px">sets the chapter numbers</text>
+  <circle class="w-butter" cx="452" cy="30" r="11"/>
+  <path class="ln" d="M462.7 28.5C462.7 28.5 462.7 29.2 462.6 29.6S462.6 30.4 462.6 30.8S462.5 31.5 462.5 31.9S462.3 32.7 462.2 33S461.9 33.8 461.8 34.1S461.5 34.8 461.3 35.2S460.9 35.9 460.7 36.2S460.2 36.8 460 37.1S459.5 37.7 459.2 37.9S458.6 38.4 458.3 38.7S457.7 39.1 457.4 39.3S456.7 39.7 456.3 39.9S455.6 40.2 455.3 40.3S454.5 40.5 454.1 40.6S453.4 40.8 453 40.8S452.2 40.9 451.8 40.9S451.1 40.8 450.7 40.8S449.9 40.7 449.5 40.6S448.8 40.4 448.4 40.3S447.7 40 447.4 39.9S446.7 39.5 446.3 39.3S445.7 38.9 445.4 38.7S444.8 38.2 444.5 38S443.9 37.4 443.7 37.1S443.2 36.5 443 36.2S442.5 35.6 442.4 35.2S442 34.5 441.9 34.2S441.6 33.4 441.5 33.1S441.3 32.3 441.2 32S441.1 31.2 441.1 30.8S441 30 441.1 29.6S441.1 28.9 441.2 28.5S441.3 27.7 441.4 27.4S441.6 26.6 441.7 26.2S442 25.5 442.2 25.2S442.5 24.5 442.8 24.2S443.2 23.5 443.4 23.2S443.9 22.6 444.2 22.4S444.7 21.8 445 21.6S445.6 21.1 446 20.9S446.6 20.5 446.9 20.3S447.6 19.9 448 19.8S448.7 19.5 449.1 19.4S449.9 19.3 450.2 19.2S451 19.1 451.4 19.1S452.2 19.1 452.5 19.1S453.3 19.1 453.7 19.2S454.5 19.3 454.8 19.5S455.6 19.7 455.9 19.8S456.6 20.1 457 20.3S457.6 20.7 458 20.9S458.6 21.4 458.9 21.6S459.5 22.1 459.7 22.4S460.2 23 460.5 23.3S460.9 23.9 461.1 24.3S461.5 24.9 461.7 25.3S462 26 462.1 26.4S462.3 27.1 462.4 27.5S462.5 28.2 462.6 28.6S462.6 29.4 462.6 29.8S462.6 30.8 462.6 30.8S462.6 30 462.6 29.6S462.7 28.5 462.7 28.5"/>
+  <text class="n mid" x="452" y="35" style="font-size:14px">3</text>
+  <text class="hand" x="472" y="36" style="font-size:19px">compile</text>
+  <path class="ln blue" d="M399.4 372.1C403.9 367.6 407.6 362.3 411 357S417.2 345.9 420.1 340.3S425.5 328.8 428.4 323.1S434.2 311.8 437.6 306.4S444.5 295.7 448.6 290.9S457.2 281.5 462.3 277.7" marker-end="url(#ab)"/>
+  <path class="card" d="M486 78 H702 V378 H486 Z"/>
+  <path class="ln thin" d="M484.5 78.2C491.8 78.2 499.1 78 506.4 77.9S520.9 78.1 528.2 78.1S542.8 78.1 550.1 78S564.7 77.5 572 77.5S586.6 77.4 593.9 77.4S608.5 77.4 615.8 77.6S630.3 78.2 637.6 78.4S652.2 78.7 659.5 78.7S674.1 78.4 681.4 78.3S696 78.1 703.3 78.2M702.1 77.4C702 84.1 701.9 90.8 701.9 97.5S702 110.9 702 117.6S701.9 131 701.9 137.6S702.2 151 702.3 157.7S702.6 171.1 702.5 177.8S702.2 191.1 702 197.8S701.5 211.2 701.4 217.9S701.4 231.3 701.6 237.9S702.1 251.3 702.3 258S702.7 271.4 702.7 278.1S702.3 291.4 702.1 298.1S701.7 311.5 701.6 318.2S701.7 331.5 701.7 338.2S702 351.6 702.1 358.3S702.4 371.7 702.4 378.4M703.2 377.6C695.9 377.8 688.6 378 681.4 378.1S666.8 378.1 659.5 378.1S645 378 637.7 378S623.2 378 615.9 378S601.3 378.3 594 378.3S579.5 378.2 572.2 378S557.7 377.6 550.4 377.5S535.8 377.4 528.6 377.4S514 377.2 506.7 377.3S492.2 377.4 484.9 377.7M486.2 378.5C486.2 370.1 486 361.7 486 353.4S485.6 336.6 485.6 328.3S485.7 311.6 485.8 303.2S486.2 286.5 486.3 278.1S486.5 261.4 486.5 253S486.4 236.3 486.4 227.9S486.5 211.2 486.5 202.8S486.5 186.1 486.5 177.7S486.2 161 486.1 152.6S485.9 135.9 485.8 127.5S485.7 110.8 485.7 102.4S485.5 85.7 485.5 77.4"/>
+  <path class="card" d="M480 72 H696 V372 H480 Z"/>
+  <path class="ln thin" d="M478.2 72.3C485.5 72.3 492.8 72.1 500.1 72.1S514.7 72.1 522 72.1S536.5 72.2 543.8 72.1S558.4 71.6 565.7 71.5S580.2 71.3 587.5 71.3S602.1 71.4 609.4 71.5S624 72 631.2 72.2S645.8 72.6 653.1 72.7S667.7 72.6 674.9 72.5S689.5 72.2 696.8 72.1M696.2 71.6C696.1 78.3 696 85 696 91.7S696.2 105.1 696.2 111.8S695.9 125.2 695.9 131.9S695.9 145.4 696 152.1S696.5 165.5 696.5 172.2S696.4 185.6 696.3 192.3S695.8 205.7 695.7 212.4S695.4 225.8 695.5 232.5S695.9 245.9 696.1 252.6S696.7 266 696.7 272.8S696.4 286.2 696.2 292.9S695.7 306.3 695.7 313S695.7 326.4 695.7 333.1S696 346.5 696.1 353.2S696.4 366.6 696.4 373.3M697.9 371.8C691.8 371.9 685.7 372.2 679.6 372.2S667.4 372.2 661.4 372.2S649.2 372.1 643.1 372S630.9 371.8 624.8 371.8S612.7 372 606.6 372.1S594.4 372.3 588.3 372.3S576.1 372 570.1 371.9S557.9 371.6 551.8 371.5S539.6 371.6 533.5 371.5S521.4 371.4 515.3 371.3S503.1 371.2 497 371.3S484.8 371.8 478.8 372M480.2 372.6C480.2 364.2 480 355.8 479.9 347.4S479.7 330.7 479.7 322.3S479.8 305.6 480 297.2S480.4 280.5 480.5 272.1S480.6 255.4 480.6 247S480.6 230.2 480.6 221.9S480.6 205.1 480.6 196.7S480.4 180 480.3 171.6S480.1 154.9 480 146.5S479.9 129.8 479.8 121.4S479.6 104.7 479.5 96.3S479.4 79.5 479.5 71.2"/>
+  <path class="card" d="M474 66 H690 V366 H474 Z"/>
+  <path class="ln" d="M472.9 66.3C479 66.4 485.1 66.3 491.1 66.3S503.2 66.1 509.3 66S521.4 66.1 527.5 66.2S539.6 66.2 545.7 66.1S557.8 65.6 563.9 65.5S576 65.3 582 65.3S594.2 65.4 600.2 65.5S612.3 65.7 618.4 65.9S630.5 66.3 636.6 66.4S648.7 66.6 654.8 66.6S666.9 66.6 672.9 66.5S685.1 66.3 691.1 66.2M690.2 65.1C690.3 71.9 690.2 78.6 690.2 85.3S690.4 98.7 690.3 105.5S690.1 118.9 690 125.6S689.7 139.1 689.8 145.8S690.2 159.3 690.3 166S690.5 179.4 690.4 186.1S690.1 199.6 689.9 206.3S689.5 219.7 689.5 226.5S689.7 239.9 689.9 246.6S690.4 260.1 690.5 266.8S690.5 280.2 690.4 287S689.9 300.4 689.8 307.1S689.6 320.6 689.7 327.3S690 340.7 690.1 347.5S690.3 360.9 690.3 367.6M691.2 366C685.2 366.2 679.1 366.4 673.1 366.4S661 366.3 654.9 366.2S642.8 365.9 636.7 365.8S624.6 365.6 618.6 365.7S606.5 366 600.4 366.1S588.3 366.2 582.3 366.1S570.2 365.8 564.1 365.7S552 365.7 545.9 365.7S533.8 365.7 527.8 365.6S515.7 365.4 509.6 365.4S497.5 365.5 491.4 365.6S479.3 366.1 473.3 366.3M474.2 367.5C474.1 357.4 474 347.3 473.9 337.2S473.8 317 473.9 306.9S474.3 286.8 474.4 276.7S474.6 256.5 474.7 246.4S474.8 226.2 474.8 216.1S474.6 196 474.4 185.9S474.1 165.7 474 155.6S474 135.4 473.9 125.4S473.6 105.2 473.5 95.1S473.5 74.9 473.6 64.8"/>
+  <text class="n" x="494" y="104" style="font-size:20px">CONTENTS</text>
+  <text x="496" y="150" style="font-size:17px">1  INTRODUCTION</text>
+  <text x="496" y="190" style="font-size:17px">2  RESEARCH</text>
+  <rect class="w-sage" x="484" y="206" width="198" height="34" rx="4"/>
+  <text class="hs" x="496" y="230" style="font-size:17px" font-weight="700">3  DISCUSSION</text>
+  <text x="496" y="270" style="font-size:17px">4  CONCLUSION</text>
+  <text x="496" y="310" style="font-size:17px">REFERENCES</text>
+  <text class="hand hs mid" x="588" y="410" style="font-size:17px">the new chapter, in place</text>
+</svg>
