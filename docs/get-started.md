@@ -54,10 +54,6 @@ page's computer card opens this step. -->
 3. **Overleaf:** keep the ZIP as it is. (Safari unzipped it? Right-click the
    folder and choose **Compress**.)
 
-Or: on the [project's GitHub page](https://github.com/diyanko/rpi-thesis-toolkit),
-use the green **Code** button, then **Download ZIP**, for every file in the
-project. You can ignore `docs/` and `site/`.
-
 Next: [set up your computer](#step-3a-your-computer-route) or
 [open the starter on Overleaf](#step-3b-overleaf-route).
 
