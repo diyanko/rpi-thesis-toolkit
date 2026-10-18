@@ -1403,6 +1403,10 @@ def drawing_code_colors():
         if style not in svg:
             errors.append(f"{name}: its <style> lacks the code classes; paste these lines before </style> "
                           f"(made from the LaTeX colors in site/site.css):\n{style}")
+        for rule in re.findall(r"[^{}]*\{[^{}]*monospace[^{}]*\}|style=\"[^\"]*monospace[^\"]*\"", svg):
+            if "font-variant-ligatures: none" not in rule:
+                errors.append(f"{name}: {rule.strip()[:60]}... sets a code font; add font-variant-ligatures: none "
+                              "so code shows the characters typed, as on the website.")
         try:
             root = ElementTree.fromstring(svg)
         except ElementTree.ParseError as problem:
