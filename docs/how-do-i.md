@@ -31,7 +31,7 @@ on a Mac) and type a word.
 ## Write
 
 - [Choose a drafting or collaboration app](how-it-works.md#draft-where-you-and-your-advisor-can-work-comfortably)
-- [Paste text or a table from Word, Google Docs, Excel, or Markdown and get LaTeX](bring-your-work-in.md)
+- [Paste text or a table from Word, Google Docs, Excel, or Markdown and get LaTeX](convert-to-latex.md)
 - [Bring in a draft from Word or Google Docs](bring-your-draft.md#from-word-or-google-docs)
 - [Bring in a draft from Markdown](bring-your-draft.md#from-markdown)
 - [Move from RPI's official LaTeX template](bring-your-draft.md#from-rpis-official-latex-template)

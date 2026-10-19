@@ -195,7 +195,7 @@ Text after a horizontal rule.
 
 ## Tool pages
 
-Every tool (Settings builder, Bring your work in, Check your references,
+Every tool (Settings builder, Convert to LaTeX, Check your references,
 Explain my error, Check your PDF) follows one pattern, so a new tool reuses
 it instead of adding styles. Tool pages (`PAGE_SCRIPTS` in
 `scripts/build_site.py`) keep the same frame as every page, drop the

@@ -416,12 +416,12 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .appearance-toggle {
   display: grid; place-items: center;
   width: 44px; height: 44px; padding: 10px;
-  color: var(--ink-soft); background: var(--card);
-  border: 1.5px solid var(--control-edge);
-  border-radius: 50%; cursor: pointer;
+  color: var(--ink); background: var(--card);
+  border: 2px solid var(--btn-edge-2);   /* the secondary button's hand-drawn edge */
+  border-radius: var(--sketch); box-shadow: 2px 2px 0 var(--btn-shadow); cursor: pointer;
 }
 .appearance-toggle:hover { color: var(--ink); background: var(--paper-2); }
-.theme-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.theme-icon { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .appearance-toggle .theme-icon { display: none; }
 .appearance[data-mode="system"] .theme-icon-system,
 .appearance[data-mode="light"] .theme-icon-light,
@@ -614,7 +614,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .dd .w-terra  { fill: var(--terra-wash); }
 .dd .w-plum   { fill: var(--plum-wash); }
 .dd .f-card   { fill: var(--card); }
-.doodle .f-butter { fill: var(--butter-wash); stroke: none; }
 
 /* Cards: paper on paper, with an even edge all round. */
 .card {
@@ -680,13 +679,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .release-pdf-q { font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: var(--c); }
 .release-pdf code { background: var(--card); }
 
-/* Margin note: Fraunces italic with a little squiggle */
-.margin-note {
-  font-family: var(--font-display);
-  font-style: italic;
-  line-height: 1.45;
-  color: var(--muted);
-}
 
 /* ---------- 6. Landing page --------------------------------------------- */
 .home-top .squiggle { position: relative; white-space: nowrap; }
@@ -766,7 +758,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 
 /* Short home page (#16): the message with the two ways to start, one
-   drawing, what is in the toolkit, three doors (Start, Tools, Help), then a
+   drawing, the "What's here" columns (Start, Tools, Help), then a
    "What's new" line and "Share this guide". Compact: the core fits in about
    one and a half laptop screens. */
 .home-top { max-width: var(--page-max); margin: 0 auto; padding: clamp(14px, 3vw, 36px) var(--gutter) 0; }
@@ -795,18 +787,9 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .home-figure.wide img { max-width: 57.5rem; }   /* 920px; grows with the type on very large screens */
 .section-title { font-size: clamp(1.35rem, 1.15rem + 0.8vw, 1.75rem); margin: 0 0 16px; }
 
-/* "What's in the toolkit": a quiet overview with small doodles, no links
-   (the doors below hold those). Variant B merges it into the doors (.here). */
-.toolkit { padding-top: clamp(22px, 3vw, 34px); }
-.toolkit-grid {
-  list-style: none; margin: 0; padding: 0;
-  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px 28px;
-}
-.toolkit-grid li { display: flex; gap: 12px; align-items: flex-start; margin: 0; }
+/* Small doodles beside each line of "What's here" (below). */
 .tk-icon { width: 40px; height: 40px; flex: none; }
-.toolkit-grid p, .here-col li p { margin: 0; font-size: 0.95rem; line-height: 1.4; color: var(--ink-soft); }
-.toolkit-grid strong { display: block; color: var(--ink); font-size: 1rem; }
-.toolkit-grid p > span { display: block; }
+.here-col li p { margin: 0; font-size: 0.95rem; line-height: 1.4; color: var(--ink-soft); }
 .toolkit-isnt {
   margin: 18px 0 0; padding: 10px 16px;
   font-size: 0.95rem; line-height: 1.5; color: var(--ink-soft);
@@ -816,7 +799,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .toolkit-isnt strong { color: var(--ink); }
 
-.doors-section { padding: clamp(24px, 3vw, 36px) 0 clamp(24px, 3vw, 34px); }
 .doors { gap: 26px; isolation: isolate; }
 .doors .card, .here-col { box-shadow: 3px 3px 0 var(--line-strong); }   /* the pager's and result cards' offset */
 .doors .card { padding: clamp(18px, 2.2vw, 24px) clamp(18px, 2.4vw, 26px) clamp(10px, 1.4vw, 14px); }
@@ -826,12 +808,12 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .doors .help-card p { font-size: 0.98rem; margin-bottom: 0.7rem; }
 .doors .help-card ul { padding-top: 0.5rem; }
 .doors .help-card li a { padding: 7px 0; }
-:is(.door-start, .here-start) .kicker { color: var(--sage); }
-:is(.door-tools, .here-tools) .kicker { color: var(--blue); }
-:is(.door-help, .here-help) .kicker   { color: var(--terra); }
+.here-start .kicker { color: var(--sage); }
+.here-tools .kicker { color: var(--blue); }
+.here-help .kicker  { color: var(--terra); }
 .doors li a { white-space: normal; }   /* longer link names wrap at large text sizes */
 
-/* Variant B: "What's here", the doors with everything in the toolkit listed
+/* "What's here", the doors with everything in the toolkit listed
    under them; each line is an icon, a link and a few words. */
 .here { padding-top: clamp(22px, 3vw, 34px); }
 .here-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px; isolation: isolate; }
@@ -874,7 +856,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   padding-top: 14px;
   border-top: 1.5px dashed var(--line-strong);
 }
-.toolkit + .doors-section, .here + .home-foot { margin-top: 0; }
 .here + .home-foot { margin-top: clamp(24px, 3vw, 34px); }
 .home-news { margin: 0; flex: 1 1 30rem; max-width: 60rem; color: var(--ink-soft); }
 .home-news .tag { margin-right: 0.4em; }
@@ -926,7 +907,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .share-status:empty { display: none; }
 @media (max-width: 1080px) {
   .guide-list.doors { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
-  .toolkit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 860px) {
   .guide-list.doors, .here-grid { grid-template-columns: minmax(0, 1fr); padding-right: 6px; gap: 20px; }
@@ -936,10 +916,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   .home-top .lead { margin-bottom: 0.7em; }
   .home-actions .button { flex: 1 1 100%; }   /* both ways to start, full width */
   .home-more .sep { display: block; height: 0; overflow: hidden; }   /* one link per line */
-  .toolkit-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 14px; }   /* phones: names only, two columns */
-  .toolkit-grid li { align-items: center; gap: 8px; }
-  .toolkit-grid p > span { display: none; }
-  .toolkit-grid strong { font-size: 0.92rem; line-height: 1.3; }
   .tk-icon { width: 32px; height: 32px; }
   .doors .help-card > svg { float: none; width: 40px; height: 40px; }
   .doors .help-card .help-text { clear: none; }
@@ -1186,6 +1162,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .pager-prev .pager-label::before { content: "← " / ""; }
 .pager-next .pager-label::after { content: " →" / ""; }
 .pager-next { grid-column: 2; text-align: right; }
+.guide-content .page-feedback { margin: 2.2rem 0 0.6rem; font-size: 0.95rem; line-height: 1.45; color: var(--muted); }
 .guide-content .to-top { margin: 0 0 1.1rem; font-size: 0.95rem; line-height: 1.4; text-align: right; }
 .guide-content .to-top a { display: inline-block; padding: 8px 0 8px 10px; }   /* a comfortable touch target */
 
@@ -1624,13 +1601,14 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 /* Optional guide search: the same paper and ink in both themes. */
 .search-open {
   display: inline-flex; align-items: center; gap: 8px;
-  color: var(--ink-soft); background: transparent;
-  border: 1.5px solid var(--control-edge); border-radius: 999px;
-  font: inherit; font-size: 0.95rem; cursor: pointer; min-height: 44px;
+  color: var(--ink); background: var(--card);
+  border: 2px solid var(--btn-edge-2); border-radius: var(--sketch);   /* as .appearance-toggle */
+  box-shadow: 2px 2px 0 var(--btn-shadow);
+  font: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; min-height: 44px;
   padding: 8px 13px; text-align: left;
 }
 .search-open:hover, .search-close:hover { color: var(--ink); background: var(--paper-2); }
-.search-icon { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
+.search-icon { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .search-open[hidden], .guide-search[hidden] { display: none; }
 .search-dialog {
   color: var(--ink); background: var(--paper);
@@ -1853,7 +1831,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 }
 
 @media print {
-  .site-header, .nav-menu-list, .guide-sidebar, .guide-topics, .pager, .guide-end, .skip-link, .site-footer, .hero-actions, .diagram-open, .viewer, .page-toc, .page-toc-wide, .code-toolbar { display: none !important; }
+  .site-header, .nav-menu-list, .guide-sidebar, .guide-topics, .pager, .guide-end, .skip-link, .site-footer, .hero-actions, .diagram-open, .viewer, .page-toc, .page-toc-wide, .code-toolbar, .page-feedback { display: none !important; }
   .code-block { border: 0; background: none; }
   .guide-content .code-block > pre { padding-top: 16px; }
   :root, :root[data-theme], :root:not([data-theme]) {
@@ -1949,7 +1927,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 @media (max-width: 600px) { dialog.benefit-preview { padding-top: 72px; } }
 
 /* ---------- 12. Tools: one pattern ------------------------------------
-   Settings builder, Bring your work in, Check your references, Explain my
+   Settings builder, Convert to LaTeX, Check your references, Explain my
    error, Check your PDF. Every tool page uses the same parts and classes
    (docs/project/components.md, "Tool pages"):
      .tool          the tool's root; hidden until its script runs
@@ -2211,9 +2189,9 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .settings-page .tp-gap-20 { margin-top: calc(100cqw * 20 / 612); }
 .settings-page .tp-gap-40 { margin-top: calc(100cqw * 40 / 612); }
 .settings-page .is-empty { color: var(--page-muted); opacity: 0.7; }
-.settings-page .tp-seal {   /* 0.25 of the text width, the seal's shape; pushed down like \vfill */
-  display: grid; place-items: center;
-  width: 25%; aspect-ratio: 605 / 608; margin-top: auto;
+.settings-page .tp-seal {   /* a circle 0.25 of the text width (468pt); pushed down like \vfill */
+  display: grid; place-items: center; flex: none;
+  width: calc(100cqw * 117 / 612); height: calc(100cqw * 117 / 612); margin-top: auto;
   border: 1px dashed var(--line-strong); border-radius: 50%;
   color: var(--muted); font-size: calc(100cqw * 8 / 612);
 }
@@ -2246,7 +2224,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .guide-content .settings-errors:empty { display: none; }
 .guide-content .settings-errors li { margin: 0.15rem 0; }
 
-/* Bring your work in: the pasted text on the left, the LaTeX on the right;
+/* Convert to LaTeX: the pasted text on the left, the LaTeX on the right;
    stacked on narrow screens. */
 .convert-options { margin: 0 0 1rem; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; }
 .convert-options legend { padding: 0; margin: 0 0 6px; font-family: var(--font-body); font-size: 1rem; font-weight: 700; }

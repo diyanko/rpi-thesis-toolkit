@@ -197,7 +197,7 @@ it does not remove the need to revise the argument for its audience.
 - **Advisors who prefer Word.** Send a PDF to comment on, or a Word copy, and
   apply their edits by hand ([common situations](going-further.md#common-situations)).
 - **Tables take a bit more effort.** Paste spreadsheet cells into
-  [Bring your work in](bring-your-work-in.md), or adapt the sample chapters'
+  [Convert to LaTeX](convert-to-latex.md), or adapt the sample chapters'
   example.
 - **The Office of Graduate Education (OGE) can't debug LaTeX.** Its staff
   review your formatting, not your code

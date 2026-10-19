@@ -5,7 +5,7 @@ have to start over. Get the sample compiling first
 ([get started](get-started.md)) and keep your original untouched. Move **one
 small section** first, to meet any surprises early. Then go one chapter at a
 time, compiling after each. Moving a section or a table? Paste it into
-[Bring your work in](bring-your-work-in.md) for a first pass in LaTeX.
+[Convert to LaTeX](convert-to-latex.md) for a first pass.
 
 Where do you start?
 
@@ -30,7 +30,7 @@ In Google Docs, copy the text, or choose **File → Download → Microsoft
 Word**.
 
 1. **Convert one section:** paste it into
-   [Bring your work in](bring-your-work-in.md). It turns headings, bold and
+   [Convert to LaTeX](convert-to-latex.md). It turns headings, bold and
    italics, lists, links, special characters, and tables into LaTeX, and
    lists what it left for you. By hand instead: headings become
    `\chapter{...}`, `\section{...}`, or `\subsection{...}`; footnotes become
@@ -55,7 +55,7 @@ Markdown draft carries over once each symbol becomes its command. Neither
 route below changes your original file.
 
 - **In your browser, nothing to install:** paste a section into
-  [Bring your work in](bring-your-work-in.md), which reads Markdown too.
+  [Convert to LaTeX](convert-to-latex.md), which reads Markdown too.
 - **One short section by hand:** [move it by hand](#move-a-section-by-hand).
 - **A longer draft:** [use Pandoc](#convert-a-draft-with-pandoc-optional), then
   clean up its output.

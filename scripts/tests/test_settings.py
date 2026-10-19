@@ -73,7 +73,7 @@ class Schema(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     settings.load(folder)
 
-    @unittest.skipUnless(shutil.which("pandoc"), "no Pandoc")
+    @unittest.skipUnless(build_site.pandoc_ready(), "no Pandoc 3.11 or newer")
     def test_reference_table_online_and_offline(self):
         for offline in (False, True):
             with self.subTest(offline=offline):
@@ -98,7 +98,7 @@ class Browser(unittest.TestCase):
         for name in ("core", "ui"):
             shutil.copyfile(ROOT / f"site/settings/{name}.js", cls.folder / f"settings/{name}.js")
         (cls.folder / "settings/data.js").write_text(settings.javascript(settings.load()), encoding="utf-8")
-        if shutil.which("pandoc"):
+        if build_site.pandoc_ready():
             html = build_site.Site(offline=False).render("docs/settings-builder.md")
         else:
             doc = (ROOT / "docs/settings-builder.md").read_text(encoding="utf-8")
@@ -232,7 +232,7 @@ class Browser(unittest.TestCase):
         self.assertIn(r"100\% of A\&B\_\#1 \{x\} \$y\$ \textasciitilde{} \textasciicircum{} \textbackslash{}input", result["text"])
         self.assertFalse(result["errors"])
 
-    @unittest.skipUnless(shutil.which("pandoc"), "no Pandoc")
+    @unittest.skipUnless(build_site.pandoc_ready(), "no Pandoc 3.11 or newer")
     def test_rendered_page_without_javascript(self):
         self.browser.call("Emulation.setScriptExecutionDisabled", value=True)
         try:

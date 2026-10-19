@@ -255,7 +255,7 @@ const styleSeen = {};
 function recordStyles(win, doc, page) {
   for (const selector of STYLED) {
     for (const el of doc.querySelectorAll(selector)) {
-      if (el.closest("[hidden], .visually-hidden, dialog:not([open]), .component-variant")) continue;
+      if (el.closest("[hidden], .visually-hidden, dialog:not([open])")) continue;
       const cs = win.getComputedStyle(el);
       if (cs.display === "none" || !el.getBoundingClientRect().width) continue;
       const look = LOOK.map((k) => cs[k]).join(" ");
@@ -397,7 +397,7 @@ SETTLE = """Promise.race([new Promise(r => setTimeout(r, 5000)), Promise.all([do
 FULL_MAX = 16000  # px; longer pages are cut off at this height
 # A tablet in portrait, an ultrawide and a 4K monitor: one home page, guide page and
 # tool page, so the layouts between phone and laptop, and above, stay reviewed.
-WIDE_SHOTS = {"index.html", "guide/writing.html", "guide/bring-your-work-in.html"}
+WIDE_SHOTS = {"index.html", "guide/writing.html", "guide/convert-to-latex.html"}
 SHOTS = main_checkout(ROOT) / "_local" / "shots"
 
 

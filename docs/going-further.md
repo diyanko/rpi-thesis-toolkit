@@ -35,7 +35,8 @@ put `main.pdf` beside `main.tex`.
 <details id="your-computer-to-overleaf"><summary>Your computer to Overleaf</summary>
 
 1. ZIP your whole project folder, including your downloaded seal in
-   `assets/` (you can leave out `build/`).
+   `assets/` (you can leave out `build/`, `guide/`, `START-HERE.html`, and
+   the cheat sheet PDF).
 2. Upload it as a new Overleaf project, then set the main document and
    compiler as in [the Overleaf route](get-started.md#step-3b-overleaf-route).
 3. Recompile. Overleaf runs the bibliography step for you.
@@ -320,16 +321,11 @@ public.
 > is public, and GitHub doesn't let you make it private
 > ([GitHub: visibility of forks](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/about-permissions-and-visibility-of-forks)).
 
-Use one of these private routes instead:
-
-- **A new private repository:** create one and choose **Private**
-  ([GitHub: creating a new repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository)).
-  Then add your starter's files with **Add file → Upload files**.
-- **Use this template:** if the toolkit's GitHub page shows a **Use this
-  template** button, click it, choose **Create a new repository**, and set
-  **Private**
-  ([GitHub: creating a repository from a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)).
-  <!-- TODO(verify): checked 14 Oct 2026 against the GitHub docs linked here. On that date the toolkit repository was not marked as a template, so the button does not appear yet. Enable "Template repository" in its settings, or remove this route. -->
+Instead, create a new repository and choose **Private**
+([GitHub: creating a new repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository)).
+Then add the files from the starter ZIP with **Add file → Upload files**.
+The toolkit's own repository holds scripts and website code that a thesis
+does not need.
 
 **Without a terminal:** to save later work, open the repository's page.
 GitHub's uploader puts each file in the folder you are viewing, so an
@@ -471,7 +467,7 @@ anything else confidential.
 I am setting up the RPI Thesis Toolkit, an unofficial, community-made LaTeX starter for RPI theses and dissertations. Its guide is https://diyanko.github.io/rpi-thesis-toolkit/guide/get-started.html. I use [Overleaf / my computer with Windows, macOS, or Linux]. Walk me through [installing LaTeX / opening the starter] one step at a time, following that guide. Do not change rpi-thesis.cls, and do not invent OGE rules: say when I should check OGE's own pages.
 ```
 
-**Convert to LaTeX:**
+**Convert a section with AI:**
 
 ```prompt
 I am using the RPI Thesis Toolkit, an unofficial LaTeX starter for RPI theses. Convert this [Word section / Markdown text / table / equation] into LaTeX for a chapter file of that starter: [paste it or attach the file]. Preserve every word, value, and symbol, and flag anything unclear instead of guessing. Use plain LaTeX commands, add no formatting packages, leave rpi-thesis.cls untouched, and do not invent OGE rules.
@@ -480,7 +476,7 @@ I am using the RPI Thesis Toolkit, an unofficial LaTeX starter for RPI theses. C
 The prompt for **an error** is in [fixing problems](troubleshooting.md#ask-an-ai-chat-to-explain-it),
 and the one for **suggesting a change to the toolkit** is on the
 [Contribute page](../CONTRIBUTING.md#three-ways-to-help). For a section or a
-table, try [Bring your work in](bring-your-work-in.md) first: it converts in
+table, try [Convert to LaTeX](convert-to-latex.md) first: it converts in
 your browser.
 
 ### Ask for a file conversion
@@ -651,7 +647,7 @@ check glyphs and pagination. Other writing systems are untested.
   LuaLaTeX or XeLaTeX.
 - **VS Code:** open the Command Palette (Ctrl+Shift+P, or Cmd+Shift+P on
   macOS), run **LaTeX Workshop: Build with recipe**, and pick
-  **RPI Thesis Toolkit: LuaLaTeX + Biber** or **XeLaTeX + Biber**. Pick it
+  **RPI Thesis Toolkit: LuaLaTeX + Biber (Unicode)** or **XeLaTeX + Biber (Unicode)**. Pick it
   again after you reopen VS Code.
 
 Optional, with the build helper, from the folder containing `main.tex` (on

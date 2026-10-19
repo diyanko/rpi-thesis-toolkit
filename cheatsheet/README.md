@@ -26,7 +26,8 @@ ignored by Git.
 
 It uses only packages included in TeX Live and Overleaf: `geometry`, `fix-cm`,
 `libertinus`, `zi4` (Inconsolata), `xcolor`, `tcolorbox` (with TikZ and
-`listings`), and `array`. It does not need shell escape.
+`listings`), `array`, and `hyperref` (live links in the PDF). It does not
+need shell escape. The version in its footer is set by `scripts/bump.py`.
 
 ## Keep it accurate
 

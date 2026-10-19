@@ -1,4 +1,4 @@
-// "Bring your work in" (docs/bring-your-work-in.md): reading pasted text and
+// "Convert to LaTeX" (docs/convert-to-latex.md): reading pasted text and
 // writing LaTeX, without any page code, so scripts/tests/test_convert.py can
 // run it in a headless browser. site/convert/ui.js is the page part.
 //

@@ -23,6 +23,7 @@ class Bump(unittest.TestCase):
             "scripts/build_site.py": 'RELEASE_VERSION = "0.7.0"\n',
             "README.md": "v0.7.0/rpi-thesis-starter-v0.7.0.zip\n",
             "docs/get-started.md": "v0.7.0%2Frpi-thesis-overleaf-v0.7.0.zip\n",
+            "cheatsheet/cheatsheet.tex": "\\newcommand{\\sheetversion}{0.7.0}\n",
             "CITATION.cff": "version: 0.7.0\ndate-released: 2026-10-16\n",
             "CHANGELOG.md": "# Changes\n\n## Unreleased\n\n**Changes your PDF?** No.\n",
         }
@@ -69,6 +70,7 @@ class Bump(unittest.TestCase):
         self.assertEqual(old, "0.7.0")
         self.assertEqual(set(prepared), set(self.files))
         self.assertIn("2026/10/17 v0.8.0", prepared["rpi-thesis.cls"])
+        self.assertIn("\\newcommand{\\sheetversion}{0.8.0}", prepared["cheatsheet/cheatsheet.tex"])
         self.assertIn("v0.8.0%2Frpi-thesis-overleaf-v0.8.0", prepared["docs/get-started.md"])
         self.assertIn("`v0.8.0`.\n\n**Changes your PDF?** No.", prepared["CHANGELOG.md"])
         self.invoke()

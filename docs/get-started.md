@@ -54,10 +54,6 @@ page's computer card opens this step. -->
 3. **Overleaf:** keep the ZIP as it is. (Safari unzipped it? Right-click the
    folder and choose **Compress**.)
 
-Or: on the [project's GitHub page](https://github.com/diyanko/rpi-thesis-toolkit),
-use the green **Code** button, then **Download ZIP**, for every file in the
-project. You can ignore `docs/` and `site/`.
-
 Next: [set up your computer](#step-3a-your-computer-route) or
 [open the starter on Overleaf](#step-3b-overleaf-route).
 
@@ -202,8 +198,9 @@ Then go to [Step 4](#step-4-check-your-first-pdf).
 1. Sign in to [Overleaf](https://www.overleaf.com/); the free plan is enough
    to start.
 2. **[Open the starter in Overleaf](https://www.overleaf.com/docs?snip_uri=https%3A%2F%2Fgithub.com%2Fdiyanko%2Frpi-thesis-toolkit%2Freleases%2Fdownload%2Fv0.10.0%2Frpi-thesis-overleaf-v0.10.0.zip)**.
-   - Or upload the ZIP from [Step 2](#step-2-get-the-files) yourself:
-     **New project → Upload project**
+   - Or download the
+     [Overleaf ZIP](https://github.com/diyanko/rpi-thesis-toolkit/releases/download/v0.10.0/rpi-thesis-overleaf-v0.10.0.zip)
+     and upload it yourself: **New project → Upload project**
      ([Overleaf's steps](https://docs.overleaf.com/managing-projects-and-files/uploading-a-project)).
      If your files end up inside a folder, re-zip the items *inside* it.
    <!-- Checked 14 Oct 2026: Overleaf's "open from a ZIP link" created a

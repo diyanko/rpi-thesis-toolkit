@@ -11,6 +11,25 @@ come first. Each rule below is quoted from the
 page numbers are the manual's printed pages, **FC** is OGE's Formatting
 Checklist, and **LT** its *LaTeX Formatting Tips & Tricks*.
 
+## If you advise students
+
+- **What it is:** a free LaTeX starter for RPI master's theses and doctoral
+  dissertations, a plain-language guide, and a few browser tools. It is
+  unofficial and community-made: RPI and OGE did not make it, and OGE has
+  not reviewed it.
+- **What students get:** a thesis that compiles from the first day, on
+  Overleaf or their own computer, with the title page, contents, page
+  numbers, and references laid out by one shared class file. They write
+  the chapters; no programming, Git, or paid software is needed.
+- **What stays theirs:** checking the PDF against OGE's current manual,
+  and every decision this page lists under
+  [what still needs a human look](#what-still-needs-a-human-look).
+- **Privacy:** the tools run in the browser; nothing a student pastes or
+  chooses is uploaded.
+- **To recommend it:** share the website,
+  <https://diyanko.github.io/rpi-thesis-toolkit/>. It always points to the
+  current version.
+
 ## What the class sets
 
 The class file (`rpi-thesis.cls`) supplies the layout defaults below; each

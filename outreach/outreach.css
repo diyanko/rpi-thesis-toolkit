@@ -1,0 +1,489 @@
+/* ==========================================================================
+   RPI Thesis Toolkit outreach pages (handout and poster), for print.
+   The website's look on paper: the same fonts, colors, doodles and
+   hand-drawn boxes as site/site.css, on white paper (home printers cannot
+   print to the edge, so a page-wide color would leave a white frame).
+   Everything stays readable in black and white: text is ink, colors are
+   light washes behind it.
+
+   Sections: 1 Fonts  2 Colors  3 Base  4 Shared pieces  5 Handout
+             6 Handout two-up (imposed)  7 Drawings  8 Handout front and back
+             9 QR centre discs  10 Poster  11 Poster QR codes
+   ========================================================================== */
+
+/* ---------- 1. Fonts: the website's own files (site/fonts), embedded in the PDF */
+@font-face {
+  font-family: "Fraunces"; font-style: normal; font-weight: 600;
+  src: url("../site/fonts/fraunces-600-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Fraunces"; font-style: italic; font-weight: 400;
+  src: url("../site/fonts/fraunces-400-italic-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Next"; font-style: normal; font-weight: 400 700;
+  src: url("../site/fonts/atkinson-hyperlegible-next-latin.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Atkinson Hyperlegible Next"; font-style: italic; font-weight: 400;
+  src: url("../site/fonts/atkinson-hyperlegible-next-400-italic-latin.woff2") format("woff2");
+}
+
+/* ---------- 2. Colors: the light tokens of site/site.css, section 2 ------ */
+:root {
+  color-scheme: light;
+  --paper:       #faf5ea;
+  --paper-2:     #f1e8d6;
+  --card:        #fffcf5;
+  --ink:         #2d2620;
+  --ink-soft:    #4a4037;
+  --muted:       #625547;
+  --line:        #e3d6bf;
+  --line-strong: #c4ae8a;
+  --sage:  #4a6b42;  --sage-wash:  #e4ecd2;
+  --blue:  #24518c;  --blue-wash:  #e0e6ef;
+  --terra: #a24a24;  --terra-wash: #f6dfcd;
+  --plum:  #70466a;  --plum-wash:  #f1e0ea;
+  --butter-wash: #f7e8b3;
+  --rpi-red: #c8102e;
+
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --font-body: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+
+  --sketch: 9pt 12pt 8pt 11pt / 11pt 8pt 12pt 9pt;   /* hand-drawn box */
+  --wobble: 58% 42% 55% 45% / 48% 56% 44% 52%;       /* hand-drawn circle */
+}
+
+/* ---------- 3. Base ------------------------------------------------------ */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fff; }
+body {
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 10pt;
+  line-height: 1.4;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+h1, h2, h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+p { margin: 0; text-wrap: pretty; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+strong { font-weight: 700; }
+
+/* On screen, show each page as a sheet on a grey desk. */
+@media screen {
+  html { background: #8a8178; }
+  body { background: transparent; padding: 24px 0; }
+  .page, .sheet { margin: 0 auto 24px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35); }
+}
+
+/* ---------- 4. Shared pieces -------------------------------------------- */
+.page {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+  break-after: page;
+}
+.page:last-child { break-after: auto; }
+
+/* The site mark: braces hugging a red dot (site/logo.svg), and the name. */
+.brand { display: flex; align-items: center; gap: 6pt; }
+.brand svg { width: 17pt; height: 17pt; flex: none; }
+.brand .brace { fill: none; stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.brand .dot { fill: var(--rpi-red); }
+.brand-name { font-family: var(--font-display); font-weight: 600; font-size: 11.5pt; letter-spacing: -0.01em; }
+.tag {
+  display: inline-block;
+  padding: 0 7pt;
+  font-size: 7.5pt;
+  font-weight: 700;
+  line-height: 1.6;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--terra);
+  background: var(--terra-wash);
+  border: 0.75pt solid color-mix(in srgb, var(--terra) 40%, transparent);
+  border-radius: 999px;
+}
+.eyebrow {
+  font-size: 8.5pt;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* The hand-drawn wave under one word, as on the home page. */
+.squiggle { position: relative; white-space: nowrap; }
+.squiggle::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0.05em; bottom: -0.15em;
+  height: 0.16em;
+  background: var(--rpi-red);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 7'%3E%3Cpath d='M-1 4.2 C 2 1.6, 6 1.4, 10 3.5 S 17 5.6, 21 2.9' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left center / 0.4em 100%;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 7'%3E%3Cpath d='M-1 4.2 C 2 1.6, 6 1.4, 10 3.5 S 17 5.6, 21 2.9' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left center / 0.4em 100%;
+}
+/* Handwriting: Fraunces italic in a color, for notes in the margin. */
+.hand { font-family: var(--font-display); font-style: italic; font-weight: 400; }
+.hand-terra { color: var(--terra); }
+.hand-blue { color: var(--blue); }
+.hand-sage { color: var(--sage); }
+
+/* A hand-drawn box with a color wash printed a little off, as in the diagrams. */
+.sketch {
+  position: relative;
+  background: var(--card);
+  border: 1.2pt solid var(--ink);
+  border-radius: var(--sketch);
+  box-shadow: 4pt 4pt 0 var(--wash, var(--paper-2));
+}
+.wash-sage   { --wash: var(--sage-wash); }
+.wash-blue   { --wash: var(--blue-wash); }
+.wash-terra  { --wash: var(--terra-wash); }
+
+/* A QR code with its quiet zone (4 modules, from the padding) and its address under it. */
+.qr { display: flex; flex-direction: column; align-items: center; gap: 3pt; }
+.qr-code {
+  background: #fff;
+  border: 1pt solid var(--line-strong);
+  border-radius: 6pt;
+}
+.qr-code img { display: block; width: 100%; height: auto; }
+.qr-url { font-weight: 700; font-size: 9.5pt; line-height: 1.2; text-align: center; overflow-wrap: anywhere; }
+
+/* Room for a centre disc (section 9). */
+.qr-code { position: relative; }
+
+.disclaimer { font-size: 9pt; line-height: 1.35; color: var(--ink-soft); }
+.disclaimer strong { color: var(--ink); }
+
+/* ---------- 5. Handout: half letter, 5.5 x 8.5 in, portrait -------------- */
+@page { size: 5.5in 8.5in; margin: 0; }
+.handout .page {
+  width: 5.5in;
+  height: 8.5in;
+  padding: 0.33in 0.4in 0.32in;
+  display: flex;
+  flex-direction: column;
+}
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 8pt; }
+
+/* Front */
+.front h1 { font-size: 24pt; margin: 9pt 0 6pt; }
+.front .lead { font-size: 10.5pt; line-height: 1.36; color: var(--ink-soft); }
+
+.start {
+  margin-top: auto;
+  display: flex; align-items: center; gap: 12pt;
+  padding: 6pt 7pt 6pt 14pt;
+}
+.start-text { flex: 1; min-width: 0; }
+.start-text .qr-url { text-align: left; font-size: 10pt; margin-top: 5pt; }
+.start-text p { font-size: 9.5pt; color: var(--ink-soft); }
+.start .qr-code { width: 1.26in; padding: calc(1.26in * 4 / 49); }   /* 41 modules + 4 on each side */
+
+/* ---------- 6. Handout two-up: two half-letter pages on US letter landscape.
+   scripts/outreach.py builds this from handout.html: each .sheet holds two
+   copies of one side, so a double-sided print (flip on short edge), cut in
+   the middle, gives two identical pamphlets. */
+@page sheet { size: 11in 8.5in; margin: 0; }
+.sheet {
+  page: sheet;
+  position: relative;
+  width: 11in;
+  height: 8.5in;
+  display: flex;
+  background: #fff;
+  break-after: page;
+}
+.sheet:last-child { break-after: auto; }
+.sheet .page { flex: none; }
+/* Faint cut marks: short ticks at the middle of the top and bottom edges,
+   in the margins, never on the content. */
+.cut { position: absolute; left: 5.5in; width: 0; height: 0.2in; border-left: 0.6pt solid #8a7d6d; }
+.cut-top { top: 0.12in; }
+.cut-bottom { bottom: 0.12in; }
+
+/* ---------- 7. Drawings: the site's doodle style (site/site.css, .dd) ---- */
+.dd, .dd * { fill: none; stroke: var(--ink); stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.dd .ln { stroke: var(--muted); stroke-width: 1; }
+.dd .k { fill: var(--card); stroke: none; }
+.dd .w-sage, .dd .w-blue, .dd .w-butter, .dd .w-terra, .dd .w-plum { stroke: none; }
+.dd .w-sage { fill: var(--sage-wash); }
+.dd .w-blue { fill: var(--blue-wash); }
+.dd .w-butter { fill: var(--butter-wash); }
+.dd .w-terra { fill: var(--terra-wash); }
+.dd .w-plum { fill: var(--plum-wash); }
+.dd .arr { stroke: var(--terra); stroke-width: 1.4; }
+.dd .tada { stroke: var(--terra); stroke-width: 1.3; }
+.dd .margin { stroke: var(--blue); stroke-width: 0.8; stroke-dasharray: 2.5 2.5; }
+.dd .dots { stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 0.5 4; }
+.dd text { stroke: none; fill: var(--ink); }
+.dd .hand-t { font-family: var(--font-display); font-style: italic; font-size: 13px; }
+.dd .small-hand { font-size: 11px; }
+.dd .mono-t { font-family: var(--font-mono); font-size: 8.5px; fill: var(--ink-soft); }
+.dd .serif-t { font-family: var(--font-display); font-weight: 600; font-size: 6.5px; letter-spacing: 0.04em; }
+.dd .t-terra { fill: var(--terra); }
+.dd .t-sage { fill: var(--sage); }
+.dd .t-plum { fill: var(--plum); }
+.dd .t-blue { fill: var(--blue); }
+
+/* ---------- 8. Handout front and back ------------------------------------ */
+.opt .page { padding: 0.42in 0.45in; }
+.opt .front h1 { margin: 22pt 0 8pt; }
+.opt .lead { font-size: 11pt; line-height: 1.4; color: var(--ink-soft); }
+
+/* The way in: the website QR with the brace mark, and its address. */
+.opt .start { margin-top: auto; display: flex; align-items: center; gap: 14pt; padding: 0; background: none; border: 0; box-shadow: none; }
+.opt .start .qr-code { width: 1.3in; padding: calc(1.3in * 4 / 49); }   /* 41 modules + 4 on each side */
+.opt .start-text { flex: 1; min-width: 0; }
+.opt .start-note { font-size: 12pt; margin-bottom: 2pt; }
+.opt .start .qr-url { text-align: left; font-size: 11pt; }
+.opt .start-sub { margin-top: 4pt; font-size: 9.5pt; color: var(--ink-soft); }
+
+/* Back: who it is for, the feedback ask, the fine print. */
+.hand-line { display: block; font-style: italic; font-weight: 400; color: var(--terra); }
+
+.fine { margin-top: 18pt; font-size: 9pt; line-height: 1.4; color: var(--muted); }
+.fine strong { color: var(--ink); }
+
+/* More drawing strokes. */
+.dd .stream { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
+.dd .pt { stroke: var(--muted); stroke-width: 0.8; }
+.dd .lnb { stroke: var(--blue); stroke-width: 2.2; }
+.dd .lns { stroke: var(--sage); stroke-width: 2.2; }
+.dd .md { font-size: 7.5px; }
+.panel-art { width: 1.3in; height: auto; flex: none; overflow: visible; }
+.dd .code { font-size: 8px; fill: var(--blue); }
+.dd .plotline { stroke: var(--sage); stroke-width: 1.4; }
+.dd .f-dot { fill: var(--ink); stroke: none; }
+.dd .bibt { fill: var(--blue); }
+.dd .serif-t.big { font-size: 9px; }
+
+/* The front drawing, the OGE list, the steps and the feedback box. */
+.opt-h .front h1 { font-size: 27pt; }
+.art-h { margin: 12pt 0 0; }
+.art-h .drawing { display: block; width: 100%; height: auto; overflow: visible; }
+.oge svg { width: 11pt; height: 9pt; flex: none; overflow: visible; transform: translateY(1pt); }
+.oge path { fill: none; stroke: var(--sage); stroke-width: 1.5pt; stroke-linecap: round; stroke-linejoin: round; }
+
+.back-h2 { font-size: 13pt; margin-bottom: 7pt; }
+.oge li { display: flex; gap: 6pt; align-items: baseline; }
+.oge p { font-size: 9.5pt; line-height: 1.35; color: var(--ink-soft); }
+.oge strong { color: var(--ink); }
+.back-h { font-size: 22pt; margin-top: 12pt; }
+.back-h2 { margin-top: 16pt; }
+
+.steps-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9pt; }
+.steps-row li { padding: 6pt 6pt 7pt; display: flex; flex-direction: column; align-items: center; text-align: center; }
+.steps-row .panel-art { width: 100%; }
+.steps-row .hand { font-size: 10.5pt; line-height: 1.15; margin-top: 3pt; }
+
+.fb { margin-top: auto; display: flex; align-items: center; gap: 12pt; padding: 11pt 12pt 11pt 14pt; }
+.fb > div { flex: 1; min-width: 0; }
+.fb h2 { font-size: 14pt; line-height: 1.15; }
+.fb p { margin-top: 4pt; font-size: 9.5pt; line-height: 1.35; color: var(--ink-soft); }
+.fb .qr-code { width: 1.05in; padding: calc(1.05in * 4 / 45); flex: none; }   /* 37 modules + 4 on each side */
+.fb .plane { position: absolute; right: 1.2in; top: -14pt; width: 0.8in; height: auto; overflow: visible; }
+.opt .fb + .fine { margin-top: 12pt; }
+.step-d { margin-top: 3pt; font-size: 9pt; line-height: 1.3; color: var(--ink-soft); }
+.opt-h .panel-art { width: 1.1in; }
+.opt-h .fb .plane { right: 1.35in; top: -15pt; }
+.opt-h .dd .small-hand { paint-order: stroke; stroke: #fff; stroke-width: 3.5px; stroke-linejoin: round; }
+.kicker-line { margin-top: 18pt; font-size: 14pt; line-height: 1.1; }
+.opt-h .front .kicker-line + h1 { margin-top: 3pt; }
+.opt-h .back-h { font-size: 21pt; margin-top: 12pt; }
+.oge-short { margin-top: 10pt; display: grid; grid-template-columns: 1fr 1fr; gap: 6pt 12pt; }
+.oge-short p { font-size: 10pt; line-height: 1.3; }
+.opt-h .back-h2 { margin-top: 14pt; }
+.do-h { margin-top: 12pt; display: grid; grid-template-columns: 1fr 1fr; gap: 12pt; }
+.do-h h3 { font-size: 11.5pt; margin-bottom: 2pt; }
+.do-h p { font-size: 9.5pt; line-height: 1.35; color: var(--ink-soft); }
+/* ---------- 9. QR centre discs: about 26% of the code's width (level H),
+   on a white ring; the code is 41 (site) or 37 (form) modules plus 8 for the
+   quiet zone, so 26% of the code is 21.8% or 21.4% of the box. */
+.qr-disc {
+  position: absolute; left: 50%; top: 50%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  display: grid; place-items: center;
+  background: #fff;
+  border-radius: 50%;
+}
+.qr-site .qr-disc { width: 21.8%; }
+.qr-feedback .qr-disc { width: 21.4%; }
+.qr-disc svg { width: 82%; height: 82%; }
+/* A hand-drawn underline: one slightly wobbly pen stroke under a word or two,
+   in the site's blue. At most two marks a page, counting the red wave. */
+.hl { position: relative; white-space: nowrap; }
+.hl::after {
+  content: "";
+  position: absolute;
+  left: -0.03em; right: -0.08em; bottom: -0.14em;
+  height: 0.2em;
+  background: var(--blue);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8.6C14 7 27 7.6 41 6.9S70 5.3 83 5.6C89 5.7 94 5.2 98 4.4' fill='none' stroke='black' stroke-width='4.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8.6C14 7 27 7.6 41 6.9S70 5.3 83 5.6C89 5.7 94 5.2 98 4.4' fill='none' stroke='black' stroke-width='4.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center / 100% 100%;
+}
+.opt-h .back .top { justify-content: flex-start; }
+/* ---------- 10. Poster: US letter, portrait ------------------------------ */
+@page pv { size: 8.5in 11in; margin: 0; }
+.pv .page {
+  page: pv;
+  width: 8.5in;
+  height: 11in;
+  padding: 0.55in 0.6in 0.5in;
+  display: flex;
+  flex-direction: column;
+}
+.pv .brand svg { width: 22pt; height: 22pt; }
+.pv .brand-name { font-size: 14.5pt; }
+.pv .tag { font-size: 8.5pt; padding: 1pt 9pt; }
+.pv .eyebrow { font-size: 10pt; letter-spacing: 0.08em; }
+.pv h1 { font-size: 48pt; line-height: 1.02; letter-spacing: -0.02em; }
+.pv .lead { font-size: 14pt; line-height: 1.42; color: var(--ink-soft); }
+
+/* Hand-drawn art: one line weight, washes printed a little off. */
+.art svg { display: block; width: 100%; height: auto; overflow: visible; }
+.art .s { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.art .s.thin { stroke-width: 1.5; }
+.art .s.ln { stroke: var(--muted); stroke-width: 1.7; }
+.art .s.blue { stroke: var(--blue); }   .art .card { fill: var(--card); }
+.art .paper { fill: var(--paper); }
+.art .w-sage { fill: var(--sage-wash); } .art .w-blue { fill: var(--blue-wash); }
+.art .w-terra { fill: var(--terra-wash); } .art .w-plum { fill: var(--plum-wash); }
+.art .w-butter { fill: var(--butter-wash); }
+.art .f-red { fill: var(--rpi-red); } .art text { font-family: var(--font-body); fill: var(--ink); }
+.art .t-hand { font-family: var(--font-display); font-style: italic; font-weight: 400; }
+.art .t-terra { fill: var(--terra); } .art .t-sage { fill: var(--sage); }
+.art .t-blue { fill: var(--blue); }   .art .t-plum { fill: var(--plum); }
+.art .t-muted { fill: var(--muted); }
+.art .t-serif { font-family: var(--font-display); font-weight: 600; }
+.art .mid { text-anchor: middle; } .art .end { text-anchor: end; }
+
+/* A footer with the two QR codes side by side, then the disclaimer. */
+.pv-foot { margin-top: auto; padding-top: 12pt; }
+.qr-pair.rule { border-top: 1.2pt dashed var(--line-strong); padding-top: 12pt; gap: 18pt; }
+.qr-pair.rule > .plain + .plain { border-left: 1.2pt dashed var(--line-strong); padding-left: 18pt; }
+.qr-pair { display: grid; grid-template-columns: 1.25fr 1fr; gap: 16pt; align-items: stretch; }
+.qr-card { display: flex; align-items: center; gap: 12pt; padding: 10pt 12pt 10pt 14pt; }
+.qr-card > div:first-child { flex: 1; min-width: 0; }
+.qr-card.plain { padding: 0; }
+.qr-card h3 { font-size: 17pt; margin-bottom: 4pt; }
+.qr-card p { font-size: 10.5pt; line-height: 1.35; color: var(--ink-soft); }
+.qr-card .url { margin-top: 6pt; font-weight: 700; font-size: 10pt; line-height: 1.2; color: var(--ink); }
+.qr-label {
+  display: inline-flex; align-items: center; gap: 4pt;
+  font-size: 8.5pt; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 3pt;
+}
+.qr-label svg { width: 12pt; height: 12pt; overflow: visible; }
+.qr-label .brace { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.qr-label .dot { fill: var(--rpi-red); }
+.pv .disclaimer { margin-top: 12pt; font-size: 9.5pt; line-height: 1.4; text-align: center; }
+
+/* ---------- 11. Poster QR codes with a centre mark ------------------------
+   --w: printed width including the quiet zone (4 modules each side).
+   --n: modules across the code itself (41 for the website, 37 for the form).
+   The mark sits on a solid paper-colored rounded square 19% of the code's
+   width: these codes use the highest error correction (H). */
+.qrm {
+  --w: 1.4in; --n: 41;
+  position: relative;
+  flex: none;
+  width: var(--w);
+  padding: calc(var(--w) * 4 / (var(--n) + 8));
+  background: #fff;
+  border: 1pt solid var(--line-strong);
+  border-radius: 7pt;
+}
+.qrm img { display: block; width: 100%; height: auto; }
+.qrm .mark {
+  position: absolute; left: 50%; top: 50%;
+  width: calc(var(--w) * var(--n) / (var(--n) + 8) * 0.19);
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  display: grid; place-items: center;
+  background: var(--paper);
+  border-radius: 24%;
+}
+.qrm .mark svg { width: 78%; height: 78%; overflow: visible; }
+.qrm-site { --n: 41; }
+.qrm-form { --n: 37; }
+/* Bolder marks: a solid disc with a white glyph, on a white ring, 26% of the code's width (level H). */
+.qrm .mark-disc { width: calc(var(--w) * var(--n) / (var(--n) + 8) * 0.26); border-radius: 50%; background: #fff; }
+.qrm .mark-disc svg { width: 82%; height: 82%; }
+
+/* The poster's funnel drawing and heading. */
+.art .s.dashy { stroke: var(--muted); stroke-dasharray: 4 5; }
+.pv-h .eyebrow { margin-top: 14pt; }
+.pv-h h1 { margin: 6pt 0 0; font-size: 42pt; }
+.funnel { margin: 18pt 0 0; }
+.pv-h .lead { margin-top: 8pt; font-size: 12.5pt; }
+
+/* ---------- 12. Handout back: its own rhythm ------------------------------
+   The front is one big drawing; the back is a pinned note, a row of tilted
+   cards joined by arrows, two small doodles, and a speech bubble. Spare
+   height is shared out evenly between the blocks (gap plus auto margins). */
+.handout .back { gap: 9pt; }
+.handout .back .back-h { margin-top: 0; }
+.back .note, .back .do-block, .back .do-h, .back .fb { margin-top: auto; }
+
+/* What the starter sets up, as a sticky note pinned with a strip of tape. */
+.note {
+  position: relative;
+  padding: 9pt 12pt 8pt 11pt;
+  background: var(--butter-wash);
+  border: 1pt solid color-mix(in srgb, var(--ink) 55%, transparent);
+  border-radius: 2pt 3pt 9pt 2pt / 2pt 2pt 12pt 3pt;
+  box-shadow: 2pt 3pt 0 color-mix(in srgb, var(--ink) 12%, transparent);
+  transform: rotate(-1.1deg);
+  margin-left: 2pt; margin-right: 3pt;   /* room for the tilt */
+}
+.note::before {
+  content: "";
+  position: absolute; left: 50%; top: -6pt;
+  width: 52pt; height: 12pt;
+  background: color-mix(in srgb, var(--paper-2) 80%, transparent);
+  border: 0.6pt solid var(--line-strong);
+  transform: translateX(-50%) rotate(2.5deg);
+}
+.handout .note .oge-short { margin-top: 0; gap: 5pt 12pt; }
+.handout .note .oge-short p { font-size: 9.5pt; }
+
+/* The three steps: tilted cards, with a doodled arrow from one to the next. */
+.back .do-block .back-h2 { margin-top: 0; }
+.back .steps-row { gap: 14pt; padding: 0 3pt 0 2pt; }   /* room for the tilt */
+.back .steps-row .panel-art { width: 0.85in; }
+.back .steps-row li:nth-child(1) { transform: rotate(-1.4deg); }
+.back .steps-row li:nth-child(2) { transform: rotate(1deg) translateY(2pt); }
+.back .steps-row li:nth-child(3) { transform: rotate(-0.8deg); }
+.back .steps-row li:not(:last-child)::after {
+  content: "";
+  position: absolute; right: -16.5pt; top: 26%;
+  width: 18pt; height: 14pt;
+  background: var(--terra);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 30'%3E%3Cg fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 20C9 8 21 5 34 14'/%3E%3Cpath d='M26 13.6C29 14 32 14.4 34.6 14.4C34 11.6 33.2 9 32.2 6.6'/%3E%3C/g%3E%3C/svg%3E") no-repeat center / contain;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 30'%3E%3Cg fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 20C9 8 21 5 34 14'/%3E%3Cpath d='M26 13.6C29 14 32 14.4 34.6 14.4C34 11.6 33.2 9 32.2 6.6'/%3E%3C/g%3E%3C/svg%3E") no-repeat center / contain;
+}
+
+/* Change one piece, Stuck: a small doodle beside each. */
+.back .do-h li { display: flex; gap: 7pt; align-items: flex-start; }
+.back .do-h li > div { flex: 1; min-width: 0; }
+.do-art { width: 0.5in; height: auto; flex: none; overflow: visible; margin-top: 1pt; }
+
+/* The feedback box as a speech bubble: a tail drawn over the bottom border. */
+.fb-tail { position: absolute; top: 100%; left: 34pt; width: 24pt; height: 18pt; overflow: visible; }
+.fb-tail .tw { fill: var(--sage-wash); }
+.fb-tail .tk { fill: var(--card); }
+.fb-tail .ts { fill: none; stroke: var(--ink); stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
+.handout .back .fb + .fine { margin-top: 10pt; }

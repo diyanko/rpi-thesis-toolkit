@@ -1,4 +1,4 @@
-// "Bring your work in" (docs/bring-your-work-in.md): the page part. An extra
+// "Convert to LaTeX" (docs/convert-to-latex.md): the page part. An extra
 // only: with JavaScript off the page explains the same steps by hand.
 //
 // What is pasted or dropped is read in this browser tab and never sent
