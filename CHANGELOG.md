@@ -1,19 +1,37 @@
 # Change log
 
 What changed in each version, newest first. Every version so far is a beta
-pre-release, and several may come out on one day. Each entry
-starts with one question, **Changes your PDF?** **Yes** means updating
-`rpi-thesis.cls` may change how your thesis looks, including page breaks:
-recompile and compare every page. **No** means only the guide, the website,
-scripts, or examples changed. Before updating, read
+pre-release. Each one starts with **Changes your PDF?**: **Yes** means
+updating `rpi-thesis.cls` may change how your thesis looks, so recompile and
+compare every page; **No** means only the guide, website, scripts, or
+examples changed. Before updating, read
 [update the formatting safely](docs/going-further.md#update-the-formatting-safely).
-Your version is in the `\ProvidesClass` line near the top of
-`rpi-thesis.cls`, and [Check your PDF](docs/check-pdf.md) names it too.
+Your version is on the `\ProvidesClass` line of `rpi-thesis.cls`, and
+[Check your PDF](docs/check-pdf.md) names it too.
 
-Want the detail? On the toolkit's website, each version below gives its
-date and links its download and its code changes on GitHub, and the
-[requirements map](docs/project/requirements.md) records every formatting
-rule with its source.
+## Unreleased
+
+**Changes your PDF?** No.
+
+- **Starter:** `metadata.tex` is shorter, with each choice and an example
+  beside its setting.
+- **Get just the class:** a clear **Download rpi-thesis.cls** button and
+  three short steps.
+- **Website:** opening Search no longer shifts the page; Back to top and the
+  code blocks' Copy share one small button style with icons; every section
+  heading has a link that copies its address; the LaTeX or Preview switch
+  matches the other buttons; the current page in the footer is marked
+  more clearly; on tablets and small laptops the header and home page use
+  the space better.
+- **Tools:** paste boxes show an example of what goes in them instead of
+  repeating their label; Check your PDF explains its results in one table.
+- **Requirements map:** easier to read, with when it was last checked (as
+  "2 weeks ago"), what you still check yourself, and how this class relates
+  to RPI's official LaTeX template.
+- **Cheat sheet:** more room above the footer, and boxes drawn by hand like
+  the website's.
+- **Wording:** "unofficial, community-made" everywhere, without separate
+  "not affiliated" lines.
 
 ## 0.10.1 (beta), 19 Oct 2026
 
