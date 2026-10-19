@@ -15,7 +15,9 @@ date and links its download and its code changes on GitHub, and the
 [requirements map](docs/project/requirements.md) records every formatting
 rule with its source.
 
-## Unreleased
+## 0.10.1 (beta), 19 Oct 2026
+
+Published as the pre-release `v0.10.1`.
 
 **Changes your PDF?** No.
 
@@ -28,6 +30,11 @@ rule with its source.
 - **Guide:** the starter ZIP is the one download (GitHub's whole-repository
   ZIP and the template route are gone), and Overleaf uploads use the smaller
   Overleaf ZIP.
+- **Cheat sheet:** links you can click in the PDF, and a footer with its
+  version, the website, and OGE's submission page.
+- **Website footer:** says when the formatting was last checked against
+  OGE's manual, apart from when the toolkit was released, as "5 days ago"
+  (the full date without JavaScript).
 
 ## 0.10.0 (beta), 18 Oct 2026
 
