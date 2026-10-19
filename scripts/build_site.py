@@ -227,15 +227,23 @@ def read_markdown(source):
     return front.get("title") or plain(heading[1]), description, text
 
 
+def stamp(day):
+    """A <time> that dates.js may turn into "3 weeks ago"; plain text without it."""
+    return f'<time datetime="{day.isoformat()}">on {day.day} {day:%b %Y}</time>'
+
+
 def edition():
+    """Footer stamp, as HTML: when the formatting was last checked against OGE's
+    manual, kept apart from when the toolkit was released (the two differ)."""
     sources = json.loads((ROOT / "docs/project/sources.json").read_text(encoding="utf-8"))
     manual = sources["documents"][0]
     name = Path(manual["title"]).stem.removesuffix(manual["version"]).strip()
     reviewed = date.fromisoformat(sources["last_reviewed"])
+    version, released = class_version()
+    beta = " (beta)" if version.startswith("0.") else ""
     return (
-        f"Based on the RPI OGE {name} ({manual['version']}) · "
-        f"last reviewed {reviewed.day} {reviewed:%b %Y} · template v{class_version()[0]}"
-        + (" (beta)" if class_version()[0].startswith("0.") else "")
+        f"Formatting last checked against OGE&#8217;s {escape(manual['version'])} {escape(name)} "
+        f"{stamp(reviewed)}<br>Toolkit v{escape(version)}{beta}, released {stamp(released)}"
     )
 
 
@@ -284,9 +292,9 @@ def whats_new():
 
 
 def last_updated(source):
-    """'14 Oct 2026' from the last commit that changed `source`; '' without Git history."""
+    """A <time> for the last commit that changed `source`; '' without Git history."""
     day = last_commit(source)
-    return f"{day.day} {day:%b %Y}" if day else ""
+    return stamp(day) if day else ""
 
 
 def svg_size(path):
@@ -600,7 +608,8 @@ class Site:
                        "site/theme.js": "theme.js",     # optional: saved System/Light/Dark appearance
                        "site/search.js": "search.js",   # optional: offline section search
                        "site/share.js": "share.js",     # optional: the home page's "Share this guide" button
-                       "site/tools-highlight.js": "tools-highlight.js"}   # optional: colored LaTeX in tool output
+                       "site/tools-highlight.js": "tools-highlight.js",   # optional: colored LaTeX in tool output
+                       "site/dates.js": "dates.js"}     # optional: footer dates as "3 weeks ago"
         self.assets.update({f"site/{name}": name for name in EXPLAIN})  # optional: "Explain my error" page
         if not offline:  # optional: "Check your PDF" page; online only (see PDF_CHECK)
             self.assets.update({f"site/{name}": name for name in PDF_CHECK})
@@ -1165,7 +1174,7 @@ class Site:
             "tools": [entry for entry in (guide_item(name, label) for name, label in
                       [(name, label) for name, label, _ in dict(NAV)["Tools"]]
                       + [("reviewer-checklist", "Reviewer checklist")]) if entry],
-            "edition": escape(self.edition),
+            "edition": self.edition,
             "feedback_url": self.relative(here, self.feedback),
             "search_field": search_field("dialog-search"),
         }

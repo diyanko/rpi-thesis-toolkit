@@ -41,7 +41,7 @@ BIB_CHECK = ["bibcheck/core.js", "bibcheck/ui.js"]
 # The "Explain my error" page (docs/explain-my-error.md): ui.js and core.js
 # (finding the first error). They run in the offline guide too.
 EXPLAIN = ["explain/ui.js", "explain/core.js"]
-SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js", "share.js", "tools-highlight.js", *PDF_CHECK, *CONVERT, *BIB_CHECK,
+SITE_SCRIPTS = {"copy.js", "viewer.js", "theme.js", "search.js", "search-index.js", "share.js", "tools-highlight.js", "dates.js", *PDF_CHECK, *CONVERT, *BIB_CHECK,
                 *EXPLAIN, "settings/core.js", "settings/ui.js", "settings/data.js"}
 # The one PDF the website may hold: the cheat sheet (no RPI artwork), built
 # from cheatsheet/cheatsheet.tex with --previews or --cheatsheet. The offline
