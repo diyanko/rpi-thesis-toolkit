@@ -157,12 +157,14 @@ Text inside an open disclosure.
 <p class="hero-actions"><a class="button" href="#buttons-and-links">Primary action</a> <a class="button button-secondary" href="#buttons-and-links">Secondary action</a> <a class="button" aria-disabled="true">Disabled</a></p>
 
 Navigation links in the header, the sidebar and the footer share one set of
-states: hover underlines the text, and the current page is the one sage pill.
+states: hover underlines the text, and the current page is the one sage pill
+(in the footer, on its tan band, bold with a wavy terra underline instead).
 No box anywhere carries a colored bar on one edge; status is said in words.
 
 **Icons.** An action button opts into one hand-drawn icon with
 `data-icon="..."` (copy, download, add, remove, clear, search, bulb, eye,
-file, print, again, prev, next, check, undo; section 5 of `site/site.css`).
+file, print, again, prev, next, up, link, check, undo; section 5 of
+`site/site.css`).
 Use these for the same action everywhere; draw a new one only for a new kind
 of action, in the same 24 px, 2 px stroke, slightly wobbly style.
 
@@ -170,6 +172,15 @@ of action, in the same 24 px, 2 px stroke, slightly wobbly style.
 
 The quiet button (`.button-quiet`) is a 44 px icon with no edge until you
 point at it, for a small action beside a field, such as removing a row.
+
+**Small paper buttons** share one look: the code block's **Copy** (copy icon,
+a check once copied) and **Back to top** at the end of long pages (up arrow).
+**Section links:** every `##` and `###` heading ends with a link icon that
+shows on hover or focus; clicking it copies the section's address.
+**Segmented controls** (LaTeX or Preview, the class demo) use the same
+hand-drawn edge and shadow, with a check on the chosen side.
+
+<p class="to-top"><a href="#buttons-and-links" data-icon="up">Back to top</a></p>
 
 **Action rows** (`.action-rows`, a list of `.card.help-card` items): one row
 per way of doing something, its title and one line on the left and one

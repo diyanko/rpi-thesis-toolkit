@@ -1,4 +1,5 @@
-// Show footer dates as "3 weeks ago", keeping the full date as a tooltip.
+// Show footer dates, and dates marked data-ago, as "3 weeks ago", keeping the
+// full date as a tooltip.
 // Optional: without JavaScript the dates read as written, such as "on 14 Oct 2026".
 (function () {
   "use strict";
@@ -13,7 +14,7 @@
     if (days < 365) return Math.floor(days / 30) + " months ago";
     return "over a year ago";
   }
-  document.querySelectorAll(".site-footer time[datetime]").forEach(function (time) {
+  document.querySelectorAll(".site-footer time[datetime], time[datetime][data-ago]").forEach(function (time) {
     var parts = time.getAttribute("datetime").split("-");
     var text = ago(new Date(+parts[0], parts[1] - 1, +parts[2]).getTime());
     if (!text) return;

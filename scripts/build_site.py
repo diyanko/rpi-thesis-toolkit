@@ -49,7 +49,7 @@ NAME = "RPI Thesis Toolkit"
 HOME_TITLE = NAME + " · LaTeX thesis and dissertation starter for RPI"
 HOME_DESCRIPTION = (
     "Unofficial, community-made LaTeX starter, plain-language guide, and browser tools for RPI "
-    "master's theses and doctoral dissertations. Not affiliated with or endorsed by RPI."
+    "master's theses and doctoral dissertations."
 )
 
 # The guide, in reading order, grouped into stages: (stage, [(file in docs/,
@@ -295,6 +295,15 @@ def last_updated(source):
     """A <time> for the last commit that changed `source`; '' without Git history."""
     day = last_commit(source)
     return stamp(day) if day else ""
+
+
+def heading_links(body):
+    """A small link at the end of each ## and ### heading, so a section can be
+    shared; site/copy.js also copies its address when clicked."""
+    return re.sub(r'(<h([23]) id="([^"]+)"[^>]*>)(.*?)(</h\2>)',
+                  lambda m: (f'{m[1]}{m[4]}<a class="heading-link" href="#{m[3]}" data-icon="link">'
+                             f'<span class="visually-hidden">Link to this section</span></a>{m[5]}'),
+                  body, flags=re.S)
 
 
 def svg_size(path):
@@ -1069,6 +1078,11 @@ class Site:
                 text = self.known_problems(text, source)
             text, problems, _ = rules.expand(text, source)
             self.errors.extend(problems)
+            if source == rules.SOURCE:   # "Last checked" at the top follows sources.json
+                reviewed = json.loads((ROOT / "docs/project/sources.json").read_text(encoding="utf-8"))["last_reviewed"]
+                if f'<time datetime="{reviewed}"' not in text:
+                    self.errors.append(f"{source}: the <time> in the note at the top must say {reviewed}, "
+                                       "last_reviewed in docs/project/sources.json.")
             body = pandoc(["--from=gfm", "--to=html5", "--wrap=none", "--syntax-highlighting=none"], text)
             if self.form_url:
                 body = re.sub(r'(<a\b[^>]*\bdata-form\b[^>]*\bhref=")[^"]*(")|(<a\b[^>]*\bhref=")[^"]*("[^>]*\bdata-form\b)',
@@ -1115,6 +1129,7 @@ class Site:
                 body, toc = self.page_top(body, Path(source).stem)
             elif kind == "project":   # long reference pages (change log, requirements map) get the same list
                 body, toc = self.page_top(body, Path(source).stem)
+            body = heading_links(body)
 
         def item(path, label, name=None):
             entry = {"href": self.relative(here, path), "label": escape(label)}
@@ -1226,6 +1241,8 @@ class Site:
                 values["page_script"] = PAGE_SCRIPTS[Path(source).stem]
         if kind == "project" and toc:   # long reference pages: the same "On this page" list
             values["toc"] = toc
+        if source == rules.SOURCE:   # four-column tables: the whole main column (site.css, page-wide)
+            values["wide"] = True
         if kind == "notfound":
             values["notfound"] = True
         else:  # every indexed page needs its own title and description
