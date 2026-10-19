@@ -5,8 +5,8 @@ final submission: the usual path from a finished draft to an approved PDF,
 and what to double-check on the way.
 
 > [!IMPORTANT]
-> This toolkit is unofficial: not affiliated with, endorsed by, or reviewed by
-> RPI or the Office of Graduate Education (OGE), and OGE's current rules win.
+> This toolkit is unofficial and community-made, and the current rules of RPI's
+> Office of Graduate Education (OGE) always win.
 > The manual, checklists, forms, and dates are on the
 > [OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation).
 > OGE recommends its Word template unless you are **proficient in LaTeX**; its

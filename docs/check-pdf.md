@@ -1,11 +1,12 @@
 # Check your PDF
 
-Choose a thesis or dissertation PDF, from any program; the page measures
-paper size, page numbers, headings, side margins, the contents, and fonts
-against the OGE *Dissertation and Thesis Manual*. It is not an OGE review:
-use the [final PDF checklist](submission.md#final-pdf-checklist) as well.
+Choose your thesis or dissertation PDF, made with any program. The page
+measures paper size, page numbers, headings, side margins, the contents, and
+fonts against OGE's *Dissertation and Thesis Manual*. It is not an OGE
+review, so use the [final PDF checklist](submission.md#final-pdf-checklist)
+too.
 
-<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page reads your PDF in your browser. Its PDF reader, Mozilla's free pdf.js, is part of this website, so nothing is downloaded from another website.</p>
+<p class="tool-privacy"><strong>Nothing is uploaded.</strong> The page reads your PDF in your browser, with Mozilla's free pdf.js, served from this website.</p>
 
 <div class="tool pdf-check" data-pdf-check data-version="" hidden><label class="pdf-check-drop tool-drop tool-file" for="pdf-check-file"><span class="tool-file-button is-primary" data-icon="file">Choose your PDF</span> <span class="tool-file-or">or drop it here</span></label><input class="visually-hidden" id="pdf-check-file" type="file" accept="application/pdf,.pdf"><p class="tool-file-names" data-file-names></p><div class="pdf-check-status tool-status" role="status" aria-live="polite"></div><p class="tool-actions pdf-check-actions"><button type="button" class="button button-secondary pdf-check-cancel" hidden data-icon="remove">Cancel the check</button> <button type="button" class="button button-secondary pdf-check-again" hidden data-icon="again">Check another PDF</button></p><div class="pdf-check-results tool-results"></div></div>
 
@@ -13,45 +14,22 @@ use the [final PDF checklist](submission.md#final-pdf-checklist) as well.
 
 ## Reading the results
 
-The page compares your PDF with the wording of the OGE manual. Each point
-gets one of these results:
+Each point gets one result, and the points to look at come first:
 
-- **Looks right:** the page measured this point and found nothing to look at.
-- **Differs from the manual's wording:** a small difference from what the
-  manual says, such as page numbers a little closer to the edge than 0.75 in.
-  The result names the manual's value and the one measured. It has not
-  passed: follow the manual where you can, and if you are unsure whether the
-  difference is acceptable, confirm it with OGE.
-- **Look at this:** something differs clearly from what the manual asks, or
-  (for an information point) is worth a look. The details name the PDF page.
-- **Could not tell:** the page could not measure this point in this PDF, for
-  example because it found no contents page. It says why. Check the point by
-  eye; it has not passed.
-- **Information:** a fact about the file, not a rule.
+| Result | What it means | What to do |
+| --- | --- | --- |
+| **Looks right** | Measured, and nothing to look at. | Nothing. |
+| **Differs from the manual's wording** | A small difference, such as page numbers a little closer to the edge than 0.75 in. The result gives both values. | Follow the manual where you can; if unsure, ask OGE. It has not passed. |
+| **Look at this** | A clear difference from the manual, or a fact worth a look. The details name the PDF page. | Fix it, or check the page by eye. |
+| **Could not tell** | This point could not be measured in this PDF (for example, no contents page found, or a page with no text, such as a scan). It says why. | Check the point by eye. It has not passed. |
+| **Information** | A fact about the file, not a rule. | Nothing, unless it surprises you. |
 
-The results start with a count of each kind, and the points to look at come
-first. Some points also say which pages they measured: a page with no text,
-such as a full-page picture or a scan, cannot be measured, and the result
-names it so you can check it by eye.
-
-When a point names PDF pages, **Show PDF page** draws that page from your
-PDF, in this browser, with what the checker measured drawn over it: the
-1 in margins (a dashed line), the lines 0.75 in from the top and bottom
-edges where the manual puts page numbers (dotted lines), and a box around
-the page number, heading, or text the point is about. A short legend under
-the page says the same in words, and the result above it gives the measured
-values. **Previous page** and **Next page** step through the pages the point
-names; **Close** (or the Esc key) closes the view. The box is drawn from the
-checker's measurements, so it shows where the checker looked, not a new
-check.
-
-To keep a record, or to send one with a question, use **Print or save the
-result** below the results. The printout lists the file name, the date, the
-toolkit version, every point with its result and source, and every page it
-names. Your browser's print window can save it as a PDF.
-
-A long PDF takes a while to read. **Cancel the check** stops it; choosing
-another PDF also replaces a check that is still running.
+**Show PDF page** draws the page from your PDF with the checker's lines on
+it: the 1 in margins (dashed), the 0.75 in page-number lines (dotted), and a
+box around what the point is about. **Print or save the result**, below the
+results, makes a record with the file name, date, and toolkit version, handy
+when you ask a question. A long PDF takes a while; **Cancel the check** stops
+it.
 
 ## What it looks at
 

@@ -1,46 +1,68 @@
 # Formatting requirements and implementation
 
-Baseline checked: **14 Oct 2026**. Sources (versions and fingerprints in
-[sources.json](sources.json)): *Dissertation and Thesis Manual 2026* (PDF and
-Word version; same text), the September 2025 *Thesis/Dissertation Formatting
-Checklist* (**FC**), master's and doctoral checklists, *LaTeX Formatting Tips
-& Tricks* (**LT**, Sep 2025), and the Fall 2026 preparation workshop. The
-[OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation)
-is the primary entry point.
+Every formatting rule the class follows: where OGE states it, where the class
+does it, and how it is checked. OGE's current manual always wins; this map
+belongs to an unofficial, community-made project and is not OGE approval.
 
-This is a requirements map for an unofficial, community-made class; it is
-not a claim of OGE approval. Page numbers are **printed manual pages**
-(printed p. 1 = PDF p. 10). RPI's official LaTeX template (available from
-RPI ITS's [Thesis Preparation page](https://itssc.rpi.edu/hc/en-us/articles/360010087512-Thesis-Preparation))
-is the baseline: this independent class follows its formatting except where
-a difference below is justified by the manual or fixes a clear bug in RPI's
-template. No RPI files are included in this project; maintainers compare
-against a local copy in `_local/legacy/`.
+> [!NOTE]
+> Last checked against OGE's documents <time datetime="2026-10-14" data-ago>on 14 Oct 2026</time>.
+> Start from the [OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation)
+> for the current versions.
 
-Implementation names a macro, key, package, or section comment in
-`rpi-thesis.cls` unless another file is given; search the class for it.
+## How to read this page
 
-Verification: **check** = assertion in `scripts/check.py`; **visual** =
-rendered page compared with the manual's sample and the output of RPI's
-official template;
-**student** = cannot be automated.
+- **Sources:** OGE's *Dissertation and Thesis Manual 2026* (PDF and Word
+  versions, same text); the *Thesis/Dissertation Formatting Checklist*
+  (**FC**), the master's and doctoral checklists, and *LaTeX Formatting Tips
+  & Tricks* (**LT**), all September 2025; and the Fall 2026 preparation
+  workshop. Versions and fingerprints are in [sources.json](sources.json).
+- **Manual:** section and printed page of the manual (printed p. 1 = PDF
+  p. 10). FC and LT are named where they add something.
+- **Where:** the macro, key, or package in `rpi-thesis.cls` that does it;
+  "cls §N" is the class's numbered section (each starts with a banner such as
+  `% 4. Page layout and spacing`). Another file is named when it is not the
+  class.
+- **Checked by:** **check** is an automatic test of the sample PDF
+  (`scripts/check.py`); **regressions** a targeted test
+  (`scripts/regressions.py`); **visual** a look at the rendered page next to
+  the manual's sample and RPI's official template; **student** something only
+  you can check, listed in [what you still check](#what-you-still-check).
+
+## RPI's official LaTeX template and this class
+
+RPI ITS offers an official LaTeX template on its
+[Thesis Preparation page](https://itssc.rpi.edu/hc/en-us/articles/360010087512-Thesis-Preparation)
+(files dated 2018). This class was written independently and takes that
+template as its baseline: it keeps the template's formatting except where the
+2026 manual asks for something else or the template has a clear bug. Every
+difference is in
+[the table below](#differences-from-rpis-official-latex-template), with its
+reason.
+
+The hope is that, once students have used it and OGE has had a look, this
+toolkit can take over from the 2018 template as the maintained LaTeX starting
+point for RPI theses and dissertations. Until then both exist, and the manual
+is the reference for each. No RPI files are included in this project.
+
+## What you still check
+
+The class cannot check these for you; look at each before you submit (the
+[reviewer checklist](../reviewer-checklist.md) helps).
+
+- Capitalization: consistent throughout.
+- Full names: department, and every committee member.
+- Captions: wording and case; tables and figures centered and legible.
+- Equations: every display numbered.
+- Reused work: chapter attribution wording (also for sole-authored work) and
+  the Declaration of Co-Contribution (co-authored work); permissions.
+- References: each one against the official style guide, including access
+  dates and number format (for example ACS); in sequential numbered styles,
+  the citation order, especially in captions of floats that moved to a later
+  page.
 
 ## Requirements map
 
-How to read this page: **FC** is the Formatting Checklist and **LT** is
-*LaTeX Formatting Tips & Tricks* (both listed above); section and page
-numbers without a prefix are the manual's printed pages. "cls §N" in the
-**Where** column is the numbered section of `rpi-thesis.cls` (each starts
-with a banner comment such as `% 4. Page layout and spacing`). The tables
-follow the class's structure.
-
-Each rule is written once, here. The code that starts each **Rule** cell,
-such as `page-size`, is the rule's stable id: guide pages cite a rule as
-`{{cite:page-size}}` (its **Manual** cell, linked to this page) or quote it
-as `{{rule:page-size}}` (the rest of its **Rule** cell), and
-`scripts/build_site.py` fills these in, stopping on an unknown id. Change a
-rule or citation here and every page that uses it follows; rename an id only
-together with the pages that use it (`python3 scripts/rules.py` lists them).
+The tables follow the class's structure, one row per rule.
 
 ### Page layout and spacing
 
@@ -300,16 +322,6 @@ from RPI ITS; files dated 2018); it is not part of this project.
   `chapters/02-research.tex`, and the cheat sheet carry the same wording).
   Confirm with OGE which reading applies.
 
-## Students must still check
-
-Capitalization consistency, full department and committee names, caption
-wording and case, centering and legibility, every equation numbered,
-attribution wording (also for sole-authored work) and the Declaration of
-Co-Contribution (co-authored work), permissions,
-every reference against the official style guide (including access dates
-and number format, e.g. ACS), and citation order in sequential numbered
-styles, especially captions of floats that moved to a later page.
-
 ## How this stays current
 
 Do not replace working requirements from a search result or an automatically
@@ -318,3 +330,14 @@ record its version and source, change the class/examples where needed, then
 compile and inspect representative PDFs. See [the review process](maintenance.md#review-a-requirement-change).
 Keep changing administrative information, contacts, deadlines, plan limits,
 and download URLs linked to official pages instead of freezing them in code.
+Maintainers compare with a local copy of RPI's template in `_local/legacy/`.
+
+Each rule is written once, here. The code that starts each **Rule** cell,
+such as `page-size`, is the rule's stable id: guide pages cite a rule as
+`{{cite:page-size}}` (its **Manual** cell, linked to this page) or quote it
+as `{{rule:page-size}}` (the rest of its **Rule** cell), and
+`scripts/build_site.py` fills these in, stopping on an unknown id. Change a
+rule or citation here and every page that uses it follows; rename an id only
+together with the pages that use it (`python3 scripts/rules.py` lists them).
+The date in the note at the top must match `last_reviewed` in
+[sources.json](sources.json); the build checks it.

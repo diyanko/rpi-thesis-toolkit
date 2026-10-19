@@ -1,31 +1,26 @@
 % !TEX root = main.tex
-% Your details for the title page. Change only what is inside { } or after =.
-% Every setting ends with a comma; a comma after the last one is fine too.
-% Values such as doctoral and May are case-sensitive. All settings: the
-% guide, Going further, "All thesis settings".
+% metadata.tex: your title page. Change only what is inside { } or after =,
+% and write each choice exactly as shown (doctoral, May, [Chair]). Every
+% setting: the guide, Going further, "All thesis settings".
+
 \thesissetup{
-  % Who you are and what you wrote. Math in the title: write it as
-  % \texorpdfstring{$\alpha$}{alpha} so the PDF's title property reads well.
   title = {Your thesis title},
   author = {Your full name},
 
-  % doctoral (PhD), masters, or engineering-doctorate (DEng)
-  degree = doctoral,
-  % The full name, e.g. Department of Physics, Applied Physics and Astronomy
+  degree = doctoral,   % doctoral (PhD), masters (MS), or engineering-doctorate (DEng)
   department = {Department of Your Full Department Name},
+  % for example {Department of Physics, Applied Physics and Astronomy}
 
-  % When you graduate (May, August, or December), not when you submit
-  graduation-month = May,
+  graduation-month = May,   % May, August, or December: when you graduate
   graduation-year = {2027},
 
-  % Optional pages
-  copyright-page = false, % true adds the optional copyright page; check OGE's manual
-  list-of-tables = true, % false only if your thesis has no tables
-  list-of-figures = true, % false only if your thesis has no figures
+  % Optional pages: true or false
+  copyright-page = false,   % true adds a copyright page after the title page
+  list-of-tables = true,    % false if you have no tables
+  list-of-figures = true,   % false if you have no figures
 }
 
-% Your committee: one line per approved member, the chair first.
-% Keep [Chair] on the chair's line; use [Co-Chair] for a co-chair.
+% Your committee: one line per approved member, chair first.
 \committeemember[Chair]{Your committee chair}
 \committeemember{Committee member two}
 \committeemember{Committee member three}

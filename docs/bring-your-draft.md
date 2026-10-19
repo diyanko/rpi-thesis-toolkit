@@ -237,16 +237,24 @@ Already have a `.bib` file? Copy it in as `references.bib` and
 
 ## Already have a LaTeX thesis? Use just the class
 
-Keep your own project and take only the formatting. Put
-[`rpi-thesis.cls`](https://diyanko.github.io/rpi-thesis-toolkit/downloads/rpi-thesis.cls)
-next to your main file, then make the top of that file follow this shape
-(your packages go after the `\documentclass` line; drop any margin, spacing,
-or title-page code of your own, since the class handles it):
+Keep your own project and take only the formatting: one file,
+`rpi-thesis.cls`.
+
+<p class="tool-actions"><a class="button" data-icon="download" href="https://diyanko.github.io/rpi-thesis-toolkit/downloads/rpi-thesis.cls" download>Download rpi-thesis.cls</a></p>
+
+1. Save `rpi-thesis.cls` next to your main `.tex` file (on Overleaf:
+   **Upload**, in the file list).
+2. Make the top of your main file follow the shape below. Your own packages
+   go after the `\documentclass` line; delete any margin, spacing, or
+   title-page code of your own, since the class handles it.
+3. Compile, and compare with the
+   [settings list](going-further.md#all-thesis-settings) if something is
+   missing.
 
 ```latex
 \documentclass{rpi-thesis}
-\usepackage{csquotes}  % \enquote and quotation support, as in the starter
-\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}  % your style
+\usepackage{csquotes}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
 \addbibresource{references.bib}
 \thesissetup{
   title = {Your thesis title},
@@ -277,11 +285,10 @@ instead. The class still puts one blank line between references (tested with
 numeric, APA, MLA, and Chicago author-date); check your PDF with any other
 style ([citations](citations.md#change-the-citation-style)).
 
-Compile it (save in your editor, or click **Recompile** on Overleaf; both run
-the bibliography step for you), and compare with the
-[settings list](going-further.md#all-thesis-settings) if something is missing.
-From RPI's official template, [the section above](#from-rpis-official-latex-template)
-maps its settings one by one.
+Saving in your editor, or clicking **Recompile** on Overleaf, also runs the
+bibliography step. Coming from RPI's official template?
+[The section above](#from-rpis-official-latex-template) maps its settings
+one by one.
 
 ## Still drafting? Make the move easy
 

@@ -94,7 +94,6 @@ your original.
 
 ---
 
-The RPI Thesis Toolkit is unofficial and community-made: not affiliated with
-or endorsed by RPI or its Office of Graduate Education (OGE). OGE's current
-requirements always come first. Tell the facilitator, or the help and
+The RPI Thesis Toolkit is unofficial and community-made. The current
+requirements of RPI's Office of Graduate Education (OGE) always come first. Tell the facilitator, or the help and
 feedback form (forms.gle/fjfiLfkmVhkcyRNCA), where you got stuck.

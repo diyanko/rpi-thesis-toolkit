@@ -45,7 +45,7 @@
     <tspan x="72">A free, unofficial starter and plain-language guide for</tspan>
     <tspan x="72" dy="38">master’s theses and PhD and DEng dissertations.</tspan>
   </text>
-  <text class="body" x="72" y="604" font-size="22" fill="#625547">Unofficial · community-made · not affiliated with RPI</text>
+  <text class="body" x="72" y="604" font-size="22" fill="#625547">Unofficial · community-made · diyanko.github.io/rpi-thesis-toolkit</text>
 
   <!-- typeset page doodle -->
   <g filter="url(#rough)">
