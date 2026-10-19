@@ -1,9 +1,8 @@
 # Attribution, provenance, and licensing
 
-The RPI Thesis Toolkit is an unofficial, community-made project. It is not
-affiliated with or endorsed by Rensselaer Polytechnic Institute (RPI) or its
-Office of Graduate Education (OGE), and OGE has not reviewed or approved the
-class. It works with RPI's requirements and links to RPI's own resources.
+The RPI Thesis Toolkit is an unofficial, community-made project for students
+at Rensselaer Polytechnic Institute (RPI). OGE (RPI's Office of Graduate
+Education) has not reviewed or approved the class. It works with RPI's requirements and links to RPI's own resources.
 
 ## What's ours and what isn't
 

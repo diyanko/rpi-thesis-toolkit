@@ -7,8 +7,8 @@ thesis on Overleaf, put their own name on the title page, write a section, a
 figure, a table, and a citation, fix an error on purpose, and learn where to
 check their PDF before submitting.
 
-The RPI Thesis Toolkit is unofficial and community-made: not affiliated with
-or endorsed by RPI or its Office of Graduate Education (OGE). Say so when you
+The RPI Thesis Toolkit is unofficial and community-made, and the current rules
+of RPI's Office of Graduate Education (OGE) come first. Say so when you
 introduce it (the first and last slides do), and send people to the
 [OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation)
 for the current rules, forms, and dates.

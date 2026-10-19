@@ -536,8 +536,7 @@ def notes_text(cfg, version=RELEASE_VERSION, root=ROOT):
         raise ReleaseError(f"CHANGELOG.md has no entry for {version}; run scripts/bump.py first.")
     header = (
         "Beta pre-release of the RPI Thesis Toolkit, an unofficial, community-made LaTeX "
-        "starter and guide for RPI master's theses and doctoral dissertations. Not affiliated "
-        "with or endorsed by RPI or its Office of Graduate Education.\n\n"
+        "starter and guide for RPI master's theses and doctoral dissertations.\n\n"
         f"**Guide:** {cfg.site}\n\n"
         f"**Downloads:** `{starter}` (thesis files, offline guide, cheat sheet), `{overleaf}` "
         "(thesis files only, for Overleaf), and `rpi-thesis.cls` (the class alone, to update "

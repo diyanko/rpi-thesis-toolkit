@@ -93,10 +93,9 @@ Formatting lives in rpi-thesis.cls. To update the formatting later, follow
 "Update the formatting safely" in the guide (Going further page). Before
 version 1.0, anything may change, and the changelog says what to do.
 
-This is an unofficial, community-made starter. It is not affiliated with or
-endorsed by Rensselaer Polytechnic Institute or its Office of Graduate
-Education (OGE), and it does not include RPI's seal or original template.
-Check the current OGE requirements before you submit.
+This is an unofficial, community-made starter. It does not include RPI's
+seal or original template. Check the current requirements of RPI's Office of
+Graduate Education (OGE) before you submit.
 """
 CHEATSHEET_NOTE = """
 For a one-page printable reference, open rpi-thesis-cheatsheet.pdf.
@@ -151,9 +150,8 @@ The full guide: {guide_url}
 To update the formatting later, follow "Update the formatting safely" in the
 guide (Going further page). Before version 1.0, anything may change, and
 the changelog says what to do.
-This is an unofficial, community-made starter. It is not affiliated with or
-endorsed by Rensselaer Polytechnic Institute or its Office of Graduate
-Education (OGE). Check the current OGE requirements before you submit.
+This is an unofficial, community-made starter. Check the current requirements
+of RPI's Office of Graduate Education (OGE) before you submit.
 """
 
 

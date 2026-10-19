@@ -4,7 +4,7 @@ Printable pages that point people to the RPI Thesis Toolkit website. They are
 maintainer material: not shipped in the starter ZIP and not part of the
 website. They say the toolkit is unofficial, community-made, and free, and
 ask readers to check the current requirements of RPI's Office of Graduate
-Education (OGE). The project is not affiliated with or endorsed by RPI or OGE.
+Education (OGE).
 
 ## What is here
 

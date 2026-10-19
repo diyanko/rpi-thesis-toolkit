@@ -230,9 +230,10 @@ step differs by degree, say so explicitly ("Doctoral students: ...").
 - Student pages contain no deadlines, staff names, office hours, or tool
   version numbers. Link to the stable OGE submission page instead; deep links
   and versions live in `docs/project/sources.json` and the maintainer docs.
-- State the "unofficial; not affiliated with or endorsed by RPI or OGE"
-  disclaimer once each in `README.md` and `docs/submission.md`, not on every
-  page. The website header carries a short **Unofficial** tag.
+- Say "unofficial, community-made" once each in `README.md` and
+  `docs/submission.md`, not on every page; no "not affiliated with or
+  endorsed by" lines (maintainer decision, 19 Oct 2026). The website header
+  carries a short **Unofficial** tag.
 - Link to official documentation for third-party tools instead of describing
   menus that will change.
 - Refer to code by name (macro, key, or section comment), not line number.

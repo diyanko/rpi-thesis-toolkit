@@ -1,7 +1,7 @@
 # RPI Thesis Toolkit
 
-An unofficial, community-made starter. Not affiliated with or endorsed by
-Rensselaer Polytechnic Institute or its Office of Graduate Education (OGE).
+An unofficial, community-made starter for Rensselaer Polytechnic Institute
+(RPI) graduate students.
 
 **A LaTeX starter and plain-language guide for RPI theses and dissertations, written for first-time LaTeX users too.**
 
