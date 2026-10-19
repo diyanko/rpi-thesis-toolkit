@@ -13,8 +13,8 @@ abstract: >-
 authors:
   - given-names: Diyanko
     family-names: Bhowmik
-version: 0.10.0
-date-released: 2026-10-18
+version: 0.10.1
+date-released: 2026-10-19
 license: MIT
 repository-code: "https://github.com/diyanko/rpi-thesis-toolkit"
 url: "https://diyanko.github.io/rpi-thesis-toolkit"
