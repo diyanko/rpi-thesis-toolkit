@@ -211,7 +211,7 @@
       const name = element("input", "", row);
       name.type = "text";
       name.className = "m-name";
-      name.placeholder = "Full name";
+      name.placeholder = number === 1 ? "For example, Ada Lovelace" : "";
       name.setAttribute("aria-label", `Full name, committee member ${number}`);
       name.dataset.memberName = "";
       const choice = element("select", "", row);

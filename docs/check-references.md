@@ -17,13 +17,13 @@ list in your PDF.
 <label class="tool-drop tool-file" for="bibcheck-files" data-drop><span class="tool-file-button" data-icon="file">Choose files</span> <span class="tool-file-or">or drop references.bib and .tex files here</span></label><input class="visually-hidden" id="bibcheck-files" type="file" accept=".bib,.tex" multiple>
 <p class="tool-file-names" data-file-names></p>
 <label for="bibcheck-bib">Contents of references.bib</label>
-<textarea id="bibcheck-bib" data-bib rows="10" spellcheck="false" placeholder="Paste references.bib here."></textarea>
+<textarea id="bibcheck-bib" data-bib rows="10" spellcheck="false" placeholder="@article{lamport1994,&#10;  author = {Leslie Lamport},&#10;  title  = {LaTeX: A Document Preparation System},&#10;  ...&#10;}"></textarea>
 <details><summary>Optional: add your style and citations</summary>
-<p>Choose these files above or paste them here. File names other than preamble.tex are treated as chapters. A new chapter file selection replaces the previous chapter selection; pasted chapter text is checked as well.</p>
+<p>Choose these files above, or paste them here. Any file other than preamble.tex counts as a chapter.</p>
 <label for="bibcheck-preamble">Contents of preamble.tex</label>
-<textarea id="bibcheck-preamble" data-preamble rows="4" spellcheck="false" placeholder="Paste preamble.tex here."></textarea>
-<label for="bibcheck-tex">Chapter .tex text (optional)</label>
-<textarea id="bibcheck-tex" data-tex rows="5" spellcheck="false" placeholder="Paste chapter text here."></textarea>
+<textarea id="bibcheck-preamble" data-preamble rows="4" spellcheck="false" placeholder="\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}"></textarea>
+<label for="bibcheck-tex">Chapter text</label>
+<textarea id="bibcheck-tex" data-tex rows="5" spellcheck="false" placeholder="As \textcite{lamport1994} shows, ..."></textarea>
 <label><input type="checkbox" data-unused> Also list entries not cited in the supplied .tex files</label>
 </details>
 <p class="tool-actions"><button type="button" class="button" data-run data-icon="search">Check references</button> <button type="button" class="button button-secondary" data-clear data-icon="clear">Clear</button></p>
