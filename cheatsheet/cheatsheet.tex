@@ -2,7 +2,7 @@
 % Compile with pdfLaTeX (no shell escape). See cheatsheet/README.md.
 % Every snippet below follows the starter's own files and conventions.
 \documentclass[10pt]{article}
-\usepackage[letterpaper,landscape,top=0.34in,bottom=0.30in,
+\usepackage[letterpaper,landscape,top=0.28in,bottom=0.26in,
   left=0.36in,right=0.36in,footskip=0pt,nohead]{geometry}
 \usepackage{fix-cm}
 \usepackage[T1]{fontenc}
@@ -53,11 +53,19 @@
   font=\fontsize{7.5}{8}\selectfont\bfseries](n){#1};}
 
 % A boxed section: #1 number, #2 title, #3 handwritten-style aside.
+% The frame is drawn slightly unevenly, like the website's hand-drawn boxes;
+% \pgfmathsetseed in the document keeps it the same on every build.
 \newtcolorbox{fg}[3]{enhanced,breakable=false,
   colback=white,colframe=ink,boxrule=.6pt,arc=3pt,
   left=5pt,right=5pt,top=2pt,bottom=3pt,
   before skip=0pt,after skip=0pt,
-  shadow={1.6pt}{-1.6pt}{0pt}{sage!28},
+  frame code={\fill[sage!28,rounded corners=3pt]
+      ([xshift=1.8pt,yshift=-1.8pt]frame.south west) rectangle ([xshift=1.8pt,yshift=-1.8pt]frame.north east);
+    \fill[white,rounded corners=3pt] (frame.south west) rectangle (frame.north east);
+    \draw[ink,line width=.65pt,rounded corners=2.6pt,decorate,
+      decoration={random steps,segment length=14pt,amplitude=.2pt}]
+      (frame.south west) rectangle (frame.north east);},
+  interior code={},
   fontupper=\bodysize,
   title={\badge{#1}\hspace{4pt}{\fontsize{10.6}{12}\selectfont\bfseries #2}%
     \hfill\raisebox{.5pt}{\fontsize{8}{9}\selectfont\aside{#3}}},
@@ -99,9 +107,10 @@
 % every column ends on the same line.
 \newlength{\colw}
 \newlength{\colh}
-\newcommand{\gap}{\par\vspace{5pt plus 1fill}}
+\newcommand{\gap}{\par\vspace{4pt plus 1fill}}
 
 \begin{document}
+\pgfmathsetseed{2026}
 \bodysize
 % ------------------------------------------------------------------ header
 \newsavebox{\headerbox}
@@ -146,7 +155,7 @@
 \vspace{3.5pt}
 % ------------------------------------------------------------------ columns
 \setlength{\colw}{\dimexpr(\linewidth-20pt)/3\relax}
-\setlength{\colh}{\dimexpr\textheight-\ht\headerbox-\dp\headerbox-7pt-16pt\relax}
+\setlength{\colh}{\dimexpr\textheight-\ht\headerbox-\dp\headerbox-7pt-23pt\relax}
 \begin{minipage}[t][\colh][t]{\colw}\vspace{0pt}
 % ============================ 1. FILES
 \begin{fg}{1}{Your files}{what each one is for}
@@ -365,10 +374,11 @@ the guide's \link{\site/guide/troubleshooting.html}{\textbf{Fixing problems}} pa
 \end{minipage}
 
 \vfill
+\vspace{6pt}
 {\fontsize{7.1}{8}\selectfont\color{ink!75}\centering
 \textbf{RPI Thesis Toolkit} v\sheetversion{} \textperiodcentered{}
 \link{\site/}{diyanko.github.io/rpi-thesis-toolkit} \textperiodcentered{}
 \link{\site/project/changelog.html}{what changed} \textperiodcentered{}
-unofficial community project, not endorsed by RPI/OGE \textperiodcentered{}
+unofficial, community-made \textperiodcentered{}
 check the \link{\site/guide/submission.html\#official-resources}{current OGE manual}\par}
 \end{document}
