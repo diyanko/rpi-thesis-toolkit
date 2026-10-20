@@ -303,6 +303,7 @@
       }).filter(Boolean).map(function (entry) { return {entry: entry.source, score: 0}; });
       results.none = true;
     }
+    results.log = request.log;
     // Highlight the words that actually matched, including aliases and
     // corrected spellings, not only the letters typed.
     results.highlight = new Set();
@@ -360,7 +361,7 @@
       clearTimeout(timer);
       var query = input.value.trim();
       list.replaceChildren();
-      if (!query) { status.textContent = "Search all guide pages. Try “seal”, “citations”, or “PDF won’t build”."; return; }
+      if (!query) { status.textContent = ""; return; }
       if (normalize(query).length < 2) { status.textContent = "Type at least two letters or numbers."; return; }
       var results = search(query), shown = results.slice(0, 8);
       status.textContent = results.length ? (results.length > 8 ? "Showing 8 of " + results.length + " results." : results.length + (results.length === 1 ? " result." : " results.")) : "No matching sections. Try fewer words or a different topic. The task links on How do I…? can also help.";
@@ -369,6 +370,16 @@
       else if (results.unknownError) status.textContent = "This exact error is not covered in the guide. These sections explain how to read it and get help.";
       else if (results.policy) status.textContent = "For institutional policy, check the current official resources.";
       else if (results.related) status.textContent = "Related sections found for part of your question. Try fewer words to narrow the search.";
+      // A pasted error: offer the tool that reads the whole message first.
+      var explain = results.log && entries.find(function (entry) { return entry.source.title === "Explain my error" && entry.source.page === "Explain my error"; });
+      if (explain && !location.pathname.endsWith(explain.source.href.split("#")[0])) {
+        var tool = element("a", "search-result search-result-tool", "");
+        tool.href = new URL(explain.source.href.split("#")[0], root).href + "#text=" + encodeURIComponent(query.slice(0, 4000));
+        tool.appendChild(element("span", "search-result-page", "Tool"));
+        tool.appendChild(element("span", "search-result-title", "Explain this error"));
+        tool.appendChild(element("span", "search-result-text", "Opens Explain my error with your message filled in. Nothing is uploaded."));
+        list.appendChild(element("li", "", "")).appendChild(tool);
+      }
       shown.forEach(function (result) {
         var entry = result.entry, item = element("li", "", ""), link = element("a", "search-result", "");
         link.href = new URL(entry.href, root).href;
@@ -452,6 +463,13 @@
         event.preventDefault(); openSearch();
       }
     });
+  }
+  // A link with ?q=... opens search with that query (handouts, issue replies).
+  var shared = new URLSearchParams(location.search).get("q");
+  if (shared && dialogField && typeof dialog.showModal === "function") {
+    openSearch();
+    dialogField.input.value = shared.slice(0, 4000);
+    dialogField.update();
   }
   // A deep link may land inside an optional example. Reveal its ancestors.
   function revealTarget() {
