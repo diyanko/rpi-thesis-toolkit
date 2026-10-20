@@ -1212,6 +1212,8 @@ class Site:
                       + [("reviewer-checklist", "Reviewer checklist")]) if entry],
             "edition": self.edition,
             "feedback_url": self.relative(here, self.feedback),
+            # The feedback form, or the Ask for help section when it has none.
+            "form_url": escape(self.form_url, quote=True) if self.form_url else self.relative(here, self.feedback),
             "search_field": search_field("dialog-search"),
         }
         if quick:

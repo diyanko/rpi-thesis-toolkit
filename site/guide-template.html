@@ -162,7 +162,7 @@ $endif$
   <main class="guide-content" id="main">
 $body$
 $if(page_feedback)$
-    <p class="page-feedback">Something wrong or unclear on this page? <a href="$page_feedback$">Tell the maintainer</a>, no account needed.</p>
+    <p class="page-feedback">Something wrong or unclear on this page? <a href="$page_feedback$">Tell us</a>, no account needed.</p>
 $endif$
 $-- Long pages (those with "On this page") end with a way back up.
 $if(toc)$
@@ -198,7 +198,7 @@ $endif$
   <div class="footer-inner">
     <div class="footer-about">
       <p class="footer-name"><strong>RPI Thesis Toolkit</strong> <span class="unofficial-tag">Unofficial</span></p>
-      <p class="footer-note">Unofficial and community-made: by students, for students at Rensselaer Polytechnic Institute.</p>
+      <p class="footer-note">Unofficial and community-made: by students, for students at Rensselaer Polytechnic Institute. It grows with your feedback.</p>
       <p class="edition">$edition$</p>
 $if(updated)$
       <p class="updated">This page last updated $updated$</p>
@@ -239,9 +239,10 @@ $endif$
         </ul>
       </div>
       <div class="footer-col">
-        <h2 class="footer-head">Help</h2>
+        <h2 class="footer-head">Help and feedback</h2>
         <ul role="list">
-          <li><a href="$feedback_url$">Ask for help or suggest a change</a> <span class="footer-aside">No account needed</span></li>
+          <li><a href="$form_url$">Share feedback</a> <span class="footer-aside">No account needed</span></li>
+          <li><a href="$feedback_url$">Ask for help</a></li>
 $if(edit_url)$
           <li><a href="$edit_url$">Edit this page on GitHub</a></li>
 $endif$

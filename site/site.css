@@ -814,7 +814,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .doors .help-card li a { padding: 7px 0; }
 .here-start .kicker { color: var(--sage); }
 .here-tools .kicker { color: var(--blue); }
-.here-help .kicker  { color: var(--terra); }
+.here-learn .kicker { color: var(--terra); }
 .doors li a { white-space: normal; }   /* longer link names wrap at large text sizes */
 
 /* "What's here", the doors with everything in the toolkit listed
@@ -860,7 +860,18 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   padding-top: 14px;
   border-top: 1.5px dashed var(--line-strong);
 }
-.here + .home-foot { margin-top: clamp(24px, 3vw, 34px); }
+.here-more { margin: 0 0 10px; padding-top: 9px; border-top: 1.5px dashed var(--line); font-size: 0.95rem; line-height: 1.4; color: var(--ink-soft); }
+.here-more a { font-weight: 700; }
+/* "Help shape it": the feedback ask, a sage card like a tip */
+.home-feedback {
+  margin-top: clamp(24px, 3vw, 34px); padding: 18px 22px 4px;
+  background: var(--sage-wash); border: 1.5px solid var(--line-strong); border-radius: var(--sketch);
+  box-shadow: 3px 3px 0 var(--line-strong);
+}
+.home-feedback .section-title { margin-bottom: 8px; }
+.home-feedback p { max-width: 64ch; margin: 0 0 14px; }
+.home-feedback .tool-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+:is(.here, .home-feedback) + .home-foot { margin-top: clamp(24px, 3vw, 34px); }
 .home-news { margin: 0; flex: 1 1 30rem; max-width: 60rem; color: var(--ink-soft); }
 .home-news .tag { margin-right: 0.4em; }
 .home-news a { white-space: nowrap; }   /* "All changes" and "How to update" stay whole */
