@@ -167,7 +167,7 @@ $endif$
 $-- Long pages (those with "On this page") end with a way back up.
 $if(toc)$
     <div class="guide-end">
-    <p class="to-top"><a href="#top" data-icon="up">Back to top</a></p>
+    <p class="to-top"><a class="paper-button" href="#top" data-icon="up">Back to top</a></p>
 $elseif(pager)$
     <div class="guide-end">
 $endif$
@@ -191,7 +191,7 @@ $endif$
 </div>
 $endif$
 <dialog class="search-dialog" id="guide-search-dialog" aria-label="Search the guide" data-root="$search_root$">
-  <div class="search-dialog-bar"><span>Search the guide</span><button type="button" class="search-close">Close<span class="visually-hidden"> search</span></button></div>
+  <div class="search-dialog-bar"><span>Search the guide</span><button type="button" class="search-close paper-button" data-icon="remove" aria-label="Close search" title="Close (Esc)"></button></div>
   $search_field$
 </dialog>
 <footer class="site-footer">

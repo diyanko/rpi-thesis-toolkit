@@ -1282,11 +1282,11 @@ class Site:
 def search_field(name):
     """The dialog's ordinary input and real result links."""
     return ('<section class="guide-search" data-search hidden aria-label="Search the guide">'
-            f'<label for="{name}" class="visually-hidden">Search the guide</label>'
+            f'<label for="{name}" data-icon="search"><span class="visually-hidden">Search the guide</span></label>'
             f'<input id="{name}" type="search" placeholder="Try a topic or paste an error" '
             f'autocomplete="off" spellcheck="false" maxlength="4000" '
             f'aria-describedby="{name}-hint {name}-status" aria-controls="{name}-results">'
-            f'<p class="search-hint" id="{name}-hint">Keywords, questions, commands, or pasted errors.</p>'
+            f'<p class="search-hint" id="{name}-hint">Topics, questions, or pasted errors. Try “seal”, “citations”, or “PDF won’t build”.</p>'
             f'<p class="search-status" id="{name}-status" role="status" aria-live="polite" '
             'aria-atomic="true"></p>'
             f'<ol class="search-results" id="{name}-results" role="list"></ol></section>')
