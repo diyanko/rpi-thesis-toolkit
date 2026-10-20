@@ -10,8 +10,7 @@ abstract: >-
   graduate theses and dissertations (master's, PhD, and DEng) at Rensselaer
   Polytechnic Institute (RPI). It includes no RPI-owned materials.
 authors:
-  - given-names: Diyanko
-    family-names: Bhowmik
+  - name: "RPI Thesis Toolkit contributors"
 version: 0.10.2
 date-released: 2026-10-19
 license: MIT

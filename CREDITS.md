@@ -12,7 +12,7 @@ testing, examples, and pull requests, large or small.
 
 | Contributor | Contribution |
 | --- | --- |
-| Diyanko Bhowmik | Project initiation and maintenance |
+| The maintainer | Project initiation and maintenance |
 
 Helped and not listed? Credit is optional and opt-in; see
 [add or update a credit](#add-or-update-a-credit).

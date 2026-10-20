@@ -81,9 +81,9 @@ the smallest useful correction.
   (such as copy buttons) are allowed when everything works with JavaScript off.
 - Never add dependencies beyond the Python standard library and Pandoc, plus
   `pypdf` for `check.py` and TeX Live for compiling.
-- Never add personal data (other than opt-in credits in `CREDITS.md` and the
-  maintainer contact in `CODE_OF_CONDUCT.md`), local absolute paths, secrets,
-  or tokens.
+- Never add personal data (other than opt-in credits in `CREDITS.md`), local
+  absolute paths, secrets, or tokens. Refer to the maintainer by role, never
+  by name; the GitHub account in the project's addresses is the exception.
 - Never hard-code deadlines, staff names, or tool versions in student pages.
 - Never imply the toolkit is only for master's or only for doctoral students.
 

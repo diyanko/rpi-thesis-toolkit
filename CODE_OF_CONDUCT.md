@@ -59,8 +59,8 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at
-[diyankobhowmik.db@gmail.com](mailto:diyankobhowmik.db@gmail.com).
+reported privately to the maintainer, who is responsible for enforcement,
+through the [help and feedback form](https://forms.gle/fjfiLfkmVhkcyRNCA); only the maintainer reads it.
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the

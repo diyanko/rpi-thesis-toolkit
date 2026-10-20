@@ -2,8 +2,8 @@
 % dissertation. You normally never edit this file: your words go in chapters/,
 % your details in metadata.tex, and extra packages in preamble.tex.
 %
-% Unofficial community class; not affiliated with or endorsed by RPI or OGE.
-% Copyright (c) 2026 Diyanko Bhowmik and contributors. See LICENSE.md.
+% Unofficial, community-made class.
+% Copyright (c) 2026 RPI Thesis Toolkit contributors. See LICENSE.md.
 %
 % For reviewers, including OGE staff: the class is the standard report class
 % plus only what RPI's rules require. Each section below names the part of
