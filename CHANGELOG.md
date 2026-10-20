@@ -9,7 +9,9 @@ examples changed. Before updating, read
 Your version is on the `\ProvidesClass` line of `rpi-thesis.cls`, and
 [Check your PDF](docs/check-pdf.md) names it too.
 
-## Unreleased
+## 0.10.3 (beta), 20 Oct 2026
+
+Published as the pre-release `v0.10.3`.
 
 **Changes your PDF?** No. Only the guide, website, and scripts changed.
 

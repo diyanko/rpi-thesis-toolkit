@@ -24,7 +24,7 @@
 % 1. Identity and options. Rules: page-size, font (12 pt, US letter)
 % ---------------------------------------------------------------------------
 \NeedsTeXFormat{LaTeX2e}[2022-06-01]
-\ProvidesClass{rpi-thesis}[2026/10/19 v0.10.2 RPI community thesis starter]
+\ProvidesClass{rpi-thesis}[2026/10/20 v0.10.3 RPI community thesis starter]
 % Every compile says which version this is and where the newest one lives.
 \typeout{rpi-thesis \csname ver@rpi-thesis.cls\endcsname. Newest version:^^J
   https://diyanko.github.io/rpi-thesis-toolkit/downloads/rpi-thesis.cls}
