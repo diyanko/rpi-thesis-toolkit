@@ -64,6 +64,7 @@
     [/^(apa|ieee|mla|chicago)( style)?$/, ["Change the citation style", "Print a full reference in the text"]],
     [/^(title page|committee|committee chair|graduation( month| year| date)?|masters( degree)?|doctoral( degree)?|engineering doctorate)$/, ["Put your name on it", "All thesis settings"]],
     [/^copyright( page)?$/, ["All thesis settings", "Put your name on it"]],
+    [/^((re)?name (the |my )?pdf|pdf (file )?name|file ?name|output (file|name)|main pdf)$/, ["Name your PDF"]],
     // The five tools: short searches for a tool's job open the tool first.
     [/^(settings|settings builder|settings form|metadata( tex)?|title page settings|thesis settings)$/, ["Settings builder", "All thesis settings", "Put your name on it"]],
     [/^(bib|bib file|references bib|(references?|bib|bibliography|citations?) (check|checker)|check (references?|bib|bibliography|citations?))$/, ["Check your references", "Citations and references"]],
