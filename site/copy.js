@@ -42,7 +42,7 @@
     pre.parentNode.insertBefore(box, pre);
     box.appendChild(pre);
     button.type = "button";
-    button.className = "copy-button";
+    button.className = "copy-button paper-button paper-button-sm";
     button.dataset.icon = "copy";
     button.setAttribute("aria-label", "Copy " + kind.toLowerCase());
     button.textContent = "Copy";

@@ -194,6 +194,22 @@ function details(win, doc, add) {
       if (Math.max(...tops) - Math.min(...tops) > 2) note("fields in one row do not line up: " + controls.map(describe).join(" / "));
     }
   }
+  // Themed drawings follow the page: never a light copy on a dark page, or the reverse.
+  const dark = win.getComputedStyle(doc.documentElement).colorScheme === "dark";
+  for (const img of doc.images) {
+    const theme = (img.currentSrc.match(/\/themes\/(light|dark)\//) || [])[1];
+    if (theme && theme !== (dark ? "dark" : "light")) note("drawing in the " + theme + " theme on a " + (dark ? "dark" : "light") + " page: " + describe(img));
+  }
+  // Paired panes side by side (input and result): their boxes share top and bottom edges.
+  for (const panes of doc.querySelectorAll("[class*='-panes']")) {
+    const boxes = Array.from(panes.children).map((pane) => Array.from(pane.children)   // each pane's tallest child
+      .filter((c) => shown(c, win.getComputedStyle(c))).map((c) => [c, c.getBoundingClientRect()])
+      .sort((a, b) => b[1].height - a[1].height)[0]).filter(Boolean);
+    if (boxes.length < 2 || Math.abs(boxes[0][1].top - boxes[1][1].top) > boxes[0][1].height) continue;   // stacked
+    if (Math.abs(boxes[0][1].top - boxes[1][1].top) > 1 || Math.abs(boxes[0][1].bottom - boxes[1][1].bottom) > 1) {
+      note("paired boxes do not line up: " + boxes.map((b) => describe(b[0])).join(" / "));
+    }
+  }
   const extra = found.filter((m) => m === null).length;
   for (const m of found.filter(Boolean)) add(m);
   if (extra) add("... and " + extra + " more detail problem(s)");

@@ -7,6 +7,12 @@
   var control, toggle, menu;
 
   function pictures(theme) {
+    // Drawings: each dark <source> follows the device unless Light or Dark is chosen.
+    document.querySelectorAll("source[data-theme-media]").forEach(function (source) {
+      var base = source.getAttribute("data-theme-media");
+      source.media = theme === "dark" ? base || "all" : theme === "light" ? "not all"
+        : (base ? base + " and " : "") + "(prefers-color-scheme: dark)";
+    });
     document.querySelectorAll("[data-theme-asset]").forEach(function (picture) {
       var attribute = picture.getAttribute("data-theme-asset");
       var source = picture.getAttribute("data-theme-" + theme);

@@ -11,6 +11,27 @@ Students never need this page; it is not linked from the guide.
 
 When a new component appears in the guide, add one example of it here.
 
+## Design rules
+
+Fix a visual bug by fixing the rule it breaks, here and in `site/site.css`,
+not the one spot where it showed up.
+
+- **One control height.** Buttons, switches and menu rows use
+  `--control-h` (44 px); tool fields and primary tool buttons use
+  `--control-h-lg` (48 px). Borders and padding fit inside that height
+  (`box-sizing: border-box`, one line of text at `line-height: 1.4`).
+- **One field style.** Tool fields and the search field share one rule:
+  2 px edge, hand-drawn corners, offset shadow, the site focus ring.
+- **One small button.** `.paper-button` (Copy, Back to top, Close) with an
+  icon from the `data-icon` set; `.paper-button-sm` only in code-block corners.
+- **Paired panes line up.** Side-by-side input and result panes share their
+  rows (CSS subgrid), so their boxes start and end on the same lines whatever
+  sits above them. `ui_check.py` fails when they do not.
+- **Shadows stay inside.** A control at a container's edge leaves room for
+  its offset shadow.
+- **No media queries inside images.** Themed drawings come as fixed light and
+  dark copies, chosen by the page.
+
 <p class="page-tag"><span class="tag tag-start">Start here</span> <span class="tag tag-now">Need now</span> <span class="tag tag-draft">If you have a draft</span> <span class="tag tag-stuck">When stuck</span> <span class="tag tag-later">Need later</span> <span class="tag tag-optional">Optional</span></p>
 
 ## Headings and text
@@ -173,14 +194,15 @@ of action, in the same 24 px, 2 px stroke, slightly wobbly style.
 The quiet button (`.button-quiet`) is a 44 px icon with no edge until you
 point at it, for a small action beside a field, such as removing a row.
 
-**Small paper buttons** share one look: the code block's **Copy** (copy icon,
-a check once copied) and **Back to top** at the end of long pages (up arrow).
+**Small paper buttons** (`.paper-button`) share one look: the code block's
+**Copy** (copy icon, a check once copied), **Back to top** at the end of long
+pages (up arrow), and the search box's **Close** (an icon alone).
 **Section links:** every `##` and `###` heading ends with a link icon that
 shows on hover or focus; clicking it copies the section's address.
 **Segmented controls** (LaTeX or Preview, the class demo) use the same
 hand-drawn edge and shadow, with a check on the chosen side.
 
-<p class="to-top"><a href="#buttons-and-links" data-icon="up">Back to top</a></p>
+<p class="to-top"><a class="paper-button" href="#buttons-and-links" data-icon="up">Back to top</a></p>
 
 **Action rows** (`.action-rows`, a list of `.card.help-card` items): one row
 per way of doing something, its title and one line on the left and one

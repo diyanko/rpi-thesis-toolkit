@@ -298,6 +298,13 @@
     root.hidden = false;
     var note = document.querySelector("[data-explain-nojs]");
     if (note) note.hidden = true;
+    // From guide search: #text=... carries a pasted error in the address's
+    // fragment, which the browser never sends. Read it once, then drop it.
+    if (/^#text=/.test(location.hash)) {
+      try { input.value = decodeURIComponent(location.hash.slice(6)).slice(0, MAX_SIZE); } catch (_) { input.value = ""; }
+      history.replaceState(null, "", location.pathname + location.search);
+      if (input.value) run();
+    }
   }
   var tag = document.createElement("script");
   tag.src = script.src.replace(/[^/]*$/, "") + "core.js";

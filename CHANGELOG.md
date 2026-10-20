@@ -9,6 +9,24 @@ examples changed. Before updating, read
 Your version is on the `\ProvidesClass` line of `rpi-thesis.cls`, and
 [Check your PDF](docs/check-pdf.md) names it too.
 
+## Unreleased
+
+**Changes your PDF?** No. Only the guide, website, and scripts changed.
+
+- **Home page:** Open in Overleaf comes first, What's here is grouped into
+  the template, the online tools, and learning LaTeX, and a new card asks
+  for feedback.
+- **Search:** the search box matches the rest of the site; a pasted error
+  offers **Explain this error**, which opens that tool with the message
+  filled in; a link ending in `?q=seal` opens search for "seal".
+- **Website:** controls share one height and one field style, so boxes and
+  buttons line up everywhere; side-by-side panes (Convert to LaTeX) always
+  start and end on the same line; drawings follow System appearance in
+  every browser, including Safari.
+- **Guide:** how to give the PDF you submit a clearer name.
+- **Project:** conduct reports go through the feedback form instead of a
+  personal address.
+
 ## 0.10.2 (beta), 19 Oct 2026
 
 Published as the pre-release `v0.10.2`.

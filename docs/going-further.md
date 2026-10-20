@@ -637,6 +637,17 @@ creates the output subfolders (`build/chapters/`, …) a first pass needs. If yo
 type `latexmk -outdir=...` yourself, create those subfolders first, or let
 `latexmk` retry after "I can't write on file".
 
+### Name your PDF
+
+The starter always builds `main.pdf` (`build/main.pdf` with the build
+helper), and Overleaf, the editors, and this guide all expect that name. To
+hand in or share a file with a clearer name, such as
+`Lastname-Dissertation-2027.pdf`, rename or copy the finished PDF; do not
+rename `main.tex`. You submit the PDF through ProQuest ETD Administrator, as
+the [OGE submission page](https://graduate.rpi.edu/academic-progress/submit-your-thesis-dissertation)
+describes.
+<!-- TODO(verify): the OGE submission page and the master's checklist set no file-name rule (read 2026-10-20); check the current Dissertation and Thesis Manual for one and quote it here if it exists. -->
+
 ### Choose a compile engine
 
 pdfLaTeX uses New TX fonts; LuaLaTeX and XeLaTeX use TeX Gyre Termes via

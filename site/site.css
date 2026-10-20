@@ -167,6 +167,8 @@
   --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
 
   --radius: 14px;
+  --control-h: 44px;      /* every control and row target: buttons, switches, menus */
+  --control-h-lg: 48px;   /* tool inputs and primary tool buttons */
   --wobble: 58% 42% 55% 45% / 48% 56% 44% 52%;   /* hand-drawn circle */
   --sketch: 14px 18px 13px 17px / 17px 13px 18px 14px;  /* hand-drawn box */
   --offset: 9px;      /* misregistered color wash behind a card, as in the diagrams */
@@ -262,6 +264,7 @@
 
 /* ---------- 3. Base ------------------------------------------------------ */
 *, *::before, *::after { box-sizing: border-box; }
+picture.theme-pick { display: contents; }   /* a drawing's light and dark copies: lays out as its <img> */
 
 html {
   -webkit-text-size-adjust: 100%;
@@ -435,7 +438,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .appearance-menu p { margin: 4px 10px 8px; color: var(--muted); font-size: 0.875rem; }
 .appearance-menu button {
-  display: flex; align-items: center; gap: 12px; width: 100%; min-height: 44px; padding: 8px 12px;
+  display: flex; align-items: center; gap: 12px; width: 100%; min-height: var(--control-h); padding: 8px 12px;
   font: inherit; font-size: 1rem; text-align: left;
   color: var(--ink); background: transparent; border: 1.5px solid transparent;
   border-radius: 8px; cursor: pointer;
@@ -443,7 +446,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .appearance-menu button .choice { display: block; line-height: 1.25; }
 .appearance-menu button .choice span { display: block; color: var(--muted); font-size: 0.8rem; font-weight: 400; }
 .appearance-menu .theme-icon { flex: none; width: 20px; height: 20px; color: var(--ink-soft); }
-.appearance-menu button { min-height: 48px; }
+.appearance-menu button { min-height: var(--control-h-lg); }
 .appearance-menu button:hover { background: var(--paper-2); }
 .appearance-menu button[aria-pressed="true"] { background: var(--sage-wash); font-weight: 700; }   /* selected: the one sage, as for the current page */
 .appearance-menu button:focus-visible { outline: 3px solid var(--focus); outline-offset: -3px; }
@@ -538,7 +541,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 48px;
+  min-height: var(--control-h-lg);
   padding: 12px 22px;
   font: inherit;
   font-weight: 700;
@@ -811,7 +814,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .doors .help-card li a { padding: 7px 0; }
 .here-start .kicker { color: var(--sage); }
 .here-tools .kicker { color: var(--blue); }
-.here-help .kicker  { color: var(--terra); }
+.here-learn .kicker { color: var(--terra); }
 .doors li a { white-space: normal; }   /* longer link names wrap at large text sizes */
 
 /* "What's here", the doors with everything in the toolkit listed
@@ -857,7 +860,18 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   padding-top: 14px;
   border-top: 1.5px dashed var(--line-strong);
 }
-.here + .home-foot { margin-top: clamp(24px, 3vw, 34px); }
+.here-more { margin: 0 0 10px; padding-top: 9px; border-top: 1.5px dashed var(--line); font-size: 0.95rem; line-height: 1.4; color: var(--ink-soft); }
+.here-more a { font-weight: 700; }
+/* "Help shape it": the feedback ask, a sage card like a tip */
+.home-feedback {
+  margin-top: clamp(24px, 3vw, 34px); padding: 18px 22px 4px;
+  background: var(--sage-wash); border: 1.5px solid var(--line-strong); border-radius: var(--sketch);
+  box-shadow: 3px 3px 0 var(--line-strong);
+}
+.home-feedback .section-title { margin-bottom: 8px; }
+.home-feedback p { max-width: 64ch; margin: 0 0 14px; }
+.home-feedback .tool-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+:is(.here, .home-feedback) + .home-foot { margin-top: clamp(24px, 3vw, 34px); }
 .home-news { margin: 0; flex: 1 1 30rem; max-width: 60rem; color: var(--ink-soft); }
 .home-news .tag { margin-right: 0.4em; }
 .home-news a { white-space: nowrap; }   /* "All changes" and "How to update" stay whole */
@@ -904,7 +918,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .button-quiet:is(:hover, :focus-visible) { color: var(--terra); border-color: currentColor; background: var(--terra-wash); }
 .button-quiet:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-.button-small { min-height: 44px; padding: 8px 16px; font-size: 0.98rem; gap: 8px; box-shadow: 2px 2px 0 var(--btn-shadow); }
+.button-small { min-height: var(--control-h); padding: 8px 16px; font-size: 0.98rem; gap: 8px; box-shadow: 2px 2px 0 var(--btn-shadow); }
 .button-small svg { width: 18px; height: 18px; }
 .share-status { font-weight: 700; font-size: 0.95rem; color: var(--sage); }
 .share-status:empty { display: none; }
@@ -1028,7 +1042,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 /* "How do I…?": quick answers, above the stages */
 .guide-quick {
   display: flex; gap: 10px; align-items: center;
-  min-height: 44px;
+  min-height: var(--control-h);
   margin: 0 0 16px;
   padding: 8px 10px 8px 8.5px;   /* 8.5px + the 1.5px border: the "?" sits in the list's marker column */
   color: var(--ink);
@@ -1059,7 +1073,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 /* Reading column */
 .guide-content { min-width: 0; padding-bottom: 8px; }
 .guide-content > * { max-width: 68ch; }   /* comfortable lines of text */
-.guide-content > :is(.table-wrap, figure, p:has(> img:only-child)) { max-width: none; }   /* tables and drawings may use the whole column */
+.guide-content > :is(.table-wrap, figure, p:has(> :is(img, picture.theme-pick):only-child)) { max-width: none; }   /* tables and drawings may use the whole column */
 .guide-content > h1:first-child { margin-top: 26px; font-size: clamp(2.2rem, 1.7rem + 2.2vw, 3.1rem); }
 .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1.2rem; color: var(--ink-soft); line-height: 1.6; }
 .guide-content > h1:first-child:has(+ .page-tag) { margin-bottom: 0.25em; }
@@ -1168,7 +1182,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 }
 .pager a {   /* card-like buttons: lift on hover, press flat when clicked */
   display: block;
-  min-height: 44px;
+  min-height: var(--control-h);
   padding: 14px 18px;
   background: var(--card);
   color: var(--link);
@@ -1197,20 +1211,6 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 .pager-next { grid-column: 2; text-align: right; }
 .guide-content .page-feedback { margin: 2.2rem 0 0.6rem; font-size: 0.95rem; line-height: 1.45; color: var(--muted); }
 .guide-content .to-top { margin: 0 0 1.1rem; text-align: right; }
-.guide-content .to-top a {   /* the same small paper button as "Copy", with an arrow */
-  display: inline-flex; align-items: center; gap: 8px;
-  min-height: 40px; padding: 6px 14px;
-  font-size: 0.9rem; font-weight: 700; line-height: 1.2;
-  color: var(--ink-soft); text-decoration: none;
-  background: var(--card);
-  border: 1.5px solid var(--control-edge);
-  border-radius: var(--sketch);
-  box-shadow: 2px 2px 0 var(--line-strong);
-  transition: transform .12s ease, box-shadow .12s ease;
-}
-.guide-content .to-top a:is(:hover, :focus-visible) { color: var(--ink); border-color: var(--ink); transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--line-strong); }
-.guide-content .to-top a:active { transform: translate(2px, 2px); box-shadow: none; }
-.guide-content .to-top a::before { width: 16px; height: 16px; }
 
 /* ---------- 8. Guide content (what Pandoc makes from Markdown) ----------- */
 .guide-content ul, .guide-content ol { padding-left: 1.4em; margin: 0 0 1.1em; }
@@ -1260,10 +1260,10 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 /* Pictures and diagrams: centered, never wider than the column. An italic
    paragraph right after a picture ("*In words:* …") reads as its caption. */
 .guide-content img { display: block; margin: 0 auto; }
-.guide-content p:has(> img:only-child),
+.guide-content p:has(> :is(img, picture.theme-pick):only-child),
 .guide-content figure { margin: 1.5rem 0 1.8rem; text-align: center; }
-.guide-content :is(p:has(> img:only-child), figure.diagram):has(+ p > em:first-child) { margin-bottom: 0.8rem; }
-.guide-content :is(p:has(> img:only-child), figure.diagram) + p:has(> em:first-child),
+.guide-content :is(p:has(> :is(img, picture.theme-pick):only-child), figure.diagram):has(+ p > em:first-child) { margin-bottom: 0.8rem; }
+.guide-content :is(p:has(> :is(img, picture.theme-pick):only-child), figure.diagram) + p:has(> em:first-child),
 .guide-content figcaption {
   max-width: 54ch;
   margin: 0 auto 1.8rem;
@@ -1279,7 +1279,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   display: flex;
   width: fit-content;
   align-items: center;
-  min-height: 44px;
+  min-height: var(--control-h);
   margin: 10px auto 0;
   padding: 8px 14px;
   border: 1px solid var(--line-strong);
@@ -1325,7 +1325,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .viewer-pan:focus-visible { outline: 3px solid var(--overlay-ink); outline-offset: 2px; }
 .viewer img[src$=".svg"] { width: min(100%, 1400px); object-fit: contain; padding: clamp(8px, 2vw, 20px); }
 .viewer-close {
-  display: inline-flex; align-items: center; min-height: 44px;
+  display: inline-flex; align-items: center; min-height: var(--control-h);
   position: fixed; top: 14px; right: clamp(12px, 3vw, 28px);
   padding: 6px 16px;
   color: var(--overlay-ink); font-weight: 700; text-decoration: none;
@@ -1518,26 +1518,29 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   border: 0;
   border-radius: 0 0 11px 11px;
 }
-.copy-button {
+/* Small paper button: Copy on code blocks, Back to top, and Close in search.
+   One look, one size (.paper-button-sm for code-block corners); an icon
+   from the data-icon set, with or without a word. */
+.paper-button {
   flex: none;
-  display: inline-flex; align-items: center; gap: 6px;
-  min-height: 30px;
-  padding: 2px 12px;
-  font: inherit;
-  font-size: 0.8rem;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--ink-soft);
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 40px; padding: 6px 14px;
+  font: inherit; font-size: 0.9rem; font-weight: 700; line-height: 1.2;
+  color: var(--ink-soft); text-decoration: none;
   background: var(--card);
   border: 1.5px solid var(--control-edge);
   border-radius: var(--sketch);
   box-shadow: 2px 2px 0 var(--line-strong);
   cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease;
 }
-.copy-button:is(:hover, :focus-visible) { color: var(--ink); border-color: var(--ink); }
-.copy-button:active { box-shadow: none; transform: translate(2px, 2px); }
-.copy-button:focus-visible { outline-offset: 2px; }
-.copy-button[data-icon]::before { width: 14px; height: 14px; }
+.paper-button:is(:hover, :focus-visible) { color: var(--ink); border-color: var(--ink); transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--line-strong); }
+.paper-button:active { transform: translate(2px, 2px); box-shadow: none; }
+.paper-button:focus-visible { outline-offset: 2px; }
+.paper-button[data-icon]::before { width: 16px; height: 16px; }
+.paper-button:empty { width: 40px; padding: 0; }   /* icon only: a square */
+.paper-button-sm { min-height: 30px; padding: 2px 12px; font-size: 0.8rem; gap: 6px; }
+.paper-button-sm[data-icon]::before { width: 14px; height: 14px; }
 
 /* Tables: the build wraps each one in .table-wrap, which scrolls if needed */
 .table-wrap {
@@ -1651,10 +1654,10 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   color: var(--ink); background: var(--card);
   border: 2px solid var(--btn-edge-2); border-radius: var(--sketch);   /* as .appearance-toggle */
   box-shadow: 2px 2px 0 var(--btn-shadow);
-  font: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; min-height: 44px;
+  font: inherit; font-size: 0.95rem; font-weight: 700; cursor: pointer; min-height: var(--control-h);
   padding: 8px 13px; text-align: left;
 }
-.search-open:hover, .search-close:hover { color: var(--ink); background: var(--paper-2); }
+.search-open:hover { color: var(--ink); background: var(--paper-2); }
 .search-icon { width: 19px; height: 19px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .search-open[hidden], .guide-search[hidden] { display: none; }
 .search-dialog {
@@ -1670,17 +1673,17 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 @media screen { html:has(.search-dialog[open]) { overflow: hidden; } }
 .search-dialog-bar { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .search-dialog-bar > span { font-family: var(--font-display); font-size: 1.3rem; font-style: italic; }
-.search-close { min-height: 44px; padding: 6px 10px; border: 0; border-radius: 6px; font: inherit; font-size: 0.9rem; color: var(--muted); background: transparent; cursor: pointer; }
 .guide-search { margin: 0 0 24px; }
 .search-dialog .guide-search { display: flex; flex-direction: column; min-height: 0; margin: 0; }
 .search-dialog .guide-search > :not(.search-results) { flex-shrink: 0; }
 .search-dialog .guide-search .search-results { overflow-y: auto; min-height: 0; padding: 0 4px; scrollbar-width: thin; }
-.guide-search label { display: block; font-weight: 700; margin-bottom: 8px; }
-.guide-search input {
-  display: block; width: 100%; min-width: 0; min-height: 50px;
-  padding: 10px 12px; border: 1.5px solid var(--control-edge); border-radius: 8px;
-  font: inherit; font-size: 1rem; color: var(--ink); background: var(--card);
+.guide-search { position: relative; }
+.guide-search input[type="search"] { padding-left: 44px; -webkit-appearance: none; appearance: none; }
+.guide-search label[data-icon] {   /* the label is the header button's magnifier, inside the field */
+  position: absolute; top: 0; left: 15px; display: flex; align-items: center; height: var(--control-h-lg); margin: 0; color: var(--muted); pointer-events: none;
 }
+.guide-search label[data-icon]::before { width: 20px; height: 20px; }
+.guide-search input::-webkit-search-cancel-button { display: none; }
 .guide-search input::placeholder { color: var(--muted); opacity: 1; }
 .guide-search .search-hint, .guide-search .search-status { color: var(--muted); font-size: 0.9rem; line-height: 1.4; margin: 10px 0; }
 .guide-search .search-status { margin: 12px 0 8px; }
@@ -1737,7 +1740,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-topics > nav { padding: 0 12px 8px; }
   .guide-topics .guide-groups { padding: 10px 0 4px; border-top: 1.5px dashed var(--line); }
   .guide-topics .guide-group { padding-inline: 8px; }
-  .guide-topics .guide-nav a { padding: 11px 8px; min-height: 44px; }   /* label centred in the 44px row */
+  .guide-topics .guide-nav a { padding: 11px 8px; min-height: var(--control-h); }   /* label centred in the 44px row */
   .guide-topics .guide-quick { padding-left: 6.5px; }   /* + 1.5px border: "?" in the marker column */
 }
 
@@ -1760,7 +1763,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .lead { font-size: 1.15rem; }
   .guide-list { grid-template-columns: minmax(0, 1fr); }
   .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1.1rem; }
-  .guide-content :is(p:has(> img:only-child), figure.diagram) { margin-inline: -10px; }   /* diagrams get a little more room */
+  .guide-content :is(p:has(> :is(img, picture.theme-pick):only-child), figure.diagram) { margin-inline: -10px; }   /* diagrams get a little more room */
   /* PDF crops keep a readable size and scroll sideways inside their box */
   .guide-content .shot-scroll { overflow-x: auto; scrollbar-width: thin; }
   .guide-content figure.shot img { width: 480px; max-width: none; }
@@ -1768,7 +1771,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content details { padding: 0 16px; }
   .guide-content pre { padding: 12px 14px; font-size: 0.85rem; }
   .code-toolbar { padding-left: 14px; }
-  .copy-button { min-height: 36px; }
+  .paper-button-sm { min-height: 36px; }
   .guide-content pre, .guide-content pre code { white-space: pre-wrap; overflow-wrap: anywhere; }   /* phones: wrap, never clip; Copy still copies the original lines */
   .guide-content th, .guide-content td { padding: 9px 11px; }
   .guide-content td:first-child code { white-space: normal; overflow-wrap: break-word; padding: 0.05em 0.25em; }
@@ -1844,7 +1847,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
 .class-demo > input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
 .class-demo > label {
   display: flex; align-items: center; justify-content: center;
-  min-height: 44px; padding: 6px 12px; text-align: center;
+  min-height: var(--control-h); padding: 6px 12px; text-align: center;
   font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink); background: var(--card); cursor: pointer;
   border: 1.5px solid var(--control-edge);
   box-shadow: 0 2px 0 var(--line-strong);
@@ -1921,7 +1924,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content pre { white-space: pre-wrap; overflow: visible; }
   .table-wrap { overflow: visible; }
   .guide-content td:first-child code { white-space: normal; }
-  pre, .table-wrap, figure, p:has(> img:only-child), .note, .tip, .important, .warning, .caution, tr, .card {
+  pre, .table-wrap, figure, p:has(> :is(img, picture.theme-pick):only-child), .note, .tip, .important, .warning, .caution, tr, .card {
     break-inside: avoid;
   }
   /* A table of six or more rows may break between rows (each row stays whole)
@@ -2019,18 +2022,18 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
    that grows on hover, and the blue focus ring. All are native controls, so
    keyboard use, forms and screen readers work as usual. */
 .tool :where(label:not(:has(input)), .tool-label) { display: block; margin: 1rem 0 6px; font-weight: 700; }
-.tool :where(input[type="text"], input:not([type]), select, textarea) {
-  display: block; box-sizing: border-box; width: 100%; min-width: 0; min-height: 48px; margin: 0;
-  padding: 10px 14px;
-  font: inherit; color: var(--ink);
+.tool :where(input[type="text"], input:not([type]), select, textarea), .guide-search input {
+  display: block; box-sizing: border-box; width: 100%; min-width: 0; min-height: var(--control-h-lg); margin: 0;
+  padding: 8px 14px;
+  font: inherit; line-height: 1.4; color: var(--ink);   /* one line of text fits the control height exactly */
   background: var(--card);
   border: 2px solid var(--control-edge);
   border-radius: var(--sketch);
   box-shadow: 3px 3px 0 var(--line-strong);
   transition: border-color .12s ease, box-shadow .12s ease;
 }
-.tool :where(input[type="text"], input:not([type]), select, textarea):hover { border-color: var(--ink); }
-.tool :where(input[type="text"], input:not([type]), select, textarea):focus-visible {
+.tool :where(input[type="text"], input:not([type]), select, textarea):hover, .guide-search input:hover { border-color: var(--ink); }
+.tool :where(input[type="text"], input:not([type]), select, textarea):focus-visible, .guide-search input:focus-visible {
   border-color: var(--ink); box-shadow: 4px 4px 0 var(--line-strong);
 }
 .tool :where(select) {
@@ -2040,7 +2043,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 }
 .tool :where(textarea) { padding: 14px 16px; font: 0.88rem/1.6 var(--font-mono); tab-size: 2; resize: vertical; }
 .tool ::placeholder { color: var(--muted); opacity: 1; font-family: var(--font-body); }
-.tool :where(input, select, textarea):focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.tool :where(input, select, textarea):focus-visible, .guide-search input:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
 
 /* Checkboxes and radio buttons: a hand-drawn box with the guide's tick, and a
    wobbly circle with a dot. The label is the click target; it sits beside the
@@ -2075,7 +2078,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 }
 
 /* A yes/no setting: a native checkbox (role="switch") drawn as a switch. */
-.tool .tool-switch { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; margin: 0; font-weight: 700; cursor: pointer; }
+.tool .tool-switch { display: inline-flex; align-items: center; gap: 12px; min-height: var(--control-h); margin: 0; font-weight: 700; cursor: pointer; }
 .tool-switch input {
   -webkit-appearance: none; appearance: none;
   flex: none; position: relative; font: inherit;
@@ -2131,7 +2134,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
   cursor: pointer;
 }
 .tool-file-button {
-  display: inline-flex; align-items: center; min-height: 48px; padding: 12px 22px;
+  display: inline-flex; align-items: center; min-height: var(--control-h-lg); padding: 12px 22px;
   font-weight: 700; font-size: 1.05rem; line-height: 1.25;
   background: var(--card); color: var(--ink);
   border: 2px solid var(--btn-edge-2); border-radius: var(--sketch);
@@ -2249,7 +2252,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .settings-preview.is-off figcaption { display: none; }
 .settings-builder .tool-hint { margin: 6px 0 0; }
 /* Title and department: one line that grows with the text, in the field font. */
-.tool textarea.settings-grow { font: inherit; padding: 10px 14px; min-height: 48px; field-sizing: content; resize: none; overflow: hidden; }
+.tool textarea.settings-grow { font: inherit; line-height: 1.4; padding: 8px 14px; min-height: var(--control-h-lg); field-sizing: content; resize: none; overflow: hidden; }
 /* The committee: a quiet list. One line per member (name, role, a small x);
    "Another role" opens a box under the menu. Column names show once, on wide forms. */
 .settings-member-head { display: none; }
@@ -2275,20 +2278,26 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
    stacked on narrow screens. */
 .convert-options { margin: 0 0 1rem; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 6px 22px; }
 .convert-options legend { padding: 0; margin: 0 0 6px; font-family: var(--font-body); font-size: 1rem; font-weight: 700; }
-.convert-panes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; }
+.convert-panes { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 18px; }
 .convert-pane { min-width: 0; display: flex; flex-direction: column; }
+/* Paired panes share their rows (head, box, buttons), so the boxes line up
+   whatever each head holds, in every browser. */
+@supports (grid-template-rows: subgrid) {
+  .convert-pane { display: grid; grid-row: span 3; grid-template-rows: subgrid; align-content: start; }
+}
 .tool .convert-label { display: block; margin: 0; font-weight: 700; }
 .convert-head {   /* the same height over both panes, so the boxes line up */
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 14px;
-  min-height: 44px; margin: 0 0 6px;
+  min-height: var(--control-h); margin: 0 0 6px;
 }
 .convert-source { font-weight: 400; color: var(--muted); }
 /* LaTeX or Preview: a segmented control, as in the class demo. The native
    radios stay (keyboard, arrow keys) but are visually hidden; each label is a segment. */
-.tool fieldset.convert-view { display: flex; min-width: 0; margin: 0; padding: 0; background: none; border: 0; border-radius: var(--sketch); box-shadow: 2px 2px 0 var(--line-strong); }
+.tool fieldset.convert-view { display: flex; min-width: 0; margin: 0 2px 0 0;   /* its shadow stays inside the box edge below */
+  padding: 0; background: none; border: 0; border-radius: var(--sketch); box-shadow: 2px 2px 0 var(--line-strong); }
 .convert-view > input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; pointer-events: none; }
 .tool .convert-view > label {
-  display: flex; align-items: center; min-height: 44px; margin: 0; padding: 6px 16px;
+  display: flex; align-items: center; min-height: var(--control-h); margin: 0; padding: 6px 16px;
   gap: 6px; font-weight: 400; color: var(--ink); background: var(--card); cursor: pointer;
   border: 1.5px solid var(--control-edge);
 }
@@ -2365,6 +2374,7 @@ dialog.benefit-caption[open] { grid-template-rows: auto minmax(0, 1fr); gap: 12p
 .convert-results ol, .convert-results ul { margin: 0 0 0.4rem; padding-left: 1.3rem; }
 @media (max-width: 1100px) {   /* below about 360px a pane is too narrow: stack (tablets in landscape too) */
   .convert-panes, .convert-results { grid-template-columns: minmax(0, 1fr); }
+  .convert-pane + .convert-pane { margin-top: 18px; }
   .tool .convert-input, .guide-content .tool .convert-output, .guide-content .tool .convert-preview { height: 15rem; }
 }
 
