@@ -82,8 +82,9 @@ the smallest useful correction.
 - Never add dependencies beyond the Python standard library and Pandoc, plus
   `pypdf` for `check.py` and TeX Live for compiling.
 - Never add personal data (other than opt-in credits in `CREDITS.md`), local
-  absolute paths, secrets, or tokens. Refer to the maintainer by role, never
-  by name; the GitHub account in the project's addresses is the exception.
+  absolute paths, secrets, or tokens. The maintainer's name belongs only in
+  `LICENSE.md`, `CITATION.cff`, the class header, and `CREDITS.md`; elsewhere
+  write "the maintainer" or "us".
 - Never hard-code deadlines, staff names, or tool versions in student pages.
 - Never imply the toolkit is only for master's or only for doctoral students.
 

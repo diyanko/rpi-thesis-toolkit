@@ -11,8 +11,7 @@ Your version is on the `\ProvidesClass` line of `rpi-thesis.cls`, and
 
 ## Unreleased
 
-**Changes your PDF?** No. Only a comment at the top of `rpi-thesis.cls`
-changed.
+**Changes your PDF?** No. Only the guide, website, and scripts changed.
 
 - **Home page:** Open in Overleaf comes first, What's here is grouped into
   the template, the online tools, and learning LaTeX, and a new card asks
@@ -25,9 +24,8 @@ changed.
   start and end on the same line; drawings follow System appearance in
   every browser, including Safari.
 - **Guide:** how to give the PDF you submit a clearer name.
-- **Project:** credits, license, and citation name the maintainer by role
-  and the contributors as a group; conduct reports go through the feedback
-  form.
+- **Project:** conduct reports go through the feedback form instead of a
+  personal address.
 
 ## 0.10.2 (beta), 19 Oct 2026
 
