@@ -15,6 +15,7 @@
     if (!box) {
       var img = dialog.querySelector("img");
       if (!img) return;
+      if (img.parentNode.tagName === "PICTURE") img = img.parentNode;   // keep its light and dark sources with it
       box = document.createElement("div");
       box.className = "viewer-pan";
       box.setAttribute("role", "region");

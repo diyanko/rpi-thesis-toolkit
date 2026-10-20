@@ -673,32 +673,53 @@ class Site:
         return posixpath.relpath(target, posixpath.dirname(here) or ".")
 
     def theme_pictures(self, html, here, absolute=False):
-        """Manual choices use fixed SVG copies, including Safari and offline files.
-        Original SVG URLs remain the no-JavaScript and System fallback."""
+        """Themed drawings come as fixed light and dark copies; the page picks one.
+        Each picture gets a dark <source> (media: prefers-color-scheme) before its
+        light one, so System works in every browser with JavaScript off; theme.js
+        only rewrites that media for a manual Light or Dark choice. Never rely on
+        a media query inside an image: Safari ignores it in <img>."""
         def url(path):
             return (self.url or "") + "/" + path if absolute else self.relative(here, path)
 
         variants = {url(path): (url(f"themes/light/{path}"), url(f"themes/dark/{path}"))
                     for path in self.theme_assets}
+        dark_query = "(prefers-color-scheme: dark)"
 
-        def picture(match):
-            tag = match[0]
-            attribute = "srcset" if tag.startswith("<source") else "src"
-            if tag.startswith("<link"):
-                if not re.search(r'\brel="icon"', tag):
+        def swap(tag, attribute, value):
+            return re.sub(rf'\b{attribute}="[^"]*"', f'{attribute}="{escape(value)}"', tag, count=1)
+
+        def themed(tag, in_picture):
+            if tag.startswith("<link"):   # the favicon: theme.js swaps it
+                source = re.search(r'\bhref="([^"]+)"', tag)
+                if not re.search(r'\brel="icon"', tag) or not source or unescape(source[1]) not in variants:
                     return tag
-                attribute = "href"
+                light, dark = variants[unescape(source[1])]
+                return tag[:-1] + (f' data-theme-asset="href" data-theme-system="{escape(unescape(source[1]))}"'
+                                   f' data-theme-light="{escape(light)}" data-theme-dark="{escape(dark)}">')
+            attribute = "srcset" if tag.startswith("<source") else "src"
             source = re.search(rf'\b{attribute}="([^"]+)"', tag)
             if not source or unescape(source[1]) not in variants:
                 return tag
-            original = unescape(source[1])
-            light, dark = variants[original]
-            attributes = (f' data-theme-asset="{attribute}" data-theme-system="{escape(original)}"'
-                          f' data-theme-light="{escape(light)}" data-theme-dark="{escape(dark)}"')
-            ending = "/>" if tag.endswith("/>") else ">"
-            return tag[:-len(ending)] + attributes + ending
+            light, dark = variants[unescape(source[1])]
+            media = re.search(r'\bmedia="([^"]*)"', tag)
+            base = unescape(media[1]) if media else ""
+            query = f"{base} and {dark_query}" if base else dark_query
+            dark_source = (f'<source srcset="{escape(dark)}" media="{escape(query)}" data-theme-media="{escape(base)}"'
+                           + "".join(f' {name}="{value}"' for name, value in re.findall(r'\b(width|height|type)="([^"]*)"', tag))
+                           + ">")
+            light_tag = swap(tag, attribute, light)
+            if tag.startswith("<img") and not in_picture:
+                return f'<picture class="theme-pick">{dark_source}{light_tag}</picture>'
+            return dark_source + light_tag
 
-        return re.sub(r"<(?:img|source|link)\b[^>]*>", picture, html)
+        out, depth, position = [], 0, 0
+        for match in re.finditer(r"<(?:img|source|link)\b[^>]*>|<picture\b[^>]*>|</picture>", html):
+            out.append(html[position:match.start()])
+            position, tag = match.end(), match[0]
+            depth += tag.startswith("<picture") - (tag == "</picture>")
+            out.append(tag if "picture" in tag[:9] else themed(tag, depth > 0))
+        out.append(html[position:])
+        return "".join(out)
 
     def link(self, href, source, here, base):
         """Rewrite a link from `source` for output page `here`. None = keep the text only."""

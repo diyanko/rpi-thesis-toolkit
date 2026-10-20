@@ -194,6 +194,12 @@ function details(win, doc, add) {
       if (Math.max(...tops) - Math.min(...tops) > 2) note("fields in one row do not line up: " + controls.map(describe).join(" / "));
     }
   }
+  // Themed drawings follow the page: never a light copy on a dark page, or the reverse.
+  const dark = win.getComputedStyle(doc.documentElement).colorScheme === "dark";
+  for (const img of doc.images) {
+    const theme = (img.currentSrc.match(/\/themes\/(light|dark)\//) || [])[1];
+    if (theme && theme !== (dark ? "dark" : "light")) note("drawing in the " + theme + " theme on a " + (dark ? "dark" : "light") + " page: " + describe(img));
+  }
   // Paired panes side by side (input and result): their boxes share top and bottom edges.
   for (const panes of doc.querySelectorAll("[class*='-panes']")) {
     const boxes = Array.from(panes.children).map((pane) => Array.from(pane.children)   // each pane's tallest child

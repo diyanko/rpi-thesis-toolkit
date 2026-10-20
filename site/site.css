@@ -264,6 +264,7 @@
 
 /* ---------- 3. Base ------------------------------------------------------ */
 *, *::before, *::after { box-sizing: border-box; }
+picture.theme-pick { display: contents; }   /* a drawing's light and dark copies: lays out as its <img> */
 
 html {
   -webkit-text-size-adjust: 100%;
@@ -1061,7 +1062,7 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 /* Reading column */
 .guide-content { min-width: 0; padding-bottom: 8px; }
 .guide-content > * { max-width: 68ch; }   /* comfortable lines of text */
-.guide-content > :is(.table-wrap, figure, p:has(> img:only-child)) { max-width: none; }   /* tables and drawings may use the whole column */
+.guide-content > :is(.table-wrap, figure, p:has(> :is(img, picture.theme-pick):only-child)) { max-width: none; }   /* tables and drawings may use the whole column */
 .guide-content > h1:first-child { margin-top: 26px; font-size: clamp(2.2rem, 1.7rem + 2.2vw, 3.1rem); }
 .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1.2rem; color: var(--ink-soft); line-height: 1.6; }
 .guide-content > h1:first-child:has(+ .page-tag) { margin-bottom: 0.25em; }
@@ -1248,10 +1249,10 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
 /* Pictures and diagrams: centered, never wider than the column. An italic
    paragraph right after a picture ("*In words:* …") reads as its caption. */
 .guide-content img { display: block; margin: 0 auto; }
-.guide-content p:has(> img:only-child),
+.guide-content p:has(> :is(img, picture.theme-pick):only-child),
 .guide-content figure { margin: 1.5rem 0 1.8rem; text-align: center; }
-.guide-content :is(p:has(> img:only-child), figure.diagram):has(+ p > em:first-child) { margin-bottom: 0.8rem; }
-.guide-content :is(p:has(> img:only-child), figure.diagram) + p:has(> em:first-child),
+.guide-content :is(p:has(> :is(img, picture.theme-pick):only-child), figure.diagram):has(+ p > em:first-child) { margin-bottom: 0.8rem; }
+.guide-content :is(p:has(> :is(img, picture.theme-pick):only-child), figure.diagram) + p:has(> em:first-child),
 .guide-content figcaption {
   max-width: 54ch;
   margin: 0 auto 1.8rem;
@@ -1751,7 +1752,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .lead { font-size: 1.15rem; }
   .guide-list { grid-template-columns: minmax(0, 1fr); }
   .guide-content > :is(h1:first-child, .page-tag) + p { font-size: 1.1rem; }
-  .guide-content :is(p:has(> img:only-child), figure.diagram) { margin-inline: -10px; }   /* diagrams get a little more room */
+  .guide-content :is(p:has(> :is(img, picture.theme-pick):only-child), figure.diagram) { margin-inline: -10px; }   /* diagrams get a little more room */
   /* PDF crops keep a readable size and scroll sideways inside their box */
   .guide-content .shot-scroll { overflow-x: auto; scrollbar-width: thin; }
   .guide-content figure.shot img { width: 480px; max-width: none; }
@@ -1912,7 +1913,7 @@ html:has(dialog.viewer[open]) { overflow: hidden; }   /* the page behind stays p
   .guide-content pre { white-space: pre-wrap; overflow: visible; }
   .table-wrap { overflow: visible; }
   .guide-content td:first-child code { white-space: normal; }
-  pre, .table-wrap, figure, p:has(> img:only-child), .note, .tip, .important, .warning, .caution, tr, .card {
+  pre, .table-wrap, figure, p:has(> :is(img, picture.theme-pick):only-child), .note, .tip, .important, .warning, .caution, tr, .card {
     break-inside: avoid;
   }
   /* A table of six or more rows may break between rows (each row stays whole)
