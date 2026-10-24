@@ -41,7 +41,7 @@ import rules  # scripts/rules.py: the OGE rules in docs/project/requirements.md
 
 from common import ROOT, class_version, site_config
 from site_checks import (BUILD_FILE, CHEATSHEET_PDF, CLASS_DOWNLOAD, CONVERT, EXPLAIN, PDF_CHECK, BIB_CHECK, SearchSections,
-                         checker_ids, search_route_problems, validate)
+                         checker_ids, search_route_problems, validate, validate_search)
 import build as build_helper  # scripts/build.py: KNOWN_PROBLEMS, shared with "Explain my error"
 
 SITE = ROOT / "site"
@@ -582,6 +582,7 @@ class Site:
         # Cookie-less page counts on the website only; empty turns them off,
         # and the offline guide never counts anything.
         self.analytics = "" if offline else config.get("cloudflare_analytics_token", "")
+        self.google_verification = "" if offline else config.get("google_site_verification", "")
         self.offline = offline
         # The exact commit this website was built from, on every online page and
         # in build.txt, so a live check can tell which build is being served.
@@ -1191,6 +1192,7 @@ class Site:
             "description": escape(description),
             "root": self.relative(here, "x")[:-1],
             "search_root": (self.url or "") + "/" if kind == "notfound" else self.relative(here, "x")[:-1],
+            "privacy_url": self.relative(here, self.pages["README.md"]) + "#privacy",
             "nav": nav + ([quick] if quick else []),
             "navgroups": groups,
             "header": header,
@@ -1285,6 +1287,8 @@ class Site:
             values["build_id"] = self.build_id
         if self.analytics:
             values["analytics_token"] = self.analytics
+        if kind == "home" and self.google_verification:
+            values["google_verification"] = escape(self.google_verification, quote=True)
         if self.cheatsheet:
             values.update(cheatsheet_url=self.relative(here, self.cheatsheet), cheatsheet_pdf=True)
         elif self.repo:
@@ -1406,6 +1410,25 @@ def write_sitemap(site, destination):
     (destination / "robots.txt").write_text(
         f"User-agent: *\nAllow: /\n\nSitemap: {site.url}/sitemap.xml\n", encoding="utf-8"
     )
+
+
+def write_llms(site, destination):
+    """Optional plain-text discovery index; HTML and Markdown remain authoritative."""
+    lines = [f"# {NAME}", "", f"> {HOME_DESCRIPTION}", "",
+             "The current OGE manual and checklists outrank this toolkit's guidance.",
+             "Browser tools process student files locally; this site contains no student research.",
+             "", "## Current pages", ""]
+    for page, (title, description) in site.meta.items():
+        address = site.url + "/" + ("" if page == "index.html" else page)
+        lines.append(f"- [{unescape(title)}]({address}): {unescape(description)}")
+    if site.repo:
+        lines += ["", "## Source and history", "",
+                  f"- [Markdown guide sources]({site.repo}/tree/main/docs): Current editable guide.",
+                  f"- [Release history]({site.repo}/releases): Versioned source and downloads.",
+                  f"- [Commit history]({site.repo}/commits/main/): Changes over time.",
+                  "", "Historical versions can contain superseded advice; use the current guide",
+                  "and RPI's current documents for submission requirements."]
+    (destination / "llms.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 @contextlib.contextmanager
@@ -1700,6 +1723,8 @@ def build_into(destination, final, offline, previews, cheatsheet, publish, compl
             seen.setdefault(meta[position], page)
     if site.url:  # search engines only; the offline guide has no address
         write_sitemap(site, destination)
+        write_llms(site, destination)
+        site.errors.extend(validate_search(destination, site.url, site.meta))
     if site.build_id:  # read by scripts/release.py live
         (destination / BUILD_FILE).write_text(f"commit={site.build_id}\nrelease={RELEASE_TAG}\n", encoding="utf-8")
     elif publish:
