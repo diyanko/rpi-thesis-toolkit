@@ -220,18 +220,38 @@ writes the ZIPs to `dist/`.
   Do not change DNS or add a Cloudflare proxy for the GitHub-owned hostname.
   See Google's [sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap)
   and [robots.txt placement rules](https://developers.google.com/crawling/docs/robots-txt/robots-txt-spec).
-- **Measurement and privacy:** keep the one Cloudflare Web Analytics beacon
-  configured by `cloudflare_analytics_token` in `site/site.json`; an empty
-  value disables it, and offline builds always omit it. The Google ownership
-  tag (`google_site_verification` in the same file) appears only on the online
-  homepage and runs no code. Do not add Google Analytics or custom click events
-  to collect student input. The footer links the privacy notice in
-  `README.md#privacy`; update that notice with any measurement change.
-  Cloudflare reports aggregate traffic and performance, and its dashboard's
-  Path filter separates this project from other sites on the same hostname.
-  Export aggregate reports before the service's retention window expires if
-  longer history is needed; consult its current
-  [limits](https://developers.cloudflare.com/web-analytics/limits/).
+- **Measurement and privacy:** `site/measurement.js` loads the one Cloudflare
+  beacon only on the configured live site, when the browser is not excluded.
+  An empty `cloudflare_analytics_token` disables page counts. The browser
+  choice in `README.md#privacy` uses a local yes/no preference, never an ID;
+  `?measurement=off` sets it before the beacon loads, and removes the query
+  from the address. Configure this separately in each maintainer browser.
+  Global Privacy Control, Do Not Track, browser automation, local previews,
+  and offline builds send no measurements. Clearing browser data clears the
+  opt-out. The Google ownership tag runs no code and appears only on the
+  online homepage. Update the privacy notice with any measurement change.
+  Cloudflare reports aggregate traffic, countries, referrers and performance;
+  use the Path filter for `/rpi-thesis-toolkit/` to separate other projects
+  on the same hostname. Export reports before the service's
+  [retention limit](https://developers.cloudflare.com/web-analytics/limits/)
+  when longer history is needed. Keep each project's reporting separate in
+  the same account; do not create a cross-site visitor identity.
+- **Anonymous download sessions:** `download_counter_url` names the optional
+  Worker `/event` endpoint. `services/download-counter/worker.js` and
+  `schema.sql` are the source; deploy them in the existing Cloudflare account
+  with a D1 binding `COUNTS` and Workers request logs disabled. No packages
+  or build step are needed. Only a fixed download type is sent, once per tab
+  session; storage contains UTC day, type and an atomic total. `/counts`
+  returns the latest 1,464 day/category rows; export D1 for longer
+  history. No request headers, IPs, identifiers, referrers or raw events are
+  written to D1. Cloudflare still processes network metadata as the host.
+  Direct downloads bypass this counter. Origin and payload checks reject
+  ordinary unrelated requests, but this is not proof of a human: automation,
+  blocked measurement, multiple tabs and repeat visits limit the estimate.
+  Endpoint failure or unavailable session storage never prevents downloading.
+  Disable the endpoint configuration to stop sending events; the links work
+  with JavaScript off. See the [service README](../../services/download-counter/README.md)
+  for setup and checks.
 - **Download counts:** GitHub already counts requests for release assets,
   without a site tracking script. Optional maintainer command:
   `gh api --paginate repos/diyanko/rpi-thesis-toolkit/releases --jq '.[] | .tag_name as $tag | .assets[] | [$tag, .name, .download_count] | @csv'`.

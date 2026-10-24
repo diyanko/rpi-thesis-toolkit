@@ -76,6 +76,29 @@ no cookies, local storage, or fingerprinting to track visitors. The site adds no
 Search Console measures the site's appearance in Google Search; its ownership
 verification tag adds no visitor-tracking script.
 
+An optional counter records the first download or Open in Overleaf click in
+one browser tab session. It sends only a fixed download type to Cloudflare;
+the database stores a daily total for each type. A temporary yes/no flag in
+your tab prevents repeated clicks from being counted again. No visitor ID,
+IP address, referrer, page address, or raw click record is stored by the counter.
+Cloudflare still handles network requests under its
+[privacy policy](https://www.cloudflare.com/privacypolicy/).
+These counts estimate download sessions, not people, successful installations,
+or actual thesis use. Direct GitHub downloads and automated file checks do
+not use this counter. Browser automation and local previews are excluded;
+some bots and repeat visits can still affect totals.
+
+<div data-measurement-controls hidden>
+<p data-measurement-status role="status"></p>
+<p class="tool-actions"><button class="paper-button" type="button" data-measurement-choice="off">Exclude this browser</button> <button class="paper-button" type="button" data-measurement-choice="on">Allow aggregate measurement</button></p>
+</div>
+
+The browser choice applies to both page analytics and download counts. It
+stays on this device; repeat it in each browser or after clearing browser data.
+Global Privacy Control and Do Not Track also turn measurement off. With
+JavaScript disabled, neither measurement script runs. Downloads always work
+without measurement.
+
 Guide search and the browser tools process your text and files on your device;
 they do not send that content to analytics or upload it. The offline guide in
 the ZIP includes no analytics. Your appearance preference is saved in your
