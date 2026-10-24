@@ -416,6 +416,10 @@ a:is(:hover, :focus-visible) { text-decoration-style: solid; }
   position: relative; z-index: 20;
 }
 .appearance[hidden], .appearance-menu[hidden] { display: none; }
+/* Reserve optional header controls before their scripts finish. Hidden controls
+   stay invisible and unfocusable; revealing them must not reflow the page. */
+.header-tools .appearance[hidden] { display: block; visibility: hidden; }
+.header-tools .search-header[hidden] { display: inline-flex; visibility: hidden; }
 .diagram-open[hidden] { display: none; }   /* viewer.js hides it when the drawing is already near full size */
 .appearance-toggle {
   display: grid; place-items: center;
