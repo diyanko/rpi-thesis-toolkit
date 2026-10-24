@@ -47,8 +47,8 @@ $endif$
 $if(share_url)$
 <script src="${root}share.js" defer></script>
 $endif$
-$if(analytics_token)$
-<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "$analytics_token$"}'></script>
+$if(measurement)$
+<script src="${root}measurement.js" defer data-site="$measurement_site$" data-repository="$measurement_repo$" data-token="$analytics_token$" data-counter="$counter_url$"></script>
 $endif$
 </head>
 <body class="page-$kind$$if(tool)$ page-tool$endif$$if(wide)$ page-wide$endif$" id="top">
