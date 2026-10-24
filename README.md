@@ -69,9 +69,24 @@ walks through each.
 
 ## Privacy
 
-The website counts page views with Cloudflare Web Analytics: no cookies and no
-personal data. Guide search runs in your browser and sends nothing anywhere.
-The offline guide in the ZIP counts nothing.
+The website uses [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/about/)
+for aggregate page views, visits, referrers, and page performance. Cloudflare
+describes its [privacy protections](https://www.cloudflare.com/web-analytics/):
+no cookies, local storage, or fingerprinting to track visitors. The site adds no Google Analytics, advertising tags, or visitor IDs.
+Search Console measures the site's appearance in Google Search; its ownership
+verification tag adds no visitor-tracking script.
+
+Guide search and the browser tools process your text and files on your device;
+they do not send that content to analytics or upload it. The offline guide in
+the ZIP includes no analytics. Your appearance preference is saved in your
+browser so it works on your next visit.
+
+GitHub hosts the site and release downloads under its
+[privacy statement](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement).
+GitHub provides aggregate release download counts; these count requests,
+including automated checks and repeat downloads, rather than individual people.
+Following a link to another service uses that service's privacy practices.
+For a privacy question, use [the help and feedback form](docs/troubleshooting.md#ask-for-help).
 
 ## Credit and license
 

@@ -199,6 +199,48 @@ writes the ZIPs to `dist/`.
   check can tell which build is served. The SHA is `GITHUB_SHA` in CI, else
   `git rev-parse HEAD`; `--publish` fails without one. The offline guide
   carries neither.
+- **Search discovery:** online builds generate canonical URLs, page titles and
+  descriptions, `sitemap.xml`, and an unrestricted project `robots.txt`.
+  The build checks canonical/sitemap agreement and accidental indexing blocks.
+  `llms.txt` is an optional generated index of current pages, Markdown sources,
+  releases, and commit history; it is not a search-engine requirement or a
+  guarantee that an AI tool reads it. Historical advice may be superseded.
+  Keep these generated files out of Git.
+- **Search Console:** verify a URL-prefix property matching `site_url` in
+  `site/site.json` (including the project path and trailing slash), then submit
+  its `sitemap.xml` in Google's
+  [Sitemaps report](https://support.google.com/webmasters/answer/7451001).
+  Use [URL Inspection](https://support.google.com/webmasters/answer/9012289)
+  to check the homepage and a guide page and request indexing when needed.
+  Verification requires the owner's signed-in account and a verification
+  method deployed on the site; never claim submission before it succeeds.
+  On GitHub project Pages, crawlers read `/robots.txt` at the domain root,
+  not the project's nested file. A root 404 does not block crawling; root
+  rules, response headers, and live index status need a separate live check.
+  Do not change DNS or add a Cloudflare proxy for the GitHub-owned hostname.
+  See Google's [sitemap guidance](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap)
+  and [robots.txt placement rules](https://developers.google.com/crawling/docs/robots-txt/robots-txt-spec).
+- **Measurement and privacy:** keep the one Cloudflare Web Analytics beacon
+  configured by `cloudflare_analytics_token` in `site/site.json`; an empty
+  value disables it, and offline builds always omit it. The Google ownership
+  tag (`google_site_verification` in the same file) appears only on the online
+  homepage and runs no code. Do not add Google Analytics or custom click events
+  to collect student input. The footer links the privacy notice in
+  `README.md#privacy`; update that notice with any measurement change.
+  Cloudflare reports aggregate traffic and performance, and its dashboard's
+  Path filter separates this project from other sites on the same hostname.
+  Export aggregate reports before the service's retention window expires if
+  longer history is needed; consult its current
+  [limits](https://developers.cloudflare.com/web-analytics/limits/).
+- **Download counts:** GitHub already counts requests for release assets,
+  without a site tracking script. Optional maintainer command:
+  `gh api --paginate repos/diyanko/rpi-thesis-toolkit/releases --jq '.[] | .tag_name as $tag | .assets[] | [$tag, .name, .download_count] | @csv'`.
+  Save dated exports under ignored `_local/analytics/` for comparisons.
+  Counts include repeat requests and CI download checks, and do not identify
+  people or prove a completed installation. Direct files served by Pages
+  (the class and cheat sheet) have no GitHub release-asset counter. Do not
+  change a working download route just to count it. See GitHub's
+  [release asset API](https://docs.github.com/en/rest/releases/assets).
 - **JavaScript is optional.** The scripts in `site/` (`copy.js`, `viewer.js`,
   `theme.js`, `search.js` and its index, `site/pdf-check/`) are enhancements;
   search sends nothing anywhere.
