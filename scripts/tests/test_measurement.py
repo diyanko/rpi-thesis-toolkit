@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 CHROME = find_chrome()
 
 
-@unittest.skipUnless(CHROME, 'Chrome unavailable')
+@unittest.skipUnless(CHROME, 'no Chrome or Chromium')
 class Measurement(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
