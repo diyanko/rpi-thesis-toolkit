@@ -582,6 +582,7 @@ class Site:
         # Cookie-less page counts on the website only; empty turns them off,
         # and the offline guide never counts anything.
         self.analytics = "" if offline else config.get("cloudflare_analytics_token", "")
+        self.counter = "" if offline else config.get("download_counter_url", "")
         self.google_verification = "" if offline else config.get("google_site_verification", "")
         self.offline = offline
         # The exact commit this website was built from, on every online page and
@@ -621,6 +622,8 @@ class Site:
                        "site/tools-highlight.js": "tools-highlight.js",   # optional: colored LaTeX in tool output
                        "site/dates.js": "dates.js"}     # optional: footer dates as "3 weeks ago"
         self.assets.update({f"site/{name}": name for name in EXPLAIN})  # optional: "Explain my error" page
+        if not offline:
+            self.assets["site/measurement.js"] = "measurement.js"
         if not offline:  # optional: "Check your PDF" page; online only (see PDF_CHECK)
             self.assets.update({f"site/{name}": name for name in PDF_CHECK})
             self.assets.update({f"site/{name}": name for name in BIB_CHECK})
@@ -1285,7 +1288,11 @@ class Site:
             values["offline"] = True
         if self.build_id:
             values["build_id"] = self.build_id
-        if self.analytics:
+        if not self.offline and (self.analytics or self.counter):
+            values["measurement"] = True
+            values["measurement_site"] = escape(self.url + "/", quote=True)
+            values["measurement_repo"] = escape(self.repo, quote=True)
+            values["counter_url"] = escape(self.counter, quote=True)
             values["analytics_token"] = self.analytics
         if kind == "home" and self.google_verification:
             values["google_verification"] = escape(self.google_verification, quote=True)
