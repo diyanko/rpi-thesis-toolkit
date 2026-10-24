@@ -89,6 +89,12 @@ class Measurement(unittest.TestCase):
                 sent = self.browser.evaluate('sent')
                 self.assertEqual([json.loads(event['options']['body'])['asset'] for event in sent], [] if category is None else [category])
 
+    def test_exclusion_changed_after_page_load(self):
+        self.fixture()
+        self.browser.evaluate("localStorage.setItem('rpi-thesis-measurement','off')")
+        self.click()
+        self.assertEqual(self.browser.evaluate('sent.length'), 0)
+
     def test_worker_validation_and_atomic_aggregate(self):
         source = (ROOT / 'services/download-counter/worker.js').read_text().replace('export default', 'window.counter =')
         result = self.browser.evaluate('''(async()=>{''' + source + '''
