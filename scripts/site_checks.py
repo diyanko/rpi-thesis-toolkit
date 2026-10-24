@@ -11,6 +11,8 @@ from html.parser import HTMLParser
 import json
 import re
 from urllib.parse import quote, unquote, urlsplit
+from urllib.robotparser import RobotFileParser
+from xml.etree import ElementTree
 
 from common import ROOT
 import rules  # scripts/rules.py: the OGE rules in docs/project/requirements.md
@@ -18,7 +20,7 @@ import rules  # scripts/rules.py: the OGE rules in docs/project/requirements.md
 # ---- what the website may hold ----------------------------------------------
 
 ALLOWED = {".html", ".css", ".svg", ".woff2"}  # plus fonts/*.txt, previews/*.png|webp, og-image.png,
-                                              # sitemap.xml, robots.txt, build.txt and the named scripts below
+                                              # sitemap.xml, robots.txt, llms.txt, build.txt and the named scripts below
 # Online only: "commit=<SHA>" and "release=<RELEASE_TAG>", one per line. Every online
 # page also carries <meta name="rpi-thesis-build" content="SHA">; release.py reads both.
 BUILD_FILE = "build.txt"
@@ -160,10 +162,15 @@ class PageLinks(HTMLParser):
     def __init__(self, path):
         super().__init__()
         self.links, self.ids, self.duplicates = [], set(), set()
+        self.canonicals, self.robots = [], []
         self.feed(path.read_text(encoding="utf-8"))
 
     def handle_starttag(self, tag, attrs):
         attributes = dict(attrs)
+        if tag == "link" and "canonical" in attributes.get("rel", "").split():
+            self.canonicals.append(attributes.get("href", ""))
+        if tag == "meta" and attributes.get("name", "").lower() in {"robots", "googlebot"}:
+            self.robots.extend(re.split(r"[\s,]+", attributes.get("content", "").lower()))
         if attributes.get("id"):
             if attributes["id"] in self.ids:
                 self.duplicates.add(attributes["id"])
@@ -275,7 +282,7 @@ def validate(destination, beside=(), search=()):
             errors.append(f"Private or source folder in the website: {relative}")
         elif path.is_dir() or suffix in ALLOWED:
             pass
-        elif relative.as_posix() in {"og-image.png", CHEATSHEET_PDF, CLASS_DOWNLOAD, "sitemap.xml", "robots.txt",
+        elif relative.as_posix() in {"og-image.png", CHEATSHEET_PDF, CLASS_DOWNLOAD, "sitemap.xml", "robots.txt", "llms.txt",
                                      BUILD_FILE} | SITE_SCRIPTS:
             pass
         elif not (top == "previews" and suffix in {".png", ".webp"}) and not (
@@ -288,6 +295,43 @@ def validate(destination, beside=(), search=()):
         if suffix == ".svg" and re.search(r"<image\b|data:image", path.read_text(encoding="utf-8")):
             errors.append(f"{relative}: embedded picture in a diagram; draw it with vector shapes")
     return errors, warnings, len(pages)
+
+
+def validate_search(destination, site_url, indexed):
+    """Catch indexing regressions in actual output, including project-path URLs.
+
+    Only current content belongs in the sitemap; redirects and 404 stay out.
+    Domain-root robots rules and response headers need a separate live check.
+    """
+    errors = []
+    expected = {site_url + "/" + ("" if page == "index.html" else page) for page in indexed}
+    try:
+        sitemap = ElementTree.parse(destination / "sitemap.xml")
+        locations = [node.text for node in sitemap.findall(
+            "{http://www.sitemaps.org/schemas/sitemap/0.9}url/"
+            "{http://www.sitemaps.org/schemas/sitemap/0.9}loc")]
+        if set(locations) != expected or len(locations) != len(expected):
+            errors.append("sitemap.xml: list every current page's canonical URL exactly once; exclude redirects and 404.")
+    except (OSError, ElementTree.ParseError) as exc:
+        errors.append(f"sitemap.xml: cannot read the sitemap: {exc}")
+    robots = RobotFileParser()
+    try:
+        robots.parse((destination / "robots.txt").read_text(encoding="utf-8").splitlines())
+        if site_url + "/sitemap.xml" not in (robots.site_maps() or []):
+            errors.append("robots.txt: name this site's sitemap URL.")
+    except OSError as exc:
+        errors.append(f"robots.txt: cannot read crawl rules: {exc}")
+    for page in indexed:
+        address = site_url + "/" + ("" if page == "index.html" else page)
+        parsed = PageLinks(destination / page)
+        if parsed.canonicals != [address]:
+            errors.append(f"{page}: set one absolute canonical URL matching the sitemap: {address}")
+        if {"noindex", "none"}.intersection(parsed.robots):
+            errors.append(f"{page}: remove the indexing block from this current content page.")
+        for agent in ("Googlebot", "bingbot", "OAI-SearchBot", "GPTBot", "ClaudeBot", "PerplexityBot", "*"):
+            if not robots.can_fetch(agent, address):
+                errors.append(f"robots.txt: {agent} is blocked from {page}.")
+    return errors
 
 
 # ---- the PDF checker's rule ids ------------------------------------------------

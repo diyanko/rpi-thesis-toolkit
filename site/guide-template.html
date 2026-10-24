@@ -7,6 +7,9 @@
 <script src="${root}theme.js"></script>
 <title>$pagetitle$</title>
 <meta name="description" content="$description$">
+$if(google_verification)$
+<meta name="google-site-verification" content="$google_verification$">
+$endif$
 $if(build_id)$
 <meta name="rpi-thesis-build" content="$build_id$">
 $endif$
@@ -233,6 +236,7 @@ $endif$
 $for(project)$
           <li><a href="$it.href$"$if(it.current)$ aria-current="page"$endif$>$it.label$</a></li>
 $endfor$
+          <li><a href="$privacy_url$">Privacy</a></li>
 $if(repo_url)$
           <li><a href="$repo_url$">Source files</a></li>
 $endif$
