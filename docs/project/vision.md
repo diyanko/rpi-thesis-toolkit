@@ -25,7 +25,9 @@ this project.
 2. **One source for each fact.** A rule lives once in the
    [requirements map](requirements.md); pages, the class, and the tools read it.
 3. **Private by design.** Tools run in the browser. Nothing a student pastes or
-   drops is uploaded. No accounts, no tracking beyond cookie-less page counts.
+   drops is uploaded. No accounts or visitor identifiers. Measurement is limited
+   to cookieless aggregate page views and download-session counts, with a
+   browser opt-out; downloaded thesis files contain no telemetry.
 4. **Works without extras.** Every page works without JavaScript; every core
    task works without Git, a terminal, or AI.
 5. **Honest.** Unofficial and community-made; never claim approval. Show real
