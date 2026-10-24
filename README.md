@@ -95,6 +95,7 @@ some bots and repeat visits can still affect totals.
 
 The browser choice applies to both page analytics and download counts. It
 stays on this device; repeat it in each browser or after clearing browser data.
+Reload other open tabs to apply a changed choice to their page analytics.
 Global Privacy Control and Do Not Track also turn measurement off. With
 JavaScript disabled, neither measurement script runs. Downloads always work
 without measurement.

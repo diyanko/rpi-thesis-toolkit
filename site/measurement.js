@@ -73,6 +73,8 @@
     var kind = asset(anchor.href);
     if (!kind) return;
     try {
+      // Respect exclusions made in another open tab before recording a download.
+      if (localStorage.getItem(preference) === "off") return;
       if (sessionStorage.getItem(counted)) return;
       sessionStorage.setItem(counted, "1");
     } catch (_) { return; } // No reliable session flag: skip rather than count every click.
