@@ -6,6 +6,7 @@ client speaks the DevTools protocol, and http.server serves the files, so
 nothing leaves this computer. Maintainer tooling only.
 """
 import base64
+import errno
 import http.server
 import json
 import os
@@ -157,15 +158,33 @@ class Chrome:
         return base64.b64decode(self.call("Page.captureScreenshot", format="png")["data"])
 
     def close(self):
-        if getattr(self, "socket", None):
-            self.socket.sock.close()
+        socket = getattr(self, "socket", None)
+        if socket and self.process.poll() is None:
+            try:
+                self.call("Browser.close")
+            except (OSError, ConnectionError, RuntimeError):
+                pass  # Chrome may close DevTools before acknowledging shutdown.
+        if socket:
+            socket.sock.close()
         if self.process.poll() is None:
-            self.process.terminate()
             try:
                 self.process.wait(timeout=10)
             except subprocess.TimeoutExpired:
-                self.process.kill()
-        self.profile.cleanup()
+                self.process.terminate()
+                try:
+                    self.process.wait(timeout=10)
+                except subprocess.TimeoutExpired:
+                    self.process.kill()
+                    self.process.wait(timeout=10)
+        # Chromium helpers may finish profile writes just after its main process.
+        for attempt in range(20):
+            try:
+                self.profile.cleanup()
+                break
+            except OSError as error:
+                if error.errno != errno.ENOTEMPTY or attempt == 19:
+                    raise
+                time.sleep(0.05)
 
 
 class LocalServer:
