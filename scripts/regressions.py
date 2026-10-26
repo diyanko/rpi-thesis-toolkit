@@ -552,6 +552,76 @@ def _verify_module():
     return verify
 
 
+def case_browser_shutdown(proj, work):
+    """Browser shutdown must finish before deleting a profile, without hiding cleanup errors."""
+    import errno
+    from unittest.mock import Mock, patch
+    from chrome import Chrome
+
+    def browser():
+        instance = Chrome.__new__(Chrome)
+        instance.socket = Mock()
+        instance.process = Mock()
+        instance.process.poll.return_value = None
+        instance.profile = Mock()
+        instance.call = Mock()
+        return instance
+
+    instance = browser()
+    exited = False
+
+    def wait(timeout):
+        nonlocal exited
+        if not instance.process.kill.called:
+            raise subprocess.TimeoutExpired("browser", timeout)
+        exited = True
+
+    def cleanup():
+        check(exited, "profile cleanup ran before the killed browser exited")
+
+    instance.process.wait.side_effect = wait
+    instance.profile.cleanup.side_effect = cleanup
+    instance.close()
+    check(instance.call.call_args == (("Browser.close",), {}),
+          "browser was not asked to close gracefully")
+    check(instance.process.terminate.called and instance.process.kill.called,
+          "unresponsive browser was not stopped")
+    check(exited, "the killed browser was not waited for")
+
+    instance = browser()
+    directory = work / "browser-profile"
+    directory.mkdir()
+    late_write = directory / "late-write"
+    late_write.write_text("browser data", encoding="utf-8")
+    attempts = 0
+
+    def cleanup_race():
+        nonlocal attempts
+        attempts += 1
+        if attempts == 2:
+            late_write.unlink()
+        directory.rmdir()
+
+    instance.profile.cleanup.side_effect = cleanup_race
+    with patch("chrome.time.sleep"):
+        instance.close()
+    check(not directory.exists(), "profile was left behind after its writer stopped")
+
+    for error in (OSError(errno.ENOTEMPTY, "persistent writer"),
+                  PermissionError(errno.EACCES, "profile denied")):
+        instance = browser()
+        instance.profile.cleanup.side_effect = error
+        with patch("chrome.time.sleep"):
+            try:
+                instance.close()
+            except OSError as raised:
+                check(raised is error, "cleanup replaced the original error")
+            else:
+                raise Fail("browser shutdown hid a persistent cleanup error")
+        check(instance.profile.cleanup.call_count <= 20,
+              "profile cleanup did not stop retrying")
+
+
 def case_verify_auto_mode(proj, work):
     """Audit: auto verify chose quick when git failed, on a clean tree, and could
     miss staged or renamed files."""
@@ -917,6 +987,7 @@ register("portrait-figure", case_portrait_figure, tools=("pdflatex",))
 for _engine in ("pdflatex", "xelatex", "lualatex"):
     register("ams-symbols:" + _engine, make_ams(_engine), tools=(_engine,), needs_pdf_text=True)
 register("verify-auto-mode", case_verify_auto_mode, tools=("git",))
+register("browser-shutdown", case_browser_shutdown, tools=())
 register("verify-exact-zips", case_verify_exact_zips, tools=())
 register("verbatim-input", case_verbatim_input)
 register("missing-chapter", case_missing_chapter)
